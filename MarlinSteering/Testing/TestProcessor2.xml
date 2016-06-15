@@ -1,0 +1,36 @@
+<!--
+      Example steering file to run the standard reconstruction on the 3 ttbar events 
+      simulated with Mokka in this example directory.
+
+      Works with ilcsoft v01-17-08
+
+      Defines the standard reconstruction for ILD.
+-->
+
+
+ <marlin>
+    <execute>
+        <processor name="MyStdHepReader" />
+        <processor name="MyGeneratorProcessor"/>
+    </execute>
+
+    <global>
+        <!--parameter name="LCIOInputFiles"></parameter>
+        <parameter name="GearXMLFile" value=""/-->
+        <parameter name="MaxRecordNumber" value="-1"/>
+        <parameter name="SkipNEvents" value="0"/>
+        <parameter name="SupressCheck" value="true"/>
+        <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> MESSAGE </parameter>
+        <parameter name="RandomSeed" value="1234567890" />
+    </global>
+
+    <processor name="MyStdHepReader" type="StdHepReader">
+        <parameter name="StdHepFileName" type="string">whizard_ee_nunuzz_nunuqqqq_1400GeV.001.stdhep</parameter>
+    </processor>
+
+    <processor name="MyGeneratorProcessor" type="GeneratorProcessor">
+        <parameter name="MCParticle" type="string" value="MCParticle"/>
+        <parameter name="RootFile" type="string" value="GeneratorAnalysis.root"/>
+    </processor>
+
+</marlin>
