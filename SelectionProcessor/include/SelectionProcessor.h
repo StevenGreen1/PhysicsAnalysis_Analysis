@@ -5,8 +5,9 @@
 #include "lcio.h"
 
 #include "EVENT/MCParticle.h"
+#include "EVENT/ReconstructedParticle.h"
 
-#include "CouplingAnalysis.h"
+#include "UTIL/PIDHandler.h"
 
 #include <cmath>
 #include <cstdlib>
@@ -16,7 +17,6 @@ using namespace lcio;
 using namespace marlin;
 
 class TFile;
-class TH1F;
 class TTree;
 class TLorentzVector;
 class TVector3;
@@ -24,33 +24,37 @@ class TVector3;
 class SelectionProcessor : public Processor 
 {
     public:
-    virtual Processor*  newProcessor() { return new SelectionProcessor; }
-    SelectionProcessor();
+        virtual Processor*  newProcessor() { return new SelectionProcessor; }
+        SelectionProcessor();
   
-    /* 
-     * Called at the begin of the job before anything is read.
-     * Use to initialize the processor, e.g. book histograms.
-     */
-    virtual void init();
+        /* 
+         * Called at the begin of the job before anything is read.
+         * Use to initialize the processor, e.g. book histograms.
+         */
+        virtual void init();
   
-    /*
-     * Called for every run.
-     */
-    virtual void processRunHeader( LCRunHeader *run );
+        /*
+         * Called for every run.
+         */
+        virtual void processRunHeader( LCRunHeader *run );
   
-    /*
-     * Called for every event - the working horse.
-     */
-    virtual void processEvent( LCEvent *evt ); 
+        /*
+         * Called for every event - the working horse.
+         */
+        virtual void processEvent( LCEvent *evt ); 
   
-    virtual void check( LCEvent *evt ); 
+        virtual void check( LCEvent *evt ); 
   
-    /*
-     * Called after data processing for clean up.
-     */
-    virtual void end();
+        /*
+         * Called after data processing for clean up.
+         */
+        virtual void end();
     
     private:
+        typedef std::vector<const EVENT::ReconstructedParticle*> JetVector;
+        typedef std::vector<float> FloatVector;
+        typedef std::vector<int> IntVector;
+
         /**
          * @brief Reset member variables for next event run
          */
@@ -144,7 +148,7 @@ class SelectionProcessor : public Processor
          * @param mostEnergeticTracksFromPFO track(s) from the most energetic PFO in the event
          * @param energyAroundTrack energy in cone surrounding most energetic track
          */
-        void FindEnergyInConeAroundMostEnergeticTrack(JetVector &jetVector, EVENT::TrackVec &mostEnergeticTracksFromPFO, float &energyAroundTrack) const;
+        void FindEnergyInConeAroundMostEnergeticTrack(JetVector &jetVector, float &energyAroundTrack) const;
 
         /**
          * @brief Find the energy in a cone surrounding a given track
@@ -153,8 +157,7 @@ class SelectionProcessor : public Processor
          * @param track to use as base for cone search
          * @param energyAroundTrack energy surrounding track in question
          */
-        void FindEnergyAroundTrack(JetVector &particleVector, EVENT::Track &track, float &energyAroundTrack) const;
-
+        void FindEnergyAroundTrack(JetVector *pParticleVector, EVENT::Track *pTrack, float &energyAroundTrack) const;
 
         /**
          * @brief Find the jet clustering variable y34
@@ -164,7 +167,6 @@ class SelectionProcessor : public Processor
          */
         void FindJetClusteringVariableY34(const LCCollection *pLCCollection, float &y34) const;
 
-
         /**
          * @brief Set the basic jet variables
          *
@@ -172,54 +174,64 @@ class SelectionProcessor : public Processor
          * @param numberOfParticles in jet
          * @param numberOfChargedParticles
          */
-        void JetVariables(const EVENT::ReconstructedParticle *pJet, float energy, int numberOfParticles, int numberOfChargedParticles) const
+        void JetVariables(const EVENT::ReconstructedParticle *pJet, float &energy, int &numberOfParticles, int &numberOfChargedParticles) const;
 
+        /**
+         * @brief Find best pairing of lcio particles to form either two W bosons or two Z bosons
+         *
+         * @param wCandidates candidate particles to be used for forming bosons
+         * @param type wither ww or zz to pair up W or Z bosons
+         */
+        void JetPairing(JetVector &wCandidates, std::string type);
 
-    /*
-     * @brief Calculate the cosine of the W boson polar angle in the reference frame of the WW pair
-     *
-     * @ wPlus energy 4 vector for w+ 
-     * @ wMinus energy 4 vector for w-
-     * @ cosThetaStar cosine of the W boson polar angle in the reference frame of the WW pair
-     */
-    void CalculateWBosonPolarAngle(TLorentzVector wPlus, TLorentzVector wMinus, float &cosThetaStar);
+        /**
+         * @brief Calculate the cosine of the W boson polar angle in the reference frame of the WW pair
+         *
+         * @ wPlus energy 4 vector for w+ 
+         * @ wMinus energy 4 vector for w-
+         * @ cosThetaStar cosine of the W boson polar angle in the reference frame of the WW pair
+         */
+//        void CalculateWBosonPolarAngle(TLorentzVector wPlus, TLorentzVector wMinus, float &cosThetaStar);
 
-    /**
-     * @brief Set the quark mc particles in ww vector boson scattering
-     *
-     * @param pMCParticle target quark
-     * @param u up quark type in process
-     * @param d down quark type in process
-     * @param au anti-up quark type in process
-     * @param ad anti-down quark type in process
-     */
-    void SetQuarks(MCParticle *pMCParticle, MCParticle *&u, MCParticle *&d, MCParticle *&au, MCParticle *&ad) const;
+        // Tools
+        JetVector           m_JetVector;                            ///< 
+        JetVector           m_WVector1;                             ///< 
+        JetVector           m_WVector2;                             ///< 
+        JetVector           m_ZVector1;                             ///< 
+        JetVector           m_ZVector2;                             ///< 
 
-    typedef std::vector<const EVENT::ReconstructedParticle*> JetVector;
+        // Variables of interest
+        bool                m_IsEventWW;                            ///<
+        bool                m_IsEventZZ;                            ///<
+        float               m_InvMassWVector1;                      ///< Invariant mass of W candidate jets 1
+        float               m_InvMassWVector2;                      ///< Invariant mass of W candidate jets 2
+        float               m_InvMassZVector1;                      ///< Invariant mass of Z candidate jets 1
+        float               m_InvMassZVector2;                      ///< Invariant mass of Z candidate jets 2
+        float               m_TransverseMomentum;                   ///< Transverse momentum
+        float               m_TransverseEnergy;                     ///< Transverse energy
+        float               m_CosThetaMissing;                      ///< Cosine theta of missing momentum
+        float               m_CosThetaMostEnergeticTrack;           ///< Cosine theta of the most energetic track
+        float               m_RecoilMass;                           ///< Recoil mass
+        float               m_EnergyAroundMostEnergeticTrack;       ///< Energy in a cone surround most energetic track
+        float               m_y34;                                  ///< Jet clustering parameter
+        FloatVector         m_EnergyJets;                           ///< Vector of energies of the jets
+        IntVector           m_NParticlesJets;                       ///< Vector of number of particles in the jets
+        IntVector           m_NChargedParticlesJets;                ///< Vector of number of charged particles in the jets 
 
-    JetVector           m_JetVector;                            ///< 
-    JetVector           m_WPlusVector;                          ///< 
-    JetVector           m_WMinusVector;                         ///< 
-    JetVector           m_FirstZVector;                         ///< 
-    JetVector           m_SecondZVector;                        ///< 
-    bool                m_IsEventWW;                            ///<
-    bool                m_IsEventZZ;                            ///<
+        // Reference variables
+        float               m_WBosonMass;                           ///< W boson mass from pdg
+        float               m_ZBosonMass;                           ///< Z boson mass from pdg
 
-    std::string         m_CollectionName;                       ///< PFO collection name
-    std::string         m_rootFile;                             ///< Root file output namne
-    float               m_EventMCEnergy                         ///< MC event energy excluding beam effects
-    float               m_ConeAngle;                            ///< Cone angle needed for cone energy measurement 
+        // Inputs
+        std::string         m_CollectionName;                       ///< PFO collection name
+        std::string         m_rootFile;                             ///< Root file output namne
+        float               m_EventMCEnergy;                        ///< MC event energy excluding beam effects
+        float               m_ConeAngle;                            ///< Cone angle needed for cone energy measurement 
 
-    TFile              *m_pTFile;                               ///<
-    TTree              *m_pTTree;                               ///<
-    TH1F               *m_hWWInvMass;                           ///<
-    TH1F               *m_wCosThetaStar;                        ///<
-    TH1F               *m_wCosThetaStar2;                       ///<
-    TH1F               *m_wCosThetaStar3;                       ///<
-    int                 m_nRun;                                 ///<
-    int                 m_nEvent;                               ///<
-    CouplingAnalysis   *m_CouplingAnalysis;                     ///<
-
+        TFile              *m_pTFile;                               ///<
+        TTree              *m_pTTree;                               ///<
+        int                 m_nRun;                                 ///<
+        int                 m_nEvent;                               ///<
 } ;
 
 #endif
