@@ -73,7 +73,7 @@ void SelectionProcessor::init()
     m_pTTree->Branch("CosThetaMissing", &m_CosThetaMissing, "CosThetaMissing/F");
     m_pTTree->Branch("CosThetaMostEnergeticTrack", &m_CosThetaMostEnergeticTrack, "CosThetaMostEnergeticTrack/F");
     m_pTTree->Branch("RecoilMass", &m_RecoilMass, "RecoilMass/F");
-    m_pTTree->Branch("EnergyAroundMostEnergeticTrack", &m_EnergyAroundMostEnergeticTrack, "EnergyAroundMostEnergeticTrack/F");
+    m_pTTree->Branch("EnergyAroundMostEnergeticTrack", &m_EnergyAroundMostEnergeticPfo, "EnergyAroundMostEnergeticTrack/F");
     m_pTTree->Branch("y34", &m_y34, "y34/F");
 
     m_pTTree->Branch("EnergyJets", &m_EnergyJets);
@@ -157,7 +157,7 @@ void SelectionProcessor::processEvent(LCEvent * pLCEvent)
             this->CalculateCosThetaMissingMomentum(m_JetVector, m_CosThetaMissing);
             this->FindCosThetaMostEnergeticTrack(m_JetVector, m_CosThetaMostEnergeticTrack);
             this->FindRecoilMass(m_JetVector, m_RecoilMass);
-            this->FindEnergyInConeAroundMostEnergeticTrack(m_JetVector, m_EnergyAroundMostEnergeticTrack);
+            this->FindEnergyInConeAroundMostEnergeticPfo(m_JetVector, m_EnergyAroundMostEnergeticPfo);
             this->FindJetClusteringVariableY34(pLCCollection, m_y34);
 
             this->IsEventWW();
@@ -219,7 +219,7 @@ void SelectionProcessor::Clear()
     m_CosThetaMissing = 0.f;
     m_CosThetaMostEnergeticTrack = 0.f;
     m_RecoilMass = 0.f;
-    m_EnergyAroundMostEnergeticTrack = 0.f;
+    m_EnergyAroundMostEnergeticPfo = 0.f;
     m_y34 = 0.f;
     
     m_EnergyJets.clear();
@@ -332,11 +332,11 @@ void SelectionProcessor::CalculateMissingMomentum(JetVector &jetVector, float &p
 
 void SelectionProcessor::FindCosThetaMostEnergeticTrack(JetVector &jetVector, float &cosTheta) const
 {
-    EVENT::TrackVec mostEnergeticTracksFromPFO;
-    this->FindMostEnergeticTrack(jetVector,mostEnergeticTracksFromPFO);
+    EVENT::TrackVec mostEnergeticTracksFromPfo;
+    this->FindMostEnergeticTrack(jetVector,mostEnergeticTracksFromPfo);
     float largestCosThetaTrack(0.f);
 
-    for (EVENT::TrackVec::iterator it = mostEnergeticTracksFromPFO.begin(); it != mostEnergeticTracksFromPFO.end(); it++)
+    for (EVENT::TrackVec::iterator it = mostEnergeticTracksFromPfo.begin(); it != mostEnergeticTracksFromPfo.end(); it++)
     {
         EVENT::Track *pTrack(*it);
         const float tanThetaTrack(1.f / pTrack->getTanLambda());
@@ -352,7 +352,7 @@ void SelectionProcessor::FindCosThetaMostEnergeticTrack(JetVector &jetVector, fl
 
 //===========================================================
 
-void SelectionProcessor::FindMostEnergeticTrack(JetVector &jetVector, EVENT::TrackVec &mostEnergeticTracksFromPFO) const
+void SelectionProcessor::FindMostEnergeticTrack(JetVector &jetVector, EVENT::TrackVec &mostEnergeticTracksFromPfo) const
 {
     JetVector *pReconstructedParticleVec = new JetVector();
 
@@ -362,16 +362,42 @@ void SelectionProcessor::FindMostEnergeticTrack(JetVector &jetVector, EVENT::Tra
         pReconstructedParticleVec->insert(pReconstructedParticleVec->end(), pJet->getParticles().begin(), pJet->getParticles().end());
     }
 
-    float mostEnergeticChargedParticle(0.f);
+    float energyMostEnergeticChargedPfo(0.f);
 
     for (JetVector::iterator it = pReconstructedParticleVec->begin(); it != pReconstructedParticleVec->end(); it++)
     {
         const EVENT::ReconstructedParticle* pReconstructedParticle(*it);
 
-        if (!pReconstructedParticle->getTracks().empty() and pReconstructedParticle->getEnergy() > mostEnergeticChargedParticle)
+        if (!pReconstructedParticle->getTracks().empty() and pReconstructedParticle->getEnergy() > energyMostEnergeticChargedPfo)
         {
-            mostEnergeticTracksFromPFO = pReconstructedParticle->getTracks();
-            mostEnergeticChargedParticle = pReconstructedParticle->getEnergy();
+            mostEnergeticTracksFromPfo = pReconstructedParticle->getTracks();
+            energyMostEnergeticChargedPfo = pReconstructedParticle->getEnergy();
+        }
+    }
+}
+
+//===========================================================
+
+void SelectionProcessor::FindMostEnergeticChargedParticle(JetVector &jetVector, const EVENT::ReconstructedParticle *&pMostEnergeticChargedPfo) const
+{
+    JetVector *pReconstructedParticleVec = new JetVector();
+
+    for (JetVector::iterator it = jetVector.begin(); it != jetVector.end(); it++)
+    {
+        const EVENT::ReconstructedParticle* pJet(*it);
+        pReconstructedParticleVec->insert(pReconstructedParticleVec->end(), pJet->getParticles().begin(), pJet->getParticles().end());
+    }
+
+    float energyMostEnergeticChargedPfo(0.f);
+
+    for (JetVector::iterator it = pReconstructedParticleVec->begin(); it != pReconstructedParticleVec->end(); it++)
+    {
+        const EVENT::ReconstructedParticle *pReconstructedParticle(*it);
+
+        if (!pReconstructedParticle->getTracks().empty() and pReconstructedParticle->getEnergy() > energyMostEnergeticChargedPfo)
+        {
+            pMostEnergeticChargedPfo = pReconstructedParticle;
+            energyMostEnergeticChargedPfo = pReconstructedParticle->getEnergy();
         }
     }
 }
@@ -399,10 +425,10 @@ void SelectionProcessor::FindRecoilMass(JetVector &jetVector, float &recoilMass)
 
 //===========================================================
 
-void SelectionProcessor::FindEnergyInConeAroundMostEnergeticTrack(JetVector &jetVector, float &energyAroundTrack) const
+void SelectionProcessor::FindEnergyInConeAroundMostEnergeticPfo(JetVector &jetVector, float &energyAroundMostEnergeticChargedPfo) const
 {
-    EVENT::TrackVec mostEnergeticTracksFromPFO;
-    this->FindMostEnergeticTrack(jetVector, mostEnergeticTracksFromPFO);
+    const EVENT::ReconstructedParticle *pMostEnergeticChargedPfo(NULL);
+    this->FindMostEnergeticChargedParticle(jetVector, pMostEnergeticChargedPfo);
 
     JetVector *pReconstructedParticleVec = new JetVector();
     for (JetVector::iterator it = jetVector.begin(); it != jetVector.end(); it++)
@@ -411,19 +437,48 @@ void SelectionProcessor::FindEnergyInConeAroundMostEnergeticTrack(JetVector &jet
         pReconstructedParticleVec->insert(pReconstructedParticleVec->end(), pJet->getParticles().begin(), pJet->getParticles().end());
     }
 
-    for (EVENT::TrackVec::iterator it = mostEnergeticTracksFromPFO.begin(); it != mostEnergeticTracksFromPFO.end(); it++)
-    {
-        EVENT::Track *pTrack(*it);
-        this->FindEnergyAroundTrack(pReconstructedParticleVec, pTrack, energyAroundTrack);
-    }
+    this->FindEnergyAroundPfo(pReconstructedParticleVec, pMostEnergeticChargedPfo, energyAroundMostEnergeticChargedPfo);
 }
 
 //===========================================================
 
-void SelectionProcessor::FindEnergyAroundTrack(JetVector *pParticleVector, EVENT::Track *pTrack, float &energyAroundTrack) const
+void SelectionProcessor::FindEnergyAroundPfo(JetVector *pParticleVector, const EVENT::ReconstructedParticle *pMostEnergeticChargedPfo, float &energyAroundMostEnergeticChargedPfo) const
 {
-// Make position of the cluster as the start of the track, and use the momentum for the direction of the cone 
+    float pfoX(0.f), pfoY(0.f), pfoZ(0.f);
 
+    this->GetPfoPosition(pMostEnergeticChargedPfo, pfoX, pfoY, pfoZ);
+
+    TVector3 pfoPosition(pfoX, pfoY, pfoZ);
+
+    const float pfoPx(pMostEnergeticChargedPfo->getMomentum()[0]);
+    const float pfoPy(pMostEnergeticChargedPfo->getMomentum()[1]);
+    const float pfoPz(pMostEnergeticChargedPfo->getMomentum()[2]);
+
+    TVector3 pfoP(pfoPx,pfoPy,pfoPz);
+    TVector3 unitPfoP(pfoP.Unit());
+
+    std::cout << "pfoX : " << pfoX << std::endl;
+    std::cout << "pfoY : " << pfoY << std::endl;
+    std::cout << "pfoZ : " << pfoZ << std::endl;
+    std::cout << "pfoPx : " << pfoPx << std::endl;
+    std::cout << "pfoPy : " << pfoPy << std::endl;
+    std::cout << "pfoPz : " << pfoPz << std::endl;
+
+/*
+    // This would work better if the CLIC samples had the track states
+
+    // There is one track state at the distance of closest approach
+    TrackStateVec trackStateVec = pTrack->getTrackStates();
+
+    for (TrackStateVec::iterator it = trackStateVec.begin(); it < trackStateVec.end(); it++)
+    {
+        TrackState *pTrackState(*it);
+        std::cout << "Track state number : " << it - trackStateVec.begin() << std::endl;
+        std::cout << "pTrackState->getLocation() : " << pTrackState->getLocation() << std::endl;
+    }
+
+
+    // CLIC samples do not record the track state, so must use an alternative
     const TrackState *const pTrackState = pTrack->getTrackState(TrackState::AtCalorimeter);
     energyAroundTrack = 0.f;
 
@@ -444,33 +499,67 @@ void SelectionProcessor::FindEnergyAroundTrack(JetVector *pParticleVector, EVENT
     const float zs(pTrackState->getReferencePoint()[2]);
 
     TVector3 trackAtCalorimeter(xs,ys,zs);
+*/
+    EVENT::ClusterVec clusters;
 
     for (JetVector::iterator partIt = pParticleVector->begin(); partIt != pParticleVector->end(); partIt++)
     {
-        const EVENT::ReconstructedParticle *pJet(*partIt);
-        for (EVENT::ClusterVec::const_iterator clusIt = pJet->getClusters().begin(); clusIt != pJet->getClusters().end(); clusIt++)
+        const EVENT::ReconstructedParticle *pReconstructedParticle(*partIt);
+        clusters.insert(clusters.end(), pReconstructedParticle->getClusters().begin(), pReconstructedParticle->getClusters().end());
+    }
+
+    for (EVENT::ClusterVec::const_iterator clusIt = clusters.begin(); clusIt != clusters.end(); clusIt++)
+    {
+        const EVENT::Cluster *pCluster(*clusIt);
+        const float pfoXCandidate( pCluster->getPosition()[0]);
+        const float pfoYCandidate( pCluster->getPosition()[1]);
+        const float pfoZCandidate( pCluster->getPosition()[2]);
+        TVector3 pfoPositionCandidate(pfoXCandidate,pfoYCandidate,pfoZCandidate);
+        TVector3 pfoCentroidToPfoCandidate(pfoPositionCandidate - pfoPosition);
+        TVector3 unitPfoCentroidToPfoCandidate(pfoCentroidToPfoCandidate.Unit());
+
+        float cosTheta(std::numeric_limits<float>::max());
+        float theta(std::numeric_limits<float>::max());
+
+        if (std::fabs(unitPfoCentroidToPfoCandidate.x()) < std::numeric_limits<float>::min() and std::fabs(unitPfoCentroidToPfoCandidate.y()) < std::numeric_limits<float>::min() and std::fabs(unitPfoCentroidToPfoCandidate.z()) < std::numeric_limits<float>::min())
         {
-            const EVENT::Cluster *pCluster(*clusIt);
-            for (EVENT::CalorimeterHitVec::const_iterator caloIt = pCluster->getCalorimeterHits().begin(); caloIt != pCluster->getCalorimeterHits().end(); caloIt++)
-            {
-                const EVENT::CalorimeterHit *pCaloHit(*caloIt);
-                const float xCaloHit(pCaloHit->getPosition()[0]);
-                const float yCaloHit(pCaloHit->getPosition()[1]);
-                const float zCaloHit(pCaloHit->getPosition()[2]);
-                TVector3 caloHit(xCaloHit,yCaloHit,zCaloHit);
-                TVector3 trackCalorimeterToCaloHit(caloHit-trackAtCalorimeter);
-                const float cosTheta(trackCalorimeterToCaloHit * p / p.Mag()); // Dot Product
-                const float theta(acos(cosTheta) * 180 / M_PI);
+            cosTheta = 1.f;
+            theta = 0.f;
+        }
+        else
+        {
+            cosTheta = unitPfoCentroidToPfoCandidate * unitPfoP; // Dot Product
+            theta = acos(cosTheta) * 180 / M_PI;
+        }
 
-                std::cout << theta << std::endl;
-
-                if (m_ConeAngle - theta > 0.f)
-                {
-                    energyAroundTrack += pCaloHit->getEnergy();
-                }
-            }
+        if (m_ConeAngle - theta > 0.f)
+        {
+            energyAroundMostEnergeticChargedPfo += pCluster->getEnergy();
         }
     }
+}
+
+//===========================================================
+
+void SelectionProcessor::GetPfoPosition(const EVENT::ReconstructedParticle *pReconstructedParticle, float &x, float &y, float &z) const
+{
+    x = 0.f;
+    y = 0.f;
+    z = 0.f;
+    float pfoEnergy(0.f);
+
+    for (EVENT::ClusterVec::const_iterator clusIt = pReconstructedParticle->getClusters().begin(); clusIt != pReconstructedParticle->getClusters().end(); clusIt++)
+    {
+        const EVENT::Cluster *pCluster(*clusIt);
+        x += pCluster->getPosition()[0] * pCluster->getEnergy();       
+        y += pCluster->getPosition()[1] * pCluster->getEnergy();       
+        z += pCluster->getPosition()[2] * pCluster->getEnergy();       
+        pfoEnergy += pCluster->getEnergy();
+    }
+
+    x /= pfoEnergy;
+    y /= pfoEnergy;
+    z /= pfoEnergy;
 }
 
 //===========================================================

@@ -128,10 +128,18 @@ class SelectionProcessor : public Processor
         /**
          * @brief Find the tracks assocaited to the particle with the largest energy in the jet vector 
          *
-         * @param jetVector vector of pointers to lcio particles corresponding to quark jets from fastjet
-         * @paran mostEnergeticTracksFromPFO vector of tracks associated to highest energy charged particle in the jet vector
+         * @param jetVector vector of pointers to lcio particles (coming from quark jets from fastjet)
+         * @paran mostEnergeticTracksFromPfo vector of tracks associated to highest energy charged particle in the jet vector
          */
-        void FindMostEnergeticTrack(JetVector &jetVector, EVENT::TrackVec &mostEnergeticTracksFromPFO) const;
+        void FindMostEnergeticTrack(JetVector &jetVector, EVENT::TrackVec &mostEnergeticTracksFromPfo) const;
+
+        /**
+         * @brief Find the most energetic Pfo in the jet vector
+         *
+         * @param jetVector vector of pointers to lcio particles (coming from quark jets from fastjet)
+         * @param pMostEnergeticChargedPfo Most energetic charged Pfo
+         */
+        void FindMostEnergeticChargedParticle(JetVector &jetVector, const EVENT::ReconstructedParticle *&pMostEnergeticChargedPfo) const;
 
         /**
          * @brief Find the recoil mass of the event (magnitude of missing momentum 4 vector)
@@ -142,27 +150,36 @@ class SelectionProcessor : public Processor
         void FindRecoilMass(JetVector &jetVector, float &recoilMass) const;
 
         /**
-         * @brief Find the energy in a cone around the track(s) from the most energetic PFOs
+         * @brief Find the energy in a cone around the most energetic charged Pfo 
          *
          * @param jetVector vector of pointers to lcio particles corresponding to quark jets from fastjet
-         * @param mostEnergeticTracksFromPFO track(s) from the most energetic PFO in the event
-         * @param energyAroundTrack energy in cone surrounding most energetic track
+         * @param energyAroundMostEnergeticChargedPfo energy in a cone surrounding the most energetic Pfo in the event
          */
-        void FindEnergyInConeAroundMostEnergeticTrack(JetVector &jetVector, float &energyAroundTrack) const;
+        void FindEnergyInConeAroundMostEnergeticPfo(JetVector &jetVector, float &energyAroundMostEnergeticChargedPfo) const;
 
         /**
          * @brief Find the energy in a cone surrounding a given track
          *
-         * @param particleVector vector of all lcio particles in an event
-         * @param track to use as base for cone search
-         * @param energyAroundTrack energy surrounding track in question
+         * @param particleVector vector of all lcio particles in an event (not quark jets, but their constituents)
+         * @param pMostEnergeticChargedPfo to use as base for cone search
+         * @param energyAroundMostEnergeticChargedPfo energy surrounding Pfo in question
          */
-        void FindEnergyAroundTrack(JetVector *pParticleVector, EVENT::Track *pTrack, float &energyAroundTrack) const;
+        void FindEnergyAroundPfo(JetVector *pParticleVector, const EVENT::ReconstructedParticle *pMostEnergeticChargedPfo, float &energyAroundMostEnergeticChargedPfo) const;
+
+        /**
+         * @brief Find the position of a pfo from the energy weighted cluster position (no pfo position or calo hit position stored to use as better option...)
+         *
+         * @param reconstructedParticle pfo to find the position of
+         * @param x position of particle
+         * @param y position of particle
+         * @param z position of particle
+         */
+        void GetPfoPosition(const EVENT::ReconstructedParticle *pReconstructedParticle, float &x, float &y, float &z) const;
 
         /**
          * @brief Find the jet clustering variable y34
          *
-         * @param pLCCollection Collection of PFOs to read in
+         * @param pLCCollection Collection of Pfos to read in
          * @param y34 jet clustering variable of choice
          */
         void FindJetClusteringVariableY34(const LCCollection *pLCCollection, float &y34) const;
@@ -212,7 +229,7 @@ class SelectionProcessor : public Processor
         float               m_CosThetaMissing;                      ///< Cosine theta of missing momentum
         float               m_CosThetaMostEnergeticTrack;           ///< Cosine theta of the most energetic track
         float               m_RecoilMass;                           ///< Recoil mass
-        float               m_EnergyAroundMostEnergeticTrack;       ///< Energy in a cone surround most energetic track
+        float               m_EnergyAroundMostEnergeticPfo;         ///< Energy in a cone surround most energetic pfo
         float               m_y34;                                  ///< Jet clustering parameter
         FloatVector         m_EnergyJets;                           ///< Vector of energies of the jets
         IntVector           m_NParticlesJets;                       ///< Vector of number of particles in the jets
@@ -223,7 +240,7 @@ class SelectionProcessor : public Processor
         float               m_ZBosonMass;                           ///< Z boson mass from pdg
 
         // Inputs
-        std::string         m_CollectionName;                       ///< PFO collection name
+        std::string         m_CollectionName;                       ///< Pfo collection name
         std::string         m_rootFile;                             ///< Root file output namne
         float               m_EventMCEnergy;                        ///< MC event energy excluding beam effects
         float               m_ConeAngle;                            ///< Cone angle needed for cone energy measurement 
