@@ -61,6 +61,11 @@ class SelectionProcessor : public Processor
         void Clear();
 
         /**
+         * @brief Check to see if event has features indicating qqqqvv final state
+         */
+        void IsEventAppropriate();
+
+        /**
          * @brief Determine whether event is from WW pair
          */
         void IsEventWW();
@@ -73,7 +78,7 @@ class SelectionProcessor : public Processor
         /**
          * @ brief Do some awesome physics with the output
          */
-        void DoSomethingWithOutputIfHere();
+        void DefineVariablesOfInterest();
 
         /**
          * @brief Calculate the invariant mass of all particles in jetVector
@@ -202,24 +207,33 @@ class SelectionProcessor : public Processor
         void JetPairing(JetVector &wCandidates, std::string type);
 
         /**
-         * @brief Calculate the cosine of the W boson polar angle in the reference frame of the WW pair
+         * @brief Calculate the cosine of the polar angle of the object of interest in the reference frame defined by the object of interest and the reference frame objects
          *
-         * @ wPlus energy 4 vector for w+ 
-         * @ wMinus energy 4 vector for w-
-         * @ cosThetaStar cosine of the W boson polar angle in the reference frame of the WW pair
+         * @param objectOfInterest energy 4 vector defining polar angle in question
+         * @param referenceFrameObjects energy 4 vector to define reference frame for polar angle
+         * @param cosThetaStar cosine of the polar angle of the objectOfInterest in a reference frame defined by objectOfInterest and referenceFrameObjects
          */
-//        void CalculateWBosonPolarAngle(TLorentzVector wPlus, TLorentzVector wMinus, float &cosThetaStar);
+        void CalculateCosThetaStar(JetVector objectOfInterest, JetVector referenceFrameObjects, float &cosThetaStar) const;
+
+        /**
+         * @brief Calculate the energy 4 vector for a given vector of lcio particles
+         *
+         * @param jetVector vector of lcio particles
+         * @param pTLorentzVector energy 4 vector to set
+         */
+        void DefineEnergy4Vec(JetVector &jetVector, TLorentzVector &tLorentzVector) const;
 
         // Tools
-        JetVector           m_JetVector;                            ///< 
-        JetVector           m_WVector1;                             ///< 
-        JetVector           m_WVector2;                             ///< 
-        JetVector           m_ZVector1;                             ///< 
-        JetVector           m_ZVector2;                             ///< 
+        JetVector           m_JetVector;                            ///< Vector of all LCIO reconstructed particles in event (4 as from fastjet)
+        JetVector           m_WVector1;                             ///< First possible w candidate (2 particles from m_JetVector)
+        JetVector           m_WVector2;                             ///< Second possible w candidate (2 particles from m_JetVector)
+        JetVector           m_ZVector1;                             ///< First possible z candidate (2 particles from m_JetVector)
+        JetVector           m_ZVector2;                             ///< Second possible z candidate (2 particles from m_JetVector)
 
         // Variables of interest
-        bool                m_IsEventWW;                            ///<
-        bool                m_IsEventZZ;                            ///<
+        bool                m_AppropriateEvent;                     ///< Check to see if events appears to have qqqqvv final state
+        bool                m_IsEventWW;                            ///< If event appropriate see if qqqq in qqqqvv from ww
+        bool                m_IsEventZZ;                            ///< If event appropriate see if qqqq in qqqqvv from zz
         float               m_InvMassWVector1;                      ///< Invariant mass of W candidate jets 1
         float               m_InvMassWVector2;                      ///< Invariant mass of W candidate jets 2
         float               m_InvMassZVector1;                      ///< Invariant mass of Z candidate jets 1
@@ -235,6 +249,13 @@ class SelectionProcessor : public Processor
         IntVector           m_NParticlesJets;                       ///< Vector of number of particles in the jets
         IntVector           m_NChargedParticlesJets;                ///< Vector of number of charged particles in the jets 
 
+        // Variables Used in Anomalous Coupling Study
+        float               m_InvariantMassSystem;                  ///< Invariant mass of the full system
+        FloatVector         m_CosThetaStarWBosons;                  ///< Cosine of the polar angle of the W bosons in the reference frame of the WW boson pairs
+        FloatVector         m_CosThetaStarZBosons;                  ///< Cosine of the polar angle of the Z bosons in the reference frame of the ZZ boson pairs
+        FloatVector         m_CosThetaStarWJets;                    ///< Cosine of the polar angle of the q jets in the reference frome of the W bosons
+        FloatVector         m_CosThetaStarZJets;                    ///< Cosine of the polar angle of the q jets in the reference frome of the Z bosons
+
         // Reference variables
         float               m_WBosonMass;                           ///< W boson mass from pdg
         float               m_ZBosonMass;                           ///< Z boson mass from pdg
@@ -245,10 +266,10 @@ class SelectionProcessor : public Processor
         float               m_EventMCEnergy;                        ///< MC event energy excluding beam effects
         float               m_ConeAngle;                            ///< Cone angle needed for cone energy measurement 
 
-        TFile              *m_pTFile;                               ///<
-        TTree              *m_pTTree;                               ///<
-        int                 m_nRun;                                 ///<
-        int                 m_nEvent;                               ///<
+        TFile              *m_pTFile;                               ///< Root file for output
+        TTree              *m_pTTree;                               ///< Root tree for output 
+        int                 m_nRun;                                 ///< Run number
+        int                 m_nEvent;                               ///< Event number
 } ;
 
 #endif
