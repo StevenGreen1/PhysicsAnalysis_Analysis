@@ -134,10 +134,11 @@ for eventSelection in eventsToSimulate:
             # Setup Marlin Application
             #########################
             ma = Marlin()
-            ma.setVersion('v0111Prod')
+            ma.setVersion('ILCSoft-01-17-09_gcc48')
             ma.setSteeringFile('MarlinSteering.steer')
             ma.setGearFile(gearFileLocal)
             ma.setInputFile('lfn:' + slcioFile)
+            ma.setProcessorsToUse(['libSelectionProcessor.so','libMarlinFastJet.so'])
 
             #########################
             # Submit Job
@@ -160,6 +161,7 @@ for eventSelection in eventsToSimulate:
                 exit()
             job.submit(diracInstance)
             os.system('rm *.cfg')
+            sys.exit()
 
 # Tidy Up
 os.system('rm MarlinSteering.steer')
