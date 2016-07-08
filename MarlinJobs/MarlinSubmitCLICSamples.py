@@ -19,8 +19,8 @@ jobDescription = 'PhysicsAnalysis'
 # Always define event type, events per file and energies in same way.  If not CLIC sample set ProdID to 0
 
 eventsToSimulate = [
-                       { 'EventType': "ee_nunuww_nunuqqqq"  , 'EventsPerFile' : 1000 , 'Energies':  ['1400'] },
-                       { 'EventType': "ee_nunuzz_nunuqqqq"  , 'EventsPerFile' : 1000 , 'Energies':  ['1400'] }
+                       { 'EventType': "ee_nunuww_nunuqqqq"  , 'ProdID': 0 , 'EventsPerFile' : 1000 , 'Energies':  ['1400'] },
+                       { 'EventType': "ee_nunuzz_nunuqqqq"  , 'ProdID': 0 , 'EventsPerFile' : 1000 , 'Energies':  ['1400'] }
                    ]
 
 #===== Second level user input =====
@@ -57,9 +57,16 @@ diracInstance = DiracILC(withRepo=True,repoLocation="%s.cfg" %( JobIdentificatio
 
 for eventSelection in eventsToSimulate:
     eventType = eventSelection['EventType']
+    prodID = eventSelection['ProdID']
     for energy in eventSelection['Energies']:
         slcioFormat = 'DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_GenNumber_(.*?)_(.*?)_(.*?)_REC.slcio'
-        slcioFilesToProcess = getRecSlcioFiles(jobDescription,detectorModel,reconstructionVariant,energy,eventType)
+
+        slcioFilesToProcess = []
+        if prodID == 0:
+            slcioFilesToProcess = getSlcioFiles(jobDescription,detectorModel,reconstructionVariant,energy,eventType)
+        else:
+            slcioFilesToProcess = getCLICFiles(prodID)
+        slcioFilesToProcess = getSlcioFiles(jobDescription,detectorModel,reconstructionVariant,energy,eventType)
 
         if not slcioFilesToProcess:
             print 'No slcio files found.  Exiting job submission.'
