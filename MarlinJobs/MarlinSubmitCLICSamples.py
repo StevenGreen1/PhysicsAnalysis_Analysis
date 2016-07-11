@@ -4,12 +4,12 @@ import re
 import sys
 import random
 
-from DIRAC.Core.Base import Script
-Script.parseCommandLine()
-from DIRAC.Resources.Catalog.FileCatalogClient import FileCatalogClient
 from ILCDIRAC.Interfaces.API.DiracILC import  DiracILC
 from ILCDIRAC.Interfaces.API.NewInterface.UserJob import *
 from ILCDIRAC.Interfaces.API.NewInterface.Applications import *
+from DIRAC.Core.Base import Script
+Script.parseCommandLine()
+from DIRAC.Resources.Catalog.FileCatalogClient import FileCatalogClient
 
 from Logic.GridTools import *
 
@@ -30,31 +30,17 @@ eventsToSimulate = [
 
 #===== Second level user input =====
 
-gearFile = 'TemplateSteering/' + detectorModel + '.gear'
+gearFile = 'TemplateSteering/clic_ild_cdr.gear'
 steeringTemplateFile = 'TemplateSteering/AnalysisTemplate.xml'
-
-# If applying overlay set this to true and point to relevant steering file 
-ggHadBackground = True
 
 ##############
 # Begin
 ##############
 
-if ggHadBackground:
-    reconstructionVariant += '_ggHadBkg'
-
-# Make local gear file
-os.system('cp ' + gearFile + ' .')
-gearFileLocal = os.path.basename(gearFile)
-
 # Get content of template 
 base = open(steeringTemplateFile,'r')
 steeringTemplateContent = base.read()
 base.close()
-
-# Start submission
-JobIdentificationString = jobDescription + '_Detector_Model_' + detectorModel + '_Reco_' + reconstructionVariant
-diracInstance = DiracILC(withRepo=True,repoLocation='%s.cfg' %( JobIdentificationString))
 
 for eventSelection in eventsToSimulate:
     eventType = eventSelection['EventType']
@@ -65,16 +51,25 @@ for eventSelection in eventsToSimulate:
     energy = eventSelection['Energy']
     gearFile = 'TemplateSteering/' + detectorModel + '.gear'
 
+    # Make local gear file
+    os.system('cp ' + gearFile + ' .')
+    gearFileLocal = os.path.basename(gearFile)
+
+    JobIdentificationString = jobDescription + '_Detector_Model_' + detectorModel + '_Reco_' + reconstructionVariant
+    diracInstance = DiracILC(withRepo=True,repoLocation='%s.cfg' %( JobIdentificationString))
+
     clicFiles = []
     clicFiles = getCLICFiles(prodID)
 
-    if not slcioFilesToProcess:
-        print 'No slcio files found.  Exiting job submission.'
-        sys.exit()
+    if not clicFiles:
+        print 'No clic files with production ID ' + str(prodID) + ' found.  Exiting job submission.'
+        continue
 
-    for clicFile in clicFiles:
-        print 'Checking CLIC sample ' + eventType + ' ' + str(energy) + 'GeV jobs.  Detector model ' + detectorModel + '.  Reconstruction stage ' + reconstructionVariant + '.  Slcio file ' + slcioFile + '.'
+    numberOfFiles = len(clicFiles)
 
+    for idx, clicFile in enumerate(clicFiles):
+        print 'Checking CLIC sample ' + eventType + ' ' + str(energy) + 'GeV jobs.  Detector model ' + detectorModel + '.  Reconstruction stage ' + reconstructionVariant + '.  Slcio file ' + clicFile + '.'
+        clicFileNoPath = os.path.basename(clicFile) 
         inputSandbox = ['LFN:/ilc/user/s/sgreen/SelectionProcessorTarBall/MarlinSelectionProcessor.tar.gz']
 
         #########################
@@ -84,7 +79,7 @@ for eventSelection in eventsToSimulate:
 
         outputPath = '/' + jobDescription + '/MarlinJobs/Detector_Model_' + detectorModel + '/Reconstruction_Variant_' + reconstructionVariant + '/' + eventType + '_ProdID_' + str(prodID) + '/' + str(energy) + 'GeV'
 
-        rootFileName = 'DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_ProdID_' + str(prodID) + '_' + eventType + '_' + str(energy) + 'GeV_Analysis_' + str(analysisTag)
+        rootFileName = 'DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_ProdID_' + str(prodID) + '_' + eventType + '_' + str(energy) + 'GeV_Analysis_' + str(analysisTag) + '_Number_' + str(idx+1) + '_Of_' + str(numberOfFiles)
 
         rootFileNameSelected = rootFileName + '_Selected.root'
         rootFileNameTight = rootFileName + '_Tight.root'
@@ -100,7 +95,7 @@ for eventSelection in eventsToSimulate:
         steeringTemplate = re.sub('SelectionProcessorRootFileLoose',rootFileNameLoose,steeringTemplate)
         steeringTemplate = re.sub('MCEnergy',str(energy),steeringTemplate)
         steeringTemplate = re.sub('GearFile',gearFileLocal,steeringTemplate)
-        steeringTemplate = re.sub('InputSlcioFile',slcioFileNoPath,steeringTemplate)
+        steeringTemplate = re.sub('InputSlcioFile',clicFileNoPath,steeringTemplate)
 
         #########################
         # Write Template File
@@ -129,13 +124,13 @@ for eventSelection in eventsToSimulate:
         ma.setVersion('ILCSoft-01-17-08_gcc48')
         ma.setSteeringFile('MarlinSteering.steer')
         ma.setGearFile(gearFileLocal)
-        ma.setInputFile('lfn:' + slcioFile)
+        ma.setInputFile('lfn:' + clicFile)
         ma.setProcessorsToUse(['libSelectionProcessor.so','libMarlinFastJet.so'])
 
         #########################
         # Submit Job
         #########################
-        jobDetailedName = jobDescription + '_DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_AnalysisTag' + str(analysisTag) + '_ProdID_' + str(prodID)
+        jobDetailedName = jobDescription + '_DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_Tag' + str(analysisTag) + '_ProdID_' + str(prodID) + '_Number_' + str(idx+1) + '_Of_' + str(numberOfFiles)
 
         job = UserJob()
         job.setJobGroup(jobDescription)
@@ -153,7 +148,7 @@ for eventSelection in eventsToSimulate:
             exit()
         job.submit(diracInstance)
         os.system('rm *.cfg')
-        #sys.exit()
+        sys.exit()
 
 # Tidy Up
 os.system('rm MarlinSteering.steer')
