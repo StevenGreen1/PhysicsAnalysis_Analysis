@@ -6,6 +6,7 @@ import random
 
 from DIRAC.Core.Base import Script
 Script.parseCommandLine()
+from DIRAC.Resources.Catalog.FileCatalogClient import FileCatalogClient
 from ILCDIRAC.Interfaces.API.DiracILC import  DiracILC
 from ILCDIRAC.Interfaces.API.NewInterface.UserJob import *
 from ILCDIRAC.Interfaces.API.NewInterface.Applications import *
@@ -16,18 +17,18 @@ from Logic.GridTools import *
 
 jobDescription = 'PhysicsAnalysis'
 
-# Always define event type, events per file and energies in same way.  If not CLIC sample set ProdID to 0
-
 eventsToSimulate = [
-                       { 'EventType': "ee_nunuww_nunuqqqq"  , 'ProdID': 0 , 'EventsPerFile' : 1000 , 'Energies':  ['1400'] },
-                       { 'EventType': "ee_nunuzz_nunuqqqq"  , 'ProdID': 0 , 'EventsPerFile' : 1000 , 'Energies':  ['1400'] }
+                       { 'EventType': 'ee_nunuqqqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 1, 'ProdID':2152, 'NumberOfEvents': 100000 },
+                       { 'EventType': 'ee_lnuqqqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 1, 'ProdID':2169, 'NumberOfEvents': 200000 },
+                       { 'EventType': 'ee_llqqqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 1, 'ProdID':2166, 'NumberOfEvents': 120000 },
+                       { 'EventType': 'ee_qqqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 1, 'ProdID':2163, 'NumberOfEvents': 500000 },
+                       { 'EventType': 'ee_nunuqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 1, 'ProdID':2094, 'NumberOfEvents': 500000 },
+                       { 'EventType': 'ee_lnuqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 1, 'ProdID':3249, 'NumberOfEvents': 2000000 },
+                       { 'EventType': 'ee_ll', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 1, 'ProdID':3246, 'NumberOfEvents': 2000000 },
+                       { 'EventType': 'ee_qq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 1, 'ProdID':2091, 'NumberOfEvents': 500000 }
                    ]
 
 #===== Second level user input =====
-
-detectorModel = 'clic_ild_cdr'
-reconstructionVariant = 'clic_ild_cdr'
-analysisTag = 1
 
 gearFile = 'TemplateSteering/' + detectorModel + '.gear'
 steeringTemplateFile = 'TemplateSteering/AnalysisTemplate.xml'
@@ -53,120 +54,106 @@ base.close()
 
 # Start submission
 JobIdentificationString = jobDescription + '_Detector_Model_' + detectorModel + '_Reco_' + reconstructionVariant
-diracInstance = DiracILC(withRepo=True,repoLocation="%s.cfg" %( JobIdentificationString))
+diracInstance = DiracILC(withRepo=True,repoLocation='%s.cfg' %( JobIdentificationString))
 
 for eventSelection in eventsToSimulate:
     eventType = eventSelection['EventType']
+    detectorModel = eventSelection['DetectorModel']
+    reconstructionVariant = eventSelection['ReconstructionVariant']
+    analysisTag = eventSelection['AnalysisTag']
     prodID = eventSelection['ProdID']
-    for energy in eventSelection['Energies']:
-        slcioFormat = 'DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_GenNumber_(.*?)_(.*?)_(.*?)_REC.slcio'
+    energy = eventSelection['Energy']
+    gearFile = 'TemplateSteering/' + detectorModel + '.gear'
 
-        slcioFilesToProcess = []
-        if prodID == 0:
-            slcioFilesToProcess = getSlcioFiles(jobDescription,detectorModel,reconstructionVariant,energy,eventType)
-        else:
-            slcioFilesToProcess = getCLICFiles(prodID)
-        slcioFilesToProcess = getSlcioFiles(jobDescription,detectorModel,reconstructionVariant,energy,eventType)
+    clicFiles = []
+    clicFiles = getCLICFiles(prodID)
 
-        if not slcioFilesToProcess:
-            print 'No slcio files found.  Exiting job submission.'
-            sys.exit()
+    if not slcioFilesToProcess:
+        print 'No slcio files found.  Exiting job submission.'
+        sys.exit()
 
-        for slcioFile in slcioFilesToProcess:
-            print 'Checking ' + eventType + ' ' + str(energy) + 'GeV jobs.  Detector model ' + detectorModel + '.  Reconstruction stage ' + reconstructionVariant + '.  Slcio file ' + slcioFile + '.'
-            slcioFileNoPath = os.path.basename(slcioFile)
+    for clicFile in clicFiles:
+        print 'Checking CLIC sample ' + eventType + ' ' + str(energy) + 'GeV jobs.  Detector model ' + detectorModel + '.  Reconstruction stage ' + reconstructionVariant + '.  Slcio file ' + slcioFile + '.'
 
-            inputSandbox = ['LFN:/ilc/user/s/sgreen/SelectionProcessorTarBall/MarlinSelectionProcessor.tar.gz']
+        inputSandbox = ['LFN:/ilc/user/s/sgreen/SelectionProcessorTarBall/MarlinSelectionProcessor.tar.gz']
 
-            #########################
-            # Get info from file name
-            #########################
-            matchObj = re.match(slcioFormat, os.path.basename(slcioFile), re.M|re.I) 
-            generatorSerialNumber = 0
-            numberOfEventsInFile = 0
-            startEventNumber = 0 # In generator level, not reconstruction.  Start event for all reconstruction is 0.
-            if matchObj:
-                generatorSerialNumber = matchObj.group(1)
-                numberOfEventsInFile = matchObj.group(2)
-                startEventNumber = matchObj.group(3)
-            else:
-                print 'Wrong slcio format.  Please check.'
-                continue
+        #########################
+        # Modify Template
+        #########################
+        steeringTemplate = steeringTemplateContent
 
-            #########################
-            # Modify Template
-            #########################
-            steeringTemplate = steeringTemplateContent
+        outputPath = '/' + jobDescription + '/MarlinJobs/Detector_Model_' + detectorModel + '/Reconstruction_Variant_' + reconstructionVariant + '/' + eventType + '_ProdID_' + str(prodID) + '/' + str(energy) + 'GeV'
 
-            outputPath = '/' + jobDescription + '/MarlinJobs/Detector_Model_' + detectorModel + '/Reconstruction_Variant_' + reconstructionVariant + '/' + eventType + '/' + str(energy) + 'GeV'
-            rootFileName = 'DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_GenNumber_' + str(generatorSerialNumber) + '_' + str(numberOfEventsInFile) + '_' + str(startEventNumber) + '_Analysis_' + str(analysisTag)
+        rootFileName = 'DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_ProdID_' + str(prodID) + '_' + eventType + '_' + str(energy) + 'GeV_Analysis_' + str(analysisTag)
 
-            rootFileNameSelected = rootFileName + '_Selected.root'
-            rootFileNameTight = rootFileName + '_Tight.root'
-            rootFileNameLoose = rootFileName + '_Loose.root'
+        rootFileNameSelected = rootFileName + '_Selected.root'
+        rootFileNameTight = rootFileName + '_Tight.root'
+        rootFileNameLoose = rootFileName + '_Loose.root'
 
-            outputFiles = []
-            outputFiles.append(rootFileNameSelected)
-            outputFiles.append(rootFileNameTight)
-            outputFiles.append(rootFileNameLoose)
+        outputFiles = []
+        outputFiles.append(rootFileNameSelected)
+        outputFiles.append(rootFileNameTight)
+        outputFiles.append(rootFileNameLoose)
 
-            steeringTemplate = re.sub('SelectionProcessorRootFileSelected',rootFileNameSelected,steeringTemplate)
-            steeringTemplate = re.sub('SelectionProcessorRootFileTight',rootFileNameTight,steeringTemplate)
-            steeringTemplate = re.sub('SelectionProcessorRootFileLoose',rootFileNameLoose,steeringTemplate)
-            steeringTemplate = re.sub('MCEnergy',str(energy),steeringTemplate)
-            steeringTemplate = re.sub('GearFile',gearFileLocal,steeringTemplate)
-            steeringTemplate = re.sub('InputSlcioFile',slcioFileNoPath,steeringTemplate)
+        steeringTemplate = re.sub('SelectionProcessorRootFileSelected',rootFileNameSelected,steeringTemplate)
+        steeringTemplate = re.sub('SelectionProcessorRootFileTight',rootFileNameTight,steeringTemplate)
+        steeringTemplate = re.sub('SelectionProcessorRootFileLoose',rootFileNameLoose,steeringTemplate)
+        steeringTemplate = re.sub('MCEnergy',str(energy),steeringTemplate)
+        steeringTemplate = re.sub('GearFile',gearFileLocal,steeringTemplate)
+        steeringTemplate = re.sub('InputSlcioFile',slcioFileNoPath,steeringTemplate)
 
-            #########################
-            # Write Template File
-            #########################
-            with open("MarlinSteering.steer" ,"w") as SteeringFile:
-                SteeringFile.write(steeringTemplate)
+        #########################
+        # Write Template File
+        #########################
+        with open('MarlinSteering.steer' ,'w') as SteeringFile:
+            SteeringFile.write(steeringTemplate)
 
-            #########################
-            # Check output doesn't exist already
-            #########################
-            skipJob = False
-            for outputFile in outputFiles:
-                lfn = '/ilc/user/s/sgreen' + outputPath + '/' + outputFile
-                if doesFileExist(lfn):
-                    skipJob = True
+        #########################
+        # Check output doesn't exist already
+        #########################
+        skipJob = False
+        for outputFile in outputFiles:
+            lfn = '/ilc/user/s/sgreen' + outputPath + '/' + outputFile
+            if doesFileExist(lfn):
+                skipJob = True
 
-            if skipJob:
-                continue
+        if skipJob:
+            continue
 
-            print 'Submitting ' + eventType + ' ' + str(energy) + 'GeV jobs.  Detector model ' + detectorModel + '.  Reconstruction stage ' + reconstructionVariant + '.  Slcio file ' + slcioFile + '.'  
+        print 'Submitting ' + eventType + ' ' + str(energy) + 'GeV jobs.  Detector model ' + detectorModel + '.  Reconstruction stage ' + reconstructionVariant + '.  CLIC file ' + clicFile + '.'  
 
-            #########################
-            # Setup Marlin Application
-            #########################
-            ma = Marlin()
-            ma.setVersion('v0111Prod')
-            ma.setSteeringFile('MarlinSteering.steer')
-            ma.setGearFile(gearFileLocal)
-            ma.setInputFile('lfn:' + slcioFile)
+        #########################
+        # Setup Marlin Application
+        #########################
+        ma = Marlin()
+        ma.setVersion('ILCSoft-01-17-08_gcc48')
+        ma.setSteeringFile('MarlinSteering.steer')
+        ma.setGearFile(gearFileLocal)
+        ma.setInputFile('lfn:' + slcioFile)
+        ma.setProcessorsToUse(['libSelectionProcessor.so','libMarlinFastJet.so'])
 
-            #########################
-            # Submit Job
-            #########################
-            jobDetailedName = jobDescription + '_DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_GenNumber_' + str(generatorSerialNumber) + '_' +  str(numberOfEventsInFile) + '_' + str(startEventNumber)
+        #########################
+        # Submit Job
+        #########################
+        jobDetailedName = jobDescription + '_DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_AnalysisTag' + str(analysisTag) + '_ProdID_' + str(prodID)
 
-            job = UserJob()
-            job.setJobGroup(jobDescription)
-            job.setInputSandbox(inputSandbox) # Local files
-            job.setOutputSandbox(['*.log','*.gear','*.mac','*.steer','*.xml'])
-            job.setOutputData(outputFiles,OutputPath=outputPath) # On grid
-            job.setName(jobDetailedName)
-            job.setBannedSites(['LCG.IN2P3-CC.fr','LCG.IN2P3-IRES.fr','LCG.KEK.jp','OSG.PNNL.us','OSG.CIT.us','LCG.LAPP.fr'])
-            job.dontPromptMe()
+        job = UserJob()
+        job.setJobGroup(jobDescription)
+        job.setInputSandbox(inputSandbox) # Local files
+        job.setOutputSandbox(['*.log','*.gear','*.mac','*.steer','*.xml'])
+        job.setOutputData(outputFiles,OutputPath=outputPath) # On grid
+        job.setName(jobDetailedName)
+        job.setBannedSites(['LCG.IN2P3-CC.fr','LCG.IN2P3-IRES.fr','LCG.KEK.jp','OSG.PNNL.us','OSG.CIT.us','LCG.LAPP.fr'])
+        job.dontPromptMe()
 
-            res = job.append(ma)
+        res = job.append(ma)
 
-            if not res['OK']:
-                print res['Message']
-                exit()
-            job.submit(diracInstance)
-            os.system('rm *.cfg')
+        if not res['OK']:
+            print res['Message']
+            exit()
+        job.submit(diracInstance)
+        os.system('rm *.cfg')
+        #sys.exit()
 
 # Tidy Up
 os.system('rm MarlinSteering.steer')

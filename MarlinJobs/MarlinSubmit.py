@@ -134,7 +134,7 @@ for eventSelection in eventsToSimulate:
             # Setup Marlin Application
             #########################
             ma = Marlin()
-            ma.setVersion('ILCSoft-01-17-09_gcc48')
+            ma.setVersion('ILCSoft-01-17-08_gcc48')
             ma.setSteeringFile('MarlinSteering.steer')
             ma.setGearFile(gearFileLocal)
             ma.setInputFile('lfn:' + slcioFile)
@@ -161,7 +161,7 @@ for eventSelection in eventsToSimulate:
                 exit()
             job.submit(diracInstance)
             os.system('rm *.cfg')
-            sys.exit()
+            #sys.exit()
 
 # Tidy Up
 os.system('rm MarlinSteering.steer')
