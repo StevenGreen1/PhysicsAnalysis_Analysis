@@ -96,7 +96,7 @@ for eventSelection in eventsToSimulate:
 
         outputPath = '/' + jobDescription + '/MarlinJobs/Detector_Model_' + detectorModel + '/Reconstruction_Variant_' + reconstructionVariant + '/' + eventType + '_ProdID_' + str(prodID) + '/' + str(energy) + 'GeV'
 
-        rootFileName = 'DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_ProdID_' + str(prodID) + '_' + eventType + '_' + str(energy) + 'GeV_Analysis_' + str(analysisTag) + '_Number_' + str(idx+1) + '_Of_' + str(numberOfFiles)
+        rootFileName = 'ProdID_' + str(prodID) + '_' + eventType + '_' + str(energy) + 'GeV_Analysis_' + str(analysisTag) + '_Number_' + str(idx+1) + '_Of_' + str(numberOfFiles)
 
         rootFileNameSelected = rootFileName + '_Selected.root'
         rootFileNameTight = rootFileName + '_Tight.root'
@@ -149,7 +149,7 @@ for eventSelection in eventsToSimulate:
         #########################
         # Submit Job
         #########################
-        jobDetailedName = jobDescription + '_DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_Tag' + str(analysisTag) + '_ProdID_' + str(prodID) + '_Number_' + str(idx+1) + '_Of_' + str(numberOfFiles)
+        jobDetailedName = jobDescription + '_' + eventType + '_' + str(energy) + 'GeV_Tag' + str(analysisTag) + '_ProdID_' + str(prodID) + '_Number_' + str(idx+1) + '_Of_' + str(numberOfFiles)
 
         job = UserJob()
         job.setJobGroup(jobDescription)
