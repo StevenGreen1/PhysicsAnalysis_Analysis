@@ -18,7 +18,7 @@ from Logic.GridTools import *
 jobDescription = 'PhysicsAnalysis'
 
 eventsToSimulate = [
-                       { 'EventType': 'ee_nunuqqqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 1, 'ProdID': 5527, 'NumberOfEvents': 335300 },
+#                       { 'EventType': 'ee_nunuqqqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 1, 'ProdID': 5527, 'NumberOfEvents': 335300 }, # Running 
                        { 'EventType': 'ee_lnuqqqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 1, 'ProdID': 5594, 'NumberOfEvents': 715200 },
                        { 'EventType': 'ee_llqqqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 1, 'ProdID': 5572, 'NumberOfEvents': 1101100 },
                        { 'EventType': 'ee_qqqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 1, 'ProdID': 4034, 'NumberOfEvents': 591800 },
@@ -68,10 +68,12 @@ for eventSelection in eventsToSimulate:
     gearFileLocal = os.path.basename(gearFile)
 
     JobIdentificationString = jobDescription + '_Detector_Model_' + detectorModel + '_Reco_' + reconstructionVariant
-    diracInstance = DiracILC(withRepo=True,repoLocation='%s.cfg' %( JobIdentificationString))
+    #diracInstance = DiracILC(withRepo=True,repoLocation='%s.cfg' %( JobIdentificationString))
+    diracInstance = DiracILC(withRepo=False)
 
     clicFiles = []
     clicFiles = getCLICFiles(prodID)
+    clicFiles = orderedList(clicFiles)
 
     if not clicFiles:
         print 'No clic files with production ID ' + str(prodID) + ' found.  Exiting job submission.'
