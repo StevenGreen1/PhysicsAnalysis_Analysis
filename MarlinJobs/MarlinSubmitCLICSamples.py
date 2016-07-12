@@ -18,7 +18,7 @@ from Logic.GridTools import *
 jobDescription = 'PhysicsAnalysis'
 
 eventsToSimulate = [
-#                       { 'EventType': 'ee_nunuqqqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 1, 'ProdID': 5527, 'NumberOfEvents': 335300 }, # Running 
+                       { 'EventType': 'ee_nunuqqqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 1, 'ProdID': 5527, 'NumberOfEvents': 335300 },  
                        { 'EventType': 'ee_lnuqqqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 1, 'ProdID': 5594, 'NumberOfEvents': 715200 },
                        { 'EventType': 'ee_llqqqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 1, 'ProdID': 5572, 'NumberOfEvents': 1101100 },
                        { 'EventType': 'ee_qqqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 1, 'ProdID': 4034, 'NumberOfEvents': 591800 },
@@ -82,9 +82,6 @@ for eventSelection in eventsToSimulate:
     numberOfFiles = len(clicFiles)
 
     for idx, clicFile in enumerate(clicFiles):
-        if prodID is 5594 and idx < 1271: # Code stopped working so had to rerun from here.
-            continue
-
         print 'Checking CLIC sample ' + eventType + ' ' + str(energy) + 'GeV jobs.  Detector model ' + detectorModel + '.  Reconstruction stage ' + reconstructionVariant + '.  Slcio file ' + clicFile + '.'
         clicFileNoPath = os.path.basename(clicFile) 
         inputSandbox = ['LFN:/ilc/user/s/sgreen/SelectionProcessorTarBall/MarlinSelectionProcessor.tar.gz']
