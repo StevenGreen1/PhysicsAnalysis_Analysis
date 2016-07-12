@@ -82,6 +82,9 @@ for eventSelection in eventsToSimulate:
     numberOfFiles = len(clicFiles)
 
     for idx, clicFile in enumerate(clicFiles):
+        if prodID is 5594 and idx < 1271: # Code stopped working so had to rerun from here.
+            continue
+
         print 'Checking CLIC sample ' + eventType + ' ' + str(energy) + 'GeV jobs.  Detector model ' + detectorModel + '.  Reconstruction stage ' + reconstructionVariant + '.  Slcio file ' + clicFile + '.'
         clicFileNoPath = os.path.basename(clicFile) 
         inputSandbox = ['LFN:/ilc/user/s/sgreen/SelectionProcessorTarBall/MarlinSelectionProcessor.tar.gz']
@@ -120,14 +123,16 @@ for eventSelection in eventsToSimulate:
         #########################
         # Check output doesn't exist already
         #########################
-        skipJob = False
-        for outputFile in outputFiles:
-            lfn = '/ilc/user/s/sgreen' + outputPath + '/' + outputFile
-            if doesFileExist(lfn):
-                skipJob = True
+        # !!!Skipping jobs submission check for analysis due to large number of backgrounds
 
-        if skipJob:
-            continue
+        #skipJob = False
+        #for outputFile in outputFiles:
+        #    lfn = '/ilc/user/s/sgreen' + outputPath + '/' + outputFile
+        #    if doesFileExist(lfn):
+        #        skipJob = True
+
+        #if skipJob:
+        #    continue
 
         print 'Submitting ' + eventType + ' ' + str(energy) + 'GeV jobs.  Detector model ' + detectorModel + '.  Reconstruction stage ' + reconstructionVariant + '.  CLIC file ' + clicFile + '.'  
 
