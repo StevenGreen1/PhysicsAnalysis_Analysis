@@ -55,21 +55,21 @@ def doesFileExist(lfn):
 ### ----------------------------------------------------------------------------------------------------
 ### End of doesFileExist function
 ### ----------------------------------------------------------------------------------------------------
-### Start of getListOfBackgroundFiles function
+### Start of getCLICFiles function
 ### ----------------------------------------------------------------------------------------------------
 
-def getListOfBackgroundFiles():
-    backgroundFiles = []
-    os.system('dirac-ilc-find-in-FC /ilc ProdID=770 > tmp.txt')
+def getCLICFiles(prodID):
+    clicFiles = []
+    os.system('dirac-ilc-find-in-FC /ilc/prod ProdID=' + str(prodID) + ' > tmp.txt')
     with open('tmp.txt') as f:
         lines = f.readlines()
         for idx, line in enumerate(lines):
             line = line.strip()
             if '/REC/' in line:
-                backgroundFiles.append(line)
+                clicFiles.append(line)
     os.system('rm tmp.txt')
-    return backgroundFiles
+    return clicFiles
 
 ### ----------------------------------------------------------------------------------------------------
-### End of getListOfBackgroundFiles function
+### End of getCLICFiles function
 ### ----------------------------------------------------------------------------------------------------

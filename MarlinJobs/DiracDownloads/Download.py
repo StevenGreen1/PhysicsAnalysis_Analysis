@@ -17,7 +17,7 @@ eventsToDownload = [
 
 fc = FileCatalogClient()
 
-for eventSelection in eventsToSimulate:
+for eventSelection in eventsToDownload:
     eventType = eventSelection['EventType']
     detectorModel = eventSelection['DetectorModel']
     reconstructionVariant = eventSelection['ReconstructionVariant']
@@ -48,6 +48,8 @@ for eventSelection in eventsToSimulate:
         for lfn in lfns:
             analysisString = 'Analysis_' + str(analysisTag)
             if analysisString in lfn:
-                os.system('dirac-dms-get-file ' + lfn)
+                localFile = os.path.basename(lfn)
+                if not os.path.isfile(localFile):
+                    os.system('dirac-dms-get-file ' + lfn)
 
 print 'Download script has finished.'
