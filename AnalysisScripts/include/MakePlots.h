@@ -14,7 +14,10 @@
 #include <sstream>
 #include <string>
 
+#include "TCanvas.h"
 #include "TChain.h"
+#include "TH1F.h"
+
 #include "Process.h"
 
 class MakePlots

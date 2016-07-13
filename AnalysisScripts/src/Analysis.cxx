@@ -7,6 +7,8 @@
  */
 
 #include <sstream>
+
+#include "MakePlots.h"
 #include "Process.h"
 
 template <class T>
@@ -25,6 +27,12 @@ int main(int argc, char **argv)
 
     pProcess_ee_nunuww_nunuqqqq->Print();
     pProcess_ee_nunuqqqq->Print();
+
+    std::vector<Process*> processes;
+    processes.push_back(pProcess_ee_nunuww_nunuqqqq);
+    processes.push_back(pProcess_ee_nunuqqqq);
+
+    MakePlots *makePlots = new MakePlots(processes);
 }
 
 //=====================================================================

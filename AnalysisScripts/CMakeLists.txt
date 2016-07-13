@@ -37,7 +37,7 @@ INCLUDE_DIRECTORIES(BEFORE ./include ) # use BEFORE to fix problem on mac osx (c
 
 ### LIBRARY AND TOOLS #######################################################
 
-ADD_EXECUTABLE(Analysis ./src/Analysis.cxx ./src/Process.cc)
+ADD_EXECUTABLE(Analysis ./src/Analysis.cxx ./src/Process.cc ./src/MakePlots.cc)
 
 INSTALL( TARGETS Analysis DESTINATION bin PERMISSIONS
     OWNER_READ OWNER_WRITE OWNER_EXECUTE
