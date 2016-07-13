@@ -155,6 +155,7 @@ for eventSelection in eventsToSimulate:
         job.setOutputData(outputFiles,OutputPath=outputPath) # On grid
         job.setName(jobDetailedName)
         job.setBannedSites(['LCG.IN2P3-CC.fr','LCG.IN2P3-IRES.fr','LCG.KEK.jp','OSG.PNNL.us','OSG.CIT.us','LCG.LAPP.fr'])
+        job.setCPUTime(21600) # 6 hour, should be excessive
         job.dontPromptMe()
 
         res = job.append(ma)
