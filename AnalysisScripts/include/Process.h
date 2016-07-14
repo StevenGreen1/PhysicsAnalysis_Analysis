@@ -44,7 +44,12 @@ class Process
         /**
          *  @brief Return the weight for the given process
          */
-        float GetProcessWeight();
+        float GetProcessWeight() const;
+
+        /**
+         *  @brief Return the event type for the given process
+         */
+        std::string GetEventType() const;
 
         /**
          *  @brief Print out all information about this process

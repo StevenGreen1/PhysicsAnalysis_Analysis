@@ -36,9 +36,16 @@ TChain* Process::GetTChain()
 
 //=====================================================================
 
-float Process::GetProcessWeight()
+float Process::GetProcessWeight() const 
 {
     return m_processWeight;
+}
+
+//=====================================================================
+
+std::string Process::GetEventType() const 
+{
+    return m_eventType;
 }
 
 //=====================================================================
