@@ -25,16 +25,24 @@ int main(int argc, char **argv)
 
     // Signal
     const Process *pProcess_ee_nunuww_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_nunuww_nunuqqqq",427.2,1500,1400);
+    const Process *pProcess_ee_nunuzz_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_nunuzz_nunuqqqq",427.2,1500,1400);
 
     // CLIC Backgrounds
     const Process *pProcess_ee_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_nunuqqqq",24.7,1500,1400);
+    const Process *pProcess_ee_lnuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_lnuqqqq",115.3,1500,1400);
+    const Process *pProcess_ee_llqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_llqqqq",71.7,1500,1400);
 
     pProcess_ee_nunuww_nunuqqqq->Print();
+    pProcess_ee_lnuqqqq->Print();
+    pProcess_ee_llqqqq->Print();
     pProcess_ee_nunuqqqq->Print();
 
     std::vector<const Process*> processes;
     processes.push_back(pProcess_ee_nunuww_nunuqqqq);
+    processes.push_back(pProcess_ee_nunuzz_nunuqqqq);
     processes.push_back(pProcess_ee_nunuqqqq);
+    processes.push_back(pProcess_ee_lnuqqqq);
+    processes.push_back(pProcess_ee_llqqqq);
 
     MakePlots *makePlots = new MakePlots(processes);
 }

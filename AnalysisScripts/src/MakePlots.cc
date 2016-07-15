@@ -22,7 +22,15 @@ MakePlots::MakePlots(const ProcessVector &processVector) :
         const Process *pProcess(*it);
         this->Register1DPlot(pProcess,"CosThetaMissing","float",200,-1.f,1.f);
         this->Register1DPlot(pProcess,"CosThetaMostEnergeticTrack","float",200,0.f,1.f);
+        this->Register1DPlot(pProcess,"TransverseMomentum","float",2000,0.f,2000.f);
+        this->Register1DPlot(pProcess,"TransverseEnergy","float",2000,0.f,2000.f);
+        this->Register1DPlot(pProcess,"RecoilMass","float",200,0.f,2000.f);
+        this->Register1DPlot(pProcess,"InvariantMassSystem","float",200,0.f,2000.f);
+        this->Register1DPlot(pProcess,"y34","float",100,0.f,10.f);
+        this->Register1DPlot(pProcess,"EnergyAroundMostEnergeticTrack","float",1000,0.f,1000.f);
         this->Register2DPlot(pProcess,"CosThetaMissing","CosThetaMostEnergeticTrack",200,-1.f,1.f,200,0.f,1.f);
+        this->Register2DPlot(pProcess,"InvMassWVector1","InvMassWVector2",125,0.f,500.f,125,0.f,500.f);
+        this->Register2DPlot(pProcess,"InvMassZVector1","InvMassZVector2",125,0.f,500.f,125,0.f,500.f);
     }
 
     this->LoadData();
@@ -70,12 +78,15 @@ MakePlots::MakePlots(const ProcessVector &processVector) :
 void MakePlots::WritePlots()
 {
     std::cout << "Begin: MakePlots::WritePlots" << std::endl;
-    static const float redArray[] = {1,0,0,1,0,0};
+    static const float redArray[] = {1,0.593,0,1,0.275};
     std::vector<float> red (redArray, redArray + sizeof(redArray) / sizeof(redArray[0]) );
-    static const float greenArray[] = {0,1,0,0,1,0};
+    static const float greenArray[] = {0,0.980,0,0.24362,0};
     std::vector<float> green (greenArray, greenArray + sizeof(greenArray) / sizeof(greenArray[0]) );
-    static const float blueArray[] = {0,0,1,0,0,1};
+    static const float blueArray[] = {0,0.593,1,0.588,0.510};
     std::vector<float> blue (blueArray, blueArray + sizeof(blueArray) / sizeof(blueArray[0]) );
+
+    static const int fillStyleArray[] = {3001,3002,3006,3007,3016,3017};
+    std::vector<int> fillStyle (fillStyleArray, fillStyleArray + sizeof(fillStyleArray) / sizeof(fillStyleArray[0]) );
 
     StringVector plottedVariableNames;
 
@@ -111,7 +122,7 @@ void MakePlots::WritePlots()
                 colourCounter++;
                 pTH1IJ->SetLineColor(pTColor);
                 pTH1IJ->SetFillColor(pTColor);
-                pTH1IJ->SetFillStyle(3001);
+                pTH1IJ->SetFillStyle(fillStyle.at(colourCounter));
                 pTH1IJ->SetMinimum(0);
                 pTH1IJ->SetMaximum(2*pTH1IJ->GetBinContent(pTH1IJ->GetMaximumBin()));
                 pTH1IJ->SetFillStyle(3001);
@@ -159,7 +170,7 @@ void MakePlots::WritePlots()
                 colourCounter++;
                 pTH1FJ->SetLineColor(pTColor);
                 pTH1FJ->SetFillColor(pTColor);
-                pTH1FJ->SetFillStyle(3001);
+                pTH1FJ->SetFillStyle(fillStyle.at(colourCounter));
                 pTH1FJ->SetMinimum(0);
                 pTH1FJ->SetMaximum(2*pTH1FJ->GetBinContent(pTH1FJ->GetMaximumBin()));
                 pTH1FJ->Draw("same");
@@ -187,7 +198,7 @@ void MakePlots::WriteIndividualPlots()
         TH1I *pTH1I = (TH1I*)(iter->first->Clone());
         const Process *pProcess = iter->second;
         std::string processName = pTH1I->GetName();
-        std::string saveName = processName + "_" + pProcess->GetEventType() + ".C";
+        std::string saveName = processName + ".C";
         TCanvas *pTCanvas = new TCanvas();
         pTH1I->Draw();
         pTCanvas->SaveAs(saveName.c_str());
@@ -197,16 +208,13 @@ void MakePlots::WriteIndividualPlots()
     for (Float1DPlotToProcessMap::iterator iter = m_float1DPlotToProcess.begin(); iter != m_float1DPlotToProcess.end(); iter++)
     {
         TH1F *pTH1F = (TH1F*)(iter->first->Clone());
-        std::cout << "pTH1F->GetName() : " << pTH1F->GetName() << std::endl;
         const Process *pProcess = iter->second;
         std::string processName = pTH1F->GetName();
-        std::cout << "processName : " << processName << std::endl;
-        std::string saveName = processName + "_" + pProcess->GetEventType() + ".C";
+        std::string saveName = processName + ".C";
         TCanvas *pTCanvas = new TCanvas();
         pTH1F->Draw();
         pTCanvas->SaveAs(saveName.c_str());
         pTH1F->SetName(this->RandomName().c_str());
-        std::cout << "pTH1F->GetName() : " << pTH1F->GetName() << std::endl;
     }
 
     for (Float2DPlotToProcessMap::iterator iter = m_float2DPlotToProcess.begin(); iter != m_float2DPlotToProcess.end(); iter++)
@@ -214,7 +222,7 @@ void MakePlots::WriteIndividualPlots()
         TH2F *pTH2F = (TH2F*)(iter->first->Clone());
         const Process *pProcess = iter->second;
         std::string processName = pTH2F->GetName();
-        std::string saveName = processName + "_" + pProcess->GetEventType() + ".C";
+        std::string saveName = processName + ".C";
         TCanvas *pTCanvas = new TCanvas();
         pTH2F->Draw("COLZ");
         pTCanvas->SaveAs(saveName.c_str());
@@ -296,10 +304,7 @@ void MakePlots::Register2DPlot(const Process *pProcess, const std::string &varia
     std::cout << "Begin: MakePlots::Register2DPlot" << std::endl;
 
     int positionInVectorX = std::find(m_floatVariablesToRead.begin(), m_floatVariablesToRead.end(), variableNameX) - m_floatVariablesToRead.begin();
-    int positionInVectorY = std::find(m_floatVariablesToRead.begin(), m_floatVariablesToRead.end(), variableNameY) - m_floatVariablesToRead.begin();
-
     int positionX(std::numeric_limits<int>::max());
-    int positionY(std::numeric_limits<int>::max());
 
     if (positionInVectorX != m_floatVariablesToRead.size())
     {
@@ -310,6 +315,9 @@ void MakePlots::Register2DPlot(const Process *pProcess, const std::string &varia
         positionX = m_floatVariablesToRead.size();
         m_floatVariablesToRead.push_back(variableNameX);
     }
+
+    int positionInVectorY = std::find(m_floatVariablesToRead.begin(), m_floatVariablesToRead.end(), variableNameY) - m_floatVariablesToRead.begin();
+    int positionY(std::numeric_limits<int>::max());
 
     if (positionInVectorY != m_floatVariablesToRead.size())
     {
