@@ -18,15 +18,19 @@
 
 #include "TCanvas.h"
 #include "TChain.h"
+#include "TColor.h"
 #include "TH1F.h"
 #include "TH1I.h"
 #include "TH2F.h"
+#include "TLegend.h"
+#include "TROOT.h"
+#include "TStyle.h"
 
 #include "Process.h"
 
 class MakePlots
 {
-    typedef std::vector<Process*> ProcessVector;
+    typedef std::vector<const Process*> ProcessVector;
 
     typedef std::vector<float> FloatVector;
     typedef std::vector<int> IntVector;
@@ -53,7 +57,12 @@ class MakePlots
 
     private:
         /**
-         *  @brief Write all plots that have been registered in .C format
+         *  @brief Write combined process plots in .C format
+         */
+        void WritePlots();
+
+        /**
+         *  @brief Write all individual plots that have been registered in .C format
          */
         void WriteIndividualPlots();
 
@@ -107,6 +116,11 @@ class MakePlots
          *  @param highBin high bin edge of histogram
          */
         void Register1DFloatPlot(const Process *pProcess, const std::string &variableName, const int &nBins, const float &lowBin, const float &highBin);
+
+        /**
+         *  @brief Make random string for histogram name
+         */
+        std::string RandomName();
 
         /**
          *  @brief Convert a number to a string 

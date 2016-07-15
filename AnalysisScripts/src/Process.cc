@@ -29,7 +29,7 @@ Process::Process(std::string jobDescription, std::string detectorModel, std::str
 
 //=====================================================================
 
-TChain* Process::GetTChain()
+TChain* Process::GetTChain() const
 {
     return m_pTChain;
 }
@@ -50,7 +50,7 @@ std::string Process::GetEventType() const
 
 //=====================================================================
 
-void Process::Print()
+void Process::Print() const 
 {
     std::cout << "For the process   : " << m_eventType << std::endl
               << "Det Model         : " << m_detectorModel << std::endl

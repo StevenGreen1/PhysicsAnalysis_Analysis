@@ -39,7 +39,7 @@ class Process
         /**
          *  @brief Return pointer to TChain made from input root files
          */
-        TChain* GetTChain();
+        TChain* GetTChain() const;
 
         /**
          *  @brief Return the weight for the given process
@@ -54,7 +54,7 @@ class Process
         /**
          *  @brief Print out all information about this process
          */
-        void Print();
+        void Print() const;
 
     private:
         /**
