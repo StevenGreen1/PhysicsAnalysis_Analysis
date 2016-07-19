@@ -30,7 +30,13 @@ SelectionProcessor::SelectionProcessor() : Processor("SelectionProcessor")
     registerInputCollection(LCIO::RECONSTRUCTEDPARTICLE,
                             "CollectionName",
                             "Name of input jet collection",
-                            m_CollectionName,
+                            m_jetCollectionName,
+                            std::string());
+
+    registerInputCollection(LCIO::MCPARTICLE,
+                            "MCParticleCollection",
+                            "Name of mc particle collections",
+                            m_mcParticleCollection,
                             std::string());
 
     registerProcessorParameter("MCEventEnergy",
@@ -109,19 +115,14 @@ void SelectionProcessor::processEvent(LCEvent * pLCEvent)
 
     this->Clear();
 
+    // Extract Jet Information
+
     LCCollection* pLCCollection = NULL;
-    try
-    {
-        pLCCollection = pLCEvent->getCollection( m_CollectionName );
-    }
-    catch( lcio::DataNotAvailableException e )
-    {
-        streamlog_out(WARNING) << m_CollectionName << " pLCCollectionlection not available" << std::endl;
-        pLCCollection = NULL;
-    }
 
     try 
     {
+        pLCCollection = pLCEvent->getCollection( m_jetCollectionName );
+
         if (pLCCollection != NULL)
         {
             try
@@ -183,7 +184,30 @@ void SelectionProcessor::processEvent(LCEvent * pLCEvent)
 
     catch (...)
     {
-        streamlog_out(ERROR) << "Could not extract input particle collection: " << m_CollectionName << std::endl;
+        streamlog_out(ERROR) << "Could not extract input particle collection: " << m_jetCollectionName << std::endl;
+    }
+
+    // Extract MC Information
+
+    const EVENT::LCCollection *pLCCollection = NULL;
+
+    try
+    {
+        const EVENT::LCCollection *pLCCollection = pLCEvent->getCollection(m_mcParticleCollection);
+
+        for (unsigned int i = 0, nElements = pLCCollection->getNumberOfElements(); i < nElements; ++i)
+        {
+            const EVENT::MCParticle *pMCParticle = dynamic_cast<EVENT::MCParticle*>(pLCCollection->getElementAt(i));
+
+            if (NULL == pMCParticle)
+                throw EVENT::Exception("Collection type mismatch");
+
+            this
+        }
+    }
+    catch (...)
+    {
+        streamlog_out(WARNING) << "Could not extract mc particle collection " << m_mcParticleCollection << std::endl;
     }
 
     m_nEvent++;

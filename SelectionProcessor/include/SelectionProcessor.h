@@ -261,7 +261,8 @@ class SelectionProcessor : public Processor
         float               m_ZBosonMass;                           ///< Z boson mass from pdg
 
         // Inputs
-        std::string         m_CollectionName;                       ///< Pfo collection name
+        std::string         m_jetCollectionName;                    ///< Pfo collection name
+        std::string         m_mcParticleCollection;                 ///< MC particle collectioni
         std::string         m_rootFile;                             ///< Root file output namne
         float               m_EventMCEnergy;                        ///< MC event energy excluding beam effects
         float               m_ConeAngle;                            ///< Cone angle needed for cone energy measurement 
