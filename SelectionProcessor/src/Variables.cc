@@ -454,6 +454,20 @@ float Variables::GetCosThetaStarWBosons() const
 
 //===========================================================
 
+void Variables::SetMCCosThetaStarWBosons(float mcCosThetaStarWBosons)
+{
+    m_MCCosThetaStarWBosons = mcCosThetaStarWBosons;
+}
+
+//===========================================================
+
+float Variables::GetMCCosThetaStarWBosons() const
+{
+    return m_MCCosThetaStarWBosons;
+}
+
+//===========================================================
+
 void Variables::SetCosThetaStarZBosons(float cosThetaStarZBosons)
 {
     m_CosThetaStarZBosons = cosThetaStarZBosons;
@@ -464,6 +478,20 @@ void Variables::SetCosThetaStarZBosons(float cosThetaStarZBosons)
 float Variables::GetCosThetaStarZBosons() const 
 {
     return m_CosThetaStarZBosons;
+}
+
+//===========================================================
+
+void Variables::SetMCCosThetaStarZBosons(float mcCosThetaStarZBosons)
+{
+    m_MCCosThetaStarZBosons = mcCosThetaStarZBosons;
+}
+
+//===========================================================
+
+float Variables::GetMCCosThetaStarZBosons() const
+{
+    return m_MCCosThetaStarZBosons;
 }
 
 //=========================================================== FloatVector

@@ -260,75 +260,24 @@ void MCAnalysis::DefineVariablesOfInterest()
     this->FindMCInvariantMass(m_QuarkMCParticleVector,invariantMassQuarkSystem);
     m_pVariables->SetMCInvariantMassSystem(invariantMassSystem);
 
+    float mcCosThetaStarWBoson(0.f);
+    this->CalculateMCCosThetaStar(m_WVector1,m_WVector2,mCosThetaStarWBoson);
+    m_pVariables->SetCosThetaStarWBosons(mcCosThetaStarWBoson);
 
-
-
-
-
-
-
-
-
-
-    float cosThetaStarWBoson(0.f);
-    this->CalculateCosThetaStar(m_WVector1,m_WVector2,cosThetaStarWBoson);
-    m_pVariables->SetCosThetaStarWBosons(cosThetaStarWBoson);
-
-    float cosThetaStarZBoson(0.f);
-    this->CalculateCosThetaStar(m_ZVector1,m_ZVector2,cosThetaStarZBoson);
-    m_pVariables->SetCosThetaStarZBosons(cosThetaStarZBoson);
-
-    if (m_WVector1.size() != 2 or m_WVector2.size() != 2 or m_ZVector1.size() != 2 or m_ZVector2.size() != 2)
-    {
-        std::cout << "Problem with jet pairing.  Either more or less jets associated to bosons than 2.  Unable to work out cos theta star jets.  Returning now." << std::endl;
-        return;
-    }
-
-    ParticleVector jetVectorQ1, jetVectorQ2;
-    float cosThetaStarWJet(0.f), cosThetaStarZJet(0.f);
-    FloatVector cosThetaStarWJets, cosThetaStarZJets;
-
-    jetVectorQ1.push_back(m_WVector1.at(0));
-    jetVectorQ2.push_back(m_WVector1.at(1));
-    this->CalculateCosThetaStar(jetVectorQ1,jetVectorQ2,cosThetaStarWJet);
-    cosThetaStarWJets.push_back(cosThetaStarWJet);
-    jetVectorQ1.clear();
-    jetVectorQ2.clear();
-
-    jetVectorQ1.push_back(m_WVector2.at(0));
-    jetVectorQ2.push_back(m_WVector2.at(1));
-    this->CalculateCosThetaStar(jetVectorQ1,jetVectorQ2,cosThetaStarWJet);
-    cosThetaStarWJets.push_back(cosThetaStarWJet);
-    jetVectorQ1.clear();
-    jetVectorQ2.clear();
-
-    jetVectorQ1.push_back(m_ZVector1.at(0));
-    jetVectorQ2.push_back(m_ZVector1.at(1));
-    this->CalculateCosThetaStar(jetVectorQ1,jetVectorQ2,cosThetaStarZJet);
-    cosThetaStarZJets.push_back(cosThetaStarZJet);
-    jetVectorQ1.clear();
-    jetVectorQ2.clear();
-
-    jetVectorQ1.push_back(m_ZVector2.at(0));
-    jetVectorQ2.push_back(m_ZVector2.at(1));
-    this->CalculateCosThetaStar(jetVectorQ1,jetVectorQ2,cosThetaStarZJet);
-    cosThetaStarZJets.push_back(cosThetaStarZJet);
-    jetVectorQ1.clear();
-    jetVectorQ2.clear();
-
-    m_pVariables->SetCosThetaStarWJets(cosThetaStarWJets);
-    m_pVariables->SetCosThetaStarZJets(cosThetaStarZJets);
+    float mcCosThetaStarZBoson(0.f);
+    this->CalculateMCCosThetaStar(m_ZVector1,m_ZVector2,mcCosThetaStarZBoson);
+    m_pVariables->SetCosThetaStarZBosons(mcCosThetaStarZBoson);
 }
 
 //===========================================================
 
-void MCAnalysis::CalculateCosThetaStar(ParticleVector objectOfInterest, ParticleVector referenceFrameObjects, float &cosThetaStar) const 
+void MCAnalysis::CalculateMCCosThetaStar(MCParticleVector objectOfInterest, MCParticleVector referenceFrameObjects, float &cosThetaStar) const 
 {
     cosThetaStar = -1.f;
     TLorentzVector objectOfInterest4Vec, referenceFrameObjects4Vec;
 
-    this->DefineEnergy4Vec(objectOfInterest, objectOfInterest4Vec);
-    this->DefineEnergy4Vec(referenceFrameObjects, referenceFrameObjects4Vec);
+    this->DefineMCEnergy4Vec(objectOfInterest, objectOfInterest4Vec);
+    this->DefineMCEnergy4Vec(referenceFrameObjects, referenceFrameObjects4Vec);
 
     TLorentzVector diBoson = objectOfInterest4Vec + referenceFrameObjects4Vec;
     TVector3 boostvector = -diBoson.BoostVector();
@@ -338,17 +287,17 @@ void MCAnalysis::CalculateCosThetaStar(ParticleVector objectOfInterest, Particle
 
 //===========================================================
 
-void MCAnalysis::DefineEnergy4Vec(ParticleVector &jetVector, TLorentzVector &tLorentzVector) const 
+void MCAnalysis::DefineMCEnergy4Vec(MCParticleVector &mcParticleVector, TLorentzVector &tLorentzVector) const 
 {
     float px(0.f), py(0.f), pz(0.f), E(0.f);
 
-    for (ParticleVector::const_iterator iter = jetVector.begin(); iter != jetVector.end(); iter++)
+    for (MCParticleVector::const_iterator iter = mcParticleVector.begin(); iter != mcParticleVector.end(); iter++)
     {
-        const EVENT::ReconstructedParticle *pReconstructedParticle(*iter);
-        px += pReconstructedParticle->getMomentum()[0];
-        py += pReconstructedParticle->getMomentum()[1];
-        pz += pReconstructedParticle->getMomentum()[2];
-        E += pReconstructedParticle->getEnergy();
+        const EVENT::MCParticle *pMCParticle(*iter);
+        px += pMCParticle->getMomentum()[0];
+        py += pMCParticle->getMomentum()[1];
+        pz += pMCParticle->getMomentum()[2];
+        E += pMCParticle->getEnergy();
     }
 
     tLorentzVector.SetPx(px);

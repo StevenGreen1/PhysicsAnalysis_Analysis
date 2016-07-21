@@ -163,8 +163,8 @@ class JetAnalysis
         /**
          * @brief Calculate the cosine of the polar angle of the object of interest in the reference frame defined by the object of interest and the reference frame objects
          *
-         * @param objectOfInterest energy 4 vector defining polar angle in question
-         * @param referenceFrameObjects energy 4 vector to define reference frame for polar angle
+         * @param objectOfInterest ParticleVector defining energy 4 vector for direction in question 
+         * @param referenceFrameObjects ParticleVector defining energy 4 vector for reference frame for polar angle calculation
          * @param cosThetaStar cosine of the polar angle of the objectOfInterest in a reference frame defined by objectOfInterest and referenceFrameObjects
          */
         void CalculateCosThetaStar(ParticleVector objectOfInterest, ParticleVector referenceFrameObjects, float &cosThetaStar) const;
@@ -173,7 +173,7 @@ class JetAnalysis
          * @brief Calculate the energy 4 vector for a given vector of lcio particles
          *
          * @param jetVector vector of lcio particles
-         * @param pTLorentzVector energy 4 vector to set
+         * @param tLorentzVector energy 4 vector of all partilces in jetVector to set
          */
         void DefineEnergy4Vec(ParticleVector &jetVector, TLorentzVector &tLorentzVector) const;
 
@@ -183,7 +183,6 @@ class JetAnalysis
         ParticleVector         m_WVector2;          ///< Second W candidate
         ParticleVector         m_ZVector1;          ///< First Z candidate
         ParticleVector         m_ZVector2;          ///< Second Z candidate
-
         const float            m_WBosonMass;        ///< W boson mass used for jet pairing
         const float            m_ZBosonMass;        ///< Z boson mass used for jet pairing
         const float            m_CrossingAngle;     ///< Crossing angle for CLIC ILD, radians 

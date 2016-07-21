@@ -89,36 +89,22 @@ class MCAnalysis
          */
         void DefineVariablesOfInterest();
 
-
-
-
-
-
-
-
-
-
-
-
-
         /**
          * @brief Calculate the cosine of the polar angle of the object of interest in the reference frame defined by the object of interest and the reference frame objects
          *
-         * @param objectOfInterest energy 4 vector defining polar angle in question
-         * @param referenceFrameObjects energy 4 vector to define reference frame for polar angle
+         * @param objectOfInterest MCParticleVector defining energy 4 vector for direction in question
+         * @param referenceFrameObjects MCParticleVector defining energy 4 vector for reference frame for polar angle calculation
          * @param cosThetaStar cosine of the polar angle of the objectOfInterest in a reference frame defined by objectOfInterest and referenceFrameObjects
          */
-        void CalculateCosThetaStar(ParticleVector objectOfInterest, ParticleVector referenceFrameObjects, float &cosThetaStar) const;
+        void CalculateMCCosThetaStar(MCParticleVector objectOfInterest, MCParticleVector referenceFrameObjects, float &cosThetaStar) const;
 
         /**
          * @brief Calculate the energy 4 vector for a given vector of lcio particles
          *
-         * @param jetVector vector of lcio particles
-         * @param pTLorentzVector energy 4 vector to set
+         * @param mcParticleVector vector of lcio mc particles
+         * @param tLorentzVector energy 4 vector of all particles in mcParticleVector to set
          */
-        void DefineEnergy4Vec(ParticleVector &jetVector, TLorentzVector &tLorentzVector) const;
-
-        // Tools
+        void DefineMCEnergy4Vec(MCParticleVector &mcParticleVector, TLorentzVector &tLorentzVector) const;
 
         Variables             *m_pVariables;                ///< Variables of interest to set for analysis
         MCParticleVector       m_NeutrinoMCParticleVector;  ///< Vector of neutrino MC particles 
@@ -127,8 +113,6 @@ class MCAnalysis
         MCParticleVector       m_MCWVector2;                ///< Second W candidate
         MCParticleVector       m_MCZVector1;                ///< First Z candidate
         MCParticleVector       m_MCZVector2;                ///< Second Z candidate
-
-        // Variables of interest
         const float            m_WBosonMass;                ///< W boson mass used for quark pairing
         const float            m_ZBosonMass;                ///< Z boson mass used for quark pairing
         const float            m_EventMCEnergy;             ///< MC event energy excluding beam effects

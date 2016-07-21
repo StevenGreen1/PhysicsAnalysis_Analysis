@@ -324,6 +324,18 @@ class Variables
         float GetCosThetaStarWBosons() const;
 
         /**
+         *  @brief Set m_MCCosThetaStarWBosons
+         *
+         *  @param mcCosThetaStarWBosons Cosine of the polar angle of the W bosons in the reference frame of the WW boson pairs
+         */
+        void SetMCCosThetaStarWBosons(float mcCosThetaStarWBosons);
+
+        /**
+         *  @brief Get m_MCCosThetaStarWBosons
+         */
+        float GetMCCosThetaStarWBosons() const;
+
+        /**
          *  @brief Set m_CosThetaStarZBosons
          *
          *  @param cosThetaStarZBosons Cosine of the polar angle of the Z bosons in the reference frame of the ZZ boson pairs
@@ -334,6 +346,18 @@ class Variables
          *  @brief Get m_CosThetaStarZBosons
          */
         float GetCosThetaStarZBosons() const;
+
+        /**
+         *  @brief Set m_MCCosThetaStarZBosons
+         *
+         *  @param mcCosThetaStarZBosons Cosine of the polar angle of the Z bosons in the reference frame of the ZZ boson pairs
+         */
+        void SetMCCosThetaStarZBosons(float mcCosThetaStarZBosons);
+
+        /**
+         *  @brief Get m_MCCosThetaStarZBosons
+         */
+        float GetMCCosThetaStarZBosons() const;
 
 // FloatVectors
 
@@ -462,7 +486,9 @@ class Variables
         float           m_InvariantMassSystem;              ///< Invariant mass of the jet system - JetAnalysis
         float           m_MCInvariantMassSystem;            ///< Invariant mass of the quark system - MCAnalysis
         float           m_CosThetaStarWBosons;              ///< Cosine of the polar angle of the W bosons in the reference frame of the WW boson pairs - JetAnalysis
+        float           m_MCCosThetaStarWBosons;            ///< Cosine of the polar angle of the W bosons in the reference frame of the WW boson pairs - MCAnalysis
         float           m_CosThetaStarZBosons;              ///< Cosine of the polar angle of the Z bosons in the reference frame of the ZZ boson pairs - JetAnalysis
+        float           m_MCCosThetaStarZBosons;            ///< Cosine of the polar angle of the Z bosons in the reference frame of the ZZ boson pairs - MCAnalysis
 
         FloatVector     m_InvMassWVectors;                  ///< Invariant mass of first and second pair of W paired jets - JetAnalysis
         FloatVector     m_InvMassZVectors;                  ///< Invariant mass of first and second pair of Z paired jets - JetAnalysis
