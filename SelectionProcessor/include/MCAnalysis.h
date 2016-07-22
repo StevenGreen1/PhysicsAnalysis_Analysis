@@ -6,13 +6,14 @@
  *  $Log: $
  */
 
-#ifndef JET_ANALYSIS_H
-#define JET_ANALYSIS_H 1
+#ifndef MC_ANALYSIS_H
+#define MC_ANALYSIS_H 1
 
 #include <string>
 #include <vector>
 
 #include "EVENT/LCCollection.h"
+#include "EVENT/MCParticle.h"
 #include "EVENT/ReconstructedParticle.h"
 
 #include "TLorentzVector.h"
@@ -67,7 +68,7 @@ class MCAnalysis
         /**
          *  @brief Calculate the cosine theta of the missing momentum vector using m_JetVector
          */
-        void CalculateCosThetaMissingMomentum();
+        void CalculateMCCosThetaMissingMomentum();
 
         /**
          *  @brief Calculate the recoil mass of the event (magnitude of neutrino momentum 4 vector)
@@ -87,7 +88,7 @@ class MCAnalysis
         /**
          *  @ brief Do some awesome physics with the output
          */
-        void DefineVariablesOfInterest();
+        void DefineMCVariablesOfInterest();
 
         /**
          * @brief Calculate the cosine of the polar angle of the object of interest in the reference frame defined by the object of interest and the reference frame objects
@@ -115,8 +116,9 @@ class MCAnalysis
         MCParticleVector       m_MCZVector2;                ///< Second Z candidate
         const float            m_WBosonMass;                ///< W boson mass used for quark pairing
         const float            m_ZBosonMass;                ///< Z boson mass used for quark pairing
+        const float            m_CrossingAngle;             ///< Crossing angle for CLIC ILD, radians
         const float            m_EventMCEnergy;             ///< MC event energy excluding beam effects
         float                  m_y34;                       ///< Jet clustering variable
 };
 
-#endif // #ifndef JET_ANALYSIS_H
+#endif // #ifndef MC_ANALYSIS_H

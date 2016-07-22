@@ -491,8 +491,8 @@ class Variables
         float           m_MCCosThetaStarZBosons;            ///< Cosine of the polar angle of the Z bosons in the reference frame of the ZZ boson pairs - MCAnalysis
 
         FloatVector     m_InvMassWVectors;                  ///< Invariant mass of first and second pair of W paired jets - JetAnalysis
-        FloatVector     m_InvMassZVectors;                  ///< Invariant mass of first and second pair of Z paired jets - JetAnalysis
         FloatVector     m_MCInvMassWVectors;                ///< Invariant mass of first and second pair of W paired quarks - MCAnalysis
+        FloatVector     m_InvMassZVectors;                  ///< Invariant mass of first and second pair of Z paired jets - JetAnalysis
         FloatVector     m_MCInvMassZVectors;                ///< Invariant mass of first and second pair of Z paired quarks - MCAnalysis
         FloatVector     m_EnergyJets;                       ///< Energy of reconstructed jets  - JetAnalysis
         FloatVector     m_CosThetaStarWJets;                ///< Cosine of the polar angle of the q jets in the reference frome of the W bosons - JetAnalysis

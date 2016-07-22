@@ -29,6 +29,7 @@
 #include "TVector3.h"
 
 #include "JetAnalysis.h"
+#include "MCAnalysis.h"
 #include "Variables.h"
 
 //#include "UTIL/PIDHandler.h"

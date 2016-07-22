@@ -30,7 +30,9 @@ void Variables::SetBranches(TTree *pTTree)
 // Bools
     pTTree->Branch("IsAppropriateEvent", &m_AppropriateEvent, "IsAppropriateEvent/O");
     pTTree->Branch("IsEventWW", &m_IsEventWW, "IsEventWW/O");
+    pTTree->Branch("IsMCEventWW", &m_IsMCEventWW, "IsMCEventWW/O");
     pTTree->Branch("IsEventZZ", &m_IsEventZZ, "IsEventZZ/O");
+    pTTree->Branch("IsMCEventZZ", &m_IsMCEventZZ, "IsMCEventZZ/O");
 
 // Ints
 // IntVectors
@@ -39,19 +41,28 @@ void Variables::SetBranches(TTree *pTTree)
 
 // Floats
     pTTree->Branch("TransverseMomentum", &m_TransverseMomentum, "TransverseMomentum/F");
+    pTTree->Branch("MCTransverseMomentum", &m_MCTransverseMomentum, "MCTransverseMomentum/F");
     pTTree->Branch("TransverseEnergy", &m_TransverseEnergy, "TransverseEnergy/F");
+    pTTree->Branch("MCTransverseEnergy", &m_MCTransverseEnergy, "MCTransverseEnergy/F");
     pTTree->Branch("CosThetaMissing", &m_CosThetaMissing, "CosThetaMissing/F");
+    pTTree->Branch("MCCosThetaMissing", &m_MCCosThetaMissing, "MCCosThetaMissing/F");
     pTTree->Branch("CosThetaMostEnergeticTrack", &m_CosThetaMostEnergeticTrack, "CosThetaMostEnergeticTrack/F");
     pTTree->Branch("RecoilMass", &m_RecoilMass, "RecoilMass/F");
+    pTTree->Branch("MCRecoilMass", &m_MCRecoilMass, "MCRecoilMass/F");
     pTTree->Branch("EnergyAroundMostEnergeticTrack", &m_EnergyAroundMostEnergeticPfo, "EnergyAroundMostEnergeticTrack/F");
     pTTree->Branch("y34", &m_y34, "y34/F");
     pTTree->Branch("InvariantMassSystem", &m_InvariantMassSystem, "InvariantMassSystem/F");
+    pTTree->Branch("MCInvariantMassSystem", &m_MCInvariantMassSystem, "MCInvariantMassSystem/F");
     pTTree->Branch("CosThetaStarWBosons", &m_CosThetaStarWBosons, "CosThetaStarWBosons/F");
+    pTTree->Branch("MCCosThetaStarWBosons", &m_MCCosThetaStarWBosons, "MCCosThetaStarWBosons/F");
     pTTree->Branch("CosThetaStarZBosons", &m_CosThetaStarZBosons, "CosThetaStarZBosons/F");
+    pTTree->Branch("MCCosThetaStarZBosons", &m_MCCosThetaStarZBosons, "MCCosThetaStarZBosons/F");
 
 // FloatVectors
     pTTree->Branch("InvMassWVectors", &m_InvMassWVectors);
+    pTTree->Branch("MCInvMassWVectors", &m_MCInvMassWVectors);
     pTTree->Branch("InvMassZVectors", &m_InvMassZVectors);
+    pTTree->Branch("MCInvMassZVectors", &m_MCInvMassZVectors);
     pTTree->Branch("EnergyJets", &m_EnergyJets);
     pTTree->Branch("CosThetaStarWJets", &m_CosThetaStarWJets);
     pTTree->Branch("CosThetaStarZJets", &m_CosThetaStarZJets);
@@ -63,7 +74,9 @@ void Variables::Print()
 {
     std::cout << "m_AppropriateEvent             : " << m_AppropriateEvent << std::endl;
     std::cout << "m_IsEventWW                    : " << m_IsEventWW << std::endl;
+    std::cout << "m_IsMCEventWW                  : " << m_IsMCEventWW << std::endl;
     std::cout << "m_IsEventZZ                    : " << m_IsEventZZ << std::endl;
+    std::cout << "m_IsMCEventZZ                  : " << m_IsMCEventZZ << std::endl;
 
     for (IntVector::iterator iter = m_NParticlesJets.begin(); iter != m_NParticlesJets.end(); iter++)
     {
@@ -76,15 +89,22 @@ void Variables::Print()
     }
 
     std::cout << "m_TransverseMomentum           : " << m_TransverseMomentum << std::endl;
+    std::cout << "m_MCTransverseMomentum         : " << m_MCTransverseMomentum << std::endl;
     std::cout << "m_TransverseEnergy             : " << m_TransverseEnergy << std::endl;
+    std::cout << "m_MCTransverseEnergy           : " << m_MCTransverseEnergy << std::endl;
     std::cout << "m_CosThetaMissing              : " << m_CosThetaMissing << std::endl;
+    std::cout << "m_MCCosThetaMissing            : " << m_MCCosThetaMissing << std::endl;
     std::cout << "m_CosThetaMostEnergeticTrack   : " << m_CosThetaMostEnergeticTrack << std::endl;
     std::cout << "m_RecoilMass                   : " << m_RecoilMass << std::endl;
+    std::cout << "m_MCRecoilMass                 : " << m_MCRecoilMass << std::endl;
     std::cout << "m_EnergyAroundMostEnergeticPfo : " << m_EnergyAroundMostEnergeticPfo << std::endl;
     std::cout << "m_y34                          : " << m_y34 << std::endl;
     std::cout << "m_InvariantMassSystem          : " << m_InvariantMassSystem << std::endl;
+    std::cout << "m_MCInvariantMassSystem        : " << m_MCInvariantMassSystem << std::endl;
     std::cout << "m_CosThetaStarWBosons          : " << m_CosThetaStarWBosons << std::endl;
+    std::cout << "m_MCCosThetaStarWBosons        : " << m_MCCosThetaStarWBosons << std::endl;
     std::cout << "m_CosThetaStarZBosons          : " << m_CosThetaStarZBosons << std::endl;
+    std::cout << "m_MCCosThetaStarZBosons        : " << m_MCCosThetaStarZBosons << std::endl;
 //    std::cout << " : " <<  << std::endl;
 
     for (FloatVector::iterator iter = m_EnergyJets.begin(); iter != m_EnergyJets.end(); iter++)
@@ -99,24 +119,35 @@ void Variables::Clear()
 {
     m_AppropriateEvent = false;
     m_IsEventWW = false;
+    m_IsMCEventWW = false;
     m_IsEventZZ = false;
+    m_IsMCEventZZ = false;
 
     m_NParticlesJets.clear();
     m_NChargedParticlesJets.clear();
 
     m_TransverseMomentum = std::numeric_limits<float>::max();
+    m_MCTransverseMomentum = std::numeric_limits<float>::max();
     m_TransverseEnergy = std::numeric_limits<float>::max();
+    m_MCTransverseEnergy = std::numeric_limits<float>::max();
     m_CosThetaMissing = std::numeric_limits<float>::max();
+    m_MCCosThetaMissing = std::numeric_limits<float>::max();
     m_CosThetaMostEnergeticTrack = std::numeric_limits<float>::max();
     m_RecoilMass = std::numeric_limits<float>::max();
+    m_MCRecoilMass = std::numeric_limits<float>::max();
     m_EnergyAroundMostEnergeticPfo = std::numeric_limits<float>::max();
     m_y34 = std::numeric_limits<float>::max();
     m_InvariantMassSystem = std::numeric_limits<float>::max();
+    m_MCInvariantMassSystem = std::numeric_limits<float>::max();
     m_CosThetaStarWBosons = std::numeric_limits<float>::max();
+    m_MCCosThetaStarWBosons = std::numeric_limits<float>::max();
     m_CosThetaStarZBosons = std::numeric_limits<float>::max();
+    m_MCCosThetaStarZBosons = std::numeric_limits<float>::max();
 
     m_InvMassWVectors.clear();
+    m_MCInvMassWVectors.clear();
     m_InvMassZVectors.clear();
+    m_MCInvMassZVectors.clear();
     m_EnergyJets.clear();
     m_CosThetaStarWJets.clear();
     m_CosThetaStarZJets.clear();

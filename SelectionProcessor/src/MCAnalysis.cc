@@ -14,12 +14,13 @@ MCAnalysis::MCAnalysis(const EVENT::LCCollection *pLCCollection, Variables *&var
     m_pVariables(variables),
     m_WBosonMass(80.385f),
     m_ZBosonMass(91.1876f),
+    m_CrossingAngle(0.01),
     m_EventMCEnergy(1400.f),
     m_y34(std::numeric_limits<float>::max())
 {
     for (unsigned int i = 6; i < 12; i++)
     {
-        const EVENT::MCParticle *pMCParticle(dynamic_cast<EVENT::ReconstructedParticle*>(pLCCollection->getElementAt(i)));
+        const EVENT::MCParticle *pMCParticle(dynamic_cast<EVENT::MCParticle*>(pLCCollection->getElementAt(i)));
         if (std::abs(pMCParticle->getPDG()) == 12)
         {
             m_NeutrinoMCParticleVector.push_back(pMCParticle);
@@ -30,7 +31,7 @@ MCAnalysis::MCAnalysis(const EVENT::LCCollection *pLCCollection, Variables *&var
         }
     }
 
-    if (m_NeutrinoMCParticleVector.size() == 2 and m_QuarkMCParticleVector == 4)
+    if (m_NeutrinoMCParticleVector.size() == 2 and m_QuarkMCParticleVector.size() == 4)
     {
         this->Process();
     }
@@ -52,9 +53,9 @@ void MCAnalysis::Process()
     this->CalculateMCTransverseEnergy();
     this->CalculateMCCosThetaMissingMomentum();
     this->CalculateMCRecoilMass();
-    this->IsEventWW();
-    this->IsEventZZ();
-    this->DefineVariablesOfInterest();
+    this->IsMCEventWW();
+    this->IsMCEventZZ();
+    this->DefineMCVariablesOfInterest();
 }
 
 //===========================================================
@@ -79,7 +80,7 @@ void MCAnalysis::QuarkPairing()
     {
         IntVector combination(*iter);
 
-        ParticleVector trialPair1, trialPair2;
+        MCParticleVector trialPair1, trialPair2;
         trialPair1.push_back(m_QuarkMCParticleVector.at(combination.at(0)));
         trialPair1.push_back(m_QuarkMCParticleVector.at(combination.at(1)));
         trialPair2.push_back(m_QuarkMCParticleVector.at(combination.at(2)));
@@ -254,19 +255,19 @@ void MCAnalysis::IsMCEventZZ()
 
 //===========================================================
 
-void MCAnalysis::DefineVariablesOfInterest()
+void MCAnalysis::DefineMCVariablesOfInterest()
 {
     float invariantMassQuarkSystem(std::numeric_limits<float>::max());
     this->FindMCInvariantMass(m_QuarkMCParticleVector,invariantMassQuarkSystem);
-    m_pVariables->SetMCInvariantMassSystem(invariantMassSystem);
+    m_pVariables->SetMCInvariantMassSystem(invariantMassQuarkSystem);
 
-    float mcCosThetaStarWBoson(0.f);
-    this->CalculateMCCosThetaStar(m_WVector1,m_WVector2,mCosThetaStarWBoson);
-    m_pVariables->SetCosThetaStarWBosons(mcCosThetaStarWBoson);
+    float mcCosThetaStarWBoson(std::numeric_limits<float>::max());
+    this->CalculateMCCosThetaStar(m_MCWVector1,m_MCWVector2,mcCosThetaStarWBoson);
+    m_pVariables->SetMCCosThetaStarWBosons(mcCosThetaStarWBoson);
 
-    float mcCosThetaStarZBoson(0.f);
-    this->CalculateMCCosThetaStar(m_ZVector1,m_ZVector2,mcCosThetaStarZBoson);
-    m_pVariables->SetCosThetaStarZBosons(mcCosThetaStarZBoson);
+    float mcCosThetaStarZBoson(std::numeric_limits<float>::max());
+    this->CalculateMCCosThetaStar(m_MCZVector1,m_MCZVector2,mcCosThetaStarZBoson);
+    m_pVariables->SetMCCosThetaStarZBosons(mcCosThetaStarZBoson);
 }
 
 //===========================================================
