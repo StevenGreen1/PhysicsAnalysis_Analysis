@@ -26,6 +26,8 @@ Variables::~Variables()
 
 void Variables::SetBranches(TTree *pTTree)
 {
+    gInterpreter->EnableAutoLoading();
+
 // Variables Of Interest
 // Bools
     pTTree->Branch("IsAppropriateEvent", &m_AppropriateEvent, "IsAppropriateEvent/O");
@@ -40,25 +42,25 @@ void Variables::SetBranches(TTree *pTTree)
     pTTree->Branch("NChargedParticlesJets", &m_NChargedParticlesJets);
 
 // Floats
-    pTTree->Branch("TransverseMomentum", &m_TransverseMomentum, "TransverseMomentum/F");
-    pTTree->Branch("MCTransverseMomentum", &m_MCTransverseMomentum, "MCTransverseMomentum/F");
-    pTTree->Branch("TransverseEnergy", &m_TransverseEnergy, "TransverseEnergy/F");
-    pTTree->Branch("MCTransverseEnergy", &m_MCTransverseEnergy, "MCTransverseEnergy/F");
-    pTTree->Branch("CosThetaMissing", &m_CosThetaMissing, "CosThetaMissing/F");
-    pTTree->Branch("MCCosThetaMissing", &m_MCCosThetaMissing, "MCCosThetaMissing/F");
-    pTTree->Branch("CosThetaMostEnergeticTrack", &m_CosThetaMostEnergeticTrack, "CosThetaMostEnergeticTrack/F");
-    pTTree->Branch("RecoilMass", &m_RecoilMass, "RecoilMass/F");
-    pTTree->Branch("MCRecoilMass", &m_MCRecoilMass, "MCRecoilMass/F");
-    pTTree->Branch("EnergyAroundMostEnergeticTrack", &m_EnergyAroundMostEnergeticPfo, "EnergyAroundMostEnergeticTrack/F");
-    pTTree->Branch("y34", &m_y34, "y34/F");
-    pTTree->Branch("InvariantMassSystem", &m_InvariantMassSystem, "InvariantMassSystem/F");
-    pTTree->Branch("MCInvariantMassSystem", &m_MCInvariantMassSystem, "MCInvariantMassSystem/F");
-    pTTree->Branch("CosThetaStarWBosons", &m_CosThetaStarWBosons, "CosThetaStarWBosons/F");
-    pTTree->Branch("MCCosThetaStarWBosons", &m_MCCosThetaStarWBosons, "MCCosThetaStarWBosons/F");
-    pTTree->Branch("CosThetaStarZBosons", &m_CosThetaStarZBosons, "CosThetaStarZBosons/F");
-    pTTree->Branch("MCCosThetaStarZBosons", &m_MCCosThetaStarZBosons, "MCCosThetaStarZBosons/F");
+    pTTree->Branch("TransverseMomentum", &m_TransverseMomentum, "TransverseMomentum/D");
+    pTTree->Branch("MCTransverseMomentum", &m_MCTransverseMomentum, "MCTransverseMomentum/D");
+    pTTree->Branch("TransverseEnergy", &m_TransverseEnergy, "TransverseEnergy/D");
+    pTTree->Branch("MCTransverseEnergy", &m_MCTransverseEnergy, "MCTransverseEnergy/D");
+    pTTree->Branch("CosThetaMissing", &m_CosThetaMissing, "CosThetaMissing/D");
+    pTTree->Branch("MCCosThetaMissing", &m_MCCosThetaMissing, "MCCosThetaMissing/D");
+    pTTree->Branch("CosThetaMostEnergeticTrack", &m_CosThetaMostEnergeticTrack, "CosThetaMostEnergeticTrack/D");
+    pTTree->Branch("RecoilMass", &m_RecoilMass, "RecoilMass/D");
+    pTTree->Branch("MCRecoilMass", &m_MCRecoilMass, "MCRecoilMass/D");
+    pTTree->Branch("EnergyAroundMostEnergeticTrack", &m_EnergyAroundMostEnergeticPfo, "EnergyAroundMostEnergeticTrack/D");
+    pTTree->Branch("y34", &m_y34, "y34/D");
+    pTTree->Branch("InvariantMassSystem", &m_InvariantMassSystem, "InvariantMassSystem/D");
+    pTTree->Branch("MCInvariantMassSystem", &m_MCInvariantMassSystem, "MCInvariantMassSystem/D");
+    pTTree->Branch("CosThetaStarWBosons", &m_CosThetaStarWBosons, "CosThetaStarWBosons/D");
+    pTTree->Branch("MCCosThetaStarWBosons", &m_MCCosThetaStarWBosons, "MCCosThetaStarWBosons/D");
+    pTTree->Branch("CosThetaStarZBosons", &m_CosThetaStarZBosons, "CosThetaStarZBosons/D");
+    pTTree->Branch("MCCosThetaStarZBosons", &m_MCCosThetaStarZBosons, "MCCosThetaStarZBosons/D");
 
-// FloatVectors
+// DoubleVectors
     pTTree->Branch("InvMassWVectors", &m_InvMassWVectors);
     pTTree->Branch("MCInvMassWVectors", &m_MCInvMassWVectors);
     pTTree->Branch("InvMassZVectors", &m_InvMassZVectors);
@@ -107,7 +109,7 @@ void Variables::Print()
     std::cout << "m_MCCosThetaStarZBosons        : " << m_MCCosThetaStarZBosons << std::endl;
 //    std::cout << " : " <<  << std::endl;
 
-    for (FloatVector::iterator iter = m_EnergyJets.begin(); iter != m_EnergyJets.end(); iter++)
+    for (DoubleVector::iterator iter = m_EnergyJets.begin(); iter != m_EnergyJets.end(); iter++)
     {
         std::cout << "m_EnergyJets, position " << iter-m_EnergyJets.begin() << " : " << *iter << std::endl;
     }
@@ -126,23 +128,23 @@ void Variables::Clear()
     m_NParticlesJets.clear();
     m_NChargedParticlesJets.clear();
 
-    m_TransverseMomentum = std::numeric_limits<float>::max();
-    m_MCTransverseMomentum = std::numeric_limits<float>::max();
-    m_TransverseEnergy = std::numeric_limits<float>::max();
-    m_MCTransverseEnergy = std::numeric_limits<float>::max();
-    m_CosThetaMissing = std::numeric_limits<float>::max();
-    m_MCCosThetaMissing = std::numeric_limits<float>::max();
-    m_CosThetaMostEnergeticTrack = std::numeric_limits<float>::max();
-    m_RecoilMass = std::numeric_limits<float>::max();
-    m_MCRecoilMass = std::numeric_limits<float>::max();
-    m_EnergyAroundMostEnergeticPfo = std::numeric_limits<float>::max();
-    m_y34 = std::numeric_limits<float>::max();
-    m_InvariantMassSystem = std::numeric_limits<float>::max();
-    m_MCInvariantMassSystem = std::numeric_limits<float>::max();
-    m_CosThetaStarWBosons = std::numeric_limits<float>::max();
-    m_MCCosThetaStarWBosons = std::numeric_limits<float>::max();
-    m_CosThetaStarZBosons = std::numeric_limits<float>::max();
-    m_MCCosThetaStarZBosons = std::numeric_limits<float>::max();
+    m_TransverseMomentum = std::numeric_limits<double>::max();
+    m_MCTransverseMomentum = std::numeric_limits<double>::max();
+    m_TransverseEnergy = std::numeric_limits<double>::max();
+    m_MCTransverseEnergy = std::numeric_limits<double>::max();
+    m_CosThetaMissing = std::numeric_limits<double>::max();
+    m_MCCosThetaMissing = std::numeric_limits<double>::max();
+    m_CosThetaMostEnergeticTrack = std::numeric_limits<double>::max();
+    m_RecoilMass = std::numeric_limits<double>::max();
+    m_MCRecoilMass = std::numeric_limits<double>::max();
+    m_EnergyAroundMostEnergeticPfo = std::numeric_limits<double>::max();
+    m_y34 = std::numeric_limits<double>::max();
+    m_InvariantMassSystem = std::numeric_limits<double>::max();
+    m_MCInvariantMassSystem = std::numeric_limits<double>::max();
+    m_CosThetaStarWBosons = std::numeric_limits<double>::max();
+    m_MCCosThetaStarWBosons = std::numeric_limits<double>::max();
+    m_CosThetaStarZBosons = std::numeric_limits<double>::max();
+    m_MCCosThetaStarZBosons = std::numeric_limits<double>::max();
 
     m_InvMassWVectors.clear();
     m_MCInvMassWVectors.clear();
@@ -287,323 +289,323 @@ int Variables::GetLowestNChargedParticlesJets() const
     return lowestNChargedParticlesJets;
 }
 
-//=========================================================== float
+//=========================================================== double
 
-void Variables::SetTransverseMomentum(float transverseMomentum)
+void Variables::SetTransverseMomentum(double transverseMomentum)
 {
     m_TransverseMomentum = transverseMomentum;
 }
 
 //===========================================================
 
-float Variables::GetTransverseMomentum() const 
+double Variables::GetTransverseMomentum() const 
 {
     return m_TransverseMomentum;
 }
 
 //===========================================================
 
-void Variables::SetMCTransverseMomentum(float mcTransverseMomentum)
+void Variables::SetMCTransverseMomentum(double mcTransverseMomentum)
 {
     m_MCTransverseMomentum = mcTransverseMomentum;
 }
 
 //===========================================================
 
-float Variables::GetMCTransverseMomentum() const
+double Variables::GetMCTransverseMomentum() const
 {
     return m_MCTransverseMomentum;
 }
 
 //===========================================================
 
-void Variables::SetTransverseEnergy(float transverseEnergy)
+void Variables::SetTransverseEnergy(double transverseEnergy)
 {
     m_TransverseEnergy = transverseEnergy;
 }
 
 //===========================================================
 
-float Variables::GetTransverseEnergy() const 
+double Variables::GetTransverseEnergy() const 
 {
     return m_TransverseEnergy;
 }
 
 //===========================================================
 
-void Variables::SetMCTransverseEnergy(float mcTransverseEnergy)
+void Variables::SetMCTransverseEnergy(double mcTransverseEnergy)
 {
     m_MCTransverseEnergy = mcTransverseEnergy;
 }
 
 //===========================================================
 
-float Variables::GetMCTransverseEnergy() const
+double Variables::GetMCTransverseEnergy() const
 {
     return m_MCTransverseEnergy;
 }
 
 //===========================================================
 
-void Variables::SetCosThetaMissing(float cosThetaMissing)
+void Variables::SetCosThetaMissing(double cosThetaMissing)
 {
     m_CosThetaMissing = cosThetaMissing;
 }
 
 //===========================================================
 
-float Variables::GetCosThetaMissing() const 
+double Variables::GetCosThetaMissing() const 
 {
     return m_CosThetaMissing;
 }
 
 //===========================================================
 
-void Variables::SetMCCosThetaMissing(float mcCosThetaMissing)
+void Variables::SetMCCosThetaMissing(double mcCosThetaMissing)
 {
     m_MCCosThetaMissing = mcCosThetaMissing;
 }
 
 //===========================================================
 
-float Variables::GetMCCosThetaMissing() const
+double Variables::GetMCCosThetaMissing() const
 {
     return m_MCCosThetaMissing;
 }
 
 //===========================================================
 
-void Variables::SetCosThetaMostEnergeticTrack(float cosThetaMostEnergeticTrack)
+void Variables::SetCosThetaMostEnergeticTrack(double cosThetaMostEnergeticTrack)
 {
     m_CosThetaMostEnergeticTrack = cosThetaMostEnergeticTrack;
 }
 
 //===========================================================
 
-float Variables::GetCosThetaMostEnergeticTrack() const 
+double Variables::GetCosThetaMostEnergeticTrack() const 
 {
     return m_CosThetaMostEnergeticTrack;
 }
 
 //===========================================================
 
-void Variables::SetRecoilMass(float recoilMass)
+void Variables::SetRecoilMass(double recoilMass)
 {
     m_RecoilMass = recoilMass;
 }
 
 //===========================================================
 
-float Variables::GetRecoilMass() const 
+double Variables::GetRecoilMass() const 
 {
     return m_RecoilMass;
 }
 
 //===========================================================
 
-void Variables::SetMCRecoilMass(float mcRecoilMass)
+void Variables::SetMCRecoilMass(double mcRecoilMass)
 {
     m_MCRecoilMass = mcRecoilMass;
 }
 
 //===========================================================
 
-float Variables::GetMCRecoilMass() const
+double Variables::GetMCRecoilMass() const
 {
     return m_MCRecoilMass;
 }
 
 //===========================================================
 
-void Variables::SetEnergyAroundMostEnergeticPfo(float energyAroundMostEnergeticPfo)
+void Variables::SetEnergyAroundMostEnergeticPfo(double energyAroundMostEnergeticPfo)
 {
     m_EnergyAroundMostEnergeticPfo = energyAroundMostEnergeticPfo;
 }
 
 //===========================================================
 
-float Variables::GetEnergyAroundMostEnergeticPfo() const 
+double Variables::GetEnergyAroundMostEnergeticPfo() const 
 {
     return m_EnergyAroundMostEnergeticPfo;
 }
 
 //===========================================================
 
-void Variables::SetY34(float y34)
+void Variables::SetY34(double y34)
 {
     m_y34 = y34;
 }
 
 //===========================================================
 
-float Variables::GetY34() const 
+double Variables::GetY34() const 
 {
     return m_y34;
 }
 
 //===========================================================
 
-void Variables::SetInvariantMassSystem(float invariantMassSystem)
+void Variables::SetInvariantMassSystem(double invariantMassSystem)
 {
     m_InvariantMassSystem = invariantMassSystem;
 }
 
 //=========================================================== 
 
-float Variables::GetInvariantMassSystem() const 
+double Variables::GetInvariantMassSystem() const 
 {
     return m_InvariantMassSystem;
 }
 
 //===========================================================
 
-void Variables::SetMCInvariantMassSystem(float mcInvariantMassSystem)
+void Variables::SetMCInvariantMassSystem(double mcInvariantMassSystem)
 {
     m_MCInvariantMassSystem = mcInvariantMassSystem;
 }
 
 //===========================================================
 
-float Variables::GetMCInvariantMassSystem() const
+double Variables::GetMCInvariantMassSystem() const
 {
     return m_MCInvariantMassSystem;
 }
 
 //===========================================================
 
-void Variables::SetCosThetaStarWBosons(float cosThetaStarWBosons)
+void Variables::SetCosThetaStarWBosons(double cosThetaStarWBosons)
 {
     m_CosThetaStarWBosons = cosThetaStarWBosons;
 }
 
 //===========================================================
 
-float Variables::GetCosThetaStarWBosons() const 
+double Variables::GetCosThetaStarWBosons() const 
 {
     return m_CosThetaStarWBosons;
 }
 
 //===========================================================
 
-void Variables::SetMCCosThetaStarWBosons(float mcCosThetaStarWBosons)
+void Variables::SetMCCosThetaStarWBosons(double mcCosThetaStarWBosons)
 {
     m_MCCosThetaStarWBosons = mcCosThetaStarWBosons;
 }
 
 //===========================================================
 
-float Variables::GetMCCosThetaStarWBosons() const
+double Variables::GetMCCosThetaStarWBosons() const
 {
     return m_MCCosThetaStarWBosons;
 }
 
 //===========================================================
 
-void Variables::SetCosThetaStarZBosons(float cosThetaStarZBosons)
+void Variables::SetCosThetaStarZBosons(double cosThetaStarZBosons)
 {
     m_CosThetaStarZBosons = cosThetaStarZBosons;
 }
 
 //===========================================================
 
-float Variables::GetCosThetaStarZBosons() const 
+double Variables::GetCosThetaStarZBosons() const 
 {
     return m_CosThetaStarZBosons;
 }
 
 //===========================================================
 
-void Variables::SetMCCosThetaStarZBosons(float mcCosThetaStarZBosons)
+void Variables::SetMCCosThetaStarZBosons(double mcCosThetaStarZBosons)
 {
     m_MCCosThetaStarZBosons = mcCosThetaStarZBosons;
 }
 
 //===========================================================
 
-float Variables::GetMCCosThetaStarZBosons() const
+double Variables::GetMCCosThetaStarZBosons() const
 {
     return m_MCCosThetaStarZBosons;
 }
 
-//=========================================================== FloatVector
+//=========================================================== DoubleVector
 
-void Variables::SetInvMassWVectors(FloatVector invMassWVectors)
+void Variables::SetInvMassWVectors(DoubleVector invMassWVectors)
 {
     m_InvMassWVectors = invMassWVectors;
 }
 
 //===========================================================
 
-FloatVector Variables::GetInvMassWVectors() const 
+DoubleVector Variables::GetInvMassWVectors() const 
 {
     return m_InvMassWVectors;
 }
 
 //===========================================================
 
-void Variables::SetInvMassZVectors(FloatVector invMassZVectors)
+void Variables::SetInvMassZVectors(DoubleVector invMassZVectors)
 {
     m_InvMassZVectors = invMassZVectors;
 }
 
 //===========================================================
 
-FloatVector Variables::GetInvMassZVectors() const 
+DoubleVector Variables::GetInvMassZVectors() const 
 {
     return m_InvMassZVectors;
 }
 
 //===========================================================
 
-void Variables::SetMCInvMassWVectors(FloatVector mcInvMassWVectors)
+void Variables::SetMCInvMassWVectors(DoubleVector mcInvMassWVectors)
 {
     m_MCInvMassWVectors = mcInvMassWVectors;
 }
 
 //===========================================================
 
-FloatVector Variables::GetMCInvMassWVectors() const
+DoubleVector Variables::GetMCInvMassWVectors() const
 {
     return m_MCInvMassWVectors;
 }
 
 //===========================================================
 
-void Variables::SetMCInvMassZVectors(FloatVector mcInvMassZVectors)
+void Variables::SetMCInvMassZVectors(DoubleVector mcInvMassZVectors)
 {
     m_MCInvMassZVectors = mcInvMassZVectors;
 }
 
 //===========================================================
 
-FloatVector Variables::GetMCInvMassZVectors() const
+DoubleVector Variables::GetMCInvMassZVectors() const
 {
     return m_MCInvMassZVectors;
 }
 
 //===========================================================
 
-void Variables::SetEnergyJets(FloatVector energyJets)
+void Variables::SetEnergyJets(DoubleVector energyJets)
 {
     m_EnergyJets = energyJets;
 }
 
 //===========================================================
 
-FloatVector Variables::GetEnergyJets() const 
+DoubleVector Variables::GetEnergyJets() const 
 {
     return m_EnergyJets;
 }
 
 //===========================================================
 
-float Variables::GetLowestEnergyJet() const
+double Variables::GetLowestEnergyJet() const
 {
-    float lowestEnergyJet(std::numeric_limits<float>::max());
+    double lowestEnergyJet(std::numeric_limits<double>::max());
 
-    for (FloatVector::const_iterator iter = m_EnergyJets.begin(); iter != m_EnergyJets.end(); iter++)
+    for (DoubleVector::const_iterator iter = m_EnergyJets.begin(); iter != m_EnergyJets.end(); iter++)
     {
-        const float energyJet(*iter);
+        const double energyJet(*iter);
         if (energyJet < lowestEnergyJet)
         {
             lowestEnergyJet = energyJet;
@@ -615,28 +617,28 @@ float Variables::GetLowestEnergyJet() const
 
 //===========================================================
 
-void Variables::SetCosThetaStarWJets(FloatVector cosThetaStarWJets)
+void Variables::SetCosThetaStarWJets(DoubleVector cosThetaStarWJets)
 {
     m_CosThetaStarWJets = cosThetaStarWJets;
 }
 
 //===========================================================
 
-FloatVector Variables::GetCosThetaStarWJets() const 
+DoubleVector Variables::GetCosThetaStarWJets() const 
 {
     return m_CosThetaStarWJets;
 }
 
 //===========================================================
 
-void Variables::SetCosThetaStarZJets(FloatVector cosThetaStarZJets)
+void Variables::SetCosThetaStarZJets(DoubleVector cosThetaStarZJets)
 {
     m_CosThetaStarZJets = cosThetaStarZJets;
 }
 
 //===========================================================
 
-FloatVector Variables::GetCosThetaStarZJets() const 
+DoubleVector Variables::GetCosThetaStarZJets() const 
 {
     return m_CosThetaStarZJets;
 }

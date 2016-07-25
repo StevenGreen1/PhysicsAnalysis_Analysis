@@ -125,6 +125,8 @@ void SelectionProcessor::processEvent(LCEvent * pLCEvent)
 
     m_nEvent++;
 
+    m_pVariables->Print();
+
     m_pTTree->Fill();
 }
 

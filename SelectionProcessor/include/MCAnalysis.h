@@ -53,7 +53,7 @@ class MCAnalysis
          *  @param mcParticleVector vector of pointers to lcio mc particles
          *  @param invariantMass invariant mass of the system of lcio mc particles in mcParticleVector
          */
-        void FindMCInvariantMass(MCParticleVector &mcParticleVector, float &invariantMass) const;
+        void FindMCInvariantMass(MCParticleVector &mcParticleVector, double &invariantMass) const;
 
         /**
          *  @brief Calculate the transverse momentum of all particles in m_QuarkMCParticleVector
@@ -97,7 +97,7 @@ class MCAnalysis
          * @param referenceFrameObjects MCParticleVector defining energy 4 vector for reference frame for polar angle calculation
          * @param cosThetaStar cosine of the polar angle of the objectOfInterest in a reference frame defined by objectOfInterest and referenceFrameObjects
          */
-        void CalculateMCCosThetaStar(MCParticleVector objectOfInterest, MCParticleVector referenceFrameObjects, float &cosThetaStar) const;
+        void CalculateMCCosThetaStar(MCParticleVector objectOfInterest, MCParticleVector referenceFrameObjects, double &cosThetaStar) const;
 
         /**
          * @brief Calculate the energy 4 vector for a given vector of lcio particles
@@ -114,11 +114,11 @@ class MCAnalysis
         MCParticleVector       m_MCWVector2;                ///< Second W candidate
         MCParticleVector       m_MCZVector1;                ///< First Z candidate
         MCParticleVector       m_MCZVector2;                ///< Second Z candidate
-        const float            m_WBosonMass;                ///< W boson mass used for quark pairing
-        const float            m_ZBosonMass;                ///< Z boson mass used for quark pairing
-        const float            m_CrossingAngle;             ///< Crossing angle for CLIC ILD, radians
-        const float            m_EventMCEnergy;             ///< MC event energy excluding beam effects
-        float                  m_y34;                       ///< Jet clustering variable
+        const double            m_WBosonMass;                ///< W boson mass used for quark pairing
+        const double            m_ZBosonMass;                ///< Z boson mass used for quark pairing
+        const double            m_CrossingAngle;             ///< Crossing angle for CLIC ILD, radians
+        const double            m_EventMCEnergy;             ///< MC event energy excluding beam effects
+        double                  m_y34;                       ///< Jet clustering variable
 };
 
 #endif // #ifndef MC_ANALYSIS_H

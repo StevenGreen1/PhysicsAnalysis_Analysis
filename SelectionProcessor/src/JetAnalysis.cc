@@ -15,9 +15,9 @@ JetAnalysis::JetAnalysis(const EVENT::LCCollection *pLCCollection, Variables *&v
     m_WBosonMass(80.385f),
     m_ZBosonMass(91.1876f),
     m_CrossingAngle(0.01),
-    m_EventMCEnergy(1400.f),
-    m_ConeAngle(10.f),
-    m_y34(std::numeric_limits<float>::max())
+    m_EventMCEnergy(1400.0),
+    m_ConeAngle(10.0),
+    m_y34(std::numeric_limits<double>::max())
 {
     m_JetVector.push_back(dynamic_cast<EVENT::ReconstructedParticle*>(pLCCollection->getElementAt(0)));
     m_JetVector.push_back(dynamic_cast<EVENT::ReconstructedParticle*>(pLCCollection->getElementAt(1)));
@@ -64,8 +64,8 @@ void JetAnalysis::CalculateJetClusteringVariableY34(const EVENT::LCCollection *p
 {
     std::string stringY34("y_{n-1,n}");
     std::string stringY45("y_{n,n+1}");
-    const float parameterY34(pLCCollection->getParameters().getFloatVal(stringY34));
-    const float minusLogYSeparation((parameterY34 > std::numeric_limits<double>::epsilon()) ? - std::log10(parameterY34) : 0.f);
+    const double parameterY34(pLCCollection->getParameters().getFloatVal(stringY34));
+    const double minusLogYSeparation((parameterY34 > std::numeric_limits<double>::epsilon()) ? - std::log10(parameterY34) : 0.0);
     m_pVariables->SetY34(minusLogYSeparation);
 }
 
@@ -73,7 +73,7 @@ void JetAnalysis::CalculateJetClusteringVariableY34(const EVENT::LCCollection *p
 
 void JetAnalysis::JetVariables()
 {
-    FloatVector energyJets;
+    DoubleVector energyJets;
     IntVector nParticlesJets;
     IntVector nChargedParticlesJets;
 
@@ -116,8 +116,8 @@ void JetAnalysis::JetPairing()
     IntVector combination3 (array3, array3 + sizeof(array3) / sizeof(array3[0]));
     combinations.push_back(combination3);
 
-    float bestWMetric(std::numeric_limits<float>::max()), bestZMetric(std::numeric_limits<float>::max());
-    FloatVector bestWMasses, bestZMasses;
+    double bestWMetric(std::numeric_limits<double>::max()), bestZMetric(std::numeric_limits<double>::max());
+    DoubleVector bestWMasses, bestZMasses;
 
     for (std::vector<IntVector>::iterator iter = combinations.begin(); iter != combinations.end(); iter++)
     {
@@ -129,13 +129,13 @@ void JetAnalysis::JetPairing()
         trialPair2.push_back(m_JetVector.at(combination.at(2)));
         trialPair2.push_back(m_JetVector.at(combination.at(3)));
 
-        float invariantMass1(0.f), invariantMass2(0.f);
+        double invariantMass1(0.0), invariantMass2(0.0);
 
         this->FindInvariantMass(trialPair1, invariantMass1);
         this->FindInvariantMass(trialPair2, invariantMass2);
 
-        const float wMetric((std::fabs(invariantMass1-m_WBosonMass))*std::fabs(invariantMass2-m_WBosonMass));
-        const float zMetric((std::fabs(invariantMass1-m_ZBosonMass))*std::fabs(invariantMass2-m_ZBosonMass));
+        const double wMetric((std::fabs(invariantMass1-m_WBosonMass))*std::fabs(invariantMass2-m_WBosonMass));
+        const double zMetric((std::fabs(invariantMass1-m_ZBosonMass))*std::fabs(invariantMass2-m_ZBosonMass));
 
         if (wMetric < bestWMetric)
         {
@@ -164,17 +164,17 @@ void JetAnalysis::JetPairing()
 
 //===========================================================
 
-void JetAnalysis::FindInvariantMass(ParticleVector &jetVector, float &invariantMass) const
+void JetAnalysis::FindInvariantMass(ParticleVector &jetVector, double &invariantMass) const
 {
-    float pxTot(0.f), pyTot(0.f), pzTot(0.f), energyTot(0.f);
+    double pxTot(0.0), pyTot(0.0), pzTot(0.0), energyTot(0.0);
 
     for (ParticleVector::iterator iter = jetVector.begin(); iter != jetVector.end(); iter++)
     {
         const EVENT::ReconstructedParticle* pReconstructedParticle(*iter);
-        const float px(pReconstructedParticle->getMomentum()[0]);
-        const float py(pReconstructedParticle->getMomentum()[1]);
-        const float pz(pReconstructedParticle->getMomentum()[2]);
-        const float energy(pReconstructedParticle->getEnergy());
+        const double px(pReconstructedParticle->getMomentum()[0]);
+        const double py(pReconstructedParticle->getMomentum()[1]);
+        const double pz(pReconstructedParticle->getMomentum()[2]);
+        const double energy(pReconstructedParticle->getEnergy());
 
         pxTot += px;
         pyTot += py;
@@ -189,15 +189,15 @@ void JetAnalysis::FindInvariantMass(ParticleVector &jetVector, float &invariantM
 
 void JetAnalysis::CalculateTransverseMomentum()
 {
-    float transverseMomentum(0.f);
+    double transverseMomentum(0.0);
     for (ParticleVector::iterator iter = m_JetVector.begin(); iter != m_JetVector.end(); iter++)
     {
         const EVENT::ReconstructedParticle* pReconstructedParticle(*iter);
-        const float px(pReconstructedParticle->getMomentum()[0]);
-        const float py(pReconstructedParticle->getMomentum()[1]);
-        const float pz(pReconstructedParticle->getMomentum()[2]);
-        const float p(std::sqrt(px * px + py * py + pz * pz));
-        const float energy(pReconstructedParticle->getEnergy());
+        const double px(pReconstructedParticle->getMomentum()[0]);
+        const double py(pReconstructedParticle->getMomentum()[1]);
+        const double pz(pReconstructedParticle->getMomentum()[2]);
+        const double p(std::sqrt(px * px + py * py + pz * pz));
+        const double energy(pReconstructedParticle->getEnergy());
         transverseMomentum += energy * std::sqrt(px*px + py*py) / p;
     }
     m_pVariables->SetTransverseMomentum(transverseMomentum);
@@ -207,12 +207,12 @@ void JetAnalysis::CalculateTransverseMomentum()
 
 void JetAnalysis::CalculateTransverseEnergy()
 {
-    float transverseEnergy(0.f);
+    double transverseEnergy(0.0);
     for (ParticleVector::iterator iter = m_JetVector.begin(); iter != m_JetVector.end(); iter++)
     {
         const EVENT::ReconstructedParticle* pReconstructedParticle(*iter);
-        const float px(pReconstructedParticle->getMomentum()[0]);
-        const float py(pReconstructedParticle->getMomentum()[1]);
+        const double px(pReconstructedParticle->getMomentum()[0]);
+        const double py(pReconstructedParticle->getMomentum()[1]);
 
         transverseEnergy += std::sqrt(px*px + py*py);
     }
@@ -223,17 +223,17 @@ void JetAnalysis::CalculateTransverseEnergy()
 
 void JetAnalysis::CalculateCosThetaMissingMomentum() 
 {
-    float pxMis(0.f);
-    float pyMis(0.f);
-    float pzMis(0.f);
+    double pxMis(0.0);
+    double pyMis(0.0);
+    double pzMis(0.0);
     this->FindMissingMomentum(pxMis, pyMis, pzMis);
-    const float pMis(std::sqrt(pxMis * pxMis + pyMis * pyMis + pzMis * pzMis));
+    const double pMis(std::sqrt(pxMis * pxMis + pyMis * pyMis + pzMis * pzMis));
     m_pVariables->SetCosThetaMissing(pzMis / pMis);
 }
 
 //===========================================================
 
-void JetAnalysis::FindMissingMomentum(float &pxMis, float &pyMis, float &pzMis) const
+void JetAnalysis::FindMissingMomentum(double &pxMis, double &pyMis, double &pzMis) const
 {
     for (ParticleVector::const_iterator iter = m_JetVector.begin(); iter != m_JetVector.end(); iter++)
     {
@@ -242,7 +242,7 @@ void JetAnalysis::FindMissingMomentum(float &pxMis, float &pyMis, float &pzMis) 
         pyMis -= pReconstructedParticle->getMomentum()[1];
         pzMis -= pReconstructedParticle->getMomentum()[2];
     }
-    const float xFromCrossingAngle(m_EventMCEnergy * sin(m_CrossingAngle));
+    const double xFromCrossingAngle(m_EventMCEnergy * sin(m_CrossingAngle));
     pxMis + xFromCrossingAngle;
 }
 
@@ -252,13 +252,13 @@ void JetAnalysis::CalculateCosThetaMostEnergeticTrack()
 {
     EVENT::TrackVec tracksMostEnergeticChargedPfo;
     this->FindMostEnergeticTrack(tracksMostEnergeticChargedPfo);
-    float largestCosThetaTrack(0.f);
+    double largestCosThetaTrack(0.0);
 
     for (EVENT::TrackVec::iterator iter = tracksMostEnergeticChargedPfo.begin(); iter != tracksMostEnergeticChargedPfo.end(); iter++)
     {
         EVENT::Track *pTrack(*iter);
-        const float tanThetaTrack(1.f / pTrack->getTanLambda());
-        const float cosThetaTrack(cos(atan(tanThetaTrack)));
+        const double tanThetaTrack(1.0 / pTrack->getTanLambda());
+        const double cosThetaTrack(cos(atan(tanThetaTrack)));
 
         if (cosThetaTrack > largestCosThetaTrack)
         {
@@ -280,7 +280,7 @@ void JetAnalysis::FindMostEnergeticTrack(EVENT::TrackVec &tracksMostEnergeticCha
         pReconstructedParticleVec->insert(pReconstructedParticleVec->end(), pReconstructedParticle->getParticles().begin(), pReconstructedParticle->getParticles().end());
     }
 
-    float energyMostEnergeticChargedPfo(0.f);
+    double energyMostEnergeticChargedPfo(0.0);
 
     for (ParticleVector::const_iterator iter = pReconstructedParticleVec->begin(); iter != pReconstructedParticleVec->end(); iter++)
     {
@@ -298,9 +298,9 @@ void JetAnalysis::FindMostEnergeticTrack(EVENT::TrackVec &tracksMostEnergeticCha
 
 void JetAnalysis::CalculateRecoilMass()
 {
-    const float xFromCrossingAngle(m_EventMCEnergy * sin(m_CrossingAngle));
+    const double xFromCrossingAngle(m_EventMCEnergy * sin(m_CrossingAngle));
     TLorentzVector pInit(xFromCrossingAngle,0,0,m_EventMCEnergy);
-    float px(0.f), py(0.f), pz(0.f), E(0.f);
+    double px(0.0), py(0.0), pz(0.0), E(0.0);
 
     for (ParticleVector::const_iterator iter = m_JetVector.begin(); iter != m_JetVector.end(); iter++)
     {
@@ -313,7 +313,7 @@ void JetAnalysis::CalculateRecoilMass()
 
     TLorentzVector pVis(px,py,pz,E);
     TLorentzVector pMis(pInit - pVis);
-    float recoilMass(pMis.M()); // Invairant Mass/Magnitude
+    double recoilMass(pMis.M()); // Invairant Mass/Magnitude
     m_pVariables->SetRecoilMass(recoilMass);
 }
 
@@ -331,7 +331,7 @@ void JetAnalysis::CalculateEnergyInConeAroundMostEnergeticPfo()
         pReconstructedParticleVec->insert(pReconstructedParticleVec->end(), pReconstructedParticle->getParticles().begin(), pReconstructedParticle->getParticles().end());
     }
 
-    float energyAroundMostEnergeticChargedPfo(0.f);
+    double energyAroundMostEnergeticChargedPfo(0.0);
     this->FindEnergyAroundPfo(pReconstructedParticleVec, pMostEnergeticChargedPfo, energyAroundMostEnergeticChargedPfo);
     m_pVariables->SetEnergyAroundMostEnergeticPfo(energyAroundMostEnergeticChargedPfo);
 }
@@ -348,7 +348,7 @@ void JetAnalysis::FindMostEnergeticChargedParticle(const EVENT::ReconstructedPar
         pReconstructedParticleVec->insert(pReconstructedParticleVec->end(), pReconstructedParticle->getParticles().begin(), pReconstructedParticle->getParticles().end());
     }
 
-    float energyMostEnergeticChargedPfo(0.f);
+    double energyMostEnergeticChargedPfo(0.0);
 
     for (ParticleVector::iterator iter = pReconstructedParticleVec->begin(); iter != pReconstructedParticleVec->end(); iter++)
     {
@@ -364,52 +364,55 @@ void JetAnalysis::FindMostEnergeticChargedParticle(const EVENT::ReconstructedPar
 
 //===========================================================
 
-void JetAnalysis::FindEnergyAroundPfo(ParticleVector *pParticleVector, const EVENT::ReconstructedParticle *pMostEnergeticChargedPfo, float &energyAroundMostEnergeticChargedPfo) const
+void JetAnalysis::FindEnergyAroundPfo(ParticleVector *pParticleVector, const EVENT::ReconstructedParticle *pMostEnergeticChargedPfo, double &energyAroundMostEnergeticChargedPfo) const
 {
-    energyAroundMostEnergeticChargedPfo = 0.f;
-    float pfoX(0.f), pfoY(0.f), pfoZ(0.f);
+    energyAroundMostEnergeticChargedPfo = 0.0;
+    double pfoX(0.0), pfoY(0.0), pfoZ(0.0);
     this->FindPfoPosition(pMostEnergeticChargedPfo, pfoX, pfoY, pfoZ);
     TVector3 pfoPosition(pfoX, pfoY, pfoZ);
 
-    const float pfoPx(pMostEnergeticChargedPfo->getMomentum()[0]);
-    const float pfoPy(pMostEnergeticChargedPfo->getMomentum()[1]);
-    const float pfoPz(pMostEnergeticChargedPfo->getMomentum()[2]);
+    const double pfoPx(pMostEnergeticChargedPfo->getMomentum()[0]);
+    const double pfoPy(pMostEnergeticChargedPfo->getMomentum()[1]);
+    const double pfoPz(pMostEnergeticChargedPfo->getMomentum()[2]);
 
     TVector3 pfoP(pfoPx,pfoPy,pfoPz);
     TVector3 unitPfoP(pfoP.Unit());
     EVENT::ClusterVec clusters;
 
+    EVENT::Cluster *pClusterOfInterest(NULL);
+
     for (ParticleVector::const_iterator partIt = pParticleVector->begin(); partIt != pParticleVector->end(); partIt++)
     {
         const EVENT::ReconstructedParticle *pReconstructedParticle(*partIt);
+
         clusters.insert(clusters.end(), pReconstructedParticle->getClusters().begin(), pReconstructedParticle->getClusters().end());
     }
 
     for (EVENT::ClusterVec::const_iterator clusIt = clusters.begin(); clusIt != clusters.end(); clusIt++)
     {
         const EVENT::Cluster *pCluster(*clusIt);
-        const float pfoXCandidate(pCluster->getPosition()[0]);
-        const float pfoYCandidate(pCluster->getPosition()[1]);
-        const float pfoZCandidate(pCluster->getPosition()[2]);
+        const double pfoXCandidate(pCluster->getPosition()[0]);
+        const double pfoYCandidate(pCluster->getPosition()[1]);
+        const double pfoZCandidate(pCluster->getPosition()[2]);
         TVector3 pfoPositionCandidate(pfoXCandidate,pfoYCandidate,pfoZCandidate);
         TVector3 pfoCentroidToPfoCandidate(pfoPositionCandidate - pfoPosition);
         TVector3 unitPfoCentroidToPfoCandidate(pfoCentroidToPfoCandidate.Unit());
 
-        float cosTheta(std::numeric_limits<float>::max());
-        float theta(std::numeric_limits<float>::max());
+        double cosTheta(std::numeric_limits<double>::max());
+        double theta(std::numeric_limits<double>::max());
 
-        if (std::fabs(unitPfoCentroidToPfoCandidate.x()) < std::numeric_limits<float>::min() and std::fabs(unitPfoCentroidToPfoCandidate.y()) < std::numeric_limits<float>::min() and std::fabs(unitPfoCentroidToPfoCandidate.z()) < std::numeric_limits<float>::min())
+        if (std::fabs(unitPfoCentroidToPfoCandidate.x()) < std::numeric_limits<double>::epsilon() and std::fabs(unitPfoCentroidToPfoCandidate.y()) < std::numeric_limits<double>::epsilon() and std::fabs(unitPfoCentroidToPfoCandidate.z()) < std::numeric_limits<double>::epsilon())
         {
-            cosTheta = 1.f;
-            theta = 0.f;
+            cosTheta = 1.0;
+            theta = 0.0;
         }
         else
         {
             cosTheta = unitPfoCentroidToPfoCandidate * unitPfoP; // Dot Product
-            theta = acos(cosTheta) * 180 / M_PI;
+            theta = acos(cosTheta) * 180.0 / M_PI;
         }
 
-        if (m_ConeAngle - theta > 0.f)
+        if (m_ConeAngle - theta > 0.0)
         {
             energyAroundMostEnergeticChargedPfo += pCluster->getEnergy();
         }
@@ -418,12 +421,12 @@ void JetAnalysis::FindEnergyAroundPfo(ParticleVector *pParticleVector, const EVE
 
 //===========================================================
 
-void JetAnalysis::FindPfoPosition(const EVENT::ReconstructedParticle *pReconstructedParticle, float &x, float &y, float &z) const
+void JetAnalysis::FindPfoPosition(const EVENT::ReconstructedParticle *pReconstructedParticle, double &x, double &y, double &z) const
 {
-    x = 0.f;
-    y = 0.f;
-    z = 0.f;
-    float pfoEnergy(0.f);
+    x = 0.0;
+    y = 0.0;
+    z = 0.0;
+    double pfoEnergy(0.0);
 
     for (EVENT::ClusterVec::const_iterator clusIt = pReconstructedParticle->getClusters().begin(); clusIt != pReconstructedParticle->getClusters().end(); clusIt++)
     {
@@ -443,17 +446,13 @@ void JetAnalysis::FindPfoPosition(const EVENT::ReconstructedParticle *pReconstru
 
 void JetAnalysis::IsEventAppropriate()
 {
-    std::cout << "1) Checking event" << std::endl;
-    m_pVariables->Print();
-
     if (!(m_pVariables->GetRecoilMass() >= 250 and m_pVariables->GetTransverseMomentum() >= 40 and m_pVariables->GetTransverseEnergy() >= 150 and std::fabs(m_pVariables->GetCosThetaMissing()) < 0.99f and std::fabs(m_pVariables->GetCosThetaMostEnergeticTrack()) < 0.99f and m_pVariables->GetEnergyAroundMostEnergeticPfo() >= 2 and m_pVariables->GetY34() < 3.5))
     {
         m_pVariables->SetAppropriateEvent(false);
         return;
     }
 
-    std::cout << "2) Checking event" << std::endl;
-    if (m_pVariables->GetLowestEnergyJet() < 10.f)
+    if (m_pVariables->GetLowestEnergyJet() < 10.0)
     {
         m_pVariables->SetAppropriateEvent(false);
         return;
@@ -485,15 +484,9 @@ void JetAnalysis::IsEventWW()
         return;
     }
 
-    std::cout << "W Vector Right Size" << std::endl;
-    std::cout << "m_pVariables->GetInvMassWVectors().at(0) : " << m_pVariables->GetInvMassWVectors().at(0) << std::endl;
-    std::cout << "m_pVariables->GetInvMassWVectors().at(1) : " << m_pVariables->GetInvMassWVectors().at(1) << std::endl;
-
-
     if (60 < m_pVariables->GetInvMassWVectors().at(0) and m_pVariables->GetInvMassWVectors().at(0) < 88 and 60 < m_pVariables->GetInvMassWVectors().at(1) and m_pVariables->GetInvMassWVectors().at(1) < 88)
     {
         m_pVariables->SetIsEventWW(true);
-        std::cout << "Good WW Event" << std::endl;
     }
 
     return;
@@ -521,15 +514,15 @@ void JetAnalysis::IsEventZZ()
 
 void JetAnalysis::DefineVariablesOfInterest()
 {
-    float invariantMassSystem(std::numeric_limits<float>::max());
+    double invariantMassSystem(std::numeric_limits<double>::max());
     this->FindInvariantMass(m_JetVector,invariantMassSystem);
     m_pVariables->SetInvariantMassSystem(invariantMassSystem);
 
-    float cosThetaStarWBoson(0.f);
+    double cosThetaStarWBoson(0.0);
     this->CalculateCosThetaStar(m_WVector1,m_WVector2,cosThetaStarWBoson);
     m_pVariables->SetCosThetaStarWBosons(cosThetaStarWBoson);
 
-    float cosThetaStarZBoson(0.f);
+    double cosThetaStarZBoson(0.0);
     this->CalculateCosThetaStar(m_ZVector1,m_ZVector2,cosThetaStarZBoson);
     m_pVariables->SetCosThetaStarZBosons(cosThetaStarZBoson);
 
@@ -540,8 +533,8 @@ void JetAnalysis::DefineVariablesOfInterest()
     }
 
     ParticleVector jetVectorQ1, jetVectorQ2;
-    float cosThetaStarWJet(0.f), cosThetaStarZJet(0.f);
-    FloatVector cosThetaStarWJets, cosThetaStarZJets;
+    double cosThetaStarWJet(0.0), cosThetaStarZJet(0.0);
+    DoubleVector cosThetaStarWJets, cosThetaStarZJets;
 
     jetVectorQ1.push_back(m_WVector1.at(0));
     jetVectorQ2.push_back(m_WVector1.at(1));
@@ -577,9 +570,9 @@ void JetAnalysis::DefineVariablesOfInterest()
 
 //===========================================================
 
-void JetAnalysis::CalculateCosThetaStar(ParticleVector objectOfInterest, ParticleVector referenceFrameObjects, float &cosThetaStar) const 
+void JetAnalysis::CalculateCosThetaStar(ParticleVector objectOfInterest, ParticleVector referenceFrameObjects, double &cosThetaStar) const 
 {
-    cosThetaStar = -1.f;
+    cosThetaStar = -1.0;
     TLorentzVector objectOfInterest4Vec, referenceFrameObjects4Vec;
 
     this->DefineEnergy4Vec(objectOfInterest, objectOfInterest4Vec);
@@ -595,7 +588,7 @@ void JetAnalysis::CalculateCosThetaStar(ParticleVector objectOfInterest, Particl
 
 void JetAnalysis::DefineEnergy4Vec(ParticleVector &jetVector, TLorentzVector &tLorentzVector) const 
 {
-    float px(0.f), py(0.f), pz(0.f), E(0.f);
+    double px(0.0), py(0.0), pz(0.0), E(0.0);
 
     for (ParticleVector::const_iterator iter = jetVector.begin(); iter != jetVector.end(); iter++)
     {

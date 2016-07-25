@@ -22,7 +22,7 @@
 class JetAnalysis 
 {
     typedef std::vector<const EVENT::ReconstructedParticle*> ParticleVector;
-//    typedef std::vector<float> FloatVector;
+//    typedef std::vector<double> DoubleVector;
 //    typedef std::vector<int> IntVector;
 
     public:
@@ -66,7 +66,7 @@ class JetAnalysis
          *  @param particleVector vector of pointers to lcio particles 
          *  @param invariantMass invariant mass of the system of lcio particles in particleVector
          */
-        void FindInvariantMass(ParticleVector &particleVector, float &invariantMass) const;
+        void FindInvariantMass(ParticleVector &particleVector, double &invariantMass) const;
 
         /**
          *  @brief Calculate the transverse momentum of all particles in m_JetVector
@@ -90,7 +90,7 @@ class JetAnalysis
          *  @param pyMis missing momentum in y direction
          *  @param pzMis missing momentum in z direction
          */
-        void FindMissingMomentum(float &pxMis, float &pyMis, float &pzMis) const;
+        void FindMissingMomentum(double &pxMis, double &pyMis, double &pzMis) const;
 
         /**
          *  @brief Calculate the cosine theta of the track assocaited to the particle with the largest energy in the jet vector
@@ -128,7 +128,7 @@ class JetAnalysis
          *  @param pMostEnergeticChargedPfo to use as base for cone search
          *  @param energyAroundMostEnergeticChargedPfo energy surrounding Pfo in question
          */
-        void FindEnergyAroundPfo(ParticleVector *pParticleVector, const EVENT::ReconstructedParticle *pMostEnergeticChargedPfo, float &energyAroundMostEnergeticChargedPfo) const;
+        void FindEnergyAroundPfo(ParticleVector *pParticleVector, const EVENT::ReconstructedParticle *pMostEnergeticChargedPfo, double &energyAroundMostEnergeticChargedPfo) const;
 
         /**
          *  @brief Find the position of a pfo from the energy weighted cluster position (no pfo position or calo hit position stored to use as better option...)
@@ -138,7 +138,7 @@ class JetAnalysis
          *  @param y position of pfo
          *  @param z position of pfo
          */
-        void FindPfoPosition(const EVENT::ReconstructedParticle *pReconstructedParticle, float &x, float &y, float &z) const;
+        void FindPfoPosition(const EVENT::ReconstructedParticle *pReconstructedParticle, double &x, double &y, double &z) const;
 
         /**
          *  @brief Check to see if event has features indicating qqqqvv final state
@@ -167,7 +167,7 @@ class JetAnalysis
          * @param referenceFrameObjects ParticleVector defining energy 4 vector for reference frame for polar angle calculation
          * @param cosThetaStar cosine of the polar angle of the objectOfInterest in a reference frame defined by objectOfInterest and referenceFrameObjects
          */
-        void CalculateCosThetaStar(ParticleVector objectOfInterest, ParticleVector referenceFrameObjects, float &cosThetaStar) const;
+        void CalculateCosThetaStar(ParticleVector objectOfInterest, ParticleVector referenceFrameObjects, double &cosThetaStar) const;
 
         /**
          * @brief Calculate the energy 4 vector for a given vector of lcio particles
@@ -183,12 +183,12 @@ class JetAnalysis
         ParticleVector         m_WVector2;          ///< Second W candidate
         ParticleVector         m_ZVector1;          ///< First Z candidate
         ParticleVector         m_ZVector2;          ///< Second Z candidate
-        const float            m_WBosonMass;        ///< W boson mass used for jet pairing
-        const float            m_ZBosonMass;        ///< Z boson mass used for jet pairing
-        const float            m_CrossingAngle;     ///< Crossing angle for CLIC ILD, radians 
-        const float            m_EventMCEnergy;     ///< MC event energy excluding beam effects
-        const float            m_ConeAngle;         ///< Cone angle needed for cone energy measurement, degrees
-        float                  m_y34;               ///< Jet clustering variable
+        const double            m_WBosonMass;        ///< W boson mass used for jet pairing
+        const double            m_ZBosonMass;        ///< Z boson mass used for jet pairing
+        const double            m_CrossingAngle;     ///< Crossing angle for CLIC ILD, radians 
+        const double            m_EventMCEnergy;     ///< MC event energy excluding beam effects
+        const double            m_ConeAngle;         ///< Cone angle needed for cone energy measurement, degrees
+        double                  m_y34;               ///< Jet clustering variable
 };
 
 #endif // #ifndef JET_ANALYSIS_H
