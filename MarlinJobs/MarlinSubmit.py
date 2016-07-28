@@ -154,7 +154,6 @@ for eventSelection in eventsToSimulate:
             print res['Message']
             exit()
         job.submit(diracInstance)
-        os.system('rm *.cfg')
         #sys.exit()
 
 # Tidy Up
