@@ -48,7 +48,10 @@ def doesFileExist(lfn):
     from DIRAC.DataManagementSystem.Client.DataManager import DataManager
     dm = DataManager()
     result = dm.getActiveReplicas(lfn)
-    if result[('Value')][('Successful')]:
+    if not result['OK']:
+        print "ERROR",result['Message']
+        return False
+    if lfn in result['Value']['Successful']:
         return True
     else:
         return False

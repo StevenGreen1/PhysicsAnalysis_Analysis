@@ -18,12 +18,9 @@ jobDescription = 'PhysicsAnalysis'
 
 # Always define event type, events per file and energies in same way.  If not CLIC sample set ProdID to 0
 
-                       { 'EventType': 'ee_nunuqqqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 2, 'ProdID': 5527, 'NumberOfEvents': 335300 },
-
-
 eventsToSimulate = [
-                       { 'EventType': "ee_nunuww_nunuqqqq"  , 'Energy': 1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 2 },
-                       { 'EventType': "ee_nunuzz_nunuqqqq"  , 'Energy': 1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 2 },
+                       { 'EventType': "ee_nunuww_nunuqqqq"  , 'Energy': 1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 3 },
+                       { 'EventType': "ee_nunuzz_nunuqqqq"  , 'Energy': 1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 3 }
                    ]
 
 #===== Second level user input =====
@@ -53,7 +50,8 @@ for eventSelection in eventsToSimulate:
 
     diracInstance = DiracILC(withRepo=False)
     
-    slcioFormat = 'DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_GenNumber_(.*?)_(.*?)_(.*?)_REC.slcio'
+    slcioFormat = 'DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_GenNumber_(.*?)_(.*?)_(.*?)_DST.slcio'
+
     slcioFilesToProcess = getDstSlcioFiles(jobDescription,detectorModel,reconstructionVariant,energy,eventType)
 
     if not slcioFilesToProcess:

@@ -1,0 +1,78 @@
+<!--
+           Example steering file to run a standard reconstruction on the 3 ttbar events 
+      simulated with Mokka in this example dierectory.
+      Works with ilcsoft v01-16 (DBD production release)
+      Defines the standard reconstruction for ILD.
+-->
+
+
+<marlin>
+  <execute>
+    <processor name="MyFastJetProcessor1"/>
+    <processor name="MySelectionProcessor1"/>
+    <processor name="MyFastJetProcessor2"/>
+    <processor name="MySelectionProcessor2"/>
+    <processor name="MyFastJetProcessor3"/>
+    <processor name="MySelectionProcessor3"/>
+    <!--processor name="MyLCIOOutputProcessor"/-->
+  </execute>
+
+  <global>
+    <parameter name="LCIOInputFiles">
+      InputSlcioFile 
+    </parameter>
+    <parameter name="GearXMLFile" value="GearFile"/>
+    <parameter name="MaxRecordNumber" value="-1"/>
+    <parameter name="SkipNEvents" value="0"/>
+    <parameter name="SupressCheck" value="false"/>
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> MESSAGE </parameter>
+  </global>
+
+  <processor name="MyFastJetProcessor1" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec">kt_algorithm 0.75</parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 4 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> SelectedOutputJets </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> SelectedPandoraPFANewPFOs </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+  </processor>
+
+  <processor name="MySelectionProcessor1" type="SelectionProcessor">
+    <parameter name="RootFile" type="string">SelectionProcessorRootFileSelected</parameter>
+    <parameter name="CollectionName" type="string" lcioInType="ReconstructedParticle">SelectedOutputJets</parameter>
+    <parameter name="MCParticleCollection" type="string" lcioInType="ReconstructedParticle">MCParticlesSkimmed</parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor2" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec">kt_algorithm 0.75</parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 4 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> TightOutputJets </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> TightSelectedPandoraPFANewPFOs </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+  </processor>
+
+  <processor name="MySelectionProcessor2" type="SelectionProcessor">
+    <parameter name="RootFile" type="string">SelectionProcessorRootFileTight</parameter>
+    <parameter name="CollectionName" type="string" lcioInType="ReconstructedParticle">TightOutputJets</parameter>
+    <parameter name="MCParticleCollection" type="string" lcioInType="ReconstructedParticle">MCParticlesSkimmed</parameter>
+  </processor>
+
+  <processor name="MyFastJetProcessor3" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec">kt_algorithm 0.75</parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 4 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> LooseOutputJets </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> LooseSelectedPandoraPFANewPFOs </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+  </processor>
+
+  <processor name="MySelectionProcessor3" type="SelectionProcessor">
+    <parameter name="RootFile" type="string">SelectionProcessorRootFileLoose</parameter>
+    <parameter name="CollectionName" type="string" lcioInType="ReconstructedParticle">LooseOutputJets</parameter>
+    <parameter name="MCParticleCollection" type="string" lcioInType="ReconstructedParticle">MCParticlesSkimmed</parameter>
+  </processor>
+
+  <processor name="MyLCIOOutputProcessor" type="LCIOOutputProcessor">
+    <parameter name="LCIOOutputFile" type="string">OutputSlcioFile</parameter>
+    <parameter name="LCIOWriteMode" type="string">WRITE_NEW</parameter>
+    <!--parameter name="SplitFileSizekB" type="int">1992294 </parameter-->
+  </processor>
+</marlin>
