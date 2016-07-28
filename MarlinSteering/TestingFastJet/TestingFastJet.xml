@@ -1,0 +1,48 @@
+<!--
+           Example steering file to run a standard reconstruction on the 3 ttbar events 
+      simulated with Mokka in this example dierectory.
+      Works with ilcsoft v01-16 (DBD production release)
+      Defines the standard reconstruction for ILD.
+-->
+
+
+<marlin>
+  <execute>
+    <processor name="MyFastJetProcessor"/>
+    <processor name="MySelectionProcessor"/>
+    <processor name="MyLCIOOutputProcessor"/>
+  </execute>
+
+  <global>
+    <parameter name="LCIOInputFiles">
+      /r06/lc/sg568/PhysicsAnalysis/Slcio/Detector_Model_clic_ild_cdr/Reconstruction_Variant_clic_ild_cdr/ee_nunuqqqq/1400GeV/qqqq_nunu_dst_5527_3000.slcio 
+    </parameter>
+    <parameter name="GearXMLFile" value="/var/clus/usera/sg568/PhysicsAnalysis/Reconstruction/TemplateSteering/clic_ild_cdr.gear"/>
+    <parameter name="MaxRecordNumber" value="-1"/>
+    <parameter name="SkipNEvents" value="0"/>
+    <parameter name="SupressCheck" value="false"/>
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> MESSAGE </parameter>
+  </global>
+
+  <processor name="MyFastJetProcessor" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec">kt_algorithm 0.75</parameter>
+    <parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 4 </parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> TestingOutputJets </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> SelectedPandoraPFANewPFOs </parameter>
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+  </processor>
+
+  <processor name="MyLCIOOutputProcessor" type="LCIOOutputProcessor">
+    <parameter name="LCIOOutputFile" type="string">outputfile.slcio </parameter>
+    <parameter name="LCIOWriteMode" type="string">WRITE_NEW</parameter>
+    <!--parameter name="SplitFileSizekB" type="int">1992294 </parameter-->
+  </processor>
+
+  <processor name="MySelectionProcessor" type="SelectionProcessor">
+    <parameter name="RootFile" type="string">Testing.root</parameter>
+    <parameter name="CollectionName" type="string" lcioInType="ReconstructedParticle">TestingOutputJets</parameter>
+    <parameter name="MCParticleCollection" type="string" lcioInType="ReconstructedParticle">MCParticlesSkimmed</parameter>
+    <!--parameter name="MCEventEnergy" type="float">1400.0</parameter>
+    <parameter name="ConeAngle" type="float">10.0</parameter-->
+  </processor>
+</marlin>

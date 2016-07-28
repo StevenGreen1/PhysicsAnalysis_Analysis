@@ -11,6 +11,14 @@
  <marlin>
     <execute>
         <processor name="MyStdHepReader" />
+        <processor name="MyStdHepReader2" />
+        <processor name="MyStdHepReader3" />
+        <processor name="MyStdHepReader4" />
+        <processor name="MyStdHepReader5" />
+        <processor name="MyStdHepReader6" />
+        <processor name="MyStdHepReader7" />
+        <processor name="MyStdHepReader8" />
+        <processor name="MyStdHepReader9" />
         <processor name="MyGeneratorProcessor"/>
     </execute>
 
@@ -25,8 +33,35 @@
     </global>
 
     <processor name="MyStdHepReader" type="StdHepReader">
-        <parameter name="StdHepFileName" type="string">whizard_ee_nunuzz_nunuqqqq_1400GeV.001.stdhep</parameter>
+        <parameter name="StdHepFileName" type="string">/var/clus/usera/sg568/PhysicsAnalysis/Generator/WhizardResults/ee_nunuww_nunuqqqq/1400GeV/StdHep/UploadedFiles/whizard_ee_nunuww_nunuqqqq_1400GeV.001.stdhep</parameter>
     </processor>
+
+    <processor name="MyStdHepReader2" type="StdHepReader">
+        <parameter name="StdHepFileName" type="string">/var/clus/usera/sg568/PhysicsAnalysis/Generator/WhizardResults/ee_nunuww_nunuqqqq/1400GeV/StdHep/UploadedFiles/whizard_ee_nunuww_nunuqqqq_1400GeV.002.stdhep</parameter>
+    </processor>
+
+    <processor name="MyStdHepReader3" type="StdHepReader">
+        <parameter name="StdHepFileName" type="string">/var/clus/usera/sg568/PhysicsAnalysis/Generator/WhizardResults/ee_nunuww_nunuqqqq/1400GeV/StdHep/UploadedFiles/whizard_ee_nunuww_nunuqqqq_1400GeV.003.stdhep</parameter>
+    </processor>
+    <processor name="MyStdHepReader4" type="StdHepReader">
+        <parameter name="StdHepFileName" type="string">/var/clus/usera/sg568/PhysicsAnalysis/Generator/WhizardResults/ee_nunuww_nunuqqqq/1400GeV/StdHep/UploadedFiles/whizard_ee_nunuww_nunuqqqq_1400GeV.004.stdhep</parameter>
+    </processor>
+    <processor name="MyStdHepReader5" type="StdHepReader">
+        <parameter name="StdHepFileName" type="string">/var/clus/usera/sg568/PhysicsAnalysis/Generator/WhizardResults/ee_nunuww_nunuqqqq/1400GeV/StdHep/UploadedFiles/whizard_ee_nunuww_nunuqqqq_1400GeV.005.stdhep</parameter>
+    </processor>
+    <processor name="MyStdHepReader6" type="StdHepReader">
+        <parameter name="StdHepFileName" type="string">/var/clus/usera/sg568/PhysicsAnalysis/Generator/WhizardResults/ee_nunuww_nunuqqqq/1400GeV/StdHep/UploadedFiles/whizard_ee_nunuww_nunuqqqq_1400GeV.006.stdhep</parameter>
+    </processor>
+    <processor name="MyStdHepReader7" type="StdHepReader">
+        <parameter name="StdHepFileName" type="string">/var/clus/usera/sg568/PhysicsAnalysis/Generator/WhizardResults/ee_nunuww_nunuqqqq/1400GeV/StdHep/UploadedFiles/whizard_ee_nunuww_nunuqqqq_1400GeV.007.stdhep</parameter>
+    </processor>
+    <processor name="MyStdHepReader8" type="StdHepReader">
+        <parameter name="StdHepFileName" type="string">/var/clus/usera/sg568/PhysicsAnalysis/Generator/WhizardResults/ee_nunuww_nunuqqqq/1400GeV/StdHep/UploadedFiles/whizard_ee_nunuww_nunuqqqq_1400GeV.008.stdhep</parameter>
+    </processor>
+    <processor name="MyStdHepReader9" type="StdHepReader">
+        <parameter name="StdHepFileName" type="string">/var/clus/usera/sg568/PhysicsAnalysis/Generator/WhizardResults/ee_nunuww_nunuqqqq/1400GeV/StdHep/UploadedFiles/whizard_ee_nunuww_nunuqqqq_1400GeV.009.stdhep</parameter>
+    </processor>
+
 
     <processor name="MyGeneratorProcessor" type="GeneratorProcessor">
         <parameter name="MCParticle" type="string" value="MCParticle"/>
