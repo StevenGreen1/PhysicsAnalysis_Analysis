@@ -15,6 +15,9 @@
 #include <string>
 
 #include "TChain.h"
+#include "TList.h"
+#include "TSystemDirectory.h"
+#include "TSystemFile.h"
 
 class Process
 {
@@ -28,8 +31,9 @@ class Process
          *  @param eventType
          *  @param crossSection
          *  @param energy
+         *  @param analysisTag
          */
-        Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string eventType, const float crossSection, const float luminoscity, const int energy);
+        Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag);
 
         /**
          *  @brief Default destructor
@@ -52,6 +56,11 @@ class Process
         std::string GetEventType() const;
 
         /**
+         *  @brief Get analysis tag
+         */
+        int GetAnalysisTag() const;
+
+        /**
          *  @brief Print out all information about this process
          */
         void Print() const;
@@ -70,18 +79,18 @@ class Process
         template <class T>
         std::string NumberToString(T Number);
 
-        // Member variables 
-        const std::string     m_jobDescription;
-        const std::string     m_detectorModel;
-        const std::string     m_reconstructionVariant;
-        const std::string     m_eventType;
-        const float           m_crossSection;
-        const float           m_luminoscity;
-        const unsigned int    m_energy;
-        TChain*               m_pTChain;
-        int                   m_numberOfEntries;
-        float                 m_processWeight;
-        std::string           m_pathToFiles;
+        const std::string     m_jobDescription;          ///< Job description
+        const std::string     m_detectorModel;           ///< Detector model
+        const std::string     m_reconstructionVariant;   ///< Reconstruction variant
+        const std::string     m_eventType;               ///< Process 
+        const float           m_crossSection;            ///< Cross section of proces
+        const float           m_luminosity;              ///< Luminosity
+        const unsigned int    m_energy;                  ///< Energy of process
+        const int             m_analysisTag;             ///< Analysis tag for bookeeping
+        TChain*               m_pTChain;                 ///< Chain of analysis root files
+        int                   m_numberOfEntries;         ///< Number of entries in tree
+        float                 m_processWeight;           ///< Weight to give required luminosity
+        std::string           m_pathToFiles;             ///< Path to analysis root files
 };
 
 #endif
