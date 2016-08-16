@@ -31,7 +31,7 @@ int main(int argc, char **argv)
     //const Process *pProcess_ee_nunuww_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_nunuww_nunuqqqq",24.7,1500,1400,3);
     //const Process *pProcess_ee_nunuzz_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_nunuzz_nunuqqqq",24.7,1500,1400,3);
     const Process *pProcess_ee_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_nunuqqqq",22.16,1500,1400,3);
-//    const Process *pProcess_ee_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_nunuqqqq",24.7,1500,1400,3); <-CLIC 
+    //const Process *pProcess_CLIC_ee_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","CLIC_ee_nunuqqqq",24.7,1500,1400,3); // <-CLIC 
 
     // CLIC Backgrounds
 /*
@@ -70,6 +70,7 @@ int main(int argc, char **argv)
 //    processes.push_back(pProcess_ee_nunuzz_nunuqqqq);
 
     processes.push_back(pProcess_ee_nunuqqqq);
+//    processes.push_back(pProcess_CLIC_ee_nunuqqqq);
 /*
     processes.push_back(pProcess_ee_lnuqqqq);
     processes.push_back(pProcess_ee_llqqqq);

@@ -13,6 +13,7 @@
 #include <limits>
 #include <sstream>
 #include <string>
+#include <vector>
 
 #include "TChain.h"
 #include "TList.h"
@@ -21,6 +22,9 @@
 
 class Process
 {
+    typedef std::vector<int> IntVector;
+    typedef std::vector<double> DoubleVector;
+
     public:
         /**
          *  @brief Constructor
@@ -56,6 +60,11 @@ class Process
         std::string GetEventType() const;
 
         /**
+         *  @brief Return the energy for the given process
+         */
+        int GetEnergy() const;
+
+        /**
          *  @brief Get analysis tag
          */
         int GetAnalysisTag() const;
@@ -64,6 +73,13 @@ class Process
          *  @brief Print out all information about this process
          */
         void Print() const;
+
+        /**
+         *  @brief Check to see if event passes selection cuts
+         *
+         *  @param eventNumber
+         */
+        bool DoesEventPassCuts(int eventNumber) const;
 
     private:
         /**
@@ -79,6 +95,11 @@ class Process
         template <class T>
         std::string NumberToString(T Number);
 
+        /**
+         *  @brief Make map of TChain entry for process to bool determining whether event passes selection cuts
+         */
+        void MakeSelection();
+
         const std::string     m_jobDescription;          ///< Job description
         const std::string     m_detectorModel;           ///< Detector model
         const std::string     m_reconstructionVariant;   ///< Reconstruction variant
@@ -91,6 +112,7 @@ class Process
         int                   m_numberOfEntries;         ///< Number of entries in tree
         float                 m_processWeight;           ///< Weight to give required luminosity
         std::string           m_pathToFiles;             ///< Path to analysis root files
+        std::map<int,bool>    m_doesEventPassSelection;  ///< Does event number pass the selection cuts
 };
 
 #endif

@@ -58,7 +58,7 @@ MakePlots::MakePlots(const ProcessVector &processVector) :
 
     this->LoadData();
     this->WritePlots();
-//    this->WriteIndividualPlots();
+    this->WriteIndividualPlots();
 
 //    this->Make2DBoxPlot("InvMassWVector1","InvMassWVector2","ee_nunuww_nunuqqqq","ee_nunuqqqq");
 //    this->Make2DBoxPlot("InvMassZVector1","InvMassZVector2","ee_nunuzz_nunuqqqq","ee_nunuqqqq");
@@ -501,6 +501,9 @@ void MakePlots::LoadData()
         for (unsigned int event = 0; event < pTChain->GetEntries(); event++)
         {
             pTChain->GetEntry(event);
+
+            if (!pProcess->DoesEventPassCuts(event))
+                continue;
 
             for (Int1DPlotToPositionMap::iterator iter = m_1DIntPlots.begin(); iter != m_1DIntPlots.end(); iter++)
             {
