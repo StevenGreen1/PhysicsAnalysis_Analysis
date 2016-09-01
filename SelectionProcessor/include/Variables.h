@@ -13,12 +13,15 @@
 #include <limits>
 #include <vector>
 
+#include "EVENT/LCParameters.h"
+
 #include "TInterpreter.h"
 #include "TTree.h"
 
 namespace variables_namespace
 {
     typedef std::vector<int> IntVector;
+    typedef std::vector<float> FloatVector;
     typedef std::vector<double> DoubleVector;
 }
 
@@ -53,6 +56,12 @@ class Variables
          *  @brief Reset all variables for next event
          */
         void Clear();
+
+
+        /**
+         *  @brief Set all parameters related to the LCParameters object for the event
+         */
+        void SetLCParameterInfo(const EVENT::LCParameters &lcParameters);
 
 // Bools
 

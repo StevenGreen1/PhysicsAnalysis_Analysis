@@ -210,13 +210,13 @@ void Variables::Clear()
 
 //===========================================================
 
-void Variables::SetLCParameterInfo(const LCParameters lcParameters)
+void Variables::SetLCParameterInfo(const EVENT::LCParameters &lcParameters)
 {
     m_principleThrustValue = lcParameters.getFloatVal("principleThrustValue");
     m_majorThrustValue = lcParameters.getFloatVal("majorThrustValue");
     m_minorThrustValue = lcParameters.getFloatVal("minorThrustValue");
 
-    FloatVec thrustaxis;
+    FloatVector thrustaxis;
     lcParameters.getFloatVals("principleThrustAxis", thrustaxis);
     if (thrustaxis.size() >=3)
     {

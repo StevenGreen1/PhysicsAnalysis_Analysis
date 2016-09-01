@@ -65,7 +65,7 @@ class JetAnalysis
          *
          *  @param nPfos number of Pfos to set
          */
-        void CalculateNumberOfPfos(ParticleVector particleVector, int &nPfos)
+        void CalculateNumberOfPfos(ParticleVector particleVector, int &nPfos);
 
         /**
          *  @brief Calculate the acolinearity of the jets from the W/Z bosons and the acolinearity of the W/Z boson itself
@@ -99,6 +99,11 @@ class JetAnalysis
         void FindInvariantMass(ParticleVector &particleVector, double &invariantMass) const;
 
         /**
+         *  @brief Calculate the transverse energy of all particles in m_JetVector
+         */
+        void CalculateTransverseEnergy();
+
+        /**
          *  @brief Calculate the transverse energy for the object defined by particleVector
          *
          *  @param particleVector vector of Pfos defining object
@@ -107,9 +112,9 @@ class JetAnalysis
         void CalculateTransverseEnergyObject(ParticleVector particleVector, double &transverseEnergy);
 
         /**
-         *  @brief Calculate the transverse energy of all particles in m_JetVector
+         *  @brief Calculate the transverse momentum of all particles in m_JetVector
          */
-        void CalculateTransverseEnergy();
+        void CalculateTransverseMomentum();
 
         /**
          *  @brief Calculate the transverse momentum for the object defined by particleVector
@@ -118,16 +123,6 @@ class JetAnalysis
          *  @param transverseEnergy transverse momentum of objects in particleVector to set
          */
         void CalculateTransverseMomentumObject(ParticleVector particleVector, double &transverseMomentum);
-
-        /**
-         *  @brief Calculate the transverse momentum of all particles in m_JetVector
-         */
-        void CalculateTransverseMomentum();
-
-        /**
-         *  @brief Calculate the transverse energy of all particles in m_JetVector
-         */
-        void CalculateTransverseEnergy();
 
         /**
          *  @brief Calculate the cosine theta of the missing momentum vector using m_JetVector

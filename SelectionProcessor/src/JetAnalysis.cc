@@ -221,27 +221,27 @@ void JetAnalysis::CalculateAcolinearities()
 {
     double acolinearityJetsW1(std::numeric_limits<double>::max());
     this->CalculateAcolinearity(m_WVector1.at(0), m_WVector1.at(1), acolinearityJetsW1);
-    m_pVariables->SetAcolinearityWJets1(acolinearityJetsW1);
+    m_pVariables->SetAcolinearityJetsW1(acolinearityJetsW1);
 
     double acolinearityJetsW2(std::numeric_limits<double>::max());
     this->CalculateAcolinearity(m_WVector2.at(0), m_WVector2.at(1), acolinearityJetsW2);
-    m_pVariables->SetAcolinearityWJets2(acolinearityJetsW2);
+    m_pVariables->SetAcolinearityJetsW2(acolinearityJetsW2);
 
     double acolinearityJetsZ1(std::numeric_limits<double>::max());
     this->CalculateAcolinearity(m_ZVector1.at(0), m_ZVector1.at(1), acolinearityJetsZ1);
-    m_pVariables->SetAcolinearityZJets1(acolinearityJetsZ1);
+    m_pVariables->SetAcolinearityJetsZ1(acolinearityJetsZ1);
 
     double acolinearityJetsZ2(std::numeric_limits<double>::max());
     this->CalculateAcolinearity(m_ZVector1.at(0), m_ZVector1.at(1), acolinearityJetsZ2);
-    m_pVariables->SetAcolinearityZJets2(acolinearityJetsZ2);
+    m_pVariables->SetAcolinearityJetsZ2(acolinearityJetsZ2);
 
     double acolinearityBosonW(std::numeric_limits<double>::max());
-    this->CalculateAcolinearity(m_WVector1, m_WVector2, acolinearityBosonW);
-    m_pVariables->SetAcolinearityWBoson(acolinearityBosonW);
+    this->CalculateBosonAcolinearity(m_WVector1, m_WVector2, acolinearityBosonW);
+    m_pVariables->SetAcolinearityBosonsW(acolinearityBosonW);
 
     double acolinearityBosonZ(std::numeric_limits<double>::max());
-    this->CalculateAcolinearity(m_ZVector1, m_ZVector2, acolinearityBosonZ);
-    m_pVariables->SetAcolinearityZBoson(acolinearityBosonZ);
+    this->CalculateBosonAcolinearity(m_ZVector1, m_ZVector2, acolinearityBosonZ);
+    m_pVariables->SetAcolinearityBosonsZ(acolinearityBosonZ);
 }
 
 //===========================================================
@@ -258,7 +258,7 @@ void JetAnalysis::CalculateAcolinearity(const EVENT::ReconstructedParticle* pRec
     const double pz2(pReconstructedParticle2->getMomentum()[2]);
     TVector3 p2(px2, py2, pz2);
 
-    const double openingAngle(acos(p1.Unit() * p2.Unit()) * 180.0 / PI);
+    const double openingAngle(acos(p1.Unit() * p2.Unit()) * 180.0 / M_PI);
     acolinearity = 180.0 - openingAngle;
 }
 
@@ -288,7 +288,7 @@ void JetAnalysis::CalculateBosonAcolinearity(ParticleVector particleVector1, Par
 
     TVector3 p2(px2, py2, pz2);
 
-    const double openingAngle(acos(p1.Unit() * p2.Unit()) * 180.0 / PI);
+    const double openingAngle(acos(p1.Unit() * p2.Unit()) * 180.0 / M_PI);
     acolinearity = 180.0 - openingAngle;
 }
 
@@ -313,23 +313,6 @@ void JetAnalysis::FindInvariantMass(ParticleVector &jetVector, double &invariant
     }
 
     invariantMass = std::sqrt(energyTot*energyTot - pxTot*pxTot - pyTot*pyTot - pzTot*pzTot);
-}
-
-//===========================================================
-
-void JetAnalysis::CalculateTransverseEnergyObject(ParticleVector particleVector, double &transverseEnergy)
-{
-    transverseEnergy = 0.0;
-    for (ParticleVector::iterator iter = particleVector.begin(); iter != particleVector.end(); iter++)
-    {
-        const EVENT::ReconstructedParticle* pReconstructedParticle(*iter);
-        const double px(pReconstructedParticle->getMomentum()[0]);
-        const double py(pReconstructedParticle->getMomentum()[1]);
-        const double pz(pReconstructedParticle->getMomentum()[2]);
-        const double p(std::sqrt(px * px + py * py + pz * pz));
-        const double energy(pReconstructedParticle->getEnergy());
-        transverseEnergy += energy * std::sqrt(px*px + py*py) / p;
-    }
 }
 
 //===========================================================
@@ -366,9 +349,9 @@ void JetAnalysis::CalculateTransverseEnergy()
 
 //===========================================================
 
-void JetAnalysis::CalculateTransverseMomentumObject(ParticleVector particleVector, double &transverseMomentum)
+void JetAnalysis::CalculateTransverseEnergyObject(ParticleVector particleVector, double &transverseEnergy)
 {
-    transverseMomentum = 0.0;
+    transverseEnergy = 0.0;
     for (ParticleVector::iterator iter = particleVector.begin(); iter != particleVector.end(); iter++)
     {
         const EVENT::ReconstructedParticle* pReconstructedParticle(*iter);
@@ -377,7 +360,7 @@ void JetAnalysis::CalculateTransverseMomentumObject(ParticleVector particleVecto
         const double pz(pReconstructedParticle->getMomentum()[2]);
         const double p(std::sqrt(px * px + py * py + pz * pz));
         const double energy(pReconstructedParticle->getEnergy());
-        transverseMomentum += std::sqrt(px*px + py*py);
+        transverseEnergy += energy * std::sqrt(px*px + py*py) / p;
     }
 }
 
@@ -409,6 +392,23 @@ void JetAnalysis::CalculateTransverseMomentum()
 
     this->CalculateTransverseMomentumObject(m_ZVector2, transverseMomentumBosonZ2);
     m_pVariables->SetTransverseMomentumBosonZ2(transverseMomentumBosonZ2);
+}
+
+//===========================================================
+
+void JetAnalysis::CalculateTransverseMomentumObject(ParticleVector particleVector, double &transverseMomentum)
+{
+    transverseMomentum = 0.0;
+    for (ParticleVector::iterator iter = particleVector.begin(); iter != particleVector.end(); iter++)
+    {
+        const EVENT::ReconstructedParticle* pReconstructedParticle(*iter);
+        const double px(pReconstructedParticle->getMomentum()[0]);
+        const double py(pReconstructedParticle->getMomentum()[1]);
+        const double pz(pReconstructedParticle->getMomentum()[2]);
+        const double p(std::sqrt(px * px + py * py + pz * pz));
+        const double energy(pReconstructedParticle->getEnergy());
+        transverseMomentum += std::sqrt(px*px + py*py);
+    }
 }
 
 //===========================================================
