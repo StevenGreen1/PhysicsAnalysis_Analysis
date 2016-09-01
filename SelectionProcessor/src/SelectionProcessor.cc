@@ -65,9 +65,12 @@ void SelectionProcessor::processRunHeader(LCRunHeader* run)
 
 //===========================================================
 
-void SelectionProcessor::processEvent(LCEvent * pLCEvent) 
+void SelectionProcessor::processEvent(LCEvent *pLCEvent) 
 { 
     m_pVariables->Clear();
+
+    const LCParameters &lcParameters(pLCEvent->getCollection(m_jetParticleCollection)->parameters());
+    m_pVariables->SetLCParameterInfo(lcParameters);
 
     // this gets called for every event 
     // usually the working horse ...
@@ -106,9 +109,7 @@ void SelectionProcessor::processEvent(LCEvent * pLCEvent)
     // Perform Jet Analysis
     JetAnalysis *pJetAnalysis = new JetAnalysis(pLCCollection,m_pVariables);
 
-
     // Extract MC Information
-
     const EVENT::LCCollection *pLCMCCollection = NULL;
 
     try

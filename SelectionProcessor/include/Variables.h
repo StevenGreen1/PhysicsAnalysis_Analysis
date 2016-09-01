@@ -118,6 +118,54 @@ class Variables
 
 // Ints
 
+        /**
+         *  @brief Set m_nPfosBosonW1
+         *
+         *  @param nPfosBosonW1 Number of pfos in W boson 1 in W pairing 
+         */
+        void SetNPfosBosonW1(int nPfosBosonW1);
+
+        /*
+         *  @brief Get m_nPfosBosonW1
+         */
+        int GetNPfosBosonW1() const;
+
+        /**
+         *  @brief Set m_nPfosBosonW2
+         *
+         *  @param nPfosBosonW2 Number of pfos in W boson 2 in W pairing
+         */
+        void SetNPfosBosonW2(int nPfosBosonW2);
+
+        /*
+         *  @brief Get m_nPfosBosonW2
+         */
+        int GetNPfosBosonW2() const;
+
+        /**
+         *  @brief Set m_nPfosBosonZ1
+         *
+         *  @param nPfosBosonZ1 Number of pfos in Z boson 1 in Z pairing
+         */
+        void SetNPfosBosonZ1(int nPfosBosonZ1);
+
+        /*
+         *  @brief Get m_nPfosBosonZ1
+         */
+        int GetNPfosBosonZ1() const;
+
+        /**
+         *  @brief Set m_nPfosBosonZ2
+         *
+         *  @param nPfosBosonZ2 Number of pfos in Z boson 2 in Z pairing
+         */
+        void SetNPfosBosonZ2(int nPfosBosonZ2);
+
+        /*
+         *  @brief Get m_nPfosBosonZ2
+         */
+        int GetNPfosBosonZ2() const;
+
 // IntVectors
 
         /**
@@ -169,6 +217,54 @@ class Variables
         double GetTransverseMomentum() const;
 
         /**
+         *  @brief Set m_transverseMomentumBosonW1
+         *
+         *  @param transverseMomentum Transverse momentum of W boson 1 in W pairing 
+         */
+        void SetTransverseMomentumBosonW1(double transverseMomentumBosonW1);
+
+        /**
+         *  @brief Get m_transverseMomentumBosonW1
+         */
+        double GetTransverseMomentumBosonW1() const;
+
+        /**
+         *  @brief Set m_transverseMomentumBosonW2
+         *
+         *  @param transverseMomentum Transverse momentum of W boson 2 in W pairing
+         */
+        void SetTransverseMomentumBosonW2(double transverseMomentumBosonW2);
+
+        /**
+         *  @brief Get m_transverseMomentumBosonW2
+         */
+        double GetTransverseMomentumBosonW2() const;
+
+        /**
+         *  @brief Set m_transverseMomentumBosonZ1
+         *
+         *  @param transverseMomentum Transverse momentum of Z boson 1 in Z pairing
+         */
+        void SetTransverseMomentumBosonZ1(double transverseMomentumBosonZ1);
+
+        /**
+         *  @brief Get m_transverseMomentumBosonZ1
+         */
+        double GetTransverseMomentumBosonZ1() const;
+
+        /**
+         *  @brief Set m_transverseMomentumBosonZ2
+         *
+         *  @param transverseMomentum Transverse momentum of Z boson 2 in Z pairing
+         */
+        void SetTransverseMomentumBosonZ2(double transverseMomentumBosonZ2);
+
+        /**
+         *  @brief Get m_transverseMomentumBosonZ2
+         */
+        double GetTransverseMomentumBosonZ2() const;
+
+        /**
          *  @brief Set m_MCTransverseMomentum
          *
          *  @param mcTransverseMomentum Transverse momentum of quark system
@@ -186,6 +282,54 @@ class Variables
          *  @param transverseEnergy Transverse energy of reconstructed system
          */
         void SetTransverseEnergy(double transverseEnergy);
+
+        /**
+         *  @brief Set m_transverseEnergyBosonW1
+         *
+         *  @param transverseEnergyBosonW1 Transverse energy of W boson 1 in W pairing
+         */
+        void SetTransverseEnergyBosonW1(double transverseEnergyBosonW1);
+
+        /**
+         *  @brief Get m_transverseEnergyBosonW1
+         */
+        double GetTransverseEnergyBosonW1() const;
+
+        /**
+         *  @brief Set m_transverseEnergyBosonW2
+         *
+         *  @param transverseEnergyBosonW2 Transverse energy of W boson 2 in W pairing
+         */
+        void SetTransverseEnergyBosonW2(double transverseEnergyBosonW2);
+
+        /**
+         *  @brief Get m_transverseEnergyBosonW2
+         */
+        double GetTransverseEnergyBosonW2() const;
+
+        /**
+         *  @brief Set m_transverseEnergyBosonZ1
+         *
+         *  @param transverseEnergyBosonZ1 Transverse energy of Z boson 1 in Z pairing
+         */
+        void SetTransverseEnergyBosonZ1(double transverseEnergyBosonZ1);
+
+        /**
+         *  @brief Get m_transverseEnergyBosonZ1
+         */
+        double GetTransverseEnergyBosonZ1() const;
+
+        /**
+         *  @brief Set m_transverseEnergyBosonZ2
+         *
+         *  @param transverseEnergyBosonZ2 Transverse energy of Z boson 2 in Z pairing
+         */
+        void SetTransverseEnergyBosonZ2(double transverseEnergyBosonZ2);
+
+        /**
+         *  @brief Get m_transverseEnergyBosonZ2
+         */
+        double GetTransverseEnergyBosonZ2() const;
 
         /**
          *  @brief Get m_TransverseEnergy
@@ -359,6 +503,78 @@ class Variables
          *  @brief Get m_MCCosThetaStarZBosons
          */
         double GetMCCosThetaStarZBosons() const;
+/////
+        /**
+         *  @brief Set m_acolinearityJetsW1
+         *
+         *  @param acolinearityJetsW1 Acolinearity of the jets from boson 1 in W pairing
+         */
+        void SetAcolinearityJetsW1(double acolinearityJetsW1);
+
+        /**
+         *  @brief Get m_acolinearityJetsW1
+         */
+        double GetAcolinearityJetsW1() const;
+
+        /**
+         *  @brief Set m_acolinearityJetsW2
+         *
+         *  @param acolinearityJetsW2 Acolinearity of the jets from boson 2 in W pairing
+         */
+        void SetAcolinearityJetsW2(double acolinearityJetsW2);
+
+        /**
+         *  @brief Get m_acolinearityJetsW2
+         */
+        double GetAcolinearityJetsW2() const;
+
+        /**
+         *  @brief Set m_acolinearityJetsZ1
+         *
+         *  @param acolinearityJetsZ1 Acolinearity of the jets from boson 1 in Z pairing
+         */
+        void SetAcolinearityJetsZ1(double acolinearityJetsZ1);
+
+        /**
+         *  @brief Get m_acolinearityJetsZ1
+         */
+        double GetAcolinearityJetsZ1() const;
+
+        /**
+         *  @brief Set m_acolinearityJetsZ2
+         *
+         *  @param acolinearityJetsZ2 Acolinearity of the jets from boson 2 in Z pairing
+         */
+        void SetAcolinearityJetsZ2(double acolinearityJetsZ2);
+
+        /**
+         *  @brief Get m_acolinearityJetsZ2
+         */
+        double GetAcolinearityJetsZ2() const;
+
+        /**
+         *  @brief Set m_acolinearityBosonsW
+         *
+         *  @param acolinearityBosonsW Acolinearity of the W bosons in W pairing
+         */
+        void SetAcolinearityBosonsW(double acolinearityBosonsW);
+
+        /**
+         *  @brief Get m_acolinearityBosonsW
+         */
+        double GetAcolinearityBosonsW() const;
+
+        /**
+         *  @brief Set m_acolinearityBosonsZ
+         *
+         *  @param acolinearityBosonsZ Acolinearity of the Z bosons in Z pairing
+         */
+        void SetAcolinearityBosonsZ(double acolinearityBosonsZ);
+
+        /**
+         *  @brief Get m_acolinearityBosonsZ
+         */
+        double GetAcolinearityBosonsZ() const;
 
 // DoubleVectors
 
@@ -469,13 +685,24 @@ class Variables
         bool            m_IsMCEventWW;                      ///< Are the invariant masses of the quark pairs close to the W boson mass? - MCAnalysis
         bool            m_IsEventZZ;                        ///< Are the invariant masses of the jets close to the Z boson mass? - JetAnalysis
         bool            m_IsMCEventZZ;                      ///< Are the invariant masses of the quark pairs close to the Z boson mass? - MCAnalysis
-
+        int             m_nPfosBosonW1;                     ///< Number of pfos in W boson 1 in W pairing - JetAnalysis
+        int             m_nPfosBosonW2;                     ///< Number of pfos in W boson 2 in W pairing - JetAnalysis
+        int             m_nPfosBosonZ1;                     ///< Number of pfos in W boson 1 in Z pairing - JetAnalysis
+        int             m_nPfosBosonZ2;                     ///< Number of pfos in W boson 2 in Z pairing - JetAnalysis
         IntVector       m_NParticlesJets;                   ///< Number of particles in reconstructed jet - JetAnalysis
         IntVector       m_NChargedParticlesJets;            ///< Number of charged particles in reconstructed jet - JetAnalysis
 
         double           m_TransverseMomentum;               ///< Transverse momentum of reconstructed system - JetAnalysis
+        double           m_transverseMomentumBosonW1;        ///< Transverse momentum of W boson 1 in W pairing - JetAnalysis
+        double           m_transverseMomentumBosonW2;        ///< Transverse momentum of W boson 2 in W pairing - JetAnalysis
+        double           m_transverseMomentumBosonZ1;        ///< Transverse momentum of W boson 1 in Z pairing - JetAnalysis
+        double           m_transverseMomentumBosonZ2;        ///< Transverse momentum of W boson 2 in Z pairing - JetAnalysis
         double           m_MCTransverseMomentum;             ///< Transverse momentum of quark system - MCAnalysis
         double           m_TransverseEnergy;                 ///< Transverse energy of reconstructed system - JetAnalysis
+        double           m_transverseEnergyBosonW1;          ///< Transverse energy of W boson 1 in W pairing - JetAnalysis
+        double           m_transverseEnergyBosonW2;          ///< Transverse energy of W boson 2 in W pairing - JetAnalysis
+        double           m_transverseEnergyBosonZ1;          ///< Transverse energy of Z boson 1 in Z pairing - JetAnalysis
+        double           m_transverseEnergyBosonZ2;          ///< Transverse energy of Z boson 2 in Z pairing - JetAnalysis
         double           m_MCTransverseEnergy;               ///< Transverse energy of quark system - MCAnalysis
         double           m_CosThetaMissing;                  ///< Cosine theta of missing energy - JetAnalysis
         double           m_MCCosThetaMissing;                ///< Cosine theta of neutrino energy - MCAnalysis
@@ -490,7 +717,20 @@ class Variables
         double           m_MCCosThetaStarWBosons;            ///< Cosine of the polar angle of the W bosons in the reference frame of the WW boson pairs - MCAnalysis
         double           m_CosThetaStarZBosons;              ///< Cosine of the polar angle of the Z bosons in the reference frame of the ZZ boson pairs - JetAnalysis
         double           m_MCCosThetaStarZBosons;            ///< Cosine of the polar angle of the Z bosons in the reference frame of the ZZ boson pairs - MCAnalysis
-
+        double           m_acolinearityJetsW1;               ///< Acolinearity of the jets from boson 1 in W pairing - JetAnalysis
+        double           m_acolinearityJetsW2;               ///< Acolinearity of the jets from boson 2 in W pairing - JetAnalysis
+        double           m_acolinearityJetsZ1;               ///< Acolinearity of the jets from boson 1 in Z pairing - JetAnalysis
+        double           m_acolinearityJetsZ2;               ///< Acolinearity of the jets from boson 2 in Z pairing - JetAnalysis
+        double           m_acolinearityBosonsW;              ///< Acolinearity of the W bosons in W pairing - JetAnalysis- SelectionProcessor
+        double           m_acolinearityBosonsZ;              ///< Acolinearity of the W bosons in Z pairing - JetAnalysis- SelectionProcessor
+        double           m_principleThrustValue;             ///< Principle thrust value from ThrustReconstruction processor- SelectionProcessor
+        double           m_majorThrustValue;                 ///< Major thrust value from ThrustReconstruction processor- SelectionProcessor
+        double           m_minorThrustValue;                 ///< Minor thrust value from ThrustReconstruction processor - SelectionProcessor
+        double           m_xThrustAxis;                      ///< X Thrust axis value from ThrustReconstruction processor - SelectionProcessor
+        double           m_yThrustAxis;                      ///< Y Thrust axis value from ThrustReconstruction processor  - SelectionProcessor
+        double           m_zThrustAxis;                      ///< Z Thrust axis value from ThrustReconstruction processor - SelectionProcessor
+        double           m_sphericity;                       ///< Sphericity from Sphere processor - SelectionProcessor
+        double           m_aplanarity;                       ///< Aplnarity from Sphere processor - SelectionProcessor
         DoubleVector     m_InvMassWVectors;                  ///< Invariant mass of first and second pair of W paired jets - JetAnalysis
         DoubleVector     m_MCInvMassWVectors;                ///< Invariant mass of first and second pair of W paired quarks - MCAnalysis
         DoubleVector     m_InvMassZVectors;                  ///< Invariant mass of first and second pair of Z paired jets - JetAnalysis

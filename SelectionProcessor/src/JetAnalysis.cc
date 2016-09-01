@@ -41,6 +41,7 @@ void JetAnalysis::Process()
     this->JetVariables();
     this->JetPairing();
 
+    this->CalculateAcolinearities();
     this->CalculateTransverseMomentum();
     this->CalculateTransverseEnergy();
     this->CalculateCosThetaMissingMomentum();
@@ -139,27 +140,156 @@ void JetAnalysis::JetPairing()
 
         if (wMetric < bestWMetric)
         {
-            m_WVector1 = trialPair1;
-            m_WVector2 = trialPair2;
             bestWMasses.clear();
-            bestWMasses.push_back(invariantMass1);
-            bestWMasses.push_back(invariantMass2);
+
+            if (invariantMass1 > invariantMass2)
+            {
+                m_WVector1 = trialPair1;
+                m_WVector2 = trialPair2;
+                bestWMasses.push_back(invariantMass1);
+                bestWMasses.push_back(invariantMass2);
+            }
+            else
+            {
+                m_WVector1 = trialPair2;
+                m_WVector2 = trialPair1;
+                bestWMasses.push_back(invariantMass2);
+                bestWMasses.push_back(invariantMass1);
+            }
+
             bestWMetric = wMetric;
         }
 
         if (zMetric < bestZMetric)
         {
-            m_ZVector1 = trialPair1;
-            m_ZVector2 = trialPair2;
             bestZMasses.clear();
-            bestZMasses.push_back(invariantMass1);
-            bestZMasses.push_back(invariantMass2);
+
+            if (invariantMass1 > invariantMass2)
+            {
+                m_ZVector1 = trialPair1;
+                m_ZVector2 = trialPair2;
+                bestZMasses.push_back(invariantMass1);
+                bestZMasses.push_back(invariantMass2);
+            }
+            else
+            {
+                m_ZVector1 = trialPair2;
+                m_ZVector2 = trialPair1;
+                bestZMasses.push_back(invariantMass2);
+                bestZMasses.push_back(invariantMass1);
+            }
+
             bestZMetric = zMetric;
         }
     }
 
+    //count pfos in bosons
+    int nPfosBosonW1(0), nPfosBosonW2(0), nPfosBosonZ1(0), nPfosBosonZ2(0);
+
+    this->CalculateNumberOfPfos(m_WVector1, nPfosBosonW1);
+    m_pVariables->SetNPfosBosonW1(nPfosBosonW1);
+
+    this->CalculateNumberOfPfos(m_WVector2, nPfosBosonW2);
+    m_pVariables->SetNPfosBosonW2(nPfosBosonW2);
+
+    this->CalculateNumberOfPfos(m_ZVector1, nPfosBosonZ1);
+    m_pVariables->SetNPfosBosonZ1(nPfosBosonZ1);
+
+    this->CalculateNumberOfPfos(m_ZVector2, nPfosBosonZ2);
+    m_pVariables->SetNPfosBosonZ2(nPfosBosonZ2);
+
     m_pVariables->SetInvMassWVectors(bestWMasses);
     m_pVariables->SetInvMassZVectors(bestZMasses);
+}
+
+//===========================================================
+
+void JetAnalysis::CalculateNumberOfPfos(ParticleVector particleVector, int &nPfos)
+{
+    nPfos = 0;
+
+    for (ParticleVector::iterator iter = particleVector.begin(); iter != particleVector.end(); iter++)
+    {
+        const EVENT::ReconstructedParticle *pReconstructedParticle(*iter);
+        nPfos +=  pReconstructedParticle->getParticles().size();
+    }
+}
+
+//===========================================================
+
+void JetAnalysis::CalculateAcolinearities()
+{
+    double acolinearityJetsW1(std::numeric_limits<double>::max());
+    this->CalculateAcolinearity(m_WVector1.at(0), m_WVector1.at(1), acolinearityJetsW1);
+    m_pVariables->SetAcolinearityWJets1(acolinearityJetsW1);
+
+    double acolinearityJetsW2(std::numeric_limits<double>::max());
+    this->CalculateAcolinearity(m_WVector2.at(0), m_WVector2.at(1), acolinearityJetsW2);
+    m_pVariables->SetAcolinearityWJets2(acolinearityJetsW2);
+
+    double acolinearityJetsZ1(std::numeric_limits<double>::max());
+    this->CalculateAcolinearity(m_ZVector1.at(0), m_ZVector1.at(1), acolinearityJetsZ1);
+    m_pVariables->SetAcolinearityZJets1(acolinearityJetsZ1);
+
+    double acolinearityJetsZ2(std::numeric_limits<double>::max());
+    this->CalculateAcolinearity(m_ZVector1.at(0), m_ZVector1.at(1), acolinearityJetsZ2);
+    m_pVariables->SetAcolinearityZJets2(acolinearityJetsZ2);
+
+    double acolinearityBosonW(std::numeric_limits<double>::max());
+    this->CalculateAcolinearity(m_WVector1, m_WVector2, acolinearityBosonW);
+    m_pVariables->SetAcolinearityWBoson(acolinearityBosonW);
+
+    double acolinearityBosonZ(std::numeric_limits<double>::max());
+    this->CalculateAcolinearity(m_ZVector1, m_ZVector2, acolinearityBosonZ);
+    m_pVariables->SetAcolinearityZBoson(acolinearityBosonZ);
+}
+
+//===========================================================
+
+void JetAnalysis::CalculateAcolinearity(const EVENT::ReconstructedParticle* pReconstructedParticle1, const EVENT::ReconstructedParticle* pReconstructedParticle2, double &acolinearity) const 
+{
+    const double px1(pReconstructedParticle1->getMomentum()[0]);
+    const double py1(pReconstructedParticle1->getMomentum()[1]);
+    const double pz1(pReconstructedParticle1->getMomentum()[2]);
+    TVector3 p1(px1, py1, pz1);
+
+    const double px2(pReconstructedParticle2->getMomentum()[0]);
+    const double py2(pReconstructedParticle2->getMomentum()[1]);
+    const double pz2(pReconstructedParticle2->getMomentum()[2]);
+    TVector3 p2(px2, py2, pz2);
+
+    const double openingAngle(acos(p1.Unit() * p2.Unit()) * 180.0 / PI);
+    acolinearity = 180.0 - openingAngle;
+}
+
+//===========================================================
+
+void JetAnalysis::CalculateBosonAcolinearity(ParticleVector particleVector1, ParticleVector particleVector2, double &acolinearity) const
+{
+    double px1(0.0), py1(0.0), pz1(0.0), px2(0.0), py2(0.0), pz2(0.0);
+
+    for (ParticleVector::const_iterator iter = particleVector1.begin(); iter != particleVector1.end(); iter++)
+    {
+        const EVENT::ReconstructedParticle *pReconstructedParticle(*iter);
+        px1 += pReconstructedParticle->getMomentum()[0];
+        py1 += pReconstructedParticle->getMomentum()[1];
+        pz1 += pReconstructedParticle->getMomentum()[2];
+    }
+
+    TVector3 p1(px1, py1, pz1);
+
+    for (ParticleVector::const_iterator iter = particleVector2.begin(); iter != particleVector2.end(); iter++)
+    {
+        const EVENT::ReconstructedParticle *pReconstructedParticle(*iter);
+        px2 += pReconstructedParticle->getMomentum()[0];
+        py2 += pReconstructedParticle->getMomentum()[1];
+        pz2 += pReconstructedParticle->getMomentum()[2];
+    }
+
+    TVector3 p2(px2, py2, pz2);
+
+    const double openingAngle(acos(p1.Unit() * p2.Unit()) * 180.0 / PI);
+    acolinearity = 180.0 - openingAngle;
 }
 
 //===========================================================
@@ -187,10 +317,10 @@ void JetAnalysis::FindInvariantMass(ParticleVector &jetVector, double &invariant
 
 //===========================================================
 
-void JetAnalysis::CalculateTransverseMomentum()
+void JetAnalysis::CalculateTransverseEnergyObject(ParticleVector particleVector, double &transverseEnergy)
 {
-    double transverseMomentum(0.0);
-    for (ParticleVector::iterator iter = m_JetVector.begin(); iter != m_JetVector.end(); iter++)
+    transverseEnergy = 0.0;
+    for (ParticleVector::iterator iter = particleVector.begin(); iter != particleVector.end(); iter++)
     {
         const EVENT::ReconstructedParticle* pReconstructedParticle(*iter);
         const double px(pReconstructedParticle->getMomentum()[0]);
@@ -198,9 +328,8 @@ void JetAnalysis::CalculateTransverseMomentum()
         const double pz(pReconstructedParticle->getMomentum()[2]);
         const double p(std::sqrt(px * px + py * py + pz * pz));
         const double energy(pReconstructedParticle->getEnergy());
-        transverseMomentum += energy * std::sqrt(px*px + py*py) / p;
+        transverseEnergy += energy * std::sqrt(px*px + py*py) / p;
     }
-    m_pVariables->SetTransverseMomentum(transverseMomentum);
 }
 
 //===========================================================
@@ -213,10 +342,73 @@ void JetAnalysis::CalculateTransverseEnergy()
         const EVENT::ReconstructedParticle* pReconstructedParticle(*iter);
         const double px(pReconstructedParticle->getMomentum()[0]);
         const double py(pReconstructedParticle->getMomentum()[1]);
-
-        transverseEnergy += std::sqrt(px*px + py*py);
+        const double pz(pReconstructedParticle->getMomentum()[2]);
+        const double p(std::sqrt(px * px + py * py + pz * pz));
+        const double energy(pReconstructedParticle->getEnergy());
+        transverseEnergy += energy * std::sqrt(px*px + py*py) / p;
     }
     m_pVariables->SetTransverseEnergy(transverseEnergy);
+
+    double transverseEnergyBosonW1(0.0), transverseEnergyBosonW2(0.0), transverseEnergyBosonZ1(0.0), transverseEnergyBosonZ2(0.0);
+
+    this->CalculateTransverseEnergyObject(m_WVector1, transverseEnergyBosonW1);
+    m_pVariables->SetTransverseEnergyBosonW1(transverseEnergyBosonW1);
+
+    this->CalculateTransverseEnergyObject(m_WVector2, transverseEnergyBosonW2);
+    m_pVariables->SetTransverseEnergyBosonW2(transverseEnergyBosonW2);
+
+    this->CalculateTransverseEnergyObject(m_ZVector1, transverseEnergyBosonZ1);
+    m_pVariables->SetTransverseEnergyBosonZ1(transverseEnergyBosonZ1);
+
+    this->CalculateTransverseEnergyObject(m_ZVector2, transverseEnergyBosonZ2);
+    m_pVariables->SetTransverseEnergyBosonZ2(transverseEnergyBosonZ2);
+}
+
+//===========================================================
+
+void JetAnalysis::CalculateTransverseMomentumObject(ParticleVector particleVector, double &transverseMomentum)
+{
+    transverseMomentum = 0.0;
+    for (ParticleVector::iterator iter = particleVector.begin(); iter != particleVector.end(); iter++)
+    {
+        const EVENT::ReconstructedParticle* pReconstructedParticle(*iter);
+        const double px(pReconstructedParticle->getMomentum()[0]);
+        const double py(pReconstructedParticle->getMomentum()[1]);
+        const double pz(pReconstructedParticle->getMomentum()[2]);
+        const double p(std::sqrt(px * px + py * py + pz * pz));
+        const double energy(pReconstructedParticle->getEnergy());
+        transverseMomentum += std::sqrt(px*px + py*py);
+    }
+}
+
+//===========================================================
+
+void JetAnalysis::CalculateTransverseMomentum()
+{
+    double transverseMomentum(0.0);
+    for (ParticleVector::iterator iter = m_JetVector.begin(); iter != m_JetVector.end(); iter++)
+    {
+        const EVENT::ReconstructedParticle* pReconstructedParticle(*iter);
+        const double px(pReconstructedParticle->getMomentum()[0]);
+        const double py(pReconstructedParticle->getMomentum()[1]);
+
+        transverseMomentum += std::sqrt(px*px + py*py);
+    }
+    m_pVariables->SetTransverseMomentum(transverseMomentum);
+
+    double transverseMomentumBosonW1(0.0), transverseMomentumBosonW2(0.0), transverseMomentumBosonZ1(0.0), transverseMomentumBosonZ2(0.0);
+
+    this->CalculateTransverseMomentumObject(m_WVector1, transverseMomentumBosonW1);
+    m_pVariables->SetTransverseMomentumBosonW1(transverseMomentumBosonW1);
+
+    this->CalculateTransverseMomentumObject(m_WVector2, transverseMomentumBosonW2);
+    m_pVariables->SetTransverseMomentumBosonW2(transverseMomentumBosonW2);
+
+    this->CalculateTransverseMomentumObject(m_ZVector1, transverseMomentumBosonZ1);
+    m_pVariables->SetTransverseMomentumBosonZ1(transverseMomentumBosonZ1);
+
+    this->CalculateTransverseMomentumObject(m_ZVector2, transverseMomentumBosonZ2);
+    m_pVariables->SetTransverseMomentumBosonZ2(transverseMomentumBosonZ2);
 }
 
 //===========================================================

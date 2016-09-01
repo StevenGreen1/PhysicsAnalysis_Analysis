@@ -61,12 +61,63 @@ class JetAnalysis
         void JetPairing();
 
         /**
+         *  @brief Calculate number of Pfos in a particleVector of jets e.g. boson with two jets
+         *
+         *  @param nPfos number of Pfos to set
+         */
+        void CalculateNumberOfPfos(ParticleVector particleVector, int &nPfos)
+
+        /**
+         *  @brief Calculate the acolinearity of the jets from the W/Z bosons and the acolinearity of the W/Z boson itself
+         */
+        void CalculateAcolinearities();
+
+        /**
+         *  @brief Calculate the acolinearity of a pair of LCIO particles such as the jets from the decay of W/Z bosons
+         *
+         *  @param reconstructedParticle1 pfo to use in acolinearity calculation 
+         *  @param reconstructedParticle2 pfo to use in acolinearity calculation
+         *  @param acolinearity to set
+         */
+        void CalculateAcolinearity(const EVENT::ReconstructedParticle* pReconstructedParticle1, const EVENT::ReconstructedParticle* pReconstructedParticle2, double &acolinearity) const;
+
+        /**
+         *  @brief Calculate the acolinearity of a pair of objects defined by particle vectors such as the W/Z boson
+         *
+         *  @param particleVector1 pfos to use in acolinearity calculation
+         *  @param particleVector2 pfos to use in acolinearity calculation
+         *  @param acolinearity to set
+         */
+        void CalculateBosonAcolinearity(ParticleVector particleVector1, ParticleVector particleVector2, double &acolinearity) const;
+
+        /**
          *  @brief Calculate the invariant mass of all particles in jetVector
          *
          *  @param particleVector vector of pointers to lcio particles 
          *  @param invariantMass invariant mass of the system of lcio particles in particleVector
          */
         void FindInvariantMass(ParticleVector &particleVector, double &invariantMass) const;
+
+        /**
+         *  @brief Calculate the transverse energy for the object defined by particleVector
+         *
+         *  @param particleVector vector of Pfos defining object
+         *  @param transverseEnergy transverse energy of objects in particleVector to set
+         */
+        void CalculateTransverseEnergyObject(ParticleVector particleVector, double &transverseEnergy);
+
+        /**
+         *  @brief Calculate the transverse energy of all particles in m_JetVector
+         */
+        void CalculateTransverseEnergy();
+
+        /**
+         *  @brief Calculate the transverse momentum for the object defined by particleVector
+         *
+         *  @param particleVector vector of Pfos defining object
+         *  @param transverseEnergy transverse momentum of objects in particleVector to set
+         */
+        void CalculateTransverseMomentumObject(ParticleVector particleVector, double &transverseMomentum);
 
         /**
          *  @brief Calculate the transverse momentum of all particles in m_JetVector
@@ -177,18 +228,18 @@ class JetAnalysis
          */
         void DefineEnergy4Vec(ParticleVector &jetVector, TLorentzVector &tLorentzVector) const;
 
-        ParticleVector         m_JetVector;         ///< Vector of 4 jets from fastjet
-        Variables             *m_pVariables;        ///< Variables of interest to set for analysis
-        ParticleVector         m_WVector1;          ///< First W candidate
-        ParticleVector         m_WVector2;          ///< Second W candidate
-        ParticleVector         m_ZVector1;          ///< First Z candidate
-        ParticleVector         m_ZVector2;          ///< Second Z candidate
-        const double            m_WBosonMass;        ///< W boson mass used for jet pairing
-        const double            m_ZBosonMass;        ///< Z boson mass used for jet pairing
-        const double            m_CrossingAngle;     ///< Crossing angle for CLIC ILD, radians 
-        const double            m_EventMCEnergy;     ///< MC event energy excluding beam effects
-        const double            m_ConeAngle;         ///< Cone angle needed for cone energy measurement, degrees
-        double                  m_y34;               ///< Jet clustering variable
+        ParticleVector        m_JetVector;         ///< Vector of 4 jets from fastjet
+        Variables            *m_pVariables;        ///< Variables of interest to set for analysis
+        ParticleVector        m_WVector1;          ///< First W candidate
+        ParticleVector        m_WVector2;          ///< Second W candidate
+        ParticleVector        m_ZVector1;          ///< First Z candidate
+        ParticleVector        m_ZVector2;          ///< Second Z candidate
+        const double          m_WBosonMass;        ///< W boson mass used for jet pairing
+        const double          m_ZBosonMass;        ///< Z boson mass used for jet pairing
+        const double          m_CrossingAngle;     ///< Crossing angle for CLIC ILD, radians 
+        const double          m_EventMCEnergy;     ///< MC event energy excluding beam effects
+        const double          m_ConeAngle;         ///< Cone angle needed for cone energy measurement, degrees
+        double                m_y34;               ///< Jet clustering variable
 };
 
 #endif // #ifndef JET_ANALYSIS_H
