@@ -19,8 +19,9 @@ jobDescription = 'PhysicsAnalysis'
 # Always define event type, events per file and energies in same way.  If not CLIC sample set ProdID to 0
 
 eventsToSimulate = [
-                       { 'EventType': "ee_nunuww_nunuqqqq"  , 'Energy': 1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 3 },
-                       { 'EventType': "ee_nunuzz_nunuqqqq"  , 'Energy': 1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 3 }
+                       { 'EventType': "ee_nunuqqqq"         , 'Energy': 1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 3 }
+#                       { 'EventType': "ee_nunuww_nunuqqqq"  , 'Energy': 1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 3 },
+#                       { 'EventType': "ee_nunuzz_nunuqqqq"  , 'Energy': 1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 3 }
                    ]
 
 #===== Second level user input =====

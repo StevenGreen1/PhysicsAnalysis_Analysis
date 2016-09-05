@@ -95,6 +95,8 @@ class CouplingAnalysis
          */
         float BilinearInterpolation(const float f11, const float f12, const float f21, const float f22, const float x, const float x1, const float x2, const float y, const float y1, const float y2) const;
 
+        bool DoFloatsMatch(float a, float b) const;
+
         /**
          * @brief Find the int key to the stored values of alpha4 that were simulated in whizard.  If not in m_Alpha4Vector add to vector and make new key.
          *

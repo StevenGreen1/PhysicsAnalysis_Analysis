@@ -50,15 +50,40 @@ class Process
         TChain* GetTChain() const;
 
         /**
+         *  @brief Return pointer to TChain made from input root files that will be used for training
+         */
+        TChain* GetTrainingTChain() const;
+
+        /**
+         *  @brief Return pointer to TChain made from input root files that will be used for training
+         */
+        TChain* GetPostBDTTChain() const;
+
+        /**
          *  @brief Return the weight for the given process
          */
         float GetProcessWeight() const;
+
+        /**
+         *  @brief Return the weight for the given process post BDT training
+         */
+        float GetPostBDTProcessWeight() const;
 
         /**
          *  @brief Return the event type for the given process
          */
         std::string GetEventType() const;
 
+        /**
+         *  @brief Retrun the cross section for the given process
+         */
+        float GetCrossSection() const;
+
+        /**
+         *  @brief Retrun the cross section for the given process
+         */
+        float GetLuminosity() const;
+ 
         /**
          *  @brief Return the energy for the given process
          */
@@ -100,6 +125,11 @@ class Process
          */
         void MakeSelection();
 
+        /**
+         *  @breif Set the post BDT tchain
+         */
+        void SetBDTRootFiles();
+
         const std::string     m_jobDescription;          ///< Job description
         const std::string     m_detectorModel;           ///< Detector model
         const std::string     m_reconstructionVariant;   ///< Reconstruction variant
@@ -109,8 +139,11 @@ class Process
         const unsigned int    m_energy;                  ///< Energy of process
         const int             m_analysisTag;             ///< Analysis tag for bookeeping
         TChain*               m_pTChain;                 ///< Chain of analysis root files
+        TChain*               m_pTrainTChain;            ///< Chain of analysis root files for training TMVA
+        TChain*               m_pPostBDTTChain;          ///< Chain of analysis root files post DBT training 
         int                   m_numberOfEntries;         ///< Number of entries in tree
         float                 m_processWeight;           ///< Weight to give required luminosity
+        float                 m_postBDTProcessWeight;    ///< Weight to give required luminosity for post BDT
         std::string           m_pathToFiles;             ///< Path to analysis root files
         std::map<int,bool>    m_doesEventPassSelection;  ///< Does event number pass the selection cuts
 };

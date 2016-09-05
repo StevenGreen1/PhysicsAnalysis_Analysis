@@ -21,6 +21,8 @@ CouplingAnalysis::~CouplingAnalysis()
 
 void CouplingAnalysis::GetWeight(const int eventNumber, const float alpha4, const float alpha5, float &eventWeight) const  
 {
+//    std::cout << "Getting weight " << eventNumber << " alpha4 " << alpha4 << " alpha5 " << alpha5 << " " << std::endl; 
+
     float lowerA4Bound(-1.f*std::numeric_limits<float>::max());
     int lowerA4Key(std::numeric_limits<int>::max());
 
@@ -41,10 +43,9 @@ void CouplingAnalysis::GetWeight(const int eventNumber, const float alpha4, cons
 
     for (FloatVector::const_iterator iter = m_Alpha4Vector.begin(); iter != m_Alpha4Vector.end(); iter++)
     {
-        const float a4(*iter);
-        if (a4 < alpha4)
+        int position(iter - m_Alpha4Vector.begin());
+        if (m_Alpha4Vector.at(position) <= alpha4 and alpha4 < m_Alpha4Vector.at(position+1))
         {
-            int position(iter - m_Alpha4Vector.begin());
             lowerA4Bound = m_Alpha4Vector.at(position);
             upperA4Bound = m_Alpha4Vector.at(position+1);
             this->GetAlpha4Key(lowerA4Bound,lowerA4Key);
@@ -54,17 +55,26 @@ void CouplingAnalysis::GetWeight(const int eventNumber, const float alpha4, cons
 
     for (FloatVector::const_iterator iter = m_Alpha5Vector.begin(); iter != m_Alpha5Vector.end(); iter++)
     {
-        const float a5(*iter);
-        if (a5 < alpha5)
+        int position(iter - m_Alpha5Vector.begin());
+        if (m_Alpha5Vector.at(position) <= alpha5 and alpha5 < m_Alpha5Vector.at(position+1))
         {
-            int position(iter - m_Alpha5Vector.begin());
             lowerA5Bound = m_Alpha5Vector.at(position);
             upperA5Bound = m_Alpha5Vector.at(position+1);
             this->GetAlpha5Key(lowerA5Bound,lowerA5Key);
             this->GetAlpha5Key(upperA5Bound,upperA5Key);
         }
     }
+/*
+    std::cout << "lowerA4Bound " << lowerA4Bound << std::endl;
+    std::cout << "upperA4Bound " << upperA4Bound << std::endl;
+    std::cout << "lowerA5Bound " << lowerA5Bound << std::endl;
+    std::cout << "upperA5Bound " << upperA5Bound << std::endl;
 
+    std::cout << "lowerA4Key " << lowerA4Key << std::endl;
+    std::cout << "upperA4Key " << upperA4Key << std::endl;
+    std::cout << "lowerA5Key " << lowerA5Key << std::endl;
+    std::cout << "upperA5Key " << upperA5Key << std::endl;
+*/
     const float lowerA4lowerA5(m_EventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(lowerA4Key).at(lowerA5Key));
     const float lowerA4upperA5(m_EventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(upperA4Key).at(lowerA5Key));
     const float upperA4lowerA5(m_EventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(lowerA4Key).at(upperA5Key));
@@ -86,9 +96,11 @@ float CouplingAnalysis::BilinearInterpolation(const float f11, const float f12, 
 
 void CouplingAnalysis::LoadXml()
 {
-    for (int i = -4; i < 5; i++)
+//    for (int i = -4; i < 5; i++)
+    for (int i = -2; i < 3; i++)
     {
-        for (int j = -4; j < 5; j++)
+//        for (int j = -4; j < 5; j++)
+        for (int j = -2; j < 3; j++)
         {
             std::cout << i << " " << j << std::endl;
             const float alpha4(i * 0.025);
@@ -132,11 +144,20 @@ void CouplingAnalysis::LoadIndividualXml(const float alpha4, const float alpha5)
     if (process != m_process or energy != m_energy)
         return;
 
-    int alpha4Key(std::numeric_limits<int>::max());
-    int alpha5Key(std::numeric_limits<int>::max());
-    this->SetAlpha4Key(alpha4,alpha4Key);
-    this->SetAlpha5Key(alpha5,alpha5Key);
+    int alpha4Key(0);
+    int alpha5Key(0);
 
+//    std::cout << "alpha4Key : " << alpha4Key << std::endl;
+//    std::cout << "alpha5Key : " << alpha5Key << std::endl;
+
+    this->SetAlpha4Key(alpha4,alpha4Key);
+
+//    std::cout << "alpha4Key : " << alpha4Key << std::endl;
+//    std::cout << "alpha5Key : " << alpha5Key << std::endl;
+
+    this->SetAlpha5Key(alpha5,alpha5Key);
+//    std::cout << "alpha4Key : " << alpha4Key << std::endl;
+//    std::cout << "alpha5Key : " << alpha5Key << std::endl;
     for (TiXmlElement* pTiXmlElement = pHeadTiXmlElement->FirstChildElement(); pTiXmlElement != NULL; pTiXmlElement = pTiXmlElement->NextSiblingElement())
     {
         const int eventNumber(atoi(pTiXmlElement->Attribute("Event_Number")));
@@ -144,6 +165,8 @@ void CouplingAnalysis::LoadIndividualXml(const float alpha4, const float alpha5)
 
 //        if (eventNumber > 5)
 //          continue;
+
+//        std::cout << "Adding " << eventNumber << " " << alpha4Key << " " << alpha5Key << " " << weight << std::endl;
 
         m_EventToAlpha4ToAlpha5ToWeightMap[eventNumber][alpha4Key][alpha5Key] = weight;
     }
@@ -153,20 +176,46 @@ void CouplingAnalysis::LoadIndividualXml(const float alpha4, const float alpha5)
 
 //============================================================================
 
+bool CouplingAnalysis::DoFloatsMatch(float a, float b) const
+{
+    if (a*b >= 0.f and fabs(a-b) < std::numeric_limits<float>::min())
+        return true;
+    else
+        return false;
+}
+
+//============================================================================
+
 void CouplingAnalysis::SetAlpha4Key(const float alpha4, int &alpha4Key)
 {
-    for (IntToFloatMap::const_iterator iter = m_KeyToAlpha4Map.begin(); iter != m_KeyToAlpha4Map.end(); ++iter)
-    {
-        if (fabs(iter->second - alpha4) < std::numeric_limits<float>::min())
+//    if (m_KeyToAlpha4Map.size() != 0)
+//    {
+        for (IntToFloatMap::const_iterator iter = m_KeyToAlpha4Map.begin(); iter != m_KeyToAlpha4Map.end(); ++iter)
         {
-            alpha4Key = iter->first;
-            return;
+            if (this->DoFloatsMatch(iter->second, alpha4))
+            {
+                alpha4Key = iter->first;
+                return;
+             }
         }
-    }
+//    }
+
+//    std::cout << m_NumberUniqueAlpha4 << std::endl;
+//    std::cout << alpha4 << std::endl;
 
     m_KeyToAlpha4Map.insert(std::make_pair(m_NumberUniqueAlpha4,alpha4));
     m_NumberUniqueAlpha4++;
     m_Alpha4Vector.push_back(alpha4);
+
+        for (IntToFloatMap::const_iterator iter = m_KeyToAlpha4Map.begin(); iter != m_KeyToAlpha4Map.end(); ++iter)
+        {
+            if (this->DoFloatsMatch(iter->second, alpha4))
+            {
+                alpha4Key = iter->first;
+                return;
+             }
+        }
+
     std::cout << "m_NumberUniqueAlpha4 : " << m_NumberUniqueAlpha4 << std::endl;
     std::cout << "Adding alpha4 : " << alpha4 << " to the list." << std::endl;
 }
@@ -177,7 +226,7 @@ void CouplingAnalysis::GetAlpha4Key(const float alpha4, int &alpha4Key) const
 {
     for (IntToFloatMap::const_iterator iter = m_KeyToAlpha4Map.begin(); iter != m_KeyToAlpha4Map.end(); ++iter)
     {
-        if (fabs(iter->second - alpha4) < std::numeric_limits<float>::min())
+        if (this->DoFloatsMatch(iter->second, alpha4))
         {
             alpha4Key = iter->first;
             return;
@@ -189,18 +238,31 @@ void CouplingAnalysis::GetAlpha4Key(const float alpha4, int &alpha4Key) const
 
 void CouplingAnalysis::SetAlpha5Key(const float alpha5, int &alpha5Key)
 {
-    for (IntToFloatMap::const_iterator iter = m_KeyToAlpha5Map.begin(); iter != m_KeyToAlpha5Map.end(); ++iter)
-    {
-        if (fabs(iter->second - alpha5) < std::numeric_limits<float>::min())
+//    if (m_KeyToAlpha5Map.size() != 0)
+//    {
+        for (IntToFloatMap::const_iterator iter = m_KeyToAlpha5Map.begin(); iter != m_KeyToAlpha5Map.end(); ++iter)
         {
-            alpha5Key = iter->first;
-            return;
+            if (this->DoFloatsMatch(iter->second, alpha5))
+            {
+                alpha5Key = iter->first;
+                return;
+            }
         }
-    }
+//    }
 
     m_KeyToAlpha5Map.insert(std::make_pair(m_NumberUniqueAlpha5,alpha5));
     m_NumberUniqueAlpha5++;
     m_Alpha5Vector.push_back(alpha5);
+
+        for (IntToFloatMap::const_iterator iter = m_KeyToAlpha5Map.begin(); iter != m_KeyToAlpha5Map.end(); ++iter)
+        {
+            if (this->DoFloatsMatch(iter->second, alpha5))
+            {
+                alpha5Key = iter->first;
+                return;
+            }
+        }
+
     std::cout << "m_NumberUniqueAlpha5 : " << m_NumberUniqueAlpha5 << std::endl;
     std::cout << "Adding alpha5 : " << alpha5 << " to the list." << std::endl;
 }
@@ -211,7 +273,7 @@ void CouplingAnalysis::GetAlpha5Key(const float alpha5, int &alpha5Key) const
 {
     for (IntToFloatMap::const_iterator iter = m_KeyToAlpha5Map.begin(); iter != m_KeyToAlpha5Map.end(); ++iter)
     {
-        if (fabs(iter->second - alpha5) < std::numeric_limits<float>::min())
+        if (this->DoFloatsMatch(iter->second, alpha5))
         {
             alpha5Key = iter->first;
             return;

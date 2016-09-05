@@ -1,19 +1,25 @@
 import os
+import re
+import time
+import threading
 
 from DIRAC.Core.Base import Script
 Script.parseCommandLine()
+from DIRAC.DataManagementSystem.Client.DataManager import DataManager
 from DIRAC.Resources.Catalog.FileCatalogClient import FileCatalogClient
+from DIRAC.Core.Utilities.ReturnValues import returnSingleResult
 
 #=================================
 
 jobDescription = 'PhysicsAnalysis'
 
 eventsToDownload = [
-                       { 'EventType': 'ee_nunuww_nunuqqqq'  , 'EventsPerFile' : 1000 , 'Energies':  ['1400'], 'DetectorModel': 'clic_ild_cdr', 'ReconstructionVariant': 'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 3 },
-                       { 'EventType': 'ee_nunuzz_nunuqqqq'  , 'EventsPerFile' : 1000 , 'Energies':  ['1400'], 'DetectorModel': 'clic_ild_cdr', 'ReconstructionVariant': 'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 1 },
+                       { 'EventType': "ee_nunuqqqq"         , 'EventsPerFile' : 1000 , 'Energies':  ['1400'], 'DetectorModel': 'clic_ild_cdr', 'ReconstructionVariant': 'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 3 }
+#                       { 'EventType': 'ee_nunuww_nunuqqqq'  , 'EventsPerFile' : 1000 , 'Energies':  ['1400'], 'DetectorModel': 'clic_ild_cdr', 'ReconstructionVariant': 'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 3 },
+#                       { 'EventType': 'ee_nunuzz_nunuqqqq'  , 'EventsPerFile' : 1000 , 'Energies':  ['1400'], 'DetectorModel': 'clic_ild_cdr', 'ReconstructionVariant': 'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 3 }
                    ]
 
-maxThread = 10
+maxThread = 100
 
 #=================================
 

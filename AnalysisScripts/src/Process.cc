@@ -20,20 +20,38 @@ Process::Process(std::string jobDescription, std::string detectorModel, std::str
     m_energy(energy),
     m_analysisTag(analysisTag),
     m_pTChain(NULL),
+    m_pTrainTChain(NULL),
+    m_pPostBDTTChain(NULL),
     m_numberOfEntries(std::numeric_limits<int>::max()),
+    m_postBDTProcessWeight(std::numeric_limits<float>::max()),
     m_processWeight(std::numeric_limits<float>::max())
 {
     m_pathToFiles = "/r06/lc/sg568/" + jobDescription + "/MarlinJobs/Detector_Model_" + detectorModel + "/Reconstruction_Variant_" + reconstructionVariant + "/" + eventType + "/" + this->NumberToString(energy) + "GeV/";
 
     this->MakeTChain();
     this->MakeSelection();
+    this->SetBDTRootFiles();
 }
 
 //=====================================================================
 
 TChain* Process::GetTChain() const
 {
-    return m_pTChain;
+    return (TChain*)(m_pTChain->Clone());
+}
+
+//=====================================================================
+
+TChain* Process::GetTrainingTChain() const
+{
+    return (TChain*)(m_pTrainTChain->Clone());
+}
+
+//=====================================================================
+
+TChain* Process::GetPostBDTTChain() const
+{   
+    return (TChain*)(m_pPostBDTTChain->Clone());
 }
 
 //=====================================================================
@@ -45,9 +63,30 @@ float Process::GetProcessWeight() const
 
 //=====================================================================
 
+float Process::GetPostBDTProcessWeight() const
+{
+    return m_postBDTProcessWeight;
+}
+
+//=====================================================================
+
 std::string Process::GetEventType() const 
 {
     return m_eventType;
+}
+
+//=====================================================================
+
+float Process::GetCrossSection() const
+{
+    return m_crossSection;
+}
+
+//=====================================================================
+
+float Process::GetLuminosity() const
+{
+    return m_luminosity;
 }
 
 //=====================================================================
@@ -87,14 +126,36 @@ bool Process::DoesEventPassCuts(int eventNumber) const
 
 //=====================================================================
 
+/*
+RootFiles_BDT_ee_ll_1400GeV.root       RootFiles_BDT_ee_nunuqqqq_1400GeV.root       RootFiles_BDT_egamma_qqqqnu_BS_1400GeV.root   RootFiles_BDT_gammae_qqqqnu_EPA_1400GeV.root
+RootFiles_BDT_ee_llqqqq_1400GeV.root   RootFiles_BDT_ee_qq_1400GeV.root             RootFiles_BDT_egamma_qqqqnu_EPA_1400GeV.root  RootFiles_BDT_gammagamma_qqqq_BS_BS_1400GeV.root
+RootFiles_BDT_ee_lnuqq_1400GeV.root    RootFiles_BDT_ee_qqqq_1400GeV.root           RootFiles_BDT_gammae_qqqqe_BS_1400GeV.root    RootFiles_BDT_gammagamma_qqqq_BS_EPA_1400GeV.root
+RootFiles_BDT_ee_lnuqqqq_1400GeV.root  RootFiles_BDT_egamma_qqqqe_BS_1400GeV.root   RootFiles_BDT_gammae_qqqqe_EPA_1400GeV.root   RootFiles_BDT_gammagamma_qqqq_EPA_BS_1400GeV.root
+RootFiles_BDT_ee_nunuqq_1400GeV.root   RootFiles_BDT_egamma_qqqqe_EPA_1400GeV.root  RootFiles_BDT_gammae_qqqqnu_BS_1400GeV.root   RootFiles_BDT_gammagamma_qqqq_EPA_EPA_1400GeV.root
+-bash-4.1$ pwd
+/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/RootFilesPostBDT
+*/
+
+void Process::SetBDTRootFiles()
+{
+    m_pPostBDTTChain = new TChain("BDTTree");
+    TString fileToAdd = "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/RootFilesPostBDT/RootFiles_BDT_" + m_eventType + "_" + this->NumberToString(m_energy) + "GeV.root";
+    m_pPostBDTTChain->Add(fileToAdd);
+    m_postBDTProcessWeight = m_luminosity * m_crossSection / (float)(m_pTChain->GetEntries());
+}
+
+//=====================================================================
+
 void Process::MakeTChain()
 {
     m_pTChain = new TChain("SelectionProcessorTree");
-//    std::string rootFilesToAdd = m_pathToFiles + "*Analysis_" + this->NumberToString(m_analysisTag) + "_*Selected.root";
-//    std::string extension("root");
+    m_pTrainTChain = new TChain("SelectionProcessorTree");
 
     TSystemDirectory directory(m_pathToFiles.c_str(), m_pathToFiles.c_str());
     TList *listOfFiles = directory.GetListOfFiles();
+    listOfFiles->Sort(); // Alphabetises the list
+
+    bool trainingSample(false);
 
     if (listOfFiles) 
     {
@@ -110,12 +171,21 @@ void Process::MakeTChain()
             if (!file->IsDirectory() and fileCandidate.EndsWith("root") and fileCandidate.Contains(analysisTagString.c_str()) and fileCandidate.Contains("Selected")) // and m_pTChain->GetEntries() < 10000) 
             {
                 TString rootFileToAdd = m_pathToFiles + "/" + fileCandidate.Data();
-                m_pTChain->Add(rootFileToAdd.Data());
+
+                if (trainingSample)
+                {
+                    m_pTChain->Add(rootFileToAdd.Data());
+                    trainingSample = false;
+                }
+                else
+                {
+                   m_pTrainTChain->Add(rootFileToAdd.Data()); 
+                   trainingSample = true;
+                }
             }
         }
     }
 
-//    m_pTChain->Add(rootFilesToAdd.c_str(),1000);
     m_numberOfEntries = m_pTChain->GetEntries();
     m_processWeight = m_luminosity * m_crossSection / (float)(m_numberOfEntries);
 }

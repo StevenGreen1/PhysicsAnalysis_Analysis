@@ -34,7 +34,7 @@ int main(int argc, char **argv)
     //const Process *pProcess_CLIC_ee_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","CLIC_ee_nunuqqqq",24.7,1500,1400,3); // <-CLIC 
 
     // CLIC Backgrounds
-/*
+
     const Process *pProcess_ee_lnuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_lnuqqqq",115.3,1500,1400,3);
     const Process *pProcess_ee_llqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_llqqqq",71.7,1500,1400,3);
     const Process *pProcess_ee_qqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_qqqq",1328.1,1500,1400,3);
@@ -58,20 +58,12 @@ int main(int argc, char **argv)
     const Process *pProcess_gammagamma_qqqq_EPA_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","gammagamma_qqqq_EPA_BS",4034.8,1500,1400,3);
     const Process *pProcess_gammagamma_qqqq_BS_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","gammagamma_qqqq_BS_EPA",4018.7,1500,1400,3);
     const Process *pProcess_gammagamma_qqqq_BS_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","gammagamma_qqqq_BS_BS",4009.5,1500,1400,3);
-*/
-
-//    pProcess_ee_nunuww_nunuqqqq->Print();
-//    pProcess_ee_lnuqqqq->Print();
-//    pProcess_ee_llqqqq->Print();
-//    pProcess_ee_nunuqqqq->Print();
 
     std::vector<const Process*> processes;
-//    processes.push_back(pProcess_ee_nunuww_nunuqqqq);
-//    processes.push_back(pProcess_ee_nunuzz_nunuqqqq);
 
     processes.push_back(pProcess_ee_nunuqqqq);
 //    processes.push_back(pProcess_CLIC_ee_nunuqqqq);
-/*
+
     processes.push_back(pProcess_ee_lnuqqqq);
     processes.push_back(pProcess_ee_llqqqq);
     processes.push_back(pProcess_ee_qqqq);
@@ -94,8 +86,9 @@ int main(int argc, char **argv)
     processes.push_back(pProcess_gammagamma_qqqq_EPA_EPA);
     processes.push_back(pProcess_gammagamma_qqqq_EPA_BS);
     processes.push_back(pProcess_gammagamma_qqqq_BS_EPA);
+
     processes.push_back(pProcess_gammagamma_qqqq_BS_BS);
-*/
+
     Fit *fit = new Fit(processes);
 
 //    MakePlots *makePlots = new MakePlots(processes);
