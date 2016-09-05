@@ -1,13 +1,13 @@
 /**
- *  @file   SelectionProcessor/include/SelectionProcessor.h
+ *  @file   AnalysisProcessor/include/AnalysisProcessor.h
  * 
- *  @brief  Header file for the selection processor class 
+ *  @brief  Header file for the analysis processor class 
  * 
  *  $Log: $
  */
 
-#ifndef SELECTION_PROCESSOR_H
-#define SELECTION_PROCESSOR_H 1
+#ifndef ANALYSIS_PROCESSOR_H
+#define ANALYSIS_PROCESSOR_H 1
 
 #include <iostream>
 //#include <cmath>
@@ -40,11 +40,11 @@ using namespace marlin;
 class TFile;
 class TTree;
 
-class SelectionProcessor : public Processor 
+class AnalysisProcessor : public Processor 
 {
     public:
-        virtual Processor*  newProcessor() { return new SelectionProcessor; }
-        SelectionProcessor();
+        virtual Processor*  newProcessor() { return new AnalysisProcessor; }
+        AnalysisProcessor();
   
         /* 
          * Called at the begin of the job before anything is read.
@@ -83,4 +83,4 @@ class SelectionProcessor : public Processor
         int                 m_nEvent;                  ///< Event number
 };
 
-#endif // #ifndef SELECTION_PROCESSOR_H
+#endif // #ifndef ANALYSIS_PROCESSOR_H

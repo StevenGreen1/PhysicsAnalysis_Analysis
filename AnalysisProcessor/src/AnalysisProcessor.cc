@@ -1,28 +1,28 @@
 /**
- *  @file   SelectionProcessor/src/SelectionProcessor.cc
+ *  @file   AnalysisProcessor/src/AnalysisProcessor.cc
  * 
- *  @brief  Implementation of the selection processor class
+ *  @brief  Implementation of the analysis processor class
  * 
  *  $Log: $
  */
 
-#include "SelectionProcessor.h"
+#include "AnalysisProcessor.h"
 
 using namespace lcio ;
 using namespace marlin ;
 
-SelectionProcessor selectionProcessor;
+AnalysisProcessor analysisProcessor;
 
 //===========================================================
 
-SelectionProcessor::SelectionProcessor() : Processor("SelectionProcessor") 
+AnalysisProcessor::AnalysisProcessor() : Processor("AnalysisProcessor") 
 {
-    _description = "Selection processor for vector boson scattering physics analysis";
+    _description = "Analysis processor for vector boson scattering physics analysis";
 
     registerProcessorParameter("RootFile",
                             "Name of the output root file",
                             m_rootFile,
-                            std::string("SelectionProcessor.root"));
+                            std::string("AnalysisProcessor.root"));
 
     registerInputCollection(LCIO::RECONSTRUCTEDPARTICLE,
                             "CollectionName",
@@ -39,7 +39,7 @@ SelectionProcessor::SelectionProcessor() : Processor("SelectionProcessor")
 
 //===========================================================
 
-void SelectionProcessor::init() 
+void AnalysisProcessor::init() 
 { 
     m_pVariables = new Variables();
 
@@ -48,7 +48,7 @@ void SelectionProcessor::init()
 
     m_pTFile = new TFile(m_rootFile.c_str(), "recreate");
 
-    m_pTTree = new TTree("SelectionProcessorTree", "SelectionProcessorTree");
+    m_pTTree = new TTree("AnalysisProcessorTree", "AnalysisProcessorTree");
     m_pTTree->SetDirectory(m_pTFile);
     m_pTTree->Branch("run", &m_nRun, "run/I");
     m_pTTree->Branch("event", &m_nEvent, "event/I");
@@ -58,14 +58,14 @@ void SelectionProcessor::init()
 
 //===========================================================
 
-void SelectionProcessor::processRunHeader(LCRunHeader* run) 
+void AnalysisProcessor::processRunHeader(LCRunHeader* run) 
 { 
     m_nRun++;
 } 
 
 //===========================================================
 
-void SelectionProcessor::processEvent(LCEvent *pLCEvent) 
+void AnalysisProcessor::processEvent(LCEvent *pLCEvent) 
 { 
     m_pVariables->Clear();
 
@@ -133,13 +133,13 @@ void SelectionProcessor::processEvent(LCEvent *pLCEvent)
 
 //===========================================================
 
-void SelectionProcessor::check(LCEvent * pLCEvent)
+void AnalysisProcessor::check(LCEvent * pLCEvent)
 {
 }
 
 //===========================================================
 
-void SelectionProcessor::end()
+void AnalysisProcessor::end()
 {
     m_pTFile->cd();
     m_pTTree->Write();
