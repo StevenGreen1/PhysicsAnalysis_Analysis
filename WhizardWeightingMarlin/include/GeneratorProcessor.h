@@ -67,6 +67,17 @@ class GeneratorProcessor : public Processor
      * @ cosThetaStar cosine of the W boson polar angle in the reference frame of the WW pair
      */
     void CalculateWBosonPolarAngle(TLorentzVector wPlus, TLorentzVector wMinus, float &cosThetaStar);
+
+    /**
+     * @brief Set the quark mc particles in ww vector boson scattering
+     *
+     * @param pMCParticle target quark
+     * @param u up quark type in process
+     * @param d down quark type in process
+     * @param au anti-up quark type in process
+     * @param ad anti-down quark type in process
+     */
+    void SetQuarks(MCParticle *pMCParticle, MCParticle *&u, MCParticle *&d, MCParticle *&au, MCParticle *&ad) const;
  
     std::string         m_CollectionName;                       ///<
     std::string         m_rootFile;                             ///<
@@ -74,6 +85,8 @@ class GeneratorProcessor : public Processor
     TTree              *m_pTTree;                               ///<
     TH1F               *m_hWWInvMass;                           ///<
     TH1F               *m_wCosThetaStar;                        ///<
+    TH1F               *m_wCosThetaStar2;                       ///<
+    TH1F               *m_wCosThetaStar3;                       ///<
     int                 m_nRun;                                 ///<
     int                 m_nEvent;                               ///<
     CouplingAnalysis   *m_CouplingAnalysis;                     ///<

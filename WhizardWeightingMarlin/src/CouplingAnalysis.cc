@@ -7,6 +7,7 @@ CouplingAnalysis::CouplingAnalysis() :
     m_NumberUniqueAlpha5(0)
 {
     this->LoadXml();
+    this->AnalyseSingleEvent(1);
 }
 
 //============================================================================
@@ -41,9 +42,12 @@ void CouplingAnalysis::GetWeight(const int eventNumber, const float alpha4, cons
     float lowerRightBound(this->GetStoredWeight(eventNumber,upperAlpha4,lowerAlpha5));
     float upperRightBound(this->GetStoredWeight(eventNumber,upperAlpha4,upperAlpha5));
 
+    eventWeight = this->BilinearInterpolation(lowerLeftBound,upperLeftBound,lowerRightBound,upperRightBound,lowerAlpha4,upperAlpha4,lowerAlpha5,upperAlpha5,alpha4,alpha5);
+
     std::cout << "UL : " << upperLeftBound << " " << upperRightBound << " : UR" << std::endl;
     std::cout << "LL : " << lowerLeftBound << " " << lowerRightBound << " : LR" << std::endl;
-    std::cout << "BilinearInterpolation : " << this->BilinearInterpolation(lowerLeftBound,upperLeftBound,lowerRightBound,upperRightBound,lowerAlpha4,upperAlpha4,lowerAlpha5,upperAlpha5,alpha4,alpha5) << std::endl;
+    std::cout << "BilinearInterpolation : " << eventWeight << std::endl;
+    
 }
 
 //============================================================================
@@ -70,7 +74,7 @@ float CouplingAnalysis::BilinearInterpolation(const float l4l5, const float l4u5
 
 void CouplingAnalysis::LoadXml()
 {
-    std::string process("ee_nunuzz_nunuqqqq");
+    std::string process("ee_nunuww_nunuqqqq");
     std::string energy("1400");
 
 //    for (int i = -5; i < 6; i++)
@@ -79,8 +83,8 @@ void CouplingAnalysis::LoadXml()
 //        for (int j = -5; j < 6; j++)
         for (int j = -2; j < 3; j++)
         {
-            const float alpha4(i * 0.005);
-            const float alpha5(j * 0.005);
+            const float alpha4(i * 0.05);
+            const float alpha5(j * 0.05);
             std::cout << "Loading : (Alpha4,Alpha5) = (" << this->AlphasToString(alpha4) << "," << this->AlphasToString(alpha5) << ")" << std::endl;
             this->LoadIndividualXml(process,energy,alpha4,alpha5);
         }

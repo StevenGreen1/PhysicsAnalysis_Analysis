@@ -55,6 +55,8 @@ void GeneratorProcessor::init()
     m_hWWInvMass = new TH1F("WWInvMass", "Invariant Mass of WW Pair in VBS", nBins, bins);
 
     m_wCosThetaStar = new TH1F("WCosThetaStar", "Cosine Theta of W Boson in WW Rest Frame", 10, 0, 1);
+    m_wCosThetaStar2 = new TH1F("WCosThetaStar2", "Cosine Theta of W Boson in WW Rest Frame", 10, 0, 1);
+    m_wCosThetaStar3 = new TH1F("WCosThetaStar3", "Cosine Theta of W Boson in WW Rest Frame", 10, 0, 1);
 
     m_CouplingAnalysis = new CouplingAnalysis();
 }
@@ -88,65 +90,45 @@ void GeneratorProcessor::processEvent(LCEvent * evt)
 
     if (pLCCollection != NULL)
     {
-        unsigned int nMCP(pLCCollection->getNumberOfElements());
-
-        std::cout << "The event weight is : " << evt->getWeight() << std::endl;
+//        unsigned int nMCP(pLCCollection->getNumberOfElements());
 
         MCParticle *u = NULL;
         MCParticle *d = NULL;
         MCParticle *au = NULL;
         MCParticle *ad = NULL;
 
-        for(unsigned int i = 0; i < nMCP; i++)
+        MCParticle *pMCParticle1 = dynamic_cast<MCParticle*>(pLCCollection->getElementAt(8));
+        MCParticle *pMCParticle2 = dynamic_cast<MCParticle*>(pLCCollection->getElementAt(9));
+        MCParticle *pMCParticle3 = dynamic_cast<MCParticle*>(pLCCollection->getElementAt(10));
+        MCParticle *pMCParticle4 = dynamic_cast<MCParticle*>(pLCCollection->getElementAt(11));
+
+        this->SetQuarks(pMCParticle1,u,d,au,ad);
+        this->SetQuarks(pMCParticle2,u,d,au,ad);
+        this->SetQuarks(pMCParticle3,u,d,au,ad);
+        this->SetQuarks(pMCParticle4,u,d,au,ad);
+
+        if (u == NULL)
         {
-            MCParticle *pMCParticle = dynamic_cast<MCParticle*>(pLCCollection->getElementAt(i));
-            const int pdg(pMCParticle->getPDG());
-
-            if (i > 12) continue;
-
-            if (std::abs(pdg) != 1 and std::abs(pdg) != 2 and std::abs(pdg) != 3 and std::abs(pdg) != 4 and std::abs(pdg) != 5)
-                continue;
-
-            MCParticle *pMCParticlePair = dynamic_cast<MCParticle*>(pLCCollection->getElementAt(i+1));
-            const int pdgPair(pMCParticlePair->getPDG());
-
-            if (pdg == 1 and (pdgPair != -2 and pdgPair != -4)) continue;
-            if (pdg == -1 and (pdgPair != 2 and pdgPair != 4)) continue;
-
-            if (pdg == 2 and (pdgPair != -1 and pdgPair != -3 and pdgPair != -5)) continue;
-            if (pdg == -2 and (pdgPair != 1 and pdgPair != 3 and pdgPair != 5)) continue;
-
-            if (pdg == 3 and (pdgPair != -2 and pdgPair != -4)) continue;
-            if (pdg == -3 and (pdgPair != 2 and pdgPair != 4)) continue;
-
-            if (pdg == 4 and (pdgPair != -1 and pdgPair != -3 and pdgPair != -5)) continue;
-            if (pdg == -4 and (pdgPair != 1 and pdgPair != 3 and pdgPair != 5)) continue;
-
-            if (pdg == 5 and (pdgPair != -2 and pdgPair != -4)) continue;
-            if (pdg == -5 and (pdgPair != 2 and pdgPair != 4)) continue;
-
-            if (pdg == 1 or pdg == 3 or pdg == 5)
-            {
-                u = pMCParticle;
-                ad = pMCParticlePair;
-            }
-            else if (pdg == -1 or pdg == -3 or pdg == -5)
-            {
-                au = pMCParticle;
-                d = pMCParticlePair;
-            }
-            else if (pdg == 2 or pdg == 4)
-            {
-                d = pMCParticle;
-                au = pMCParticlePair;
-            }
-            else if (pdg == -2 or pdg == -4)
-            {
-                ad = pMCParticle;
-                u = pMCParticlePair;
-            }
-            i++;
+            std::cout << "Up quark is null and not set properly" << std::endl;
         }
+
+        if (au == NULL)
+        {
+            std::cout << "Anti-up quark is null and not set properly" << std::endl;
+        }
+        if (d == NULL)
+        {
+            std::cout << "Down quark is null and not set properly" << std::endl;
+        }
+        if (ad == NULL)
+        {
+            std::cout << "Anti-down quark is null and not set properly" << std::endl;
+        }
+
+        std::cout << "u  : " << u->getPDG() << std::endl;
+        std::cout << "d  : " << d->getPDG() << std::endl;
+        std::cout << "au : " << au->getPDG() << std::endl;
+        std::cout << "ad : " << ad->getPDG() << std::endl;
 
         if (u != NULL and au != NULL and d != NULL and ad != NULL)
         {
@@ -159,12 +141,7 @@ void GeneratorProcessor::processEvent(LCEvent * evt)
             this->CalculateInvariantMass(mcParticleVector,wwInvariantMass);
 
             m_hWWInvMass->Fill(wwInvariantMass);
-/*
-            std::cout << "u  : " << u->getPDG() << std::endl;
-            std::cout << "d  : " << d->getPDG() << std::endl;
-            std::cout << "au : " << au->getPDG() << std::endl;
-            std::cout << "ad : " << ad->getPDG() << std::endl;
-*/
+
             const float wPluspx(u->getMomentum()[0] + ad->getMomentum()[0]);
             const float wPluspy(u->getMomentum()[1] + ad->getMomentum()[1]);
             const float wPlusupz(u->getMomentum()[2] + ad->getMomentum()[2]);
@@ -180,19 +157,55 @@ void GeneratorProcessor::processEvent(LCEvent * evt)
 
             float cosThetaStar(-1.f);
             this->CalculateWBosonPolarAngle(wPlus,wMinus,cosThetaStar);
-            m_wCosThetaStar->Fill(cosThetaStar);
+
+            float eventWeight(0.f);
+            float eventWeight2(0.f);
+            float eventWeight3(0.f);
+            m_CouplingAnalysis->GetWeight(m_nEvent, 0.000, 0.000, eventWeight);
+            m_CouplingAnalysis->GetWeight(m_nEvent, 0.095, 0.000, eventWeight2);
+            m_CouplingAnalysis->GetWeight(m_nEvent, 0.000, 0.095, eventWeight3);
+
+            m_wCosThetaStar->Fill(cosThetaStar, eventWeight);
+            m_wCosThetaStar2->Fill(cosThetaStar, eventWeight2);
+            m_wCosThetaStar3->Fill(cosThetaStar, eventWeight3);
             std::cout << "WW invariant mass is : " << wwInvariantMass << std::endl;
             std::cout << "W Cos Theta Star is  : " << cosThetaStar << std::endl;
+            std::cout << "Event weight (0,0)           : " << eventWeight << std::endl;
+            std::cout << "Event weight (0.02,0.0) : " << eventWeight2 << std::endl;
+            std::cout << "Event weight (0.0,0.02) : " << eventWeight3 << std::endl;
         }
     }
 
-    float eventWeight(0.f);
     m_nEvent++;
-    m_CouplingAnalysis->GetWeight(m_nEvent, 0.005, -0.005, eventWeight);
-
-    std::cout << " m_CouplingAnalysis->GetWeight(m_nEvent, 0.005, -0.005, eventWeight) : " << eventWeight << std::endl;
 
     m_pTTree->Fill();
+}
+
+//===========================================================
+
+void GeneratorProcessor::SetQuarks(MCParticle *pMCParticle, MCParticle *&u, MCParticle *&d, MCParticle *&au, MCParticle *&ad) const 
+{
+    const int pdg(pMCParticle->getPDG());
+
+    std::cout << "Setting quark pdg : " << pdg << std::endl;
+
+    if (pdg == 1 or pdg == 3 or pdg == 5) 
+    {
+         u = pMCParticle;
+    }
+    else if (pdg == -1 or pdg == -3 or pdg == -5) 
+    {
+        au = pMCParticle;
+    }
+    else if (pdg == 2 or pdg == 4 or pdg == 6) 
+    {
+        d = pMCParticle;
+    }
+    else if (pdg == -2 or pdg == -4 or pdg == -6) 
+    {
+        ad = pMCParticle;
+    }
+    return;
 }
 
 //===========================================================
@@ -245,6 +258,8 @@ void GeneratorProcessor::end()
     m_pTTree->Write();
     m_hWWInvMass->Write();
     m_wCosThetaStar->Write();
+    m_wCosThetaStar2->Write();
+    m_wCosThetaStar3->Write();
 
     m_pTFile->Close();
     delete m_pTFile;
