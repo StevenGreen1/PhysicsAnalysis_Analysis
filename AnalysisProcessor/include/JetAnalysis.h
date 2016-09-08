@@ -14,10 +14,14 @@
 
 #include "EVENT/LCCollection.h"
 #include "EVENT/ReconstructedParticle.h"
+#include "UTIL/PIDHandler.h"
 
 #include "TLorentzVector.h"
 
 #include "Variables.h"
+
+//namespace EVENT { class LCEvent; class MCParticle; class ReconstructedParticle; class ParticleID;}
+//namespace UTIL {class PIDHandler;}
 
 class JetAnalysis 
 {
@@ -37,10 +41,17 @@ class JetAnalysis
         ~JetAnalysis();
 
     private:
-        /** 
-         *   @brief Run the jet analysis process to set variables of interest
+        /**
+         *  @brief Run analysis of jets to set variables of interest
+         *
+         *  @param pLCCollection collection of jets to process
          */
-        void Process();
+        void ProcessJets(const EVENT::LCCollection *pLCCollection);
+
+        /** 
+         *   @brief Run analysis of bosons to set variables of interest
+         */
+        void ProcessBosons();
 
         /**
          *  @brief Find the jet clustering variable y34
@@ -49,6 +60,13 @@ class JetAnalysis
          *  @param y34 jet clustering variable of choice
          */
         void CalculateJetClusteringVariableY34(const EVENT::LCCollection *pLCCollection);
+
+        /**
+         *  @brief Find the flavour tagging information for the jets 
+         *
+         *  @param pLCCollection  collection of jets to process
+         */
+        void CalculateFlavourTagging(const EVENT::LCCollection *pLCCollection);
 
         /**
          *  @brief Set the basic jet variables including energy, number of particles and number of charged particles

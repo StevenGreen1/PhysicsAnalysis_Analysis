@@ -6,7 +6,7 @@ rm -rf ./lib/marlin_dll/
 mkdir ./lib/marlin_dll/
 cp ./lib/lib* ./lib/marlin_dll/
 
-MarlinLibs="MarlinAnalysisProcessor"
+MarlinLibs="JetsToPFOProcessor"
 
 rm $MarlinLibs.tar
 rm $MarlinLibs.tar.gz

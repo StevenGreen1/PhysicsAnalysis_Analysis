@@ -4,12 +4,11 @@ import re
 import sys
 import random
 
+from DIRAC.Core.Base import Script
+Script.parseCommandLine()
 from ILCDIRAC.Interfaces.API.DiracILC import  DiracILC
 from ILCDIRAC.Interfaces.API.NewInterface.UserJob import *
 from ILCDIRAC.Interfaces.API.NewInterface.Applications import *
-from DIRAC.Core.Base import Script
-Script.parseCommandLine()
-from DIRAC.Resources.Catalog.FileCatalogClient import FileCatalogClient
 
 from Logic.GridTools import *
 
@@ -20,13 +19,15 @@ jobDescription = 'PhysicsAnalysis'
 # Always define event type, events per file and energies in same way.  If not CLIC sample set ProdID to 0
 
 eventsToSimulate = [
-                       { 'EventType': "ee_nunuqqqq"         , 'Energy': 1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 4 }
+                       { 'EventType': "ee_nunuqqqq"         , 'Energy': 1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 3 }
+#                       { 'EventType': "ee_nunuww_nunuqqqq"  , 'Energy': 1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 3 },
+#                       { 'EventType': "ee_nunuzz_nunuqqqq"  , 'Energy': 1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 3 }
                    ]
 
 #===== Second level user input =====
 
 gearFile = 'TemplateSteering/clic_ild_cdr.gear'
-steeringTemplateFile = 'TemplateSteering/AnalysisTemplate_Tag4.xml'
+steeringTemplateFile = 'TemplateSteering/AnalysisTemplate.xml'
 
 ##############
 # Begin
@@ -49,8 +50,9 @@ for eventSelection in eventsToSimulate:
     gearFileLocal = os.path.basename(gearFile)
 
     diracInstance = DiracILC(withRepo=False)
-
+    
     slcioFormat = 'DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_GenNumber_(.*?)_(.*?)_(.*?)_DST.slcio'
+
     slcioFilesToProcess = getDstSlcioFiles(jobDescription,detectorModel,reconstructionVariant,energy,eventType)
 
     if not slcioFilesToProcess:
@@ -60,7 +62,8 @@ for eventSelection in eventsToSimulate:
     for slcioFile in slcioFilesToProcess:
         print 'Checking ' + eventType + ' ' + str(energy) + 'GeV jobs.  Detector model ' + detectorModel + '.  Reconstruction stage ' + reconstructionVariant + '.  Slcio file ' + slcioFile + '.'
         slcioFileNoPath = os.path.basename(slcioFile)
-        inputSandbox = ['LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/MarlinAnalysisProcessor.tar.gz', 'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/JetsToPFOProcessor.tar.gz', 'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/vtxprob.tar.gz', 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p70.tar.gz','LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_1p00.tar.gz']
+
+        inputSandbox = ['LFN:/ilc/user/s/sgreen/SelectionProcessorTarBall/MarlinSelectionProcessor.tar.gz']
 
         #########################
         # Get info from file name
@@ -84,30 +87,33 @@ for eventSelection in eventsToSimulate:
         steeringTemplate = steeringTemplateContent
 
         outputPath = '/' + jobDescription + '/MarlinJobs/Detector_Model_' + detectorModel + '/Reconstruction_Variant_' + reconstructionVariant + '/' + eventType + '/' + str(energy) + 'GeV'
-        rootFileName = 'DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_GenN_' + str(generatorSerialNumber) + '_' + str(numberOfEventsInFile) + '_' + str(startEventNumber) + '_Tag' + str(analysisTag)
-        rootFileNameSelectedPFOs_kt_1p0 = rootFileName + '_SPFOs_kt_2jets_1p00.root'
-        rootFileNameSelectedPFOs_kt_0p7 = rootFileName + '_SPFOs_kt_2jets_0p70.root'
+        rootFileName = 'DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_GenNumber_' + str(generatorSerialNumber) + '_' + str(numberOfEventsInFile) + '_' + str(startEventNumber) + '_Analysis_' + str(analysisTag)
+
+        rootFileNameSelected = rootFileName + '_Selected.root'
+        rootFileNameTight = rootFileName + '_Tight.root'
+        rootFileNameLoose = rootFileName + '_Loose.root'
 
         outputFiles = []
-        outputFiles.append(rootFileNameSelectedPFOs_kt_1p0)
-        outputFiles.append(rootFileNameSelectedPFOs_kt_0p7)
+        outputFiles.append(rootFileNameSelected)
+        outputFiles.append(rootFileNameTight)
+        outputFiles.append(rootFileNameLoose)
 
-        steeringTemplate = re.sub('InputSlcioFile',slcioFileNoPath,steeringTemplate)
+        steeringTemplate = re.sub('SelectionProcessorRootFileSelected',rootFileNameSelected,steeringTemplate)
+        steeringTemplate = re.sub('SelectionProcessorRootFileTight',rootFileNameTight,steeringTemplate)
+        steeringTemplate = re.sub('SelectionProcessorRootFileLoose',rootFileNameLoose,steeringTemplate)
+        steeringTemplate = re.sub('MCEnergy',str(energy),steeringTemplate)
         steeringTemplate = re.sub('GearFile',gearFileLocal,steeringTemplate)
-        steeringTemplate = re.sub('MaximumNumberOfEventsToRecord','-1',steeringTemplate)
-        steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPFOs_kt_1p0',rootFileNameSelectedPFOs_kt_1p0,steeringTemplate)
-        steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPFOs_kt_0p7',rootFileNameSelectedPFOs_kt_0p7,steeringTemplate)
+        steeringTemplate = re.sub('InputSlcioFile',slcioFileNoPath,steeringTemplate)
 
         #########################
         # Write Template File
         #########################
-        with open('MarlinSteering.steer' ,'w') as SteeringFile:
+        with open("MarlinSteering.steer" ,"w") as SteeringFile:
             SteeringFile.write(steeringTemplate)
 
         #########################
         # Check output doesn't exist already
         #########################
-
         skipJob = False
         for outputFile in outputFiles:
             lfn = '/ilc/user/s/sgreen' + outputPath + '/' + outputFile
@@ -117,17 +123,17 @@ for eventSelection in eventsToSimulate:
         if skipJob:
             continue
 
-        print 'Submitting ' + eventType + ' ' + str(energy) + 'GeV jobs.  Detector model ' + detectorModel + '.  Reconstruction stage ' + reconstructionVariant + '.  SLCIO file ' + slcioFile + '.'  
+        print 'Submitting ' + eventType + ' ' + str(energy) + 'GeV jobs.  Detector model ' + detectorModel + '.  Reconstruction stage ' + reconstructionVariant + '.  Slcio file ' + slcioFile + '.'  
 
         #########################
         # Setup Marlin Application
         #########################
         ma = Marlin()
-        ma.setVersion('v01-16-02')
+        ma.setVersion('ILCSoft-01-17-08_gcc48')
         ma.setSteeringFile('MarlinSteering.steer')
         ma.setGearFile(gearFileLocal)
         ma.setInputFile('lfn:' + slcioFile)
-        ma.setProcessorsToUse(['libMarlinFastJet.so', 'libJetsToPFOs.so', 'libLCFIPlus.so', 'libAnalysisProcessor.so', 'libMarlinReco.so'])
+        ma.setProcessorsToUse(['libSelectionProcessor.so','libMarlinFastJet.so'])
 
         #########################
         # Submit Job
@@ -140,8 +146,7 @@ for eventSelection in eventsToSimulate:
         job.setOutputSandbox(['*.log','*.gear','*.mac','*.steer','*.xml'])
         job.setOutputData(outputFiles,OutputPath=outputPath) # On grid
         job.setName(jobDetailedName)
-        job.setBannedSites(['LCG.IN2P3-CC.fr','LCG.IN2P3-IRES.fr','LCG.KEK.jp','OSG.PNNL.us','OSG.CIT.us','LCG.LAPP.fr','LCG.UKI-LT2-IC-HEP.uk','LCG.Tau.il','LCG.Weizmann.il','OSG.BNL.us','LCG.GRIF.fr'])
-        job.setCPUTime(21600) # 6 hour, should be excessive
+        job.setBannedSites(['LCG.IN2P3-CC.fr','LCG.IN2P3-IRES.fr','LCG.KEK.jp','OSG.PNNL.us','OSG.CIT.us','LCG.LAPP.fr'])
         job.dontPromptMe()
 
         res = job.append(ma)
@@ -150,7 +155,7 @@ for eventSelection in eventsToSimulate:
             print res['Message']
             exit()
         job.submit(diracInstance)
-        sys.exit()
+        #sys.exit()
 
 # Tidy Up
 os.system('rm MarlinSteering.steer')

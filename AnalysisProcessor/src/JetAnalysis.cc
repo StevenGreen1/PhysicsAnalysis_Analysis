@@ -24,8 +24,8 @@ JetAnalysis::JetAnalysis(const EVENT::LCCollection *pLCCollection, Variables *&v
     m_JetVector.push_back(dynamic_cast<EVENT::ReconstructedParticle*>(pLCCollection->getElementAt(2)));
     m_JetVector.push_back(dynamic_cast<EVENT::ReconstructedParticle*>(pLCCollection->getElementAt(3)));
 
-    this->CalculateJetClusteringVariableY34(pLCCollection); // Must set before process as selection of WW and ZZ events uses y34
-    this->Process();
+    this->ProcessJets(pLCCollection);
+    this->ProcessBosons();
 }
 
 //===========================================================
@@ -36,11 +36,18 @@ JetAnalysis::~JetAnalysis()
 
 //===========================================================
 
-void JetAnalysis::Process()
+void JetAnalysis::ProcessJets(const EVENT::LCCollection *pLCCollection)
 {
+    this->CalculateJetClusteringVariableY34(pLCCollection);
+    this->CalculateFlavourTagging(pLCCollection);
     this->JetVariables();
     this->JetPairing();
+}
 
+//===========================================================
+
+void JetAnalysis::ProcessBosons()
+{
     this->CalculateAcolinearities();
     this->CalculateTransverseMomentum();
     this->CalculateTransverseEnergy();
@@ -63,11 +70,46 @@ void JetAnalysis::Process()
 
 void JetAnalysis::CalculateJetClusteringVariableY34(const EVENT::LCCollection *pLCCollection)
 {
-    std::string stringY34("y_{n-1,n}");
-    std::string stringY45("y_{n,n+1}");
-    const double parameterY34(pLCCollection->getParameters().getFloatVal(stringY34));
-    const double minusLogYSeparation((parameterY34 > std::numeric_limits<double>::epsilon()) ? - std::log10(parameterY34) : 0.0);
-    m_pVariables->SetY34(minusLogYSeparation);
+    PIDHandler pidHandler(pLCCollection);
+    const int algIndexYij(pidHandler.getAlgorithmID("yth"));
+    const ParticleID &particleID(pidHandler.getParticleID(pLCCollection->getElementAt(0), algIndexYij));
+    std::string stringY34("y34");
+    std::string stringY45("y45");
+    const double parameterY34(particleID.getParameters()[pidHandler.getParameterIndex(algIndexYij, stringY34)]);
+    const double parameterY45(particleID.getParameters()[pidHandler.getParameterIndex(algIndexYij, stringY45)]);
+
+    const double minusLogY34Separation((parameterY34 > std::numeric_limits<double>::epsilon()) ? - log10(parameterY34) : 0.0);
+    const double minusLogY45Separation((parameterY45 > std::numeric_limits<double>::epsilon()) ? - log10(parameterY45) : 0.0);
+
+    m_pVariables->SetY34(minusLogY34Separation);
+    m_pVariables->SetY45(minusLogY45Separation);
+    m_y34 = minusLogY34Separation;
+}
+
+//===========================================================
+
+void JetAnalysis::CalculateFlavourTagging(const EVENT::LCCollection *pLCCollection)
+{
+    PIDHandler pidHandler(pLCCollection);
+
+    const int lcfiplusAlgID(pidHandler.getAlgorithmID("lcfiplus"));
+    const int bTagIndex(pidHandler.getParameterIndex(lcfiplusAlgID, "BTag"));
+    const int cTagIndex(pidHandler.getParameterIndex(lcfiplusAlgID, "CTag"));
+
+    DoubleVector bTagInfoJets;
+    DoubleVector cTagInfoJets;
+
+    for (ParticleVector::iterator iter = m_JetVector.begin(); iter != m_JetVector.end(); iter++)
+    {
+        const EVENT::ReconstructedParticle *pReconstructedParticle(*iter);
+        const EVENT::ParticleID &particleID = pidHandler.getParticleID(const_cast<EVENT::ReconstructedParticle *>(pReconstructedParticle), lcfiplusAlgID);
+
+        bTagInfoJets.push_back(particleID.getParameters().at(bTagIndex));
+        cTagInfoJets.push_back(particleID.getParameters().at(cTagIndex));
+    }
+
+    m_pVariables->SetBTagForJets(bTagInfoJets);
+    m_pVariables->SetCTagForJets(cTagInfoJets);
 }
 
 //===========================================================
@@ -135,12 +177,13 @@ void JetAnalysis::JetPairing()
         this->FindInvariantMass(trialPair1, invariantMass1);
         this->FindInvariantMass(trialPair2, invariantMass2);
 
-        const double wMetric((std::fabs(invariantMass1-m_WBosonMass))*std::fabs(invariantMass2-m_WBosonMass));
-        const double zMetric((std::fabs(invariantMass1-m_ZBosonMass))*std::fabs(invariantMass2-m_ZBosonMass));
+        const double wMetric((fabs(invariantMass1-m_WBosonMass))*fabs(invariantMass2-m_WBosonMass));
+        const double zMetric((fabs(invariantMass1-m_ZBosonMass))*fabs(invariantMass2-m_ZBosonMass));
 
         if (wMetric < bestWMetric)
         {
             bestWMasses.clear();
+            m_pVariables->SetJetCombinationW(combination);
 
             if (invariantMass1 > invariantMass2)
             {
@@ -163,6 +206,7 @@ void JetAnalysis::JetPairing()
         if (zMetric < bestZMetric)
         {
             bestZMasses.clear();
+            m_pVariables->SetJetCombinationZ(combination);
 
             if (invariantMass1 > invariantMass2)
             {
@@ -312,7 +356,7 @@ void JetAnalysis::FindInvariantMass(ParticleVector &jetVector, double &invariant
         energyTot += energy;
     }
 
-    invariantMass = std::sqrt(energyTot*energyTot - pxTot*pxTot - pyTot*pyTot - pzTot*pzTot);
+    invariantMass = sqrt(energyTot*energyTot - pxTot*pxTot - pyTot*pyTot - pzTot*pzTot);
 }
 
 //===========================================================
@@ -326,9 +370,9 @@ void JetAnalysis::CalculateTransverseEnergy()
         const double px(pReconstructedParticle->getMomentum()[0]);
         const double py(pReconstructedParticle->getMomentum()[1]);
         const double pz(pReconstructedParticle->getMomentum()[2]);
-        const double p(std::sqrt(px * px + py * py + pz * pz));
+        const double p(sqrt(px * px + py * py + pz * pz));
         const double energy(pReconstructedParticle->getEnergy());
-        transverseEnergy += energy * std::sqrt(px*px + py*py) / p;
+        transverseEnergy += energy * sqrt(px*px + py*py) / p;
     }
     m_pVariables->SetTransverseEnergy(transverseEnergy);
 
@@ -358,9 +402,9 @@ void JetAnalysis::CalculateTransverseEnergyObject(ParticleVector particleVector,
         const double px(pReconstructedParticle->getMomentum()[0]);
         const double py(pReconstructedParticle->getMomentum()[1]);
         const double pz(pReconstructedParticle->getMomentum()[2]);
-        const double p(std::sqrt(px * px + py * py + pz * pz));
+        const double p(sqrt(px * px + py * py + pz * pz));
         const double energy(pReconstructedParticle->getEnergy());
-        transverseEnergy += energy * std::sqrt(px*px + py*py) / p;
+        transverseEnergy += energy * sqrt(px*px + py*py) / p;
     }
 }
 
@@ -375,7 +419,7 @@ void JetAnalysis::CalculateTransverseMomentum()
         const double px(pReconstructedParticle->getMomentum()[0]);
         const double py(pReconstructedParticle->getMomentum()[1]);
 
-        transverseMomentum += std::sqrt(px*px + py*py);
+        transverseMomentum += sqrt(px*px + py*py);
     }
     m_pVariables->SetTransverseMomentum(transverseMomentum);
 
@@ -405,9 +449,9 @@ void JetAnalysis::CalculateTransverseMomentumObject(ParticleVector particleVecto
         const double px(pReconstructedParticle->getMomentum()[0]);
         const double py(pReconstructedParticle->getMomentum()[1]);
         const double pz(pReconstructedParticle->getMomentum()[2]);
-        const double p(std::sqrt(px * px + py * py + pz * pz));
+        const double p(sqrt(px * px + py * py + pz * pz));
         const double energy(pReconstructedParticle->getEnergy());
-        transverseMomentum += std::sqrt(px*px + py*py);
+        transverseMomentum += sqrt(px*px + py*py);
     }
 }
 
@@ -419,7 +463,7 @@ void JetAnalysis::CalculateCosThetaMissingMomentum()
     double pyMis(0.0);
     double pzMis(0.0);
     this->FindMissingMomentum(pxMis, pyMis, pzMis);
-    const double pMis(std::sqrt(pxMis * pxMis + pyMis * pyMis + pzMis * pzMis));
+    const double pMis(sqrt(pxMis * pxMis + pyMis * pyMis + pzMis * pzMis));
     m_pVariables->SetCosThetaMissing(pzMis / pMis);
 }
 
@@ -593,7 +637,7 @@ void JetAnalysis::FindEnergyAroundPfo(ParticleVector *pParticleVector, const EVE
         double cosTheta(std::numeric_limits<double>::max());
         double theta(std::numeric_limits<double>::max());
 
-        if (std::fabs(unitPfoCentroidToPfoCandidate.x()) < std::numeric_limits<double>::epsilon() and std::fabs(unitPfoCentroidToPfoCandidate.y()) < std::numeric_limits<double>::epsilon() and std::fabs(unitPfoCentroidToPfoCandidate.z()) < std::numeric_limits<double>::epsilon())
+        if (fabs(unitPfoCentroidToPfoCandidate.x()) < std::numeric_limits<double>::epsilon() and fabs(unitPfoCentroidToPfoCandidate.y()) < std::numeric_limits<double>::epsilon() and fabs(unitPfoCentroidToPfoCandidate.z()) < std::numeric_limits<double>::epsilon())
         {
             cosTheta = 1.0;
             theta = 0.0;
@@ -638,7 +682,7 @@ void JetAnalysis::FindPfoPosition(const EVENT::ReconstructedParticle *pReconstru
 
 void JetAnalysis::IsEventAppropriate()
 {
-    if (!(m_pVariables->GetRecoilMass() >= 250 and m_pVariables->GetTransverseMomentum() >= 40 and m_pVariables->GetTransverseEnergy() >= 150 and std::fabs(m_pVariables->GetCosThetaMissing()) < 0.99f and std::fabs(m_pVariables->GetCosThetaMostEnergeticTrack()) < 0.99f and m_pVariables->GetEnergyAroundMostEnergeticPfo() >= 2 and m_pVariables->GetY34() < 3.5))
+    if (!(m_pVariables->GetRecoilMass() >= 250 and m_pVariables->GetTransverseMomentum() >= 40 and m_pVariables->GetTransverseEnergy() >= 150 and fabs(m_pVariables->GetCosThetaMissing()) < 0.99f and fabs(m_pVariables->GetCosThetaMostEnergeticTrack()) < 0.99f and m_pVariables->GetEnergyAroundMostEnergeticPfo() >= 2 and m_pVariables->GetY34() < 3.5))
     {
         m_pVariables->SetAppropriateEvent(false);
         return;
@@ -773,7 +817,7 @@ void JetAnalysis::CalculateCosThetaStar(ParticleVector objectOfInterest, Particl
     TLorentzVector diBoson = objectOfInterest4Vec + referenceFrameObjects4Vec;
     TVector3 boostvector = -diBoson.BoostVector();
     objectOfInterest4Vec.Boost(boostvector);
-    cosThetaStar = std::fabs(objectOfInterest4Vec.Vect().Dot(diBoson.Vect()) / (objectOfInterest4Vec.Vect().Mag() * diBoson.Vect().Mag()));
+    cosThetaStar = fabs(objectOfInterest4Vec.Vect().Dot(diBoson.Vect()) / (objectOfInterest4Vec.Vect().Mag() * diBoson.Vect().Mag()));
 }
 
 //===========================================================

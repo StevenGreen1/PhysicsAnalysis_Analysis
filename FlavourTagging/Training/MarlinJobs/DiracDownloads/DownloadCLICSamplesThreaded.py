@@ -13,7 +13,7 @@ from DIRAC.Core.Utilities.ReturnValues import returnSingleResult
 
 jobDescription = 'PhysicsAnalysis_FlavourTagging'
 
-eventsToSimulate = [
+eventsToDownload = [
                        { 'EventType': 'ee_Znunu_Zbb', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 4, 'ProdID': 2804, 'NumberOfEvents': 99000, 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode': 'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
                        { 'EventType': 'ee_Znunu_Zcc', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 4, 'ProdID': 2807, 'NumberOfEvents': 99600, 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode': 'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
                        { 'EventType': 'ee_Znunu_Zudsqudsq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 4, 'ProdID': 2801, 'NumberOfEvents': 99800, 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode': 'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
@@ -79,10 +79,21 @@ for eventSelection in eventsToDownload:
     jetClusteringRadius = eventSelection['JetClusteringRadius']
     jetAlgorithmConfigString = jetClusteringAlgorithm + '_' + str(nJetsToCluster) + 'jets_' + str(format(jetClusteringRadius,'.2f')).replace('.','p')
 
+    if pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs':
+        shortPandoraPFOsToUse = 'SelectedPFOs'
+        jetAlgorithmConfigString = 'SelectedPFOs_' + jetAlgorithmConfigString
+    elif pandoraPFOsToUse == 'TightSelectedPandoraPFANewPFOs':
+        shortPandoraPFOsToUse = 'TightPFOs'
+        jetAlgorithmConfigString = 'TightPFOs_' + jetAlgorithmConfigString
+    elif pandoraPFOsToUse == 'LooseSelectedPandoraPFANewPFOs':
+        shortPandoraPFOsToUse = 'LoosePFOs'
+        jetAlgorithmConfigString = 'LoosePFOs_' + jetAlgorithmConfigString
+    else:
+        print 'Please select a set of PFOs from SelectedPandoraPFANewPFOs, TightSelectedPandoraPFANewPFOs or LooseSelectedPandoraPFANewPFOs.'
+        exit()
 
     gridPath = '/ilc/user/s/sgreen/' + jobDescription + '/MarlinJobs/Detector_Model_' + detectorModel + '/Reconstruction_Variant_' + reconstructionVariant + '/' + eventType + '_ProdID_' + str(prodID) + '/' + str(energy) + 'GeV/' + jetAlgorithmConfigString
     localPath = '/r06/lc/sg568/' + jobDescription + '/MarlinJobs/Detector_Model_' + str(detectorModel) + '/Reconstruction_Variant_' + str(reconstructionVariant) + '/' + eventType + '/' + str(energy) + 'GeV/' + jetAlgorithmConfigString 
-
     print 'Downloading from : ' + gridPath
     if not os.path.exists(localPath):
         os.makedirs(localPath)

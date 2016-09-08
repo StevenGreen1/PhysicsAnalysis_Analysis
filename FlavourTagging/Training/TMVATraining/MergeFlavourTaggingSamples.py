@@ -24,20 +24,25 @@ for eventSelection in eventsToMerge:
     prodID = eventSelection['ProdID']
     numberOfEvent = eventSelection['NumberOfEvents']
     pandoraPFOsToUse = eventSelection['PandoraPFOsToUse']
-    shortPandoraPFOsToUse = ''
     jetClusteringMode = eventSelection['JetClusteringMode']
     nJetsToCluster = eventSelection['NJetsToCluster']
     jetClusteringAlgorithm = eventSelection['JetClusteringAlgorithm']
     jetClusteringRadius = eventSelection['JetClusteringRadius']
     jetAlgorithmConfigString = jetClusteringAlgorithm + '_' + str(nJetsToCluster) + 'jets_' + str(format(jetClusteringRadius,'.2f')).replace('.','p')
 
+    if pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs':
+        jetAlgorithmConfigString = 'SelectedPFOs_' + jetAlgorithmConfigString
+    elif pandoraPFOsToUse == 'TightSelectedPandoraPFANewPFOs':
+        jetAlgorithmConfigString = 'TightPFOs_' + jetAlgorithmConfigString
+    elif pandoraPFOsToUse == 'LooseSelectedPandoraPFANewPFOs':
+        jetAlgorithmConfigString = 'LoosePFOs_' + jetAlgorithmConfigString
+    else:
+        print 'Please select a set of PFOs from SelectedPandoraPFANewPFOs, TightSelectedPandoraPFANewPFOs or LooseSelectedPandoraPFANewPFOs.'
+        exit()
+
     localPath = '/r06/lc/sg568/' + jobDescription + '/MarlinJobs/Detector_Model_' + str(detectorModel) + '/Reconstruction_Variant_' + str(reconstructionVariant) + '/' + eventType + '/' + str(energy) + 'GeV/' + jetAlgorithmConfigString
 
-    os.chdir(localPath)
-    print 'Changing directory to ' + localPath
+    haddRootFileOutput = os.path.join(localPath, 'RootFilesForTrainingFT_ProdID_' + str(prodID) + '_' + eventType + '_' + str(energy) + 'GeV_Analysis_' + str(analysisTag) + '_' + jetAlgorithmConfigString + '.root')
+    haddRootFileInput = os.path.join(localPath, 'ProdID_' + str(prodID) + '_' + eventType + '_' + str(energy) + 'GeV_Analysis_' + str(analysisTag) + '_Number_*_Of_*.root')
 
-    haddRootFileOutput = 'RootFilesForTrainingFT_ProdID_' + str(prodID) + '_' + eventType + '_' + str(energy) + 'GeV_Analysis_' + str(analysisTag) + '_' + jetAlgorithmConfigString + '.root'
-    haddRootFileInput = 'ProdID_' + str(prodID) + '_' + eventType + '_' + str(energy) + 'GeV_Analysis_' + str(analysisTag) + '_Number_*_Of_*.root'
-
-    subprocess.call(['hadd', haddRootFileOutput, haddRootFileInput])
-
+    os.system('hadd -f ' +  haddRootFileOutput + ' ' + haddRootFileInput)

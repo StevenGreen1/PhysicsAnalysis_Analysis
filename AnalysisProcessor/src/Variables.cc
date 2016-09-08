@@ -30,74 +30,73 @@ void Variables::SetBranches(TTree *pTTree)
 
 // Variables Of Interest
 // Bools
-    pTTree->Branch("IsAppropriateEvent", &m_AppropriateEvent, "IsAppropriateEvent/O");
-    pTTree->Branch("IsEventWW", &m_IsEventWW, "IsEventWW/O");
-    pTTree->Branch("IsMCEventWW", &m_IsMCEventWW, "IsMCEventWW/O");
-    pTTree->Branch("IsEventZZ", &m_IsEventZZ, "IsEventZZ/O");
-    pTTree->Branch("IsMCEventZZ", &m_IsMCEventZZ, "IsMCEventZZ/O");
+    pTTree->Branch("IsAppropriateEvent", &m_appropriateEvent, "IsAppropriateEvent/O");
+    pTTree->Branch("IsEventWW", &m_isEventWW, "IsEventWW/O");
+    pTTree->Branch("IsMCEventWW", &m_isEventWWMC, "IsMCEventWW/O");
+    pTTree->Branch("IsEventZZ", &m_isEventZZ, "IsEventZZ/O");
+    pTTree->Branch("IsMCEventZZ", &m_isEventZZMC, "IsMCEventZZ/O");
 
 // Ints
-    pTTree->Branch("NParticlesJet1", &m_NParticlesJets.at(0), "NParticlesJet1/I");
-    pTTree->Branch("NParticlesJet2", &m_NParticlesJets.at(1), "NParticlesJet2/I");
-    pTTree->Branch("NParticlesJet3", &m_NParticlesJets.at(2), "NParticlesJet3/I");
-    pTTree->Branch("NParticlesJet4", &m_NParticlesJets.at(3), "NParticlesJet4/I");
-    pTTree->Branch("NChargedParticlesJet1", &m_NChargedParticlesJets.at(0), "NParticlesJet1/I");
-    pTTree->Branch("NChargedParticlesJet2", &m_NChargedParticlesJets.at(1), "NParticlesJet2/I");
-    pTTree->Branch("NChargedParticlesJet3", &m_NChargedParticlesJets.at(2), "NParticlesJet3/I");
-    pTTree->Branch("NChargedParticlesJet4", &m_NChargedParticlesJets.at(3), "NParticlesJet4/I");
-    pTTree->Branch("NChargedParticlesJet4", &m_NChargedParticlesJets.at(3), "NParticlesJet4/I");
     pTTree->Branch("NPfosBosonW1", &m_nPfosBosonW1, "NPfosBosonW1/I");
     pTTree->Branch("NPfosBosonW2", &m_nPfosBosonW2, "NPfosBosonW2/I");
     pTTree->Branch("NPfosBosonZ1", &m_nPfosBosonZ1, "NPfosBosonZ1/I");
     pTTree->Branch("NPfosBosonZ2", &m_nPfosBosonZ2, "NPfosBosonZ2/I");
+    m_combinationWJets.resize(4);
+    pTTree->Branch("WBosonJet1Is", &m_combinationWJets.at(0), "WBosonJet1Is/I");
+    pTTree->Branch("WBosonJet2Is", &m_combinationWJets.at(1), "WBosonJet2Is/I");
+    pTTree->Branch("WBosonJet3Is", &m_combinationWJets.at(2), "WBosonJet3Is/I");
+    pTTree->Branch("WBosonJet4Is", &m_combinationWJets.at(3), "WBosonJet4Is/I");
+    m_combinationZJets.resize(4);
+    pTTree->Branch("ZBosonJet1Is", &m_combinationZJets.at(0), "ZBosonJet1Is/I");
+    pTTree->Branch("ZBosonJet2Is", &m_combinationZJets.at(1), "ZBosonJet2Is/I");
+    pTTree->Branch("ZBosonJet3Is", &m_combinationZJets.at(2), "ZBosonJet3Is/I");
+    pTTree->Branch("ZBosonJet4Is", &m_combinationZJets.at(3), "ZBosonJet4Is/I");
+    m_nParticlesJets.resize(4);
+    pTTree->Branch("NParticlesJet1", &m_nParticlesJets.at(0), "NParticlesJet1/I");
+    pTTree->Branch("NParticlesJet2", &m_nParticlesJets.at(1), "NParticlesJet2/I");
+    pTTree->Branch("NParticlesJet3", &m_nParticlesJets.at(2), "NParticlesJet3/I");
+    pTTree->Branch("NParticlesJet4", &m_nParticlesJets.at(3), "NParticlesJet4/I");
+    m_nChargedParticlesJets.resize(4);
+    pTTree->Branch("NChargedParticlesJet1", &m_nChargedParticlesJets.at(0), "NParticlesJet1/I");
+    pTTree->Branch("NChargedParticlesJet2", &m_nChargedParticlesJets.at(1), "NParticlesJet2/I");
+    pTTree->Branch("NChargedParticlesJet3", &m_nChargedParticlesJets.at(2), "NParticlesJet3/I");
+    pTTree->Branch("NChargedParticlesJet4", &m_nChargedParticlesJets.at(3), "NParticlesJet4/I");
 
-// Ints
 // IntVectors
-//    pTTree->Branch("NParticlesJets", &m_NParticlesJets);
-//    pTTree->Branch("NChargedParticlesJets", &m_NChargedParticlesJets);
+//    pTTree->Branch("NParticlesJets", &m_nParticlesJets);
+//    pTTree->Branch("NChargedParticlesJets", &m_nChargedParticlesJets);
 
 // Floats
-    pTTree->Branch("TransverseMomentum", &m_TransverseMomentum, "TransverseMomentum/D");
+    pTTree->Branch("TransverseMomentum", &m_transverseMomentum, "TransverseMomentum/D");
     pTTree->Branch("TransverseMomentumBosonW1", &m_transverseMomentumBosonW1, "TransverseMomentumBosonW1/D");
     pTTree->Branch("TransverseMomentumBosonW2", &m_transverseMomentumBosonW2, "TransverseMomentumBosonW2/D");
     pTTree->Branch("TransverseMomentumBosonZ1", &m_transverseMomentumBosonZ1, "TransverseMomentumBosonZ1/D");
     pTTree->Branch("TransverseMomentumBosonZ2", &m_transverseMomentumBosonZ2, "TransverseMomentumBosonZ2/D");
-    pTTree->Branch("MCTransverseMomentum", &m_MCTransverseMomentum, "MCTransverseMomentum/D");
-    pTTree->Branch("TransverseEnergy", &m_TransverseEnergy, "TransverseEnergy/D");
+    pTTree->Branch("MCTransverseMomentum", &m_transverseMomentumMC, "MCTransverseMomentum/D");
+    pTTree->Branch("TransverseEnergy", &m_transverseEnergy, "TransverseEnergy/D");
     pTTree->Branch("TransverseEnergyBosonW1", &m_transverseEnergyBosonW1, "TransverseEnergyBosonW1/D");
     pTTree->Branch("TransverseEnergyBosonW2", &m_transverseEnergyBosonW2, "TransverseEnergyBosonW2/D");
     pTTree->Branch("TransverseEnergyBosonZ1", &m_transverseEnergyBosonZ1, "TransverseEnergyBosonZ1/D");
     pTTree->Branch("TransverseEnergyBosonZ2", &m_transverseEnergyBosonZ2, "TransverseEnergyBosonZ2/D");
-    pTTree->Branch("MCTransverseEnergy", &m_MCTransverseEnergy, "MCTransverseEnergy/D");
-    pTTree->Branch("CosThetaMissing", &m_CosThetaMissing, "CosThetaMissing/D");
-    pTTree->Branch("MCCosThetaMissing", &m_MCCosThetaMissing, "MCCosThetaMissing/D");
-    pTTree->Branch("CosThetaMostEnergeticTrack", &m_CosThetaMostEnergeticTrack, "CosThetaMostEnergeticTrack/D");
-    pTTree->Branch("RecoilMass", &m_RecoilMass, "RecoilMass/D");
-    pTTree->Branch("MCRecoilMass", &m_MCRecoilMass, "MCRecoilMass/D");
-    pTTree->Branch("EnergyAroundMostEnergeticTrack", &m_EnergyAroundMostEnergeticPfo, "EnergyAroundMostEnergeticTrack/D");
+    pTTree->Branch("MCTransverseEnergy", &m_transverseEnergyMC, "MCTransverseEnergy/D");
+    pTTree->Branch("CosThetaMissing", &m_cosThetaMissing, "CosThetaMissing/D");
+    pTTree->Branch("MCCosThetaMissing", &m_cosThetaMissingMC, "MCCosThetaMissing/D");
+    pTTree->Branch("CosThetaMostEnergeticTrack", &m_cosThetaMostEnergeticTrack, "CosThetaMostEnergeticTrack/D");
+    pTTree->Branch("RecoilMass", &m_recoilMass, "RecoilMass/D");
+    pTTree->Branch("MCRecoilMass", &m_recoilMassMC, "MCRecoilMass/D");
+    pTTree->Branch("EnergyAroundMostEnergeticTrack", &m_energyAroundMostEnergeticPfo, "EnergyAroundMostEnergeticTrack/D");
+    pTTree->Branch("y12", &m_y12, "y12/D");
+    pTTree->Branch("y23", &m_y23, "y23/D");
     pTTree->Branch("y34", &m_y34, "y34/D");
-    pTTree->Branch("InvariantMassSystem", &m_InvariantMassSystem, "InvariantMassSystem/D");
-    pTTree->Branch("MCInvariantMassSystem", &m_MCInvariantMassSystem, "MCInvariantMassSystem/D");
-    pTTree->Branch("CosThetaStarWBosons", &m_CosThetaStarWBosons, "CosThetaStarWBosons/D");
-    pTTree->Branch("MCCosThetaStarWBosons", &m_MCCosThetaStarWBosons, "MCCosThetaStarWBosons/D");
-    pTTree->Branch("CosThetaStarZBosons", &m_CosThetaStarZBosons, "CosThetaStarZBosons/D");
-    pTTree->Branch("MCCosThetaStarZBosons", &m_MCCosThetaStarZBosons, "MCCosThetaStarZBosons/D");
-    pTTree->Branch("InvMassWVector1", &m_InvMassWVectors.at(0), "InvMassWVector1/D");
-    pTTree->Branch("InvMassWVector2", &m_InvMassWVectors.at(1), "InvMassWVector2/D");
-    pTTree->Branch("MCInvMassWVector1", &m_MCInvMassWVectors.at(0), "MCInvMassWVector1/D");
-    pTTree->Branch("MCInvMassWVector2", &m_MCInvMassWVectors.at(1), "MCInvMassWVector2/D");
-    pTTree->Branch("InvMassZVector1", &m_InvMassZVectors.at(0), "InvMassZVector1/D");
-    pTTree->Branch("InvMassZVector2", &m_InvMassZVectors.at(1), "InvMassZVector2/D");
-    pTTree->Branch("MCInvMassZVector1", &m_MCInvMassZVectors.at(0), "MCInvMassZVector1/D");
-    pTTree->Branch("MCInvMassZVector2", &m_MCInvMassZVectors.at(1), "MCInvMassZVector2/D");
-    pTTree->Branch("EnergyJet1", &m_EnergyJets.at(0), "EnergyJet1/D");
-    pTTree->Branch("EnergyJet2", &m_EnergyJets.at(1), "EnergyJet2/D");
-    pTTree->Branch("EnergyJet3", &m_EnergyJets.at(2), "EnergyJet3/D");
-    pTTree->Branch("EnergyJet4", &m_EnergyJets.at(3), "EnergyJet4/D");
-    pTTree->Branch("CosThetaStarWJet1", &m_CosThetaStarWJets.at(0), "CosThetaStarWJet1/D");
-    pTTree->Branch("CosThetaStarWJet2", &m_CosThetaStarWJets.at(1), "CosThetaStarWJet2/D");
-    pTTree->Branch("CosThetaStarZJet1", &m_CosThetaStarZJets.at(0), "CosThetaStarZJet1/D");
-    pTTree->Branch("CosThetaStarZJet2", &m_CosThetaStarZJets.at(1), "CosThetaStarZJet2/D");
+    pTTree->Branch("y45", &m_y45, "y45/D");
+    pTTree->Branch("y56", &m_y56, "y56/D");
+    pTTree->Branch("y67", &m_y67, "y67/D");
+    pTTree->Branch("InvariantMassSystem", &m_invariantMassSystem, "InvariantMassSystem/D");
+    pTTree->Branch("MCInvariantMassSystem", &m_invariantMassSystemMC, "MCInvariantMassSystem/D");
+    pTTree->Branch("CosThetaStarWBosons", &m_cosThetaStarWBosons, "CosThetaStarWBosons/D");
+    pTTree->Branch("MCCosThetaStarWBosons", &m_cosThetaStarWBosonsMC, "MCCosThetaStarWBosons/D");
+    pTTree->Branch("CosThetaStarZBosons", &m_cosThetaStarZBosons, "CosThetaStarZBosons/D");
+    pTTree->Branch("MCCosThetaStarZBosons", &m_cosThetaStarZBosonsMC, "MCCosThetaStarZBosons/D");
     pTTree->Branch("AcolinearityJetsW1", &m_acolinearityJetsW1, "AcolinearityJetsW1/D");
     pTTree->Branch("AcolinearityJetsW2", &m_acolinearityJetsW2, "AcolinearityJetsW2/D");
     pTTree->Branch("AcolinearityJetsZ1", &m_acolinearityJetsZ1, "AcolinearityJetsZ1/D");
@@ -112,59 +111,92 @@ void Variables::SetBranches(TTree *pTTree)
     pTTree->Branch("ZThrustAxis", &m_zThrustAxis, "ZThrustAxis/D");
     pTTree->Branch("Sphericity", &m_sphericity, "Sphericity/D");
     pTTree->Branch("Aplanarity", &m_aplanarity, "Aplanarity/D");
+    m_invariantMassWBosons.resize(2);
+    pTTree->Branch("InvMassWVector1", &m_invariantMassWBosons.at(0), "InvMassWVector1/D");
+    pTTree->Branch("InvMassWVector2", &m_invariantMassWBosons.at(1), "InvMassWVector2/D");
+    m_invariantMassWBosonsMC.resize(2);
+    pTTree->Branch("MCInvMassWVector1", &m_invariantMassWBosonsMC.at(0), "MCInvMassWVector1/D");
+    pTTree->Branch("MCInvMassWVector2", &m_invariantMassWBosonsMC.at(1), "MCInvMassWVector2/D");
+    m_invariantMassZBosons.resize(2);
+    pTTree->Branch("InvMassZVector1", &m_invariantMassZBosons.at(0), "InvMassZVector1/D");
+    pTTree->Branch("InvMassZVector2", &m_invariantMassZBosons.at(1), "InvMassZVector2/D");
+    m_invariantMassZBosonsMC.resize(2);
+    pTTree->Branch("MCInvMassZVector1", &m_invariantMassZBosonsMC.at(0), "MCInvMassZVector1/D");
+    pTTree->Branch("MCInvMassZVector2", &m_invariantMassZBosonsMC.at(1), "MCInvMassZVector2/D");
+    m_energyJets.resize(4);
+    pTTree->Branch("EnergyJet1", &m_energyJets.at(0), "EnergyJet1/D");
+    pTTree->Branch("EnergyJet2", &m_energyJets.at(1), "EnergyJet2/D");
+    pTTree->Branch("EnergyJet3", &m_energyJets.at(2), "EnergyJet3/D");
+    pTTree->Branch("EnergyJet4", &m_energyJets.at(3), "EnergyJet4/D");
+    m_cosThetaStarWJets.resize(2);
+    pTTree->Branch("CosThetaStarWJet1", &m_cosThetaStarWJets.at(0), "CosThetaStarWJet1/D");
+    pTTree->Branch("CosThetaStarWJet2", &m_cosThetaStarWJets.at(1), "CosThetaStarWJet2/D");
+    m_cosThetaStarZJets.resize(2);
+    pTTree->Branch("CosThetaStarZJet1", &m_cosThetaStarZJets.at(0), "CosThetaStarZJet1/D");
+    pTTree->Branch("CosThetaStarZJet2", &m_cosThetaStarZJets.at(1), "CosThetaStarZJet2/D");
+    m_bTagForJets.resize(4);
+    pTTree->Branch("BTagForJet1", &m_bTagForJets.at(0), "BTagForJet1/D");
+    pTTree->Branch("BTagForJet2", &m_bTagForJets.at(1), "BTagForJet2/D");
+    pTTree->Branch("BTagForJet3", &m_bTagForJets.at(2), "BTagForJet3/D");
+    pTTree->Branch("BTagForJet4", &m_bTagForJets.at(3), "BTagForJet4/D");
+    m_cTagForJets.resize(4);
+    pTTree->Branch("CTagForJet1", &m_cTagForJets.at(0), "CTagForJet1/D");
+    pTTree->Branch("CTagForJet2", &m_cTagForJets.at(1), "CTagForJet2/D");
+    pTTree->Branch("CTagForJet3", &m_cTagForJets.at(2), "CTagForJet3/D");
+    pTTree->Branch("CTagForJet4", &m_cTagForJets.at(3), "CTagForJet4/D");
 
 // DoubleVectors
-//    pTTree->Branch("InvMassWVectors", &m_InvMassWVectors);
-//    pTTree->Branch("MCInvMassWVectors", &m_MCInvMassWVectors);
-//    pTTree->Branch("InvMassZVectors", &m_InvMassZVectors);
-//    pTTree->Branch("MCInvMassZVectors", &m_MCInvMassZVectors);
-//    pTTree->Branch("EnergyJets", &m_EnergyJets);
-//    pTTree->Branch("CosThetaStarWJets", &m_CosThetaStarWJets);
-//    pTTree->Branch("CosThetaStarZJets", &m_CosThetaStarZJets);
+//    pTTree->Branch("InvMassWVectors", &m_invariantMassWBosons);
+//    pTTree->Branch("MCInvMassWVectors", &m_invariantMassWBosonsMC);
+//    pTTree->Branch("InvMassZVectors", &m_invariantMassZBosons);
+//    pTTree->Branch("MCInvMassZVectors", &m_invariantMassZBosonsMC);
+//    pTTree->Branch("EnergyJets", &m_energyJets);
+//    pTTree->Branch("CosThetaStarWJets", &m_cosThetaStarWJets);
+//    pTTree->Branch("CosThetaStarZJets", &m_cosThetaStarZJets);
 }
 
 //===========================================================
 
 void Variables::Print()
 {
-    std::cout << "m_AppropriateEvent             : " << m_AppropriateEvent << std::endl;
-    std::cout << "m_IsEventWW                    : " << m_IsEventWW << std::endl;
-    std::cout << "m_IsMCEventWW                  : " << m_IsMCEventWW << std::endl;
-    std::cout << "m_IsEventZZ                    : " << m_IsEventZZ << std::endl;
-    std::cout << "m_IsMCEventZZ                  : " << m_IsMCEventZZ << std::endl;
+    std::cout << "m_appropriateEvent             : " << m_appropriateEvent << std::endl;
+    std::cout << "m_isEventWW                    : " << m_isEventWW << std::endl;
+    std::cout << "m_isEventWWMC                  : " << m_isEventWWMC << std::endl;
+    std::cout << "m_isEventZZ                    : " << m_isEventZZ << std::endl;
+    std::cout << "m_isEventZZMC                  : " << m_isEventZZMC << std::endl;
 
-    for (IntVector::iterator iter = m_NParticlesJets.begin(); iter != m_NParticlesJets.end(); iter++)
+    for (IntVector::iterator iter = m_nParticlesJets.begin(); iter != m_nParticlesJets.end(); iter++)
     {
-        std::cout << "m_NParticlesJets, position " << iter-m_NParticlesJets.begin() << " : " << *iter << std::endl;
+        std::cout << "m_nParticlesJets, position " << iter-m_nParticlesJets.begin() << " : " << *iter << std::endl;
     }
 
-    for (IntVector::iterator iter = m_NChargedParticlesJets.begin(); iter != m_NChargedParticlesJets.end(); iter++)
+    for (IntVector::iterator iter = m_nChargedParticlesJets.begin(); iter != m_nChargedParticlesJets.end(); iter++)
     {
-        std::cout << "m_NChargedParticlesJets, position " << iter-m_NChargedParticlesJets.begin() << " : " << *iter << std::endl;
+        std::cout << "m_nChargedParticlesJets, position " << iter-m_nChargedParticlesJets.begin() << " : " << *iter << std::endl;
     }
 
-    std::cout << "m_TransverseMomentum           : " << m_TransverseMomentum << std::endl;
-    std::cout << "m_MCTransverseMomentum         : " << m_MCTransverseMomentum << std::endl;
-    std::cout << "m_TransverseEnergy             : " << m_TransverseEnergy << std::endl;
-    std::cout << "m_MCTransverseEnergy           : " << m_MCTransverseEnergy << std::endl;
-    std::cout << "m_CosThetaMissing              : " << m_CosThetaMissing << std::endl;
-    std::cout << "m_MCCosThetaMissing            : " << m_MCCosThetaMissing << std::endl;
-    std::cout << "m_CosThetaMostEnergeticTrack   : " << m_CosThetaMostEnergeticTrack << std::endl;
-    std::cout << "m_RecoilMass                   : " << m_RecoilMass << std::endl;
-    std::cout << "m_MCRecoilMass                 : " << m_MCRecoilMass << std::endl;
-    std::cout << "m_EnergyAroundMostEnergeticPfo : " << m_EnergyAroundMostEnergeticPfo << std::endl;
+    std::cout << "m_transverseMomentum           : " << m_transverseMomentum << std::endl;
+    std::cout << "m_transverseMomentumMC         : " << m_transverseMomentumMC << std::endl;
+    std::cout << "m_transverseEnergy             : " << m_transverseEnergy << std::endl;
+    std::cout << "m_transverseEnergyMC           : " << m_transverseEnergyMC << std::endl;
+    std::cout << "m_cosThetaMissing              : " << m_cosThetaMissing << std::endl;
+    std::cout << "m_cosThetaMissingMC            : " << m_cosThetaMissingMC << std::endl;
+    std::cout << "m_cosThetaMostEnergeticTrack   : " << m_cosThetaMostEnergeticTrack << std::endl;
+    std::cout << "m_recoilMass                   : " << m_recoilMass << std::endl;
+    std::cout << "m_recoilMassMC                 : " << m_recoilMassMC << std::endl;
+    std::cout << "m_energyAroundMostEnergeticPfo : " << m_energyAroundMostEnergeticPfo << std::endl;
     std::cout << "m_y34                          : " << m_y34 << std::endl;
-    std::cout << "m_InvariantMassSystem          : " << m_InvariantMassSystem << std::endl;
-    std::cout << "m_MCInvariantMassSystem        : " << m_MCInvariantMassSystem << std::endl;
-    std::cout << "m_CosThetaStarWBosons          : " << m_CosThetaStarWBosons << std::endl;
-    std::cout << "m_MCCosThetaStarWBosons        : " << m_MCCosThetaStarWBosons << std::endl;
-    std::cout << "m_CosThetaStarZBosons          : " << m_CosThetaStarZBosons << std::endl;
-    std::cout << "m_MCCosThetaStarZBosons        : " << m_MCCosThetaStarZBosons << std::endl;
+    std::cout << "m_invariantMassSystem          : " << m_invariantMassSystem << std::endl;
+    std::cout << "m_invariantMassSystemMC        : " << m_invariantMassSystemMC << std::endl;
+    std::cout << "m_cosThetaStarWBosons          : " << m_cosThetaStarWBosons << std::endl;
+    std::cout << "m_cosThetaStarWBosonsMC        : " << m_cosThetaStarWBosonsMC << std::endl;
+    std::cout << "m_cosThetaStarZBosons          : " << m_cosThetaStarZBosons << std::endl;
+    std::cout << "m_cosThetaStarZBosonsMC        : " << m_cosThetaStarZBosonsMC << std::endl;
 //    std::cout << " : " <<  << std::endl;
 
-    for (DoubleVector::iterator iter = m_EnergyJets.begin(); iter != m_EnergyJets.end(); iter++)
+    for (DoubleVector::iterator iter = m_energyJets.begin(); iter != m_energyJets.end(); iter++)
     {
-        std::cout << "m_EnergyJets, position " << iter-m_EnergyJets.begin() << " : " << *iter << std::endl;
+        std::cout << "m_energyJets, position " << iter-m_energyJets.begin() << " : " << *iter << std::endl;
     }
 }
 
@@ -172,40 +204,40 @@ void Variables::Print()
 
 void Variables::Clear()
 {
-    m_AppropriateEvent = false;
-    m_IsEventWW = false;
-    m_IsMCEventWW = false;
-    m_IsEventZZ = false;
-    m_IsMCEventZZ = false;
+    m_appropriateEvent = false;
+    m_isEventWW = false;
+    m_isEventWWMC = false;
+    m_isEventZZ = false;
+    m_isEventZZMC = false;
 
-    m_NParticlesJets.clear();
-    m_NChargedParticlesJets.clear();
+    m_nParticlesJets.clear();
+    m_nChargedParticlesJets.clear();
 
-    m_TransverseMomentum = std::numeric_limits<double>::max();
-    m_MCTransverseMomentum = std::numeric_limits<double>::max();
-    m_TransverseEnergy = std::numeric_limits<double>::max();
-    m_MCTransverseEnergy = std::numeric_limits<double>::max();
-    m_CosThetaMissing = std::numeric_limits<double>::max();
-    m_MCCosThetaMissing = std::numeric_limits<double>::max();
-    m_CosThetaMostEnergeticTrack = std::numeric_limits<double>::max();
-    m_RecoilMass = std::numeric_limits<double>::max();
-    m_MCRecoilMass = std::numeric_limits<double>::max();
-    m_EnergyAroundMostEnergeticPfo = std::numeric_limits<double>::max();
+    m_transverseMomentum = std::numeric_limits<double>::max();
+    m_transverseMomentumMC = std::numeric_limits<double>::max();
+    m_transverseEnergy = std::numeric_limits<double>::max();
+    m_transverseEnergyMC = std::numeric_limits<double>::max();
+    m_cosThetaMissing = std::numeric_limits<double>::max();
+    m_cosThetaMissingMC = std::numeric_limits<double>::max();
+    m_cosThetaMostEnergeticTrack = std::numeric_limits<double>::max();
+    m_recoilMass = std::numeric_limits<double>::max();
+    m_recoilMassMC = std::numeric_limits<double>::max();
+    m_energyAroundMostEnergeticPfo = std::numeric_limits<double>::max();
     m_y34 = std::numeric_limits<double>::max();
-    m_InvariantMassSystem = std::numeric_limits<double>::max();
-    m_MCInvariantMassSystem = std::numeric_limits<double>::max();
-    m_CosThetaStarWBosons = std::numeric_limits<double>::max();
-    m_MCCosThetaStarWBosons = std::numeric_limits<double>::max();
-    m_CosThetaStarZBosons = std::numeric_limits<double>::max();
-    m_MCCosThetaStarZBosons = std::numeric_limits<double>::max();
+    m_invariantMassSystem = std::numeric_limits<double>::max();
+    m_invariantMassSystemMC = std::numeric_limits<double>::max();
+    m_cosThetaStarWBosons = std::numeric_limits<double>::max();
+    m_cosThetaStarWBosonsMC = std::numeric_limits<double>::max();
+    m_cosThetaStarZBosons = std::numeric_limits<double>::max();
+    m_cosThetaStarZBosonsMC = std::numeric_limits<double>::max();
 
-    m_InvMassWVectors.clear();
-    m_MCInvMassWVectors.clear();
-    m_InvMassZVectors.clear();
-    m_MCInvMassZVectors.clear();
-    m_EnergyJets.clear();
-    m_CosThetaStarWJets.clear();
-    m_CosThetaStarZJets.clear();
+    m_invariantMassWBosons.clear();
+    m_invariantMassWBosonsMC.clear();
+    m_invariantMassZBosons.clear();
+    m_invariantMassZBosonsMC.clear();
+    m_energyJets.clear();
+    m_cosThetaStarWJets.clear();
+    m_cosThetaStarZJets.clear();
 }
 
 //===========================================================
@@ -218,6 +250,7 @@ void Variables::SetLCParameterInfo(const EVENT::LCParameters &lcParameters)
 
     FloatVector thrustaxis;
     lcParameters.getFloatVals("principleThrustAxis", thrustaxis);
+
     if (thrustaxis.size() >=3)
     {
         m_xThrustAxis  = thrustaxis[0];
@@ -237,70 +270,70 @@ void Variables::SetLCParameterInfo(const EVENT::LCParameters &lcParameters)
 
 void Variables::SetAppropriateEvent(bool appropriateEvent)
 {
-    m_AppropriateEvent = appropriateEvent;
+    m_appropriateEvent = appropriateEvent;
 }
 
 //===========================================================
 
 bool Variables::GetAppropriateEvent() const 
 {
-    return m_AppropriateEvent;
+    return m_appropriateEvent;
 }
 
 //===========================================================
 
 void Variables::SetIsEventWW(bool isEventWW)
 {
-    m_IsEventWW = isEventWW;
+    m_isEventWW = isEventWW;
 }
 
 //===========================================================
 
 bool Variables::GetIsEventWW() const 
 {
-    return m_IsEventWW;
+    return m_isEventWW;
 }
 
 //===========================================================
 
-void Variables::SetIsMCEventWW(bool isMCEventWW)
+void Variables::SetIsEventWWMC(bool isEventWWMC)
 {
-    m_IsMCEventWW = isMCEventWW;
+    m_isEventWWMC = isEventWWMC;
 }
 
 //===========================================================
 
-bool Variables::GetIsMCEventWW() const
+bool Variables::GetIsEventWWMC() const
 {
-    return m_IsMCEventWW;
+    return m_isEventWWMC;
 }
 
 //===========================================================
 
 void Variables::SetIsEventZZ(bool isEventZZ)
 {
-    m_IsEventZZ = isEventZZ;
+    m_isEventZZ = isEventZZ;
 }
 
 //===========================================================
 
 bool Variables::GetIsEventZZ() const 
 {
-    return m_IsEventZZ;
+    return m_isEventZZ;
 }
 
 //===========================================================
 
-void Variables::SetIsMCEventZZ(bool isMCEventZZ)
+void Variables::SetIsEventZZMC(bool isEventZZMC)
 {
-    m_IsMCEventZZ = isMCEventZZ;
+    m_isEventZZMC = isEventZZMC;
 }
 
 //===========================================================
 
-bool Variables::GetIsMCEventZZ() const
+bool Variables::GetIsEventZZMC() const
 {
-    return m_IsMCEventZZ;
+    return m_isEventZZMC;
 }
 
 //=========================================================== Int
@@ -361,16 +394,44 @@ int Variables::GetNPfosBosonZ2() const
 
 //=========================================================== IntVector
 
+void Variables::SetJetCombinationW(IntVector combinationWJets)
+{
+    m_combinationWJets = combinationWJets;
+}
+
+//===========================================================
+
+IntVector Variables::GetJetCombinationW() const
+{
+    return m_combinationWJets;
+}
+
+//===========================================================
+
+void Variables::SetJetCombinationZ(IntVector combinationZJets)
+{
+    m_combinationZJets = combinationZJets;
+}
+
+//===========================================================
+
+IntVector Variables::GetJetCombinationZ() const
+{
+    return m_combinationZJets;
+}
+
+//===========================================================
+
 void Variables::SetNParticlesJets(IntVector nParticlesJets)
 {
-    m_NParticlesJets = nParticlesJets;
+    m_nParticlesJets = nParticlesJets;
 }
 
 //===========================================================
 
 IntVector Variables::GetNParticlesJets() const
 {
-    return m_NParticlesJets;
+    return m_nParticlesJets;
 }
 
 //===========================================================
@@ -379,7 +440,7 @@ int Variables::GetLowestNParticlesJets() const
 {
     int lowestNParticlesJets(std::numeric_limits<int>::max());
 
-    for (IntVector::const_iterator iter = m_NParticlesJets.begin(); iter != m_NParticlesJets.end(); iter++)
+    for (IntVector::const_iterator iter = m_nParticlesJets.begin(); iter != m_nParticlesJets.end(); iter++)
     {
         const int nParticlesJet(*iter);
         if (nParticlesJet < lowestNParticlesJets)
@@ -395,14 +456,14 @@ int Variables::GetLowestNParticlesJets() const
 
 void Variables::SetNChargedParticlesJets(IntVector nChargedParticlesJets)
 {
-    m_NChargedParticlesJets = nChargedParticlesJets;
+    m_nChargedParticlesJets = nChargedParticlesJets;
 }
 
 //===========================================================
 
 IntVector Variables::GetNChargedParticlesJets() const 
 {
-    return m_NChargedParticlesJets;
+    return m_nChargedParticlesJets;
 }
 
 //===========================================================
@@ -411,7 +472,7 @@ int Variables::GetLowestNChargedParticlesJets() const
 {
     int lowestNChargedParticlesJets(std::numeric_limits<int>::max());
 
-    for (IntVector::const_iterator iter = m_NChargedParticlesJets.begin(); iter != m_NChargedParticlesJets.end(); iter++)
+    for (IntVector::const_iterator iter = m_nChargedParticlesJets.begin(); iter != m_nChargedParticlesJets.end(); iter++)
     {
         const int nChargedParticlesJet(*iter);
         if (nChargedParticlesJet < lowestNChargedParticlesJets)
@@ -427,14 +488,14 @@ int Variables::GetLowestNChargedParticlesJets() const
 
 void Variables::SetTransverseMomentum(double transverseMomentum)
 {
-    m_TransverseMomentum = transverseMomentum;
+    m_transverseMomentum = transverseMomentum;
 }
 
 //===========================================================
 
 double Variables::GetTransverseMomentum() const 
 {
-    return m_TransverseMomentum;
+    return m_transverseMomentum;
 }
 
 //===========================================================
@@ -495,30 +556,30 @@ double Variables::GetTransverseMomentumBosonZ2() const
 
 //===========================================================
 
-void Variables::SetMCTransverseMomentum(double mcTransverseMomentum)
+void Variables::SetTransverseMomentumMC(double transverseMomentumMC)
 {
-    m_MCTransverseMomentum = mcTransverseMomentum;
+    m_transverseMomentumMC = transverseMomentumMC;
 }
 
 //===========================================================
 
-double Variables::GetMCTransverseMomentum() const
+double Variables::GetTransverseMomentumMC() const
 {
-    return m_MCTransverseMomentum;
+    return m_transverseMomentumMC;
 }
 
 //===========================================================
 
 void Variables::SetTransverseEnergy(double transverseEnergy)
 {
-    m_TransverseEnergy = transverseEnergy;
+    m_transverseEnergy = transverseEnergy;
 }
 
 //===========================================================
 
 double Variables::GetTransverseEnergy() const 
 {
-    return m_TransverseEnergy;
+    return m_transverseEnergy;
 }
 
 //===========================================================
@@ -579,100 +640,128 @@ double Variables::GetTransverseEnergyBosonZ2() const
 
 //===========================================================
 
-void Variables::SetMCTransverseEnergy(double mcTransverseEnergy)
+void Variables::SetTransverseEnergyMC(double transverseEnergyMC)
 {
-    m_MCTransverseEnergy = mcTransverseEnergy;
+    m_transverseEnergyMC = transverseEnergyMC;
 }
 
 //===========================================================
 
-double Variables::GetMCTransverseEnergy() const
+double Variables::GetTransverseEnergyMC() const
 {
-    return m_MCTransverseEnergy;
+    return m_transverseEnergyMC;
 }
 
 //===========================================================
 
 void Variables::SetCosThetaMissing(double cosThetaMissing)
 {
-    m_CosThetaMissing = cosThetaMissing;
+    m_cosThetaMissing = cosThetaMissing;
 }
 
 //===========================================================
 
 double Variables::GetCosThetaMissing() const 
 {
-    return m_CosThetaMissing;
+    return m_cosThetaMissing;
 }
 
 //===========================================================
 
-void Variables::SetMCCosThetaMissing(double mcCosThetaMissing)
+void Variables::SetCosThetaMissingMC(double cosThetaMissingMC)
 {
-    m_MCCosThetaMissing = mcCosThetaMissing;
+    m_cosThetaMissingMC = cosThetaMissingMC;
 }
 
 //===========================================================
 
-double Variables::GetMCCosThetaMissing() const
+double Variables::GetCosThetaMissingMC() const
 {
-    return m_MCCosThetaMissing;
+    return m_cosThetaMissingMC;
 }
 
 //===========================================================
 
 void Variables::SetCosThetaMostEnergeticTrack(double cosThetaMostEnergeticTrack)
 {
-    m_CosThetaMostEnergeticTrack = cosThetaMostEnergeticTrack;
+    m_cosThetaMostEnergeticTrack = cosThetaMostEnergeticTrack;
 }
 
 //===========================================================
 
 double Variables::GetCosThetaMostEnergeticTrack() const 
 {
-    return m_CosThetaMostEnergeticTrack;
+    return m_cosThetaMostEnergeticTrack;
 }
 
 //===========================================================
 
 void Variables::SetRecoilMass(double recoilMass)
 {
-    m_RecoilMass = recoilMass;
+    m_recoilMass = recoilMass;
 }
 
 //===========================================================
 
 double Variables::GetRecoilMass() const 
 {
-    return m_RecoilMass;
+    return m_recoilMass;
 }
 
 //===========================================================
 
-void Variables::SetMCRecoilMass(double mcRecoilMass)
+void Variables::SetRecoilMassMC(double recoilMassMC)
 {
-    m_MCRecoilMass = mcRecoilMass;
+    m_recoilMassMC = recoilMassMC;
 }
 
 //===========================================================
 
-double Variables::GetMCRecoilMass() const
+double Variables::GetRecoilMassMC() const
 {
-    return m_MCRecoilMass;
+    return m_recoilMassMC;
 }
 
 //===========================================================
 
 void Variables::SetEnergyAroundMostEnergeticPfo(double energyAroundMostEnergeticPfo)
 {
-    m_EnergyAroundMostEnergeticPfo = energyAroundMostEnergeticPfo;
+    m_energyAroundMostEnergeticPfo = energyAroundMostEnergeticPfo;
 }
 
 //===========================================================
 
 double Variables::GetEnergyAroundMostEnergeticPfo() const 
 {
-    return m_EnergyAroundMostEnergeticPfo;
+    return m_energyAroundMostEnergeticPfo;
+}
+
+//===========================================================
+
+void Variables::SetY12(double y12)
+{
+    m_y12 = y12;
+}
+
+//===========================================================
+
+double Variables::GetY12() const
+{
+    return m_y12;
+}
+
+//===========================================================
+
+void Variables::SetY23(double y23)
+{
+    m_y23 = y23;
+}
+
+//===========================================================
+
+double Variables::GetY23() const
+{
+    return m_y23;
 }
 
 //===========================================================
@@ -691,86 +780,128 @@ double Variables::GetY34() const
 
 //===========================================================
 
+void Variables::SetY45(double y45)
+{
+    m_y45 = y45;
+}
+
+//===========================================================
+
+double Variables::GetY45() const
+{
+    return m_y45;
+}
+
+//===========================================================
+
+void Variables::SetY56(double y56)
+{
+    m_y56 = y56;
+}
+
+//===========================================================
+
+double Variables::GetY56() const
+{
+    return m_y56;
+}
+
+//===========================================================
+
+void Variables::SetY67(double y67)
+{
+    m_y67 = y67;
+}
+
+//===========================================================
+
+double Variables::GetY67() const
+{
+    return m_y67;
+}
+
+//===========================================================
+
 void Variables::SetInvariantMassSystem(double invariantMassSystem)
 {
-    m_InvariantMassSystem = invariantMassSystem;
+    m_invariantMassSystem = invariantMassSystem;
 }
 
 //=========================================================== 
 
 double Variables::GetInvariantMassSystem() const 
 {
-    return m_InvariantMassSystem;
+    return m_invariantMassSystem;
 }
 
 //===========================================================
 
-void Variables::SetMCInvariantMassSystem(double mcInvariantMassSystem)
+void Variables::SetInvariantMassSystemMC(double invariantMassSystemMC)
 {
-    m_MCInvariantMassSystem = mcInvariantMassSystem;
+    m_invariantMassSystemMC = invariantMassSystemMC;
 }
 
 //===========================================================
 
-double Variables::GetMCInvariantMassSystem() const
+double Variables::GetInvariantMassSystemMC() const
 {
-    return m_MCInvariantMassSystem;
+    return m_invariantMassSystemMC;
 }
 
 //===========================================================
 
 void Variables::SetCosThetaStarWBosons(double cosThetaStarWBosons)
 {
-    m_CosThetaStarWBosons = cosThetaStarWBosons;
+    m_cosThetaStarWBosons = cosThetaStarWBosons;
 }
 
 //===========================================================
 
 double Variables::GetCosThetaStarWBosons() const 
 {
-    return m_CosThetaStarWBosons;
+    return m_cosThetaStarWBosons;
 }
 
 //===========================================================
 
-void Variables::SetMCCosThetaStarWBosons(double mcCosThetaStarWBosons)
+void Variables::SetCosThetaStarWBosonsMC(double cosThetaStarWBosonsMC)
 {
-    m_MCCosThetaStarWBosons = mcCosThetaStarWBosons;
+    m_cosThetaStarWBosonsMC = cosThetaStarWBosonsMC;
 }
 
 //===========================================================
 
-double Variables::GetMCCosThetaStarWBosons() const
+double Variables::GetCosThetaStarWBosonsMC() const
 {
-    return m_MCCosThetaStarWBosons;
+    return m_cosThetaStarWBosonsMC;
 }
 
 //===========================================================
 
 void Variables::SetCosThetaStarZBosons(double cosThetaStarZBosons)
 {
-    m_CosThetaStarZBosons = cosThetaStarZBosons;
+    m_cosThetaStarZBosons = cosThetaStarZBosons;
 }
 
 //===========================================================
 
 double Variables::GetCosThetaStarZBosons() const 
 {
-    return m_CosThetaStarZBosons;
+    return m_cosThetaStarZBosons;
 }
 
 //===========================================================
 
-void Variables::SetMCCosThetaStarZBosons(double mcCosThetaStarZBosons)
+void Variables::SetCosThetaStarZBosonsMC(double cosThetaStarZBosonsMC)
 {
-    m_MCCosThetaStarZBosons = mcCosThetaStarZBosons;
+    m_cosThetaStarZBosonsMC = cosThetaStarZBosonsMC;
 }
 
 //===========================================================
 
-double Variables::GetMCCosThetaStarZBosons() const
+double Variables::GetCosThetaStarZBosonsMC() const
 {
-    return m_MCCosThetaStarZBosons;
+    return m_cosThetaStarZBosonsMC;
 }
 
 //===========================================================
@@ -861,70 +992,70 @@ double Variables::GetAcolinearityBosonsZ() const
 
 void Variables::SetInvMassWVectors(DoubleVector invMassWVectors)
 {
-    m_InvMassWVectors = invMassWVectors;
+    m_invariantMassWBosons = invMassWVectors;
 }
 
 //===========================================================
 
 DoubleVector Variables::GetInvMassWVectors() const 
 {
-    return m_InvMassWVectors;
+    return m_invariantMassWBosons;
 }
 
 //===========================================================
 
 void Variables::SetInvMassZVectors(DoubleVector invMassZVectors)
 {
-    m_InvMassZVectors = invMassZVectors;
+    m_invariantMassZBosons = invMassZVectors;
 }
 
 //===========================================================
 
 DoubleVector Variables::GetInvMassZVectors() const 
 {
-    return m_InvMassZVectors;
+    return m_invariantMassZBosons;
 }
 
 //===========================================================
 
-void Variables::SetMCInvMassWVectors(DoubleVector mcInvMassWVectors)
+void Variables::SetInvariantMassWBosonsMC(DoubleVector invariantMassWBosonsMC)
 {
-    m_MCInvMassWVectors = mcInvMassWVectors;
+    m_invariantMassWBosonsMC = invariantMassWBosonsMC;
 }
 
 //===========================================================
 
-DoubleVector Variables::GetMCInvMassWVectors() const
+DoubleVector Variables::GetInvariantMassWBosonsMC() const
 {
-    return m_MCInvMassWVectors;
+    return m_invariantMassWBosonsMC;
 }
 
 //===========================================================
 
-void Variables::SetMCInvMassZVectors(DoubleVector mcInvMassZVectors)
+void Variables::SetInvariantMassZBosonsMC(DoubleVector invariantMassZBosonsMC)
 {
-    m_MCInvMassZVectors = mcInvMassZVectors;
+    m_invariantMassZBosonsMC = invariantMassZBosonsMC;
 }
 
 //===========================================================
 
-DoubleVector Variables::GetMCInvMassZVectors() const
+DoubleVector Variables::GetInvariantMassZBosonsMC() const
 {
-    return m_MCInvMassZVectors;
+    return m_invariantMassZBosonsMC;
 }
 
 //===========================================================
 
 void Variables::SetEnergyJets(DoubleVector energyJets)
 {
-    m_EnergyJets = energyJets;
+    m_energyJets = energyJets;
 }
 
 //===========================================================
 
 DoubleVector Variables::GetEnergyJets() const 
 {
-    return m_EnergyJets;
+    return m_energyJets;
 }
 
 //===========================================================
@@ -933,7 +1064,7 @@ double Variables::GetLowestEnergyJet() const
 {
     double lowestEnergyJet(std::numeric_limits<double>::max());
 
-    for (DoubleVector::const_iterator iter = m_EnergyJets.begin(); iter != m_EnergyJets.end(); iter++)
+    for (DoubleVector::const_iterator iter = m_energyJets.begin(); iter != m_energyJets.end(); iter++)
     {
         const double energyJet(*iter);
         if (energyJet < lowestEnergyJet)
@@ -949,28 +1080,57 @@ double Variables::GetLowestEnergyJet() const
 
 void Variables::SetCosThetaStarWJets(DoubleVector cosThetaStarWJets)
 {
-    m_CosThetaStarWJets = cosThetaStarWJets;
+    m_cosThetaStarWJets = cosThetaStarWJets;
 }
 
 //===========================================================
 
 DoubleVector Variables::GetCosThetaStarWJets() const 
 {
-    return m_CosThetaStarWJets;
+    return m_cosThetaStarWJets;
 }
 
 //===========================================================
 
 void Variables::SetCosThetaStarZJets(DoubleVector cosThetaStarZJets)
 {
-    m_CosThetaStarZJets = cosThetaStarZJets;
+    m_cosThetaStarZJets = cosThetaStarZJets;
 }
 
 //===========================================================
 
 DoubleVector Variables::GetCosThetaStarZJets() const 
 {
-    return m_CosThetaStarZJets;
+    return m_cosThetaStarZJets;
 }
 
 //===========================================================
+
+void Variables::SetBTagForJets(DoubleVector bTagForJets)
+{
+    m_bTagForJets = bTagForJets;
+}
+
+//===========================================================
+
+DoubleVector Variables::GetBTagForJets() const
+{
+    return m_bTagForJets;
+}
+
+//===========================================================
+
+void Variables::SetCTagForJets(DoubleVector cTagForJets)
+{
+    m_cTagForJets = cTagForJets;
+}
+
+//===========================================================
+
+DoubleVector Variables::GetCTagForJets() const
+{
+    return m_cTagForJets;
+}
+
+//===========================================================
+

@@ -18,7 +18,7 @@ from Logic.GridTools import *
 jobDescription = 'PhysicsAnalysis'
 
 eventsToSimulate = [
-                       { 'EventType': 'ee_nunuqqqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 4, 'ProdID': 5527, 'NumberOfEvents': 335300 },  
+#                       { 'EventType': 'ee_nunuqqqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 4, 'ProdID': 5527, 'NumberOfEvents': 335300 },  
                        { 'EventType': 'ee_lnuqqqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 4, 'ProdID': 5594, 'NumberOfEvents': 715200 },
                        { 'EventType': 'ee_llqqqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 4, 'ProdID': 5572, 'NumberOfEvents': 1101100 },
                        { 'EventType': 'ee_qqqq', 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 4, 'ProdID': 4034, 'NumberOfEvents': 591800 },
@@ -43,7 +43,7 @@ eventsToSimulate = [
 #===== Second level user input =====
 
 gearFile = 'TemplateSteering/clic_ild_cdr.gear'
-steeringTemplateFile = 'TemplateSteering/AnalysisTemplate.xml'
+steeringTemplateFile = 'TemplateSteering/AnalysisTemplate_Tag4.xml'
 
 ##############
 # Begin
@@ -81,7 +81,7 @@ for eventSelection in eventsToSimulate:
     for idx, clicFile in enumerate(clicFiles):
         print 'Checking CLIC sample ' + eventType + ' ' + str(energy) + 'GeV jobs.  Detector model ' + detectorModel + '.  Reconstruction stage ' + reconstructionVariant + '.  Slcio file ' + clicFile + '.'
         clicFileNoPath = os.path.basename(clicFile) 
-        inputSandbox = ['LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/MarlinAnalysisProcessor.tar.gz', 'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/JetsToPFOProcessor.tar.gz', 'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/vtxprob.tar.gz']
+        inputSandbox = ['LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/MarlinAnalysisProcessor.tar.gz', 'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/JetsToPFOProcessor.tar.gz', 'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/vtxprob.tar.gz', 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p70.tar.gz','LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_1p00.tar.gz']
 
         #########################
         # Modify Template
@@ -89,9 +89,9 @@ for eventSelection in eventsToSimulate:
         steeringTemplate = steeringTemplateContent
 
         outputPath = '/' + jobDescription + '/MarlinJobs/Detector_Model_' + detectorModel + '/Reconstruction_Variant_' + reconstructionVariant + '/' + eventType + '_ProdID_' + str(prodID) + '/' + str(energy) + 'GeV'
-        rootFileName = 'ProdID_' + str(prodID) + '_' + eventType + '_' + str(energy) + 'GeV_Analysis_' + str(analysisTag) + '_Number_' + str(idx+1) + '_Of_' + str(numberOfFiles)
-        rootFileNameSelectedPFOs_kt_1p0 = rootFileName + '_SelectedPFOs_kt_1p0.root'
-        rootFileNameSelectedPFOs_kt_0p7 = rootFileName + '_SelectedPFOs_kt_0p7.root'
+        rootFileName = 'ProdID_' + str(prodID) + '_' + eventType + '_' + str(energy) + 'GeV_Tag' + str(analysisTag) + '_' + str(idx+1) + '_Of_' + str(numberOfFiles)
+        rootFileNameSelectedPFOs_kt_1p0 = rootFileName + '_SPFOs_kt_2jets_1p00.root'
+        rootFileNameSelectedPFOs_kt_0p7 = rootFileName + '_SPFOs_kt_2jets_0p70.root'
 
         outputFiles = []
         outputFiles.append(rootFileNameSelectedPFOs_kt_1p0)
@@ -99,6 +99,7 @@ for eventSelection in eventsToSimulate:
 
         steeringTemplate = re.sub('InputSlcioFile',clicFileNoPath,steeringTemplate)
         steeringTemplate = re.sub('GearFile',gearFileLocal,steeringTemplate)
+        steeringTemplate = re.sub('MaximumNumberOfEventsToRecord','2',steeringTemplate)
         steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPFOs_kt_1p0',rootFileNameSelectedPFOs_kt_1p0,steeringTemplate)
         steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPFOs_kt_0p7',rootFileNameSelectedPFOs_kt_0p7,steeringTemplate)
 
@@ -127,11 +128,11 @@ for eventSelection in eventsToSimulate:
         # Setup Marlin Application
         #########################
         ma = Marlin()
-        ma.setVersion('ILCSoft-01-17-08_gcc48')
+        ma.setVersion('v01-16-02')
         ma.setSteeringFile('MarlinSteering.steer')
         ma.setGearFile(gearFileLocal)
         ma.setInputFile('lfn:' + clicFile)
-        ma.setProcessorsToUse(['libMarlinFastJet.so', 'libJetsToPFOs.so', 'libLCFIPlus.so', 'libAnalysisProcessor.so'])
+        ma.setProcessorsToUse(['libMarlinFastJet.so', 'libJetsToPFOs.so', 'libLCFIPlus.so', 'libAnalysisProcessor.so', 'libMarlinReco.so'])
 
         #########################
         # Submit Job
@@ -144,7 +145,7 @@ for eventSelection in eventsToSimulate:
         job.setOutputSandbox(['*.log','*.gear','*.mac','*.steer','*.xml'])
         job.setOutputData(outputFiles,OutputPath=outputPath) # On grid
         job.setName(jobDetailedName)
-        job.setBannedSites(['LCG.IN2P3-CC.fr','LCG.IN2P3-IRES.fr','LCG.KEK.jp','OSG.PNNL.us','OSG.CIT.us','LCG.LAPP.fr','LCG.UKI-LT2-IC-HEP.uk','LCG.Tau.il','LCG.Weizmann.il','OSG.BNL.us'])
+        job.setBannedSites(['LCG.IN2P3-CC.fr','LCG.IN2P3-IRES.fr','LCG.KEK.jp','OSG.PNNL.us','OSG.CIT.us','LCG.LAPP.fr','LCG.UKI-LT2-IC-HEP.uk','LCG.Tau.il','LCG.Weizmann.il','OSG.BNL.us','LCG.GRIF.fr'])
         job.setCPUTime(21600) # 6 hour, should be excessive
         job.dontPromptMe()
 
@@ -154,7 +155,7 @@ for eventSelection in eventsToSimulate:
             print res['Message']
             exit()
         job.submit(diracInstance)
-        #sys.exit()
+        sys.exit()
 
 # Tidy Up
 os.system('rm MarlinSteering.steer')

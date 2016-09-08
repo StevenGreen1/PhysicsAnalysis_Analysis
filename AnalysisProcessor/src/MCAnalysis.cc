@@ -91,8 +91,8 @@ void MCAnalysis::QuarkPairing()
         this->FindMCInvariantMass(trialPair1, invariantMass1);
         this->FindMCInvariantMass(trialPair2, invariantMass2);
 
-        const double wMetric((std::fabs(invariantMass1-m_WBosonMass))*std::fabs(invariantMass2-m_WBosonMass));
-        const double zMetric((std::fabs(invariantMass1-m_ZBosonMass))*std::fabs(invariantMass2-m_ZBosonMass));
+        const double wMetric((fabs(invariantMass1-m_WBosonMass))*fabs(invariantMass2-m_WBosonMass));
+        const double zMetric((fabs(invariantMass1-m_ZBosonMass))*fabs(invariantMass2-m_ZBosonMass));
 
         if (wMetric < bestWMetric)
         {
@@ -115,8 +115,8 @@ void MCAnalysis::QuarkPairing()
         }
     }
 
-    m_pVariables->SetMCInvMassWVectors(bestWMasses);
-    m_pVariables->SetMCInvMassZVectors(bestZMasses);
+    m_pVariables->SetInvariantMassWBosonsMC(bestWMasses);
+    m_pVariables->SetInvariantMassZBosonsMC(bestZMasses);
 }
 
 //===========================================================
@@ -139,7 +139,7 @@ void MCAnalysis::FindMCInvariantMass(MCParticleVector &mcParticleVector, double 
         energyTot += energy;
     }
 
-    invariantMass = std::sqrt(energyTot*energyTot - pxTot*pxTot - pyTot*pyTot - pzTot*pzTot);
+    invariantMass = sqrt(energyTot*energyTot - pxTot*pxTot - pyTot*pyTot - pzTot*pzTot);
 }
 
 //===========================================================
@@ -153,11 +153,11 @@ void MCAnalysis::CalculateMCTransverseMomentum()
         const double px(pMCParticle->getMomentum()[0]);
         const double py(pMCParticle->getMomentum()[1]);
         const double pz(pMCParticle->getMomentum()[2]);
-        const double p(std::sqrt(px * px + py * py + pz * pz));
+        const double p(sqrt(px * px + py * py + pz * pz));
         const double energy(pMCParticle->getEnergy());
-        transverseMomentum += energy * std::sqrt(px*px + py*py) / p;
+        transverseMomentum += energy * sqrt(px*px + py*py) / p;
     }
-    m_pVariables->SetMCTransverseMomentum(transverseMomentum);
+    m_pVariables->SetTransverseMomentumMC(transverseMomentum);
 }
 
 //===========================================================
@@ -171,9 +171,9 @@ void MCAnalysis::CalculateMCTransverseEnergy()
         const double px(pMCParticle->getMomentum()[0]);
         const double py(pMCParticle->getMomentum()[1]);
 
-        transverseEnergy += std::sqrt(px*px + py*py);
+        transverseEnergy += sqrt(px*px + py*py);
     }
-    m_pVariables->SetMCTransverseEnergy(transverseEnergy);
+    m_pVariables->SetTransverseEnergyMC(transverseEnergy);
 }
 
 //===========================================================
@@ -190,8 +190,8 @@ void MCAnalysis::CalculateMCCosThetaMissingMomentum()
         pzMis += pMCParticle->getMomentum()[2];
     }
 
-    const double pMis(std::sqrt(pxMis * pxMis + pyMis * pyMis + pzMis * pzMis));
-    m_pVariables->SetMCCosThetaMissing(pzMis / pMis);
+    const double pMis(sqrt(pxMis * pxMis + pyMis * pyMis + pzMis * pzMis));
+    m_pVariables->SetCosThetaMissingMC(pzMis / pMis);
 }
 
 //===========================================================
@@ -214,22 +214,22 @@ void MCAnalysis::CalculateMCRecoilMass()
     TLorentzVector pVis(px,py,pz,E);
     TLorentzVector pMis(pInit - pVis);
     double recoilMass(pMis.M()); // Invairant Mass/Magnitude
-    m_pVariables->SetMCRecoilMass(recoilMass);
+    m_pVariables->SetRecoilMassMC(recoilMass);
 }
 
 //===========================================================
 
 void MCAnalysis::IsMCEventWW()
 {
-    if (m_pVariables->GetMCInvMassWVectors().size() != 2)
+    if (m_pVariables->GetInvariantMassWBosonsMC().size() != 2)
     {
-        m_pVariables->SetIsMCEventWW(false);
+        m_pVariables->SetIsEventWWMC(false);
         return;
     }
 
-    if (60 < m_pVariables->GetMCInvMassWVectors().at(0) and m_pVariables->GetMCInvMassWVectors().at(0) < 88 and 60 < m_pVariables->GetMCInvMassWVectors().at(1) and m_pVariables->GetMCInvMassWVectors().at(1) < 88)
+    if (60 < m_pVariables->GetInvariantMassWBosonsMC().at(0) and m_pVariables->GetInvariantMassWBosonsMC().at(0) < 88 and 60 < m_pVariables->GetInvariantMassWBosonsMC().at(1) and m_pVariables->GetInvariantMassWBosonsMC().at(1) < 88)
     {
-        m_pVariables->SetIsMCEventWW(true);
+        m_pVariables->SetIsEventWWMC(true);
     }
 
     return;
@@ -239,15 +239,15 @@ void MCAnalysis::IsMCEventWW()
 
 void MCAnalysis::IsMCEventZZ()
 {
-    if (m_pVariables->GetMCInvMassZVectors().size() != 2)
+    if (m_pVariables->GetInvariantMassZBosonsMC().size() != 2)
     {
-        m_pVariables->SetIsMCEventZZ(false);
+        m_pVariables->SetIsEventZZMC(false);
         return;
     }
 
-    if (85 < m_pVariables->GetMCInvMassZVectors().at(0) and m_pVariables->GetMCInvMassZVectors().at(0) < 100 and 85 < m_pVariables->GetMCInvMassZVectors().at(1) and m_pVariables->GetMCInvMassZVectors().at(1) < 100)
+    if (85 < m_pVariables->GetInvariantMassZBosonsMC().at(0) and m_pVariables->GetInvariantMassZBosonsMC().at(0) < 100 and 85 < m_pVariables->GetInvariantMassZBosonsMC().at(1) and m_pVariables->GetInvariantMassZBosonsMC().at(1) < 100)
     {
-        m_pVariables->SetIsMCEventZZ(true);
+        m_pVariables->SetIsEventZZMC(true);
     }
 
     return;
@@ -259,15 +259,15 @@ void MCAnalysis::DefineMCVariablesOfInterest()
 {
     double invariantMassQuarkSystem(std::numeric_limits<double>::max());
     this->FindMCInvariantMass(m_QuarkMCParticleVector,invariantMassQuarkSystem);
-    m_pVariables->SetMCInvariantMassSystem(invariantMassQuarkSystem);
+    m_pVariables->SetInvariantMassSystemMC(invariantMassQuarkSystem);
 
     double mcCosThetaStarWBoson(std::numeric_limits<double>::max());
     this->CalculateMCCosThetaStar(m_MCWVector1,m_MCWVector2,mcCosThetaStarWBoson);
-    m_pVariables->SetMCCosThetaStarWBosons(mcCosThetaStarWBoson);
+    m_pVariables->SetCosThetaStarWBosonsMC(mcCosThetaStarWBoson);
 
     double mcCosThetaStarZBoson(std::numeric_limits<double>::max());
     this->CalculateMCCosThetaStar(m_MCZVector1,m_MCZVector2,mcCosThetaStarZBoson);
-    m_pVariables->SetMCCosThetaStarZBosons(mcCosThetaStarZBoson);
+    m_pVariables->SetCosThetaStarZBosonsMC(mcCosThetaStarZBoson);
 }
 
 //===========================================================
@@ -283,7 +283,7 @@ void MCAnalysis::CalculateMCCosThetaStar(MCParticleVector objectOfInterest, MCPa
     TLorentzVector diBoson = objectOfInterest4Vec + referenceFrameObjects4Vec;
     TVector3 boostvector = -diBoson.BoostVector();
     objectOfInterest4Vec.Boost(boostvector);
-    cosThetaStar = std::fabs(objectOfInterest4Vec.Vect().Dot(diBoson.Vect()) / (objectOfInterest4Vec.Vect().Mag() * diBoson.Vect().Mag()));
+    cosThetaStar = fabs(objectOfInterest4Vec.Vect().Dot(diBoson.Vect()) / (objectOfInterest4Vec.Vect().Mag() * diBoson.Vect().Mag()));
 }
 
 //===========================================================

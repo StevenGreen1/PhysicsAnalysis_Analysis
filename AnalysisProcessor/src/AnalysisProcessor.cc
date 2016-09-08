@@ -25,15 +25,33 @@ AnalysisProcessor::AnalysisProcessor() : Processor("AnalysisProcessor")
                             std::string("AnalysisProcessor.root"));
 
     registerInputCollection(LCIO::RECONSTRUCTEDPARTICLE,
-                            "CollectionName",
-                            "Name of input jet collection",
-                            m_jetParticleCollection,
+                            "PFOCollectionName",
+                            "Name of input PFO collection",
+                            m_particleCollectionPFOs,
                             std::string());
 
     registerInputCollection(LCIO::MCPARTICLE,
                             "MCParticleCollection",
                             "Name of mc particle collections",
-                            m_mcParticleCollection,
+                            m_particleCollectionMC,
+                            std::string());
+
+    registerInputCollection(LCIO::RECONSTRUCTEDPARTICLE,
+                            "6JetCollectionName",
+                            "Name of input 6 jet collection",
+                            m_particleCollection6Jet,
+                            std::string());
+
+    registerInputCollection(LCIO::RECONSTRUCTEDPARTICLE,
+                            "4JetCollectionName",
+                            "Name of input 4 jet collection",
+                            m_particleCollection4Jet,
+                            std::string());
+
+    registerInputCollection(LCIO::RECONSTRUCTEDPARTICLE,
+                            "2JetCollectionName",
+                            "Name of input 2 jet collection",
+                            m_particleCollection2Jet,
                             std::string());
 }
 
@@ -69,65 +87,71 @@ void AnalysisProcessor::processEvent(LCEvent *pLCEvent)
 { 
     m_pVariables->Clear();
 
-    const LCParameters &lcParameters(pLCEvent->getCollection(m_jetParticleCollection)->parameters());
+    const LCParameters &lcParameters(pLCEvent->getCollection(m_particleCollectionPFOs)->parameters());
     m_pVariables->SetLCParameterInfo(lcParameters);
-
-    // this gets called for every event 
-    // usually the working horse ...
 
     if (m_nEvent%10 == 0)
     {
         std::cout << "Processing event number : " << m_nEvent << std::endl;
     }
 
-    // Extract Jet Collection
-    const EVENT::LCCollection *pLCCollection = NULL;
+    const EVENT::LCCollection *pLCCollection6Jet = NULL;
+    const EVENT::LCCollection *pLCCollection4Jet = NULL;
+    const EVENT::LCCollection *pLCCollection2Jet = NULL;
 
     try
     {
-        pLCCollection = pLCEvent->getCollection(m_jetParticleCollection);
+        pLCCollection6Jet = pLCEvent->getCollection(m_particleCollection6Jet);
+        pLCCollection4Jet = pLCEvent->getCollection(m_particleCollection4Jet);
+        pLCCollection2Jet = pLCEvent->getCollection(m_particleCollection2Jet);
     }
     catch (...)
     {
-        streamlog_out(ERROR) << "Could not extract input particle collection: " << m_jetParticleCollection << std::endl;
+        streamlog_out(ERROR) << "Could not extract input particle collection: " << m_particleCollection6Jet << ", " << m_particleCollection4Jet << " or " << m_particleCollection2Jet << std::endl;
     }
 
-    // Check clustering has produced 4 jets
-    if (pLCCollection != NULL)
+    // Check clustering has produced correct number of jets
+    if (pLCCollection6Jet != NULL or pLCCollection4Jet != NULL or pLCCollection2Jet != NULL)
     {
         try
         {
-            if (pLCCollection->getNumberOfElements() != 4)
-                throw pLCCollection->getNumberOfElements();
+            if (pLCCollection6Jet->getNumberOfElements() != 6)
+                throw pLCCollection6Jet->getNumberOfElements();
+            if (pLCCollection4Jet->getNumberOfElements() != 4)
+                throw pLCCollection4Jet->getNumberOfElements();
+            if (pLCCollection2Jet->getNumberOfElements() != 2)
+                throw pLCCollection2Jet->getNumberOfElements();
         }
         catch (int error)
         {
-            std::cout << "Error in jet clustering.  " << error << " jets found.  Expecting 4 jets." << std::endl;
+            streamlog_out(ERROR) << "Error in jet clustering.  " << error << " jets found.  Expecting 6, 4 or 2 jets." << std::endl;
         }
     }
 
-    // Perform Jet Analysis
-    JetAnalysis *pJetAnalysis = new JetAnalysis(pLCCollection,m_pVariables);
+    // Perform Full Jet Analysis
+    JetAnalysis *pJetAnalysis = new JetAnalysis(pLCCollection4Jet, m_pVariables);
+
+    // Perform Partial Jet Analysis on Differently Clustered Jets
+    PartialJetAnalysis *pPartialJetAnalysis6Jet =  new PartialJetAnalysis(pLCCollection6Jet, m_pVariables, 6);
+    PartialJetAnalysis *pPartialJetAnalysis2Jet =  new PartialJetAnalysis(pLCCollection2Jet, m_pVariables, 2);
 
     // Extract MC Information
     const EVENT::LCCollection *pLCMCCollection = NULL;
 
     try
     {
-        pLCMCCollection = pLCEvent->getCollection(m_mcParticleCollection);
+        pLCMCCollection = pLCEvent->getCollection(m_particleCollectionMC);
     }
     catch (...)
     {
-        streamlog_out(ERROR) << "Could not extract input particle collection: " << m_mcParticleCollection << std::endl;
+        streamlog_out(ERROR) << "Could not extract input particle collection: " << m_particleCollectionMC << std::endl;
     }
 
     // Perform MC Analysis
     MCAnalysis *pMCAnalysis = new MCAnalysis(pLCMCCollection,m_pVariables);
 
     m_nEvent++;
-
-    m_pVariables->Print();
-
+//    m_pVariables->Print();
     m_pTTree->Fill();
 }
 

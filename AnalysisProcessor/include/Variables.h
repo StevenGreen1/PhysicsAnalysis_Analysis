@@ -66,64 +66,64 @@ class Variables
 // Bools
 
         /**
-         *  @brief Set m_AppropriateEvent
+         *  @brief Set m_appropriateEvent
          *
          *  @param appropriateEvent Does event mass cuts to suggest vvqqqq final state
          */
         void SetAppropriateEvent(bool appropriateEvent);
 
         /**
-         *  @brief Get m_AppropriateEvent
+         *  @brief Get m_appropriateEvent
          */
         bool GetAppropriateEvent() const;
 
         /**
-         *  @brief Set m_IsEventWW
+         *  @brief Set m_isEventWW
          *
          *  @param isEventWW Are the invariant masses of the jets close to the W boson mass
          */
         void SetIsEventWW(bool isEventWW);
 
         /*
-         *  @brief Get m_IsEventWW
+         *  @brief Get m_isEventWW
          */
         bool GetIsEventWW() const;
 
         /**
-         *  @brief Set m_IsMCEventWW
+         *  @brief Set m_isEventWWMC
          *
-         *  @param isMCEventWW Are the invariant masses of the quarks close to the W boson mass
+         *  @param isEventWWMC Are the invariant masses of the quarks close to the W boson mass
          */
-        void SetIsMCEventWW(bool isMCEventWW);
+        void SetIsEventWWMC(bool isEventWWMC);
 
         /*
-         *  @brief Get m_IsMCEventWW
+         *  @brief Get m_isEventWWMC
          */
-        bool GetIsMCEventWW() const;
+        bool GetIsEventWWMC() const;
 
         /**
-         *  @brief Set m_IsEventZZ
+         *  @brief Set m_isEventZZ
          *
          *  @param isEventZZ Are the invariant masses of the jets close to the Z boson mass
          */
         void SetIsEventZZ(bool isEventZZ);
 
         /*
-         *  @brief Get m_IsEventZZ
+         *  @brief Get m_isEventZZ
          */
         bool GetIsEventZZ() const;
 
         /**
-         *  @brief Set m_IsMCEventZZ
+         *  @brief Set m_isEventZZMC
          *
-         *  @param isMCEventZZ Are the invariant masses of the quarks close to the Z boson mass
+         *  @param isEventZZMC Are the invariant masses of the quarks close to the Z boson mass
          */
-        void SetIsMCEventZZ(bool isMCEventZZ);
+        void SetIsEventZZMC(bool isEventZZMC);
 
         /*
-         *  @brief Get m_IsMCEventZZ
+         *  @brief Get m_isEventZZMC
          */
-        bool GetIsMCEventZZ() const;
+        bool GetIsEventZZMC() const;
 
 // Ints
 
@@ -178,50 +178,74 @@ class Variables
 // IntVectors
 
         /**
-         *  @brief Set m_NParticlesJets
+         *  @brief Set m_combinationWJets
+         *
+         *  @param combinationWJets The combination of jets to form W bosons
+         */
+        void SetJetCombinationW(IntVector combinationWJets);
+
+        /**
+         *  @brief Get m_combinationWJets
+         */
+        IntVector GetJetCombinationW() const;
+
+        /**
+         *  @brief Set m_combinationZJets
+         *
+         *  @param combinationZJets The combination of jets to form Z bosons
+         */
+        void SetJetCombinationZ(IntVector combinationZJets);
+
+        /**
+         *  @brief Get m_combinationZJets
+         */
+        IntVector GetJetCombinationZ() const;
+
+        /**
+         *  @brief Set m_nParticlesJets
          *
          *  @param nParticlesJets The number of particles in jets
          */
         void SetNParticlesJets(IntVector nParticlesJets);
 
         /**
-         *  @brief Get m_NParticlesJets
+         *  @brief Get m_nParticlesJets
          */
         IntVector GetNParticlesJets() const;
 
         /**
-         *  @brief Get lowest number in m_NParticlesJets
+         *  @brief Get lowest number in m_nParticlesJets
          */
         int GetLowestNParticlesJets() const;
 
         /**
-         *  @brief Set m_NChargedParticlesJets
+         *  @brief Set m_nChargedParticlesJets
          *
          *  @param nChargedParticlesJets The number of charged particles in jets
          */
         void SetNChargedParticlesJets(IntVector nChargedParticlesJets);
 
         /**
-         *  @brief Get m_NChargedParticlesJets
+         *  @brief Get m_nChargedParticlesJets
          */
         IntVector GetNChargedParticlesJets() const;
 
         /**
-         *  @brief Get lowest number in m_NChargedParticlesJets
+         *  @brief Get lowest number in m_nChargedParticlesJets
          */
         int GetLowestNChargedParticlesJets() const;
 
 // Floats
 
         /**
-         *  @brief Set m_TransverseMomentum
+         *  @brief Set m_transverseMomentum
          *
          *  @param transverseMomentum Transverse momentum of reconstructed system
          */
         void SetTransverseMomentum(double transverseMomentum);
 
         /**
-         *  @brief Get m_TransverseMomentum
+         *  @brief Get m_transverseMomentum
          */
         double GetTransverseMomentum() const;
 
@@ -274,19 +298,19 @@ class Variables
         double GetTransverseMomentumBosonZ2() const;
 
         /**
-         *  @brief Set m_MCTransverseMomentum
+         *  @brief Set m_transverseMomentumMC
          *
-         *  @param mcTransverseMomentum Transverse momentum of quark system
+         *  @param transverseMomentumMC Transverse momentum of quark system
          */
-        void SetMCTransverseMomentum(double mcTransverseMomentum);
+        void SetTransverseMomentumMC(double transverseMomentumMC);
 
         /**
-         *  @brief Get m_MCTransverseMomentum
+         *  @brief Get m_transverseMomentumMC
          */
-        double GetMCTransverseMomentum() const;
+        double GetTransverseMomentumMC() const;
 
         /**
-         *  @brief Set m_TransverseEnergy
+         *  @brief Set m_transverseEnergy
          *
          *  @param transverseEnergy Transverse energy of reconstructed system
          */
@@ -341,93 +365,117 @@ class Variables
         double GetTransverseEnergyBosonZ2() const;
 
         /**
-         *  @brief Get m_TransverseEnergy
+         *  @brief Get m_transverseEnergy
          */
         double GetTransverseEnergy() const;
 
         /**
-         *  @brief Set m_MCTransverseEnergy
+         *  @brief Set m_transverseEnergyMC
          *
-         *  @param mcTransverseEnergy Transverse energy of quark system
+         *  @param transverseEnergyMC Transverse energy of quark system
          */
-        void SetMCTransverseEnergy(double mcTransverseEnergy);
+        void SetTransverseEnergyMC(double transverseEnergyMC);
 
         /**
-         *  @brief Get m_MCTransverseEnergy
+         *  @brief Get m_transverseEnergyMC
          */
-        double GetMCTransverseEnergy() const;
+        double GetTransverseEnergyMC() const;
 
         /**
-         *  @brief Set m_CosThetaMissing
+         *  @brief Set m_cosThetaMissing
          *
          *  @param cosThetaMissing Cosine theta of missing energy
          */
         void SetCosThetaMissing(double cosThetaMissing);
 
         /**
-         *  @brief Get m_CosThetaMissing
+         *  @brief Get m_cosThetaMissing
          */
         double GetCosThetaMissing() const;
 
         /**
-         *  @brief Set m_MCCosThetaMissing
+         *  @brief Set m_cosThetaMissingMC
          *
-         *  @param mcCosThetaMissing Cosine theta of neutrino energy
+         *  @param cosThetaMissingMC Cosine theta of neutrino energy
          */
-        void SetMCCosThetaMissing(double mcCosThetaMissing);
+        void SetCosThetaMissingMC(double cosThetaMissingMC);
 
         /**
-         *  @brief Get m_MCCosThetaMissing
+         *  @brief Get m_cosThetaMissingMC
          */
-        double GetMCCosThetaMissing() const;
+        double GetCosThetaMissingMC() const;
 
         /**
-         *  @brief Set m_CosThetaMostEnergeticTrack 
+         *  @brief Set m_cosThetaMostEnergeticTrack 
          *
          *  @param cosThetaMostEnergeticTrack Cosine theta of highest energy track in system
          */
         void SetCosThetaMostEnergeticTrack(double cosThetaMostEnergeticTrack);
 
         /** 
-         *  @brief Get m_CosThetaMostEnergeticTrack
+         *  @brief Get m_cosThetaMostEnergeticTrack
          */
         double GetCosThetaMostEnergeticTrack() const;
 
         /**
-         *  @brief Set m_RecoilMass
+         *  @brief Set m_recoilMass
          *
          *  @param recoilMass Recoil mass of reconstructed system
          */
         void SetRecoilMass(double recoilMass);
 
         /**
-         *  @brief Get m_RecoilMass
+         *  @brief Get m_recoilMass
          */
         double GetRecoilMass() const;
 
         /**
-         *  @brief Set m_MCRecoilMass
+         *  @brief Set m_recoilMassMC
          *
-         *  @param mcRecoilMass Recoil mass of quark system
+         *  @param recoilMassMC Recoil mass of quark system
          */
-        void SetMCRecoilMass(double mcRecoilMass);
+        void SetRecoilMassMC(double recoilMassMC);
 
         /**
-         *  @brief Get m_MCRecoilMass
+         *  @brief Get m_recoilMassMC
          */
-        double GetMCRecoilMass() const;
+        double GetRecoilMassMC() const;
 
         /**
-         *  @brief Set m_EnergyAroundMostEnergeticPfo
+         *  @brief Set m_energyAroundMostEnergeticPfo
          *
          *  @param energyAroundMostEnergeticPfo Energy in cone around most energetic pfo
          */
         void SetEnergyAroundMostEnergeticPfo(double energyAroundMostEnergeticPfo);
 
         /**
-         *  @brief Get m_EnergyAroundMostEnergeticPfo
+         *  @brief Get m_energyAroundMostEnergeticPfo
          */
         double GetEnergyAroundMostEnergeticPfo() const;
+
+        /**
+         *  @brief Set m_y12
+         *
+         *  @param y12 Jet grouping parameter
+         */
+        void SetY12(double y12);
+
+        /**
+         *  @brief Get m_y12
+         */
+        double GetY12() const;
+
+        /**
+         *  @brief Set m_y23
+         *
+         *  @param y23 Jet grouping parameter
+         */
+        void SetY23(double y23);
+
+        /**
+         *  @brief Get m_y23
+         */
+        double GetY23() const;
 
         /**
          *  @brief Set m_y34
@@ -442,77 +490,113 @@ class Variables
         double GetY34() const;
 
         /**
-         *  @brief Set m_InvariantMassSystem
+         *  @brief Set m_y45
+         *
+         *  @param y45 Jet grouping parameter
+         */
+        void SetY45(double y45);
+
+        /**
+         *  @brief Get m_y45
+         */
+        double GetY45() const;
+
+        /**
+         *  @brief Set m_y56
+         *
+         *  @param y56 Jet grouping parameter
+         */
+        void SetY56(double y56);
+
+        /**
+         *  @brief Get m_y56
+         */
+        double GetY56() const;
+
+        /**
+         *  @brief Set m_y67
+         *
+         *  @param y67 Jet grouping parameter
+         */
+        void SetY67(double y67);
+
+        /**
+         *  @brief Get m_y67
+         */
+        double GetY67() const;
+
+        /**
+         *  @brief Set m_invariantMassSystem
          *
          *  @param invariantMassSystem Invariant mass of the jet system
          */
         void SetInvariantMassSystem(double invariantMassSystem);
 
         /**
-         *  @brief Get m_InvariantMassSystem
+         *  @brief Get m_invariantMassSystem
          */
         double GetInvariantMassSystem() const;
 
         /**
-         *  @brief Set m_MCInvariantMassSystem
+         *  @brief Set m_invariantMassSystemMC
          *
-         *  @param mcInvariantMassSystem Invariant mass of the quark system
+         *  @param invariantMassSystemMC Invariant mass of the quark system
          */
-        void SetMCInvariantMassSystem(double mcInvariantMassSystem);
+        void SetInvariantMassSystemMC(double invariantMassSystemMC);
 
         /**
-         *  @brief Get m_MCInvariantMassSystem
+         *  @brief Get m_invariantMassSystemMC
          */
-        double GetMCInvariantMassSystem() const;
+        double GetInvariantMassSystemMC() const;
 
         /**
-         *  @brief Set m_CosThetaStarWBosons
+         *  @brief Set m_cosThetaStarWBosons
          *
          *  @param cosThetaStarWBosons Cosine of the polar angle of the W bosons in the reference frame of the WW boson pairs
          */
         void SetCosThetaStarWBosons(double cosThetaStarWBosons);
 
         /**
-         *  @brief Get m_CosThetaStarWBosons
+         *  @brief Get m_cosThetaStarWBosons
          */
         double GetCosThetaStarWBosons() const;
 
         /**
-         *  @brief Set m_MCCosThetaStarWBosons
+         *  @brief Set m_cosThetaStarWBosonsMC
          *
-         *  @param mcCosThetaStarWBosons Cosine of the polar angle of the W bosons in the reference frame of the WW boson pairs
+         *  @param cosThetaStarWBosonsMC Cosine of the polar angle of the W bosons in the reference frame of the WW boson pairs
          */
-        void SetMCCosThetaStarWBosons(double mcCosThetaStarWBosons);
+        void SetCosThetaStarWBosonsMC(double cosThetaStarWBosonsMC);
 
         /**
-         *  @brief Get m_MCCosThetaStarWBosons
+         *  @brief Get m_cosThetaStarWBosonsMC
          */
-        double GetMCCosThetaStarWBosons() const;
+        double GetCosThetaStarWBosonsMC() const;
 
         /**
-         *  @brief Set m_CosThetaStarZBosons
+         *  @brief Set m_cosThetaStarZBosons
          *
          *  @param cosThetaStarZBosons Cosine of the polar angle of the Z bosons in the reference frame of the ZZ boson pairs
          */
         void SetCosThetaStarZBosons(double cosThetaStarZBosons);
 
         /**
-         *  @brief Get m_CosThetaStarZBosons
+         *  @brief Get m_cosThetaStarZBosons
          */
         double GetCosThetaStarZBosons() const;
 
         /**
-         *  @brief Set m_MCCosThetaStarZBosons
+         *  @brief Set m_cosThetaStarZBosonsMC
          *
-         *  @param mcCosThetaStarZBosons Cosine of the polar angle of the Z bosons in the reference frame of the ZZ boson pairs
+         *  @param cosThetaStarZBosonsMC Cosine of the polar angle of the Z bosons in the reference frame of the ZZ boson pairs
          */
-        void SetMCCosThetaStarZBosons(double mcCosThetaStarZBosons);
+        void SetCosThetaStarZBosonsMC(double cosThetaStarZBosonsMC);
 
         /**
-         *  @brief Get m_MCCosThetaStarZBosons
+         *  @brief Get m_cosThetaStarZBosonsMC
          */
-        double GetMCCosThetaStarZBosons() const;
-/////
+        double GetCosThetaStarZBosonsMC() const;
+
         /**
          *  @brief Set m_acolinearityJetsW1
          *
@@ -588,93 +672,117 @@ class Variables
 // DoubleVectors
 
         /**
-         *  @brief Set m_InvMassWVectors
+         *  @brief Set m_invariantMassWBosons
          *
          *  @param invMassWVectors Invariant mass of first and second pair of W paired jets
          */
         void SetInvMassWVectors(DoubleVector invMassWVectors);
 
         /**
-         *  @brief Get m_InvMassWVectors
+         *  @brief Get m_invariantMassWBosons
          */
         DoubleVector GetInvMassWVectors() const;
 
         /**
-         *  @brief Set m_InvMassZVectors 
+         *  @brief Set m_invariantMassZBosons 
          *
          *  @param invMassZVectors Invariant mass of first and second pair of Z paired jets
          */
         void SetInvMassZVectors(DoubleVector invMassZVectors);
 
         /**
-         *  @brief Get m_InvMassZVectors
+         *  @brief Get m_invariantMassZBosons
          */
         DoubleVector GetInvMassZVectors() const;
 
         /**
-         *  @brief Set m_MCInvMassWVectors
+         *  @brief Set m_invariantMassWBosonsMC
          *
-         *  @param invMassWVectors Invariant mass of first and second pair of W paired quarks
+         *  @param invariantMassWBosonsMC Invariant mass of first and second pair of W paired quarks
          */
-        void SetMCInvMassWVectors(DoubleVector mcInvMassWVectors);
+        void SetInvariantMassWBosonsMC(DoubleVector invariantMassWBosonsMC);
 
         /**
-         *  @brief Get m_MCInvMassWVectors
+         *  @brief Get m_invariantMassWBosonsMC
          */
-        DoubleVector GetMCInvMassWVectors() const;
+        DoubleVector GetInvariantMassWBosonsMC() const;
 
         /**
-         *  @brief Set m_MCInvMassZVectors
+         *  @brief Set m_invariantMassZBosonsMC
          *
-         *  @param mcInvMassZVectors Invariant mass of first and second pair of Z paired quarks
+         *  @param invariantMassZBosonsMC Invariant mass of first and second pair of Z paired quarks
          */
-        void SetMCInvMassZVectors(DoubleVector mcInvMassZVectors);
+        void SetInvariantMassZBosonsMC(DoubleVector invariantMassZBosonsMC);
 
         /**
-         *  @brief Get m_MCInvMassZVectors
+         *  @brief Get m_invariantMassZBosonsMC
          */
-        DoubleVector GetMCInvMassZVectors() const;
+        DoubleVector GetInvariantMassZBosonsMC() const;
 
         /**
-         *  @brief Set m_EnergyJets
+         *  @brief Set m_energyJets
          *
          *  @param energyJets Energy of reconstructed jets
          */
         void SetEnergyJets(DoubleVector energyJets);
 
         /**
-         *  @brief Get m_EnergyJets
+         *  @brief Get m_energyJets
          */
         DoubleVector GetEnergyJets() const;
 
         /**
-         *  @brief Get lowest number in m_EnergyJets
+         *  @brief Get lowest number in m_energyJets
          */
         double GetLowestEnergyJet() const;
 
         /**
-         *  @brief Set m_CosThetaStarWJets
+         *  @brief Set m_cosThetaStarWJets
          *
          *  @param cosThetaStarWJets Cosine of the polar angle of the q jets in the reference frome of the W bosons
          */
         void SetCosThetaStarWJets(DoubleVector cosThetaStarWJets);
 
         /**
-         *  @brief Get m_CosThetaStarWJets
+         *  @brief Get m_cosThetaStarWJets
          */
         DoubleVector GetCosThetaStarWJets() const;
 
         /**
-         *  @brief Set m_CosThetaStarZJets
+         *  @brief Set m_cosThetaStarZJets
          *
          *  @param cosThetaStarZJets Cosine of the polar angle of the q jets in the reference frome of the Z bosons
          */
         void SetCosThetaStarZJets(DoubleVector cosThetaStarZJets);
 
         /**
-         *  @brief Get m_CosThetaStarZJets
+         *  @brief Get m_cosThetaStarZJets
          */
         DoubleVector GetCosThetaStarZJets() const;
+
+        /**
+         *  @brief Set m_bTagForJets
+         *
+         *  @param bTagForJets vector of b tag values for the event 
+         */
+        void SetBTagForJets(DoubleVector bTagForJets);
+
+        /**
+         *  @brief Get m_bTagForJets
+         */
+        DoubleVector GetBTagForJets() const;
+
+        /**
+         *  @brief Set m_cTagForJets
+         *
+         *  @param cTagForJets vector of c tag values for the event
+         */
+        void SetCTagForJets(DoubleVector cTagForJets);
+
+        /**
+         *  @brief Get m_cTagForJets
+         */
+        DoubleVector GetCTagForJets() const;
 
         /**
          *  @brief Set
@@ -689,43 +797,49 @@ class Variables
 //        DoubleVector Get();
 
     private:
-        bool            m_AppropriateEvent;                 ///< Does event pass a series of cuts suggesting it has a vvqqqq final state? - JetAnalysis
-        bool            m_IsEventWW;                        ///< Are the invariant masses of the jets close to the W boson mass? - JetAnalysis
-        bool            m_IsMCEventWW;                      ///< Are the invariant masses of the quark pairs close to the W boson mass? - MCAnalysis
-        bool            m_IsEventZZ;                        ///< Are the invariant masses of the jets close to the Z boson mass? - JetAnalysis
-        bool            m_IsMCEventZZ;                      ///< Are the invariant masses of the quark pairs close to the Z boson mass? - MCAnalysis
-        int             m_nPfosBosonW1;                     ///< Number of pfos in W boson 1 in W pairing - JetAnalysis
-        int             m_nPfosBosonW2;                     ///< Number of pfos in W boson 2 in W pairing - JetAnalysis
-        int             m_nPfosBosonZ1;                     ///< Number of pfos in W boson 1 in Z pairing - JetAnalysis
-        int             m_nPfosBosonZ2;                     ///< Number of pfos in W boson 2 in Z pairing - JetAnalysis
-        IntVector       m_NParticlesJets;                   ///< Number of particles in reconstructed jet - JetAnalysis
-        IntVector       m_NChargedParticlesJets;            ///< Number of charged particles in reconstructed jet - JetAnalysis
-
-        double           m_TransverseMomentum;               ///< Transverse momentum of reconstructed system - JetAnalysis
+        bool             m_appropriateEvent;                 ///< Does event pass a series of cuts suggesting it has a vvqqqq final state? - JetAnalysis
+        bool             m_isEventWW;                        ///< Are the invariant masses of the jets close to the W boson mass? - JetAnalysis
+        bool             m_isEventWWMC;                      ///< Are the invariant masses of the quark pairs close to the W boson mass? - MCAnalysis
+        bool             m_isEventZZ;                        ///< Are the invariant masses of the jets close to the Z boson mass? - JetAnalysis
+        bool             m_isEventZZMC;                      ///< Are the invariant masses of the quark pairs close to the Z boson mass? - MCAnalysis
+        int              m_nPfosBosonW1;                     ///< Number of pfos in W boson 1 in W pairing - JetAnalysis
+        int              m_nPfosBosonW2;                     ///< Number of pfos in W boson 2 in W pairing - JetAnalysis
+        int              m_nPfosBosonZ1;                     ///< Number of pfos in W boson 1 in Z pairing - JetAnalysis
+        int              m_nPfosBosonZ2;                     ///< Number of pfos in W boson 2 in Z pairing - JetAnalysis
+        IntVector        m_combinationWJets;                 ///< Combination of jets to form W bosons - JetAnalysis
+        IntVector        m_combinationZJets;                 ///< Combination of jets to form Z bosons - JetAnalysis
+        IntVector        m_nParticlesJets;                   ///< Number of particles in reconstructed jet - JetAnalysis
+        IntVector        m_nChargedParticlesJets;            ///< Number of charged particles in reconstructed jet - JetAnalysis
+        double           m_transverseMomentum;               ///< Transverse momentum of reconstructed system - JetAnalysis
         double           m_transverseMomentumBosonW1;        ///< Transverse momentum of W boson 1 in W pairing - JetAnalysis
         double           m_transverseMomentumBosonW2;        ///< Transverse momentum of W boson 2 in W pairing - JetAnalysis
         double           m_transverseMomentumBosonZ1;        ///< Transverse momentum of W boson 1 in Z pairing - JetAnalysis
         double           m_transverseMomentumBosonZ2;        ///< Transverse momentum of W boson 2 in Z pairing - JetAnalysis
-        double           m_MCTransverseMomentum;             ///< Transverse momentum of quark system - MCAnalysis
-        double           m_TransverseEnergy;                 ///< Transverse energy of reconstructed system - JetAnalysis
+        double           m_transverseMomentumMC;             ///< Transverse momentum of quark system - MCAnalysis
+        double           m_transverseEnergy;                 ///< Transverse energy of reconstructed system - JetAnalysis
         double           m_transverseEnergyBosonW1;          ///< Transverse energy of W boson 1 in W pairing - JetAnalysis
         double           m_transverseEnergyBosonW2;          ///< Transverse energy of W boson 2 in W pairing - JetAnalysis
         double           m_transverseEnergyBosonZ1;          ///< Transverse energy of Z boson 1 in Z pairing - JetAnalysis
         double           m_transverseEnergyBosonZ2;          ///< Transverse energy of Z boson 2 in Z pairing - JetAnalysis
-        double           m_MCTransverseEnergy;               ///< Transverse energy of quark system - MCAnalysis
-        double           m_CosThetaMissing;                  ///< Cosine theta of missing energy - JetAnalysis
-        double           m_MCCosThetaMissing;                ///< Cosine theta of neutrino energy - MCAnalysis
-        double           m_CosThetaMostEnergeticTrack;       ///< Cosine theta of highest energy track in system - JetAnalysis
-        double           m_RecoilMass;                       ///< Recoil mass of reconstructed system - JetAnalysis
-        double           m_MCRecoilMass;                     ///< Recoil mass of quark system - MCAnalysis
-        double           m_EnergyAroundMostEnergeticPfo;     ///< Energy in cone around most energetic pfo - JetAnalysis
+        double           m_transverseEnergyMC;               ///< Transverse energy of quark system - MCAnalysis
+        double           m_cosThetaMissing;                  ///< Cosine theta of missing energy - JetAnalysis
+        double           m_cosThetaMissingMC;                ///< Cosine theta of neutrino energy - MCAnalysis
+        double           m_cosThetaMostEnergeticTrack;       ///< Cosine theta of highest energy track in system - JetAnalysis
+        double           m_recoilMass;                       ///< Recoil mass of reconstructed system - JetAnalysis
+        double           m_recoilMassMC;                     ///< Recoil mass of quark system - MCAnalysis
+        double           m_energyAroundMostEnergeticPfo;     ///< Energy in cone around most energetic pfo - JetAnalysis
+        double           m_y12;                              ///< Jet grouping parameter
+        double           m_y23;                              ///< Jet grouping parameter
         double           m_y34;                              ///< Jet grouping parameter
-        double           m_InvariantMassSystem;              ///< Invariant mass of the jet system - JetAnalysis
-        double           m_MCInvariantMassSystem;            ///< Invariant mass of the quark system - MCAnalysis
-        double           m_CosThetaStarWBosons;              ///< Cosine of the polar angle of the W bosons in the reference frame of the WW boson pairs - JetAnalysis
-        double           m_MCCosThetaStarWBosons;            ///< Cosine of the polar angle of the W bosons in the reference frame of the WW boson pairs - MCAnalysis
-        double           m_CosThetaStarZBosons;              ///< Cosine of the polar angle of the Z bosons in the reference frame of the ZZ boson pairs - JetAnalysis
-        double           m_MCCosThetaStarZBosons;            ///< Cosine of the polar angle of the Z bosons in the reference frame of the ZZ boson pairs - MCAnalysis
+        double           m_y45;                              ///< Jet grouping parameter
+        double           m_y56;                              ///< Jet grouping parameter
+        double           m_y67;                              ///< Jet grouping parameter
+        double           m_invariantMassSystem;              ///< Invariant mass of the jet system - JetAnalysis
+        double           m_invariantMassSystemMC;            ///< Invariant mass of the quark system - MCAnalysis
+        double           m_cosThetaStarWBosons;              ///< Cosine of the polar angle of the W bosons in the reference frame of the WW boson pairs - JetAnalysis
+        double           m_cosThetaStarWBosonsMC;            ///< Cosine of the polar angle of the W bosons in the reference frame of the WW boson pairs - MCAnalysis
+        double           m_cosThetaStarZBosons;              ///< Cosine of the polar angle of the Z bosons in the reference frame of the ZZ boson pairs - JetAnalysis
+        double           m_cosThetaStarZBosonsMC;            ///< Cosine of the polar angle of the Z bosons in the reference frame of the ZZ boson pairs - MCAnalysis
         double           m_acolinearityJetsW1;               ///< Acolinearity of the jets from boson 1 in W pairing - JetAnalysis
         double           m_acolinearityJetsW2;               ///< Acolinearity of the jets from boson 2 in W pairing - JetAnalysis
         double           m_acolinearityJetsZ1;               ///< Acolinearity of the jets from boson 1 in Z pairing - JetAnalysis
@@ -740,13 +854,15 @@ class Variables
         double           m_zThrustAxis;                      ///< Z Thrust axis value from ThrustReconstruction processor - SelectionProcessor
         double           m_sphericity;                       ///< Sphericity from Sphere processor - SelectionProcessor
         double           m_aplanarity;                       ///< Aplnarity from Sphere processor - SelectionProcessor
-        DoubleVector     m_InvMassWVectors;                  ///< Invariant mass of first and second pair of W paired jets - JetAnalysis
-        DoubleVector     m_MCInvMassWVectors;                ///< Invariant mass of first and second pair of W paired quarks - MCAnalysis
-        DoubleVector     m_InvMassZVectors;                  ///< Invariant mass of first and second pair of Z paired jets - JetAnalysis
-        DoubleVector     m_MCInvMassZVectors;                ///< Invariant mass of first and second pair of Z paired quarks - MCAnalysis
-        DoubleVector     m_EnergyJets;                       ///< Energy of reconstructed jets  - JetAnalysis
-        DoubleVector     m_CosThetaStarWJets;                ///< Cosine of the polar angle of the q jets in the reference frome of the W bosons - JetAnalysis
-        DoubleVector     m_CosThetaStarZJets;                ///< Cosine of the polar angle of the q jets in the reference frome of the Z bosons - JetAnalysis
+        DoubleVector     m_invariantMassWBosons;             ///< Invariant mass of first and second pair of W paired jets - JetAnalysis
+        DoubleVector     m_invariantMassWBosonsMC;           ///< Invariant mass of first and second pair of W paired quarks - MCAnalysis
+        DoubleVector     m_invariantMassZBosons;             ///< Invariant mass of first and second pair of Z paired jets - JetAnalysis
+        DoubleVector     m_invariantMassZBosonsMC;           ///< Invariant mass of first and second pair of Z paired quarks - MCAnalysis
+        DoubleVector     m_energyJets;                       ///< Energy of reconstructed jets  - JetAnalysis
+        DoubleVector     m_cosThetaStarWJets;                ///< Cosine of the polar angle of the q jets in the reference frome of the W bosons - JetAnalysis
+        DoubleVector     m_cosThetaStarZJets;                ///< Cosine of the polar angle of the q jets in the reference frome of the Z bosons - JetAnalysis
+        DoubleVector     m_bTagForJets;                      ///< B tag value for the jets in the event
+        DoubleVector     m_cTagForJets;                      ///< C tag value for the jets in the event
 };
 
 #endif // #ifndef VARIABLES_H

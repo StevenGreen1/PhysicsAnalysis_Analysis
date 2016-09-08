@@ -32,6 +32,16 @@ for eventSelection in eventsToMerge:
     jetClusteringRadius = eventSelection['JetClusteringRadius']
     jetAlgorithmConfigString = jetClusteringAlgorithm + '_' + str(nJetsToCluster) + 'jets_' + str(format(jetClusteringRadius,'.2f')).replace('.','p')
 
+    if pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs':
+        jetAlgorithmConfigString = 'SelectedPFOs_' + jetAlgorithmConfigString
+    elif pandoraPFOsToUse == 'TightSelectedPandoraPFANewPFOs':
+        jetAlgorithmConfigString = 'TightPFOs_' + jetAlgorithmConfigString
+    elif pandoraPFOsToUse == 'LooseSelectedPandoraPFANewPFOs':
+        jetAlgorithmConfigString = 'LoosePFOs_' + jetAlgorithmConfigString
+    else:
+        print 'Please select a set of PFOs from SelectedPandoraPFANewPFOs, TightSelectedPandoraPFANewPFOs or LooseSelectedPandoraPFANewPFOs.'
+        exit()
+
     rootFileBB = '/r06/lc/sg568/' + jobDescription + '/MarlinJobs/Detector_Model_' + str(detectorModel) + '/Reconstruction_Variant_' + str(reconstructionVariant) + '/ee_Znunu_Zbb/' + str(energy) + 'GeV/' + jetAlgorithmConfigString + '/RootFilesForTrainingFT_ProdID_2804_ee_Znunu_Zbb_' + str(energy) + 'GeV_Analysis_' + str(analysisTag) + '_' + jetAlgorithmConfigString + '.root'
     rootFileCC = '/r06/lc/sg568/' + jobDescription + '/MarlinJobs/Detector_Model_' + str(detectorModel) + '/Reconstruction_Variant_' + str(reconstructionVariant) + '/ee_Znunu_Zcc/' + str(energy) + 'GeV/' + jetAlgorithmConfigString + '/RootFilesForTrainingFT_ProdID_2807_ee_Znunu_Zcc_' + str(energy) + 'GeV_Analysis_' + str(analysisTag) + '_' + jetAlgorithmConfigString + '.root'
     rootFileOO = '/r06/lc/sg568/' + jobDescription + '/MarlinJobs/Detector_Model_' + str(detectorModel) + '/Reconstruction_Variant_' + str(reconstructionVariant) + '/ee_Znunu_Zudsqudsq/' + str(energy) + 'GeV/' + jetAlgorithmConfigString + '/RootFilesForTrainingFT_ProdID_2801_ee_Znunu_Zudsqudsq_' + str(energy) + 'GeV_Analysis_' + str(analysisTag) + '_' + jetAlgorithmConfigString + '.root'
@@ -48,11 +58,11 @@ for eventSelection in eventsToMerge:
     with open('MarlinSteering.xml' ,'w') as steeringFile:
        steeringFile.write(steeringTemplate)
 
-    localPath = 'lcfiweights_' + jetAlgorithmConfigString
+    localPath = 'lcfiweights_' + str(energy) + 'GeV_' + jetAlgorithmConfigString
     if not os.path.exists(localPath):
         os.makedirs(localPath)
 
-    subprocess.call(['TemplateSteering/Marlin.sh', 'MarlinSteering.xml'], shell=True)
-
+#    subprocess.call(['TemplateSteering/Marlin.sh', 'MarlinSteering.xml'], shell=True)
+    os.system('TemplateSteering/Marlin.sh MarlinSteering.xml')
     os.system('cp MarlinSteering.xml ' + localPath)
     os.system('rm MarlinSteering.xml')

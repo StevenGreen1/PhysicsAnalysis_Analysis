@@ -7,7 +7,7 @@
     <group name="MyJetClusteringAndFlavourTagGroup"/> <!-- Cluster some jets, then refine the vertexing using the jet information and apply flavour tag information-->
     <processor name="MyThrustReconstruction"/>        <!-- Calculate thrust -->
     <processor name="MySphere"/>                      <!-- Calculate sphericity -->
-    <processor name="MyAnalysisProcessor"/>           <!-- Run my analysis --> 
+    <group name="MyAnalysisProcessor"/>               <!-- Run my analysis --> 
     <!--processor name="MyLCIOOutputProcessor"/-->
   </execute>
 
@@ -16,7 +16,7 @@
       InputSlcioFile
     </parameter>
     <parameter name="GearXMLFile" value="GearFile"/>
-    <parameter name="MaxRecordNumber" value="-1"/>
+    <parameter name="MaxRecordNumber" value="MaximumNumberOfEventsToRecord"/>
     <parameter name="SkipNEvents" value="0"/>
     <parameter name="SupressCheck" value="false"/>
     <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> MESSAGE </parameter>
@@ -334,7 +334,7 @@
       <parameter name="JetVertexRefiner.OutputVertexCollectionName" type="string"> SelectedPFOs_kt_0p7_6jet_RefinedVertex </parameter>                                           
       <parameter name="PrimaryVertexCollectionName" type="string"> SelectedPFOs_kt_0p7_6jet_PrimaryVertex </parameter>                                                           
       <parameter name="FlavorTag.JetCollectionName" type="string"> SelectedPFOs_kt_0p7_6jet </parameter>                                                                         
-      <parameter name="FlavorTag.WeightsDirectory" type="string">lcfiweights_SelectedPFOs_kt_0p7_1400GeV_2jets</parameter>                                                       
+      <parameter name="FlavorTag.WeightsDirectory" type="string">lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p70</parameter>                                                       
     </processor>                                                                                                                                                                 
     <processor name="JetClusteringAndFlavourTagGroup_SelectedPFOs_kt_1p0_6jet" type="LcfiplusProcessor">
       <parameter name="JetClustering.NJetsRequested" type="intVec" value="6"/>
@@ -349,7 +349,7 @@
       <parameter name="JetVertexRefiner.OutputVertexCollectionName" type="string"> SelectedPFOs_kt_1p0_6jet_RefinedVertex </parameter>                                           
       <parameter name="PrimaryVertexCollectionName" type="string"> SelectedPFOs_kt_1p0_6jet_PrimaryVertex </parameter>                                                           
       <parameter name="FlavorTag.JetCollectionName" type="string"> SelectedPFOs_kt_1p0_6jet </parameter>                                                                         
-      <parameter name="FlavorTag.WeightsDirectory" type="string">lcfiweights_SelectedPFOs_kt_1p0_1400GeV_2jets</parameter>                                                       
+      <parameter name="FlavorTag.WeightsDirectory" type="string">lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_1p00</parameter>                                                       
     </processor>                                                                                                                                                                 
     <processor name="JetClusteringAndFlavourTagGroup_SelectedPFOs_kt_0p7_4jet" type="LcfiplusProcessor">
       <parameter name="JetClustering.NJetsRequested" type="intVec" value="4"/> 
@@ -364,7 +364,7 @@
       <parameter name="JetVertexRefiner.OutputVertexCollectionName" type="string"> SelectedPFOs_kt_0p7_4jet_RefinedVertex </parameter>                                           
       <parameter name="PrimaryVertexCollectionName" type="string"> SelectedPFOs_kt_0p7_4jet_PrimaryVertex </parameter>                                                           
       <parameter name="FlavorTag.JetCollectionName" type="string"> SelectedPFOs_kt_0p7_4jet </parameter>                                                                         
-      <parameter name="FlavorTag.WeightsDirectory" type="string">lcfiweights_SelectedPFOs_kt_0p7_1400GeV_2jets</parameter>                                                       
+      <parameter name="FlavorTag.WeightsDirectory" type="string">lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p70</parameter>                                                       
     </processor>                                                                                                                                                                 
     <processor name="JetClusteringAndFlavourTagGroup_SelectedPFOs_kt_1p0_4jet" type="LcfiplusProcessor">
       <parameter name="JetClustering.NJetsRequested" type="intVec" value="4"/> 
@@ -379,7 +379,7 @@
       <parameter name="JetVertexRefiner.OutputVertexCollectionName" type="string"> SelectedPFOs_kt_1p0_4jet_RefinedVertex </parameter>
       <parameter name="PrimaryVertexCollectionName" type="string"> SelectedPFOs_kt_1p0_4jet_PrimaryVertex </parameter>
       <parameter name="FlavorTag.JetCollectionName" type="string"> SelectedPFOs_kt_1p0_4jet </parameter>
-      <parameter name="FlavorTag.WeightsDirectory" type="string">lcfiweights_SelectedPFOs_kt_1p0_1400GeV_2jets</parameter>
+      <parameter name="FlavorTag.WeightsDirectory" type="string">lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_1p00</parameter>
     </processor>
     <processor name="JetClusteringAndFlavourTagGroup_SelectedPFOs_kt_0p7_2jet" type="LcfiplusProcessor">
       <parameter name="JetClustering.NJetsRequested" type="intVec" value="2"/> 
@@ -394,7 +394,7 @@
       <parameter name="JetVertexRefiner.OutputVertexCollectionName" type="string"> SelectedPFOs_kt_0p7_2jet_RefinedVertex </parameter>
       <parameter name="PrimaryVertexCollectionName" type="string"> SelectedPFOs_kt_0p7_2jet_PrimaryVertex </parameter>
       <parameter name="FlavorTag.JetCollectionName" type="string"> SelectedPFOs_kt_0p7_2jet </parameter>
-      <parameter name="FlavorTag.WeightsDirectory" type="string">lcfiweights_SelectedPFOs_kt_0p7_1400GeV_2jets</parameter>
+      <parameter name="FlavorTag.WeightsDirectory" type="string">lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p70</parameter>
     </processor>
     <processor name="JetClusteringAndFlavourTagGroup_SelectedPFOs_kt_1p0_2jet" type="LcfiplusProcessor">
       <parameter name="JetClustering.NJetsRequested" type="intVec" value="2"/> 
@@ -409,7 +409,7 @@
       <parameter name="JetVertexRefiner.OutputVertexCollectionName" type="string"> SelectedPFOs_kt_1p0_2jet_RefinedVertex </parameter>
       <parameter name="PrimaryVertexCollectionName" type="string"> SelectedPFOs_kt_1p0_2jet_PrimaryVertex </parameter>
       <parameter name="FlavorTag.JetCollectionName" type="string"> SelectedPFOs_kt_1p0_2jet </parameter>
-      <parameter name="FlavorTag.WeightsDirectory" type="string">lcfiweights_SelectedPFOs_kt_1p0_1400GeV_2jets</parameter>
+      <parameter name="FlavorTag.WeightsDirectory" type="string">lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_1p00</parameter>
     </processor>
   </group>
 

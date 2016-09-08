@@ -30,6 +30,7 @@
 
 #include "JetAnalysis.h"
 #include "MCAnalysis.h"
+#include "PartialJetAnalysis.h"
 #include "Variables.h"
 
 //#include "UTIL/PIDHandler.h"
@@ -71,9 +72,12 @@ class AnalysisProcessor : public Processor
     
     private:
         // Inputs
-        std::string         m_jetParticleCollection;   ///< Pfo collection name
-        std::string         m_mcParticleCollection;    ///< MC particle collectioni
         std::string         m_rootFile;                ///< Root file output namne
+        std::string         m_particleCollectionPFOs;  ///< Raw PFO collection name
+        std::string         m_particleCollectionMC;    ///< MC particle collection
+        std::string         m_particleCollection6Jet;  ///< Jet collection name when clustering into 6 jets 
+        std::string         m_particleCollection4Jet;  ///< Jet collection name when clustering into 4 jets
+        std::string         m_particleCollection2Jet;  ///< Jet collection name when clustering into 2 jets
 
         // Outputs
         Variables          *m_pVariables;              ///< Variables class containing all variables of interest
