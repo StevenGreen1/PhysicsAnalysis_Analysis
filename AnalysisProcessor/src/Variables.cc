@@ -110,10 +110,10 @@ void Variables::SetBranches(TTree *pTTree)
     pTTree->Branch("NParticlesJet3", &m_nParticlesJets.at(2), "NParticlesJet3/I");
     pTTree->Branch("NParticlesJet4", &m_nParticlesJets.at(3), "NParticlesJet4/I");
     m_nChargedParticlesJets.resize(4);
-    pTTree->Branch("NChargedParticlesJet1", &m_nChargedParticlesJets.at(0), "NParticlesJet1/I");
-    pTTree->Branch("NChargedParticlesJet2", &m_nChargedParticlesJets.at(1), "NParticlesJet2/I");
-    pTTree->Branch("NChargedParticlesJet3", &m_nChargedParticlesJets.at(2), "NParticlesJet3/I");
-    pTTree->Branch("NChargedParticlesJet4", &m_nChargedParticlesJets.at(3), "NParticlesJet4/I");
+    pTTree->Branch("NChargedParticlesJet1", &m_nChargedParticlesJets.at(0), "NChargedParticlesJet1/I");
+    pTTree->Branch("NChargedParticlesJet2", &m_nChargedParticlesJets.at(1), "NChargedParticlesJet2/I");
+    pTTree->Branch("NChargedParticlesJet3", &m_nChargedParticlesJets.at(2), "NChargedParticlesJet3/I");
+    pTTree->Branch("NChargedParticlesJet4", &m_nChargedParticlesJets.at(3), "NChargedParticlesJet4/I");
 
 // IntVectors
 //    pTTree->Branch("NParticlesJets", &m_nParticlesJets);
