@@ -14,8 +14,11 @@ PartialJetAnalysis::PartialJetAnalysis(const EVENT::LCCollection *pLCCollection,
     m_NJets(nJets),
     m_pVariables(variables)
 {
-    this->CalculateJetClusteringVariableYij(pLCCollection);
-    this->Process();
+    if (pLCCollection->getNumberOfElements() == 2 or pLCCollection->getNumberOfElements() == 6)
+    {
+        this->CalculateJetClusteringVariableYij(pLCCollection);
+        this->Process();
+    }
 }
 
 //===========================================================

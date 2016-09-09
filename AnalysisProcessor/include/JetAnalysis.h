@@ -117,7 +117,7 @@ class JetAnalysis
         void FindInvariantMass(ParticleVector &particleVector, double &invariantMass) const;
 
         /**
-         *  @brief Calculate the transverse energy of all particles in m_JetVector
+         *  @brief Calculate the transverse energy of all particles in m_jetVector
          */
         void CalculateTransverseEnergy();
 
@@ -130,7 +130,7 @@ class JetAnalysis
         void CalculateTransverseEnergyObject(ParticleVector particleVector, double &transverseEnergy);
 
         /**
-         *  @brief Calculate the transverse momentum of all particles in m_JetVector
+         *  @brief Calculate the transverse momentum of all particles in m_jetVector
          */
         void CalculateTransverseMomentum();
 
@@ -143,7 +143,7 @@ class JetAnalysis
         void CalculateTransverseMomentumObject(ParticleVector particleVector, double &transverseMomentum);
 
         /**
-         *  @brief Calculate the cosine theta of the missing momentum vector using m_JetVector
+         *  @brief Calculate the cosine theta of the missing momentum vector using m_jetVector
          */
         void CalculateCosThetaMissingMomentum();
 
@@ -164,7 +164,7 @@ class JetAnalysis
         /**
          *  @brief Find the tracks assocaited to the particle with the largest energy in the jet vector
          *
-         *  @paran mostEnergeticTracksFromPfo vector of tracks associated to highest energy charged particle in the m_JetVector
+         *  @paran mostEnergeticTracksFromPfo vector of tracks associated to highest energy charged particle in the m_jetVector
          */
         void FindMostEnergeticTrack(EVENT::TrackVec &tracksMostEnergeticChargedPfo) const;
 
@@ -174,12 +174,12 @@ class JetAnalysis
         void CalculateRecoilMass();
 
         /**
-         *  @brief Find the energy in a cone around the most energetic charged Pfo in m_JetVector
+         *  @brief Find the energy in a cone around the most energetic charged Pfo in m_jetVector
          */
         void CalculateEnergyInConeAroundMostEnergeticPfo();
 
         /**
-         *  @brief Find the most energetic Pfo in m_JetVector
+         *  @brief Find the most energetic Pfo in m_jetVector
          *
          *  @param pMostEnergeticChargedPfo Most energetic charged Pfo
          */
@@ -241,17 +241,17 @@ class JetAnalysis
          */
         void DefineEnergy4Vec(ParticleVector &jetVector, TLorentzVector &tLorentzVector) const;
 
-        ParticleVector        m_JetVector;         ///< Vector of 4 jets from fastjet
+        ParticleVector        m_jetVector;         ///< Vector of 4 jets from fastjet
         Variables            *m_pVariables;        ///< Variables of interest to set for analysis
-        ParticleVector        m_WVector1;          ///< First W candidate
-        ParticleVector        m_WVector2;          ///< Second W candidate
-        ParticleVector        m_ZVector1;          ///< First Z candidate
-        ParticleVector        m_ZVector2;          ///< Second Z candidate
-        const double          m_WBosonMass;        ///< W boson mass used for jet pairing
-        const double          m_ZBosonMass;        ///< Z boson mass used for jet pairing
-        const double          m_CrossingAngle;     ///< Crossing angle for CLIC ILD, radians 
-        const double          m_EventMCEnergy;     ///< MC event energy excluding beam effects
-        const double          m_ConeAngle;         ///< Cone angle needed for cone energy measurement, degrees
+        ParticleVector        m_wVector1;          ///< First W candidate
+        ParticleVector        m_wVector2;          ///< Second W candidate
+        ParticleVector        m_zVector1;          ///< First Z candidate
+        ParticleVector        m_zVector2;          ///< Second Z candidate
+        const double          m_wBosonMass;        ///< W boson mass used for jet pairing
+        const double          m_zBosonMass;        ///< Z boson mass used for jet pairing
+        const double          m_crossingAngle;     ///< Crossing angle for CLIC ILD, radians 
+        const double          m_eventMCEnergy;     ///< MC event energy excluding beam effects
+        const double          m_coneAngle;         ///< Cone angle needed for cone energy measurement, degrees
         double                m_y34;               ///< Jet clustering variable
 };
 
