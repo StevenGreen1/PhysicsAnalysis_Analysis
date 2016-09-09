@@ -7,7 +7,7 @@
     <group name="MyJetClusteringAndFlavourTagGroup"/> <!-- Cluster some jets, then refine the vertexing using the jet information and apply flavour tag information-->
     <processor name="MyThrustReconstruction"/>        <!-- Calculate thrust -->
     <processor name="MySphere"/>                      <!-- Calculate sphericity -->
-    <group name="MyAnalysisProcessor"/>               <!-- Run my analysis --> 
+    <group name="MyAnalysisGroup"/>                   <!-- Run my analysis --> 
     <!--processor name="MyLCIOOutputProcessor"/-->
   </execute>
 
