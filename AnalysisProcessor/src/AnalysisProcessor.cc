@@ -121,6 +121,13 @@ void AnalysisProcessor::processEvent(LCEvent *pLCEvent)
                 throw pLCCollection4Jet->getNumberOfElements();
             if (pLCCollection2Jet->getNumberOfElements() != 2)
                 throw pLCCollection2Jet->getNumberOfElements();
+
+            // Perform Full Jet Analysis
+            JetAnalysis *pJetAnalysis = new JetAnalysis(pLCCollection4Jet, m_pVariables);
+
+            // Perform Partial Jet Analysis on Differently Clustered Jets
+            PartialJetAnalysis *pPartialJetAnalysis6Jet =  new PartialJetAnalysis(pLCCollection6Jet, m_pVariables, 6);
+            PartialJetAnalysis *pPartialJetAnalysis2Jet =  new PartialJetAnalysis(pLCCollection2Jet, m_pVariables, 2);
         }
         catch (int error)
         {
@@ -128,30 +135,21 @@ void AnalysisProcessor::processEvent(LCEvent *pLCEvent)
         }
     }
 
-    // Perform Full Jet Analysis
-    JetAnalysis *pJetAnalysis = new JetAnalysis(pLCCollection4Jet, m_pVariables);
-
-    // Perform Partial Jet Analysis on Differently Clustered Jets
-    PartialJetAnalysis *pPartialJetAnalysis6Jet =  new PartialJetAnalysis(pLCCollection6Jet, m_pVariables, 6);
-    PartialJetAnalysis *pPartialJetAnalysis2Jet =  new PartialJetAnalysis(pLCCollection2Jet, m_pVariables, 2);
-
     // Extract MC Information
     const EVENT::LCCollection *pLCMCCollection = NULL;
 
     try
     {
         pLCMCCollection = pLCEvent->getCollection(m_particleCollectionMC);
+        // Perform MC Analysis
+        MCAnalysis *pMCAnalysis = new MCAnalysis(pLCMCCollection,m_pVariables);
     }
     catch (...)
     {
-        streamlog_out(ERROR) << "Could not extract input particle collection: " << m_particleCollectionMC << std::endl;
+        streamlog_out(ERROR) << "Problem in MC analysis involving collection: " << m_particleCollectionMC << std::endl;
     }
 
-    // Perform MC Analysis
-    MCAnalysis *pMCAnalysis = new MCAnalysis(pLCMCCollection,m_pVariables);
-
     m_nEvent++;
-//    m_pVariables->Print();
     m_pTTree->Fill();
 }
 

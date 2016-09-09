@@ -12,7 +12,60 @@ using namespace variables_namespace;
 
 //===========================================================
 
-Variables::Variables()
+Variables::Variables() : 
+    m_appropriateEvent(false),
+    m_isEventWW(false),
+    m_isEventWWMC(false),
+    m_isEventZZ(false),
+    m_isEventZZMC(false),
+    m_nPfosBosonW1(std::numeric_limits<int>::max()),
+    m_nPfosBosonW2(std::numeric_limits<int>::max()),
+    m_nPfosBosonZ1(std::numeric_limits<int>::max()),
+    m_nPfosBosonZ2(std::numeric_limits<int>::max()),
+    m_transverseMomentum(std::numeric_limits<double>::max()),
+    m_transverseMomentumBosonW1(std::numeric_limits<double>::max()),
+    m_transverseMomentumBosonW2(std::numeric_limits<double>::max()),
+    m_transverseMomentumBosonZ1(std::numeric_limits<double>::max()),
+    m_transverseMomentumBosonZ2(std::numeric_limits<double>::max()),
+    m_transverseMomentumMC(std::numeric_limits<double>::max()),
+    m_transverseEnergy(std::numeric_limits<double>::max()),
+    m_transverseEnergyBosonW1(std::numeric_limits<double>::max()),
+    m_transverseEnergyBosonW2(std::numeric_limits<double>::max()),
+    m_transverseEnergyBosonZ1(std::numeric_limits<double>::max()),
+    m_transverseEnergyBosonZ2(std::numeric_limits<double>::max()),
+    m_transverseEnergyMC(std::numeric_limits<double>::max()),
+    m_cosThetaMissing(std::numeric_limits<double>::max()),
+    m_cosThetaMissingMC(std::numeric_limits<double>::max()),
+    m_cosThetaMostEnergeticTrack(std::numeric_limits<double>::max()),
+    m_recoilMass(std::numeric_limits<double>::max()),
+    m_recoilMassMC(std::numeric_limits<double>::max()),
+    m_energyAroundMostEnergeticPfo(std::numeric_limits<double>::max()),
+    m_y12(std::numeric_limits<double>::max()),
+    m_y23(std::numeric_limits<double>::max()),
+    m_y34(std::numeric_limits<double>::max()),
+    m_y45(std::numeric_limits<double>::max()),
+    m_y56(std::numeric_limits<double>::max()),
+    m_y67(std::numeric_limits<double>::max()),
+    m_invariantMassSystem(std::numeric_limits<double>::max()),
+    m_invariantMassSystemMC(std::numeric_limits<double>::max()),
+    m_cosThetaStarWBosons(std::numeric_limits<double>::max()),
+    m_cosThetaStarWBosonsMC(std::numeric_limits<double>::max()),
+    m_cosThetaStarZBosons(std::numeric_limits<double>::max()),
+    m_cosThetaStarZBosonsMC(std::numeric_limits<double>::max()),
+    m_acolinearityJetsW1(std::numeric_limits<double>::max()),
+    m_acolinearityJetsW2(std::numeric_limits<double>::max()),
+    m_acolinearityJetsZ1(std::numeric_limits<double>::max()),
+    m_acolinearityJetsZ2(std::numeric_limits<double>::max()),
+    m_acolinearityBosonsW(std::numeric_limits<double>::max()),
+    m_acolinearityBosonsZ(std::numeric_limits<double>::max()),
+    m_principleThrustValue(std::numeric_limits<double>::max()),
+    m_majorThrustValue(std::numeric_limits<double>::max()),
+    m_minorThrustValue(std::numeric_limits<double>::max()),
+    m_xThrustAxis(std::numeric_limits<double>::max()),
+    m_yThrustAxis(std::numeric_limits<double>::max()),
+    m_zThrustAxis(std::numeric_limits<double>::max()),
+    m_sphericity(std::numeric_limits<double>::max()),
+    m_aplanarity(std::numeric_limits<double>::max())
 {
 }
 
@@ -210,12 +263,27 @@ void Variables::Clear()
     m_isEventZZ = false;
     m_isEventZZMC = false;
 
+    m_nPfosBosonW1 = std::numeric_limits<int>::max();
+    m_nPfosBosonW2 = std::numeric_limits<int>::max();
+    m_nPfosBosonZ1 = std::numeric_limits<int>::max();
+    m_nPfosBosonZ2 = std::numeric_limits<int>::max();
+
+    m_combinationWJets.clear();
+    m_combinationZJets.clear();
     m_nParticlesJets.clear();
     m_nChargedParticlesJets.clear();
 
     m_transverseMomentum = std::numeric_limits<double>::max();
+    m_transverseMomentumBosonW1 = std::numeric_limits<double>::max();
+    m_transverseMomentumBosonW2 = std::numeric_limits<double>::max();
+    m_transverseMomentumBosonZ1 = std::numeric_limits<double>::max();
+    m_transverseMomentumBosonZ2 = std::numeric_limits<double>::max();
     m_transverseMomentumMC = std::numeric_limits<double>::max();
     m_transverseEnergy = std::numeric_limits<double>::max();
+    m_transverseEnergyBosonW1 = std::numeric_limits<double>::max();
+    m_transverseEnergyBosonW2 = std::numeric_limits<double>::max();
+    m_transverseEnergyBosonZ1 = std::numeric_limits<double>::max();
+    m_transverseEnergyBosonZ2 = std::numeric_limits<double>::max();
     m_transverseEnergyMC = std::numeric_limits<double>::max();
     m_cosThetaMissing = std::numeric_limits<double>::max();
     m_cosThetaMissingMC = std::numeric_limits<double>::max();
@@ -223,13 +291,32 @@ void Variables::Clear()
     m_recoilMass = std::numeric_limits<double>::max();
     m_recoilMassMC = std::numeric_limits<double>::max();
     m_energyAroundMostEnergeticPfo = std::numeric_limits<double>::max();
+    m_y12 = std::numeric_limits<double>::max();
+    m_y23 = std::numeric_limits<double>::max();
     m_y34 = std::numeric_limits<double>::max();
+    m_y45 = std::numeric_limits<double>::max();
+    m_y56 = std::numeric_limits<double>::max();
+    m_y67 = std::numeric_limits<double>::max();
     m_invariantMassSystem = std::numeric_limits<double>::max();
     m_invariantMassSystemMC = std::numeric_limits<double>::max();
     m_cosThetaStarWBosons = std::numeric_limits<double>::max();
     m_cosThetaStarWBosonsMC = std::numeric_limits<double>::max();
     m_cosThetaStarZBosons = std::numeric_limits<double>::max();
     m_cosThetaStarZBosonsMC = std::numeric_limits<double>::max();
+    m_acolinearityJetsW1 = std::numeric_limits<double>::max();
+    m_acolinearityJetsW2 = std::numeric_limits<double>::max();
+    m_acolinearityJetsZ1 = std::numeric_limits<double>::max();
+    m_acolinearityJetsZ2 = std::numeric_limits<double>::max();
+    m_acolinearityBosonsW = std::numeric_limits<double>::max();
+    m_acolinearityBosonsZ = std::numeric_limits<double>::max();
+    m_principleThrustValue = std::numeric_limits<double>::max();
+    m_majorThrustValue = std::numeric_limits<double>::max();
+    m_minorThrustValue = std::numeric_limits<double>::max();
+    m_xThrustAxis = std::numeric_limits<double>::max();
+    m_yThrustAxis = std::numeric_limits<double>::max();
+    m_zThrustAxis = std::numeric_limits<double>::max();
+    m_sphericity = std::numeric_limits<double>::max();
+    m_aplanarity = std::numeric_limits<double>::max();
 
     m_invariantMassWBosons.clear();
     m_invariantMassWBosonsMC.clear();
@@ -238,6 +325,8 @@ void Variables::Clear()
     m_energyJets.clear();
     m_cosThetaStarWJets.clear();
     m_cosThetaStarZJets.clear();
+    m_bTagForJets.clear();
+    m_cTagForJets.clear();
 }
 
 //===========================================================
