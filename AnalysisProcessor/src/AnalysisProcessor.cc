@@ -128,6 +128,8 @@ void AnalysisProcessor::processEvent(LCEvent *pLCEvent)
             // Perform Partial Jet Analysis on Differently Clustered Jets
             PartialJetAnalysis *pPartialJetAnalysis6Jet =  new PartialJetAnalysis(pLCCollection6Jet, m_pVariables, 6);
             PartialJetAnalysis *pPartialJetAnalysis2Jet =  new PartialJetAnalysis(pLCCollection2Jet, m_pVariables, 2);
+
+            delete pJetAnalysis, pPartialJetAnalysis6Jet, pPartialJetAnalysis2Jet;
         }
         catch (int error)
         {
@@ -143,6 +145,8 @@ void AnalysisProcessor::processEvent(LCEvent *pLCEvent)
         pLCMCCollection = pLCEvent->getCollection(m_particleCollectionMC);
         // Perform MC Analysis
         MCAnalysis *pMCAnalysis = new MCAnalysis(pLCMCCollection,m_pVariables);
+
+        delete pMCAnalysis;
     }
     catch (...)
     {
@@ -168,6 +172,7 @@ void AnalysisProcessor::end()
 
     m_pTFile->Close();
     delete m_pTFile;
+    delete m_pVariables;
 }
 
 //===========================================================
