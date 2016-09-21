@@ -21,16 +21,16 @@ Process::Process(std::string jobDescription, std::string detectorModel, std::str
     m_analysisTag(analysisTag),
     m_pTChain(NULL),
     m_pTrainTChain(NULL),
-    m_pPostBDTTChain(NULL),
+    m_pPostMVATChain(NULL),
     m_numberOfEntries(std::numeric_limits<int>::max()),
-    m_postBDTProcessWeight(std::numeric_limits<float>::max()),
+    m_postMVAProcessWeight(std::numeric_limits<float>::max()),
     m_processWeight(std::numeric_limits<float>::max())
 {
-    m_pathToFiles = "/r06/lc/sg568/" + jobDescription + "/MarlinJobs/Detector_Model_" + detectorModel + "/Reconstruction_Variant_" + reconstructionVariant + "/" + eventType + "/" + this->NumberToString(energy) + "GeV/";
+    m_pathToFiles = "/r06/lc/sg568/" + jobDescription + "/MarlinJobs/Detector_Model_" + detectorModel + "/Reconstruction_Variant_" + reconstructionVariant + "/" + eventType + "/" + this->NumberToString(energy) + "GeV/AnalysisTag" + this->NumberToString(analysisTag) + "/";
 
     this->MakeTChain();
     this->MakeSelection();
-    this->SetBDTRootFiles();
+    this->SetMVARootFiles();
 }
 
 //=====================================================================
@@ -49,9 +49,9 @@ TChain* Process::GetTrainingTChain() const
 
 //=====================================================================
 
-TChain* Process::GetPostBDTTChain() const
+TChain* Process::GetPostMVATChain() const
 {   
-    return (TChain*)(m_pPostBDTTChain->Clone());
+    return (TChain*)(m_pPostMVATChain->Clone());
 }
 
 //=====================================================================
@@ -63,9 +63,9 @@ float Process::GetProcessWeight() const
 
 //=====================================================================
 
-float Process::GetPostBDTProcessWeight() const
+float Process::GetPostMVAProcessWeight() const
 {
-    return m_postBDTProcessWeight;
+    return m_postMVAProcessWeight;
 }
 
 //=====================================================================
@@ -127,29 +127,29 @@ bool Process::DoesEventPassCuts(int eventNumber) const
 //=====================================================================
 
 /*
-RootFiles_BDT_ee_ll_1400GeV.root       RootFiles_BDT_ee_nunuqqqq_1400GeV.root       RootFiles_BDT_egamma_qqqqnu_BS_1400GeV.root   RootFiles_BDT_gammae_qqqqnu_EPA_1400GeV.root
-RootFiles_BDT_ee_llqqqq_1400GeV.root   RootFiles_BDT_ee_qq_1400GeV.root             RootFiles_BDT_egamma_qqqqnu_EPA_1400GeV.root  RootFiles_BDT_gammagamma_qqqq_BS_BS_1400GeV.root
-RootFiles_BDT_ee_lnuqq_1400GeV.root    RootFiles_BDT_ee_qqqq_1400GeV.root           RootFiles_BDT_gammae_qqqqe_BS_1400GeV.root    RootFiles_BDT_gammagamma_qqqq_BS_EPA_1400GeV.root
-RootFiles_BDT_ee_lnuqqqq_1400GeV.root  RootFiles_BDT_egamma_qqqqe_BS_1400GeV.root   RootFiles_BDT_gammae_qqqqe_EPA_1400GeV.root   RootFiles_BDT_gammagamma_qqqq_EPA_BS_1400GeV.root
-RootFiles_BDT_ee_nunuqq_1400GeV.root   RootFiles_BDT_egamma_qqqqe_EPA_1400GeV.root  RootFiles_BDT_gammae_qqqqnu_BS_1400GeV.root   RootFiles_BDT_gammagamma_qqqq_EPA_EPA_1400GeV.root
+RootFiles_MVA_ee_ll_1400GeV.root       RootFiles_MVA_ee_nunuqqqq_1400GeV.root       RootFiles_MVA_egamma_qqqqnu_BS_1400GeV.root   RootFiles_MVA_gammae_qqqqnu_EPA_1400GeV.root
+RootFiles_MVA_ee_llqqqq_1400GeV.root   RootFiles_MVA_ee_qq_1400GeV.root             RootFiles_MVA_egamma_qqqqnu_EPA_1400GeV.root  RootFiles_MVA_gammagamma_qqqq_BS_BS_1400GeV.root
+RootFiles_MVA_ee_lnuqq_1400GeV.root    RootFiles_MVA_ee_qqqq_1400GeV.root           RootFiles_MVA_gammae_qqqqe_BS_1400GeV.root    RootFiles_MVA_gammagamma_qqqq_BS_EPA_1400GeV.root
+RootFiles_MVA_ee_lnuqqqq_1400GeV.root  RootFiles_MVA_egamma_qqqqe_BS_1400GeV.root   RootFiles_MVA_gammae_qqqqe_EPA_1400GeV.root   RootFiles_MVA_gammagamma_qqqq_EPA_BS_1400GeV.root
+RootFiles_MVA_ee_nunuqq_1400GeV.root   RootFiles_MVA_egamma_qqqqe_EPA_1400GeV.root  RootFiles_MVA_gammae_qqqqnu_BS_1400GeV.root   RootFiles_MVA_gammagamma_qqqq_EPA_EPA_1400GeV.root
 -bash-4.1$ pwd
-/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/RootFilesPostBDT
+/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/RootFilesPostMVA
 */
 
-void Process::SetBDTRootFiles()
+void Process::SetMVARootFiles()
 {
-    m_pPostBDTTChain = new TChain("BDTTree");
-    TString fileToAdd = "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/RootFilesPostBDT/RootFiles_BDT_" + m_eventType + "_" + this->NumberToString(m_energy) + "GeV.root";
-    m_pPostBDTTChain->Add(fileToAdd);
-    m_postBDTProcessWeight = m_luminosity * m_crossSection / (float)(m_pTChain->GetEntries());
+    m_pPostMVATChain = new TChain("MVATree");
+    TString fileToAdd = "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/RootFilesPostMVA/RootFiles_Multivariant_" + m_eventType + "_" + this->NumberToString(m_energy) + "GeV.root";
+    m_pPostMVATChain->Add(fileToAdd);
+    m_postMVAProcessWeight = m_luminosity * m_crossSection / (float)(m_pPostMVATChain->GetEntries());
 }
 
 //=====================================================================
 
 void Process::MakeTChain()
 {
-    m_pTChain = new TChain("SelectionProcessorTree");
-    m_pTrainTChain = new TChain("SelectionProcessorTree");
+    m_pTChain = new TChain("AnalysisProcessorTree");
+    m_pTrainTChain = new TChain("AnalysisProcessorTree");
 
     TSystemDirectory directory(m_pathToFiles.c_str(), m_pathToFiles.c_str());
     TList *listOfFiles = directory.GetListOfFiles();
@@ -166,11 +166,11 @@ void Process::MakeTChain()
         while ((file=(TSystemFile*)next())) 
         {
             fileCandidate = file->GetName();
-            std::string analysisTagString("Analysis_" + this->NumberToString(m_analysisTag));
+            std::string analysisTagString("Tag" + this->NumberToString(m_analysisTag));
 
-            if (!file->IsDirectory() and fileCandidate.EndsWith("root") and fileCandidate.Contains(analysisTagString.c_str()) and fileCandidate.Contains("Selected")) // and m_pTChain->GetEntries() < 10000) 
+            if (!file->IsDirectory() and fileCandidate.EndsWith("root") and fileCandidate.Contains(analysisTagString.c_str()) and fileCandidate.Contains("SPFOs_kt_2jets_0p70")) // and m_pTChain->GetEntries() < 10000) 
             {
-                TString rootFileToAdd = m_pathToFiles + "/" + fileCandidate.Data();
+                TString rootFileToAdd = m_pathToFiles + fileCandidate.Data();
 
                 if (trainingSample)
                 {
@@ -204,6 +204,7 @@ std::string Process::NumberToString(T number)
 
 void Process::MakeSelection()
 {
+/*
     double recoilMass(std::numeric_limits<double>::max());
     double transverseMomentum(std::numeric_limits<double>::max());
     double transverseEnergy(std::numeric_limits<double>::max());
@@ -245,15 +246,6 @@ void Process::MakeSelection()
         {
            doesEventPassSelection = false;
         }
-/*
-if (recoilMass < 250.0) std::cout << "Recoil Mass" << std::endl;
-else if (transverseMomentum < 40) std::cout << "transverseMomentum" << std::endl;
-else if (transverseEnergy < 150)std::cout << "transverseEnergy" << std::endl;
-else if (std::fabs(cosThetaMissing) > 0.99)std::cout << "cosThetaMissing" << std::endl;
-else if (std::fabs(cosThetaMostEnergeticTrack) > 0.99)std::cout << "cosThetaMostEnergeticTrack" << std::endl;
-else if (energyAroundMostEnergeticTrack < 2.0)std::cout << "EnergyAroundMostEnergeticTrack" << std::endl;
-else if (y34 > 3.5)std::cout << "Y34" << std::endl;
-*/
         for (IntVector::iterator iter = nParticlesJets->begin(); iter != nParticlesJets->end(); iter++)
         {
             int nParticlesJets(*iter);
@@ -310,6 +302,7 @@ else if (y34 > 3.5)std::cout << "Y34" << std::endl;
 
         m_doesEventPassSelection.insert(std::make_pair(event,doesEventPassSelection));
     }
+*/
 }
 
 //=====================================================================

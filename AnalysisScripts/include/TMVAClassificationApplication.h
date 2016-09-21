@@ -9,6 +9,7 @@
 #ifndef TMVA_CLASSIFICATION_APPLICATION_H
 #define TMVA_CLASSIFICATION_APPLICATION_H
 
+#include <algorithm>
 #include <iostream>
 #include <limits>
 #include <sstream>

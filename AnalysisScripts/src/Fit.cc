@@ -30,10 +30,10 @@ Fit::Fit(const ProcessVector &processVector) :
 void Fit::FillDistribution()
 {
     const int a4IntMin(-5);
-    const int a4IntMax(5);
+    const int a4IntMax(-4);
     const float a4Step(0.01);
     const int a5IntMin(-5);
-    const int a5IntMax(5);
+    const int a5IntMax(-4);
     const float a5Step(0.01);
 
     std::map<int, std::map<int, std::map<int, float> > > alphaInt_EvtNumber_Weight;
@@ -44,33 +44,26 @@ void Fit::FillDistribution()
         if (pProcess->GetEventType() != "ee_nunuqqqq") 
             continue;
 
-        TChain *pTChain(pProcess->GetPostBDTTChain());
+        TChain *pTChain(pProcess->GetPostMVATChain());
         CouplingAnalysis *pCouplingAnalysis = new CouplingAnalysis(pProcess->GetEventType(),this->NumberToString(pProcess->GetEnergy()));
 
-        int generatorSerialInt(std::numeric_limits<int>::max());
+        int globalEventNumber(std::numeric_limits<int>::max());
         double bdt(std::numeric_limits<double>::max());
 
-        pTChain->SetBranchAddress("GeneratorSerialNumber", &generatorSerialInt);
+        pTChain->SetBranchAddress("GlobalEventNumber", &globalEventNumber);
         pTChain->SetBranchAddress("BDT", &bdt);
-
-        int eventCounter(0);
-        IntVector readInSGN;
 
         for (unsigned int event = 0; event < pTChain->GetEntries(); event++)
         {
             pTChain->GetEntry(event);               
-            eventCounter++;
 
-            if (std::find(readInSGN.begin(), readInSGN.end(), generatorSerialInt) == readInSGN.end())
-            {
-                readInSGN.push_back(generatorSerialInt);
-                eventCounter = 1;
-            }
+            globalEventNumber = globalEventNumber-1000;
 
-            if (bdt < 0.f)
+            if (globalEventNumber < 1e6)
                 continue;
 
-            const int eventNumber(1000*(generatorSerialInt-1) + eventCounter);
+//            if (bdt < 0.f)
+//                continue;
 
             for (int a4Int = a4IntMin; a4Int < a4IntMax+1; a4Int++)
             {
@@ -79,11 +72,12 @@ void Fit::FillDistribution()
                     float a4Current = a4Step * (float)(a4Int);
                     float a5Current = a5Step * (float)(a5Int);
                     float matrixElementWeight(std::numeric_limits<float>::max());
-                    pCouplingAnalysis->GetWeight(eventNumber, a4Current, a5Current, matrixElementWeight);
-                    alphaInt_EvtNumber_Weight[a4Int][a5Int][eventCounter] = matrixElementWeight;
+                    pCouplingAnalysis->GetWeight(globalEventNumber, a4Current, a5Current, matrixElementWeight);
+                    alphaInt_EvtNumber_Weight[a4Int][a5Int][globalEventNumber] = matrixElementWeight;
                 }
             }
         }
+        delete pCouplingAnalysis, pTChain, pProcess;
     }
 
     std::map<int, std::map<int, TH1F*> > alphaInt_HistW;
@@ -108,49 +102,41 @@ void Fit::FillDistribution()
     for (ProcessVector::const_iterator it = m_processVector.begin(); it != m_processVector.end(); it ++)
     {
         const Process *pProcess(*it);
-        double weight(pProcess->GetPostBDTProcessWeight());
+        double weight(pProcess->GetPostMVAProcessWeight());
 
-        TChain *pTChain(pProcess->GetPostBDTTChain());
+        TChain *pTChain(pProcess->GetPostMVATChain());
 
-        int generatorSerialInt(std::numeric_limits<int>::max());
+        int globalEventNumber(std::numeric_limits<int>::max());
         double cosThetaStarW(0.0);
         double bdt(std::numeric_limits<double>::max());
-        DoubleVector *cosThetaStarWJets(NULL);
-        
-        pTChain->SetBranchAddress("GeneratorSerialNumber", &generatorSerialInt);
+        double cosThetaStarWJet1(std::numeric_limits<double>::max());
+        double cosThetaStarWJet2(std::numeric_limits<double>::max());
+ 
+        pTChain->SetBranchAddress("GlobalEventNumber", &globalEventNumber);
         pTChain->SetBranchAddress("CosThetaStarWBosons", &cosThetaStarW);
         pTChain->SetBranchAddress("BDT", &bdt);
-        pTChain->SetBranchAddress("CosThetaStarWJets", &cosThetaStarWJets);
-
-        int eventCounter(0);
-        IntVector readInSGN;
+        pTChain->SetBranchAddress("CosThetaStarWJet1", &cosThetaStarWJet1);
+        pTChain->SetBranchAddress("CosThetaStarWJet2", &cosThetaStarWJet2);
 
         for (unsigned int event = 0; event < pTChain->GetEntries(); event++)
         {
             pTChain->GetEntry(event);
-            eventCounter++;
 
-            if (std::find(readInSGN.begin(), readInSGN.end(), generatorSerialInt) == readInSGN.end())
-            {
-                readInSGN.push_back(generatorSerialInt);
-                eventCounter = 1;
-            }
+            globalEventNumber = globalEventNumber-1000;
+
+            if (globalEventNumber < 1e6)
+                continue;
 
 //            std::cout << "bdt " << bdt << std::endl;
 
-            if (bdt < 0.f)
-                continue;
-
-            const int eventNumber(1000*(generatorSerialInt-1) + eventCounter);
+//            if (bdt < 0.f)
+//                continue;
 
 //            std::cout << "m_pTH1F_DistributionW_Sample->Fill(" << cosThetaStarW << "," << weight << ");" << std::endl;
             m_pTH1F_DistributionW_Sample->Fill(cosThetaStarW,weight);
 
-            for (DoubleVector::iterator it = cosThetaStarWJets->begin(); it != cosThetaStarWJets->end(); it++)
-            {
-                double cosThetaStarWJet(*it);
-                m_pTH1F_DistributionJ_Sample->Fill(cosThetaStarWJet,weight);
-            }
+            m_pTH1F_DistributionJ_Sample->Fill(cosThetaStarWJet1, weight);
+            m_pTH1F_DistributionJ_Sample->Fill(cosThetaStarWJet2, weight);
 
             for (int a4Int = a4IntMin; a4Int < a4IntMax+1; a4Int++)
             {
@@ -159,23 +145,18 @@ void Fit::FillDistribution()
                     float matrixElementWeight(1.f);
 
                     if (pProcess->GetEventType() == "ee_nunuqqqq")
-                        matrixElementWeight = alphaInt_EvtNumber_Weight.at(a4Int).at(a5Int).at(eventCounter);
+                        matrixElementWeight = alphaInt_EvtNumber_Weight.at(a4Int).at(a5Int).at(globalEventNumber);
 
-//                    std::cout << "alphaInt_EvtNumber_Weight.at(a4Int).at(a5Int).at(eventCounter)" << std::endl;
-//                    std::cout << "alphaInt_EvtNumber_Weight.at(" << a4Int << ").at(" << a5Int << ").at(" << eventCounter << ")" << alphaInt_EvtNumber_Weight.at(a4Int).at(a5Int).at(eventCounter) << std::endl;
-//                    std::cout << "alphaInt_EvtNumber_Weight.at(" << -a4Int << ").at(" << -a5Int << ").at(" << eventCounter << ")" << alphaInt_EvtNumber_Weight.at(-a4Int).at(-a5Int).at(eventCounter) << std::endl;
-//                    std::cout << "alphaInt_EvtNumber_Weight.at(" << a4Int << ").at(" << -a5Int << ").at(" << eventCounter << ")" << alphaInt_EvtNumber_Weight.at(a4Int).at(-a5Int).at(eventCounter) << std::endl;
-//                    std::cout << "alphaInt_EvtNumber_Weight.at(" << -a4Int << ").at(" << a5Int << ").at(" << eventCounter << ")" << alphaInt_EvtNumber_Weight.at(-a4Int).at(a5Int).at(eventCounter) << std::endl;
+//                    std::cout << "alphaInt_EvtNumber_Weight.at(a4Int).at(a5Int).at(globalEventNumber)" << std::endl;
+//                    std::cout << "alphaInt_EvtNumber_Weight.at(" << a4Int << ").at(" << a5Int << ").at(" << globalEventNumber << ")" << alphaInt_EvtNumber_Weight.at(a4Int).at(a5Int).at(globalEventNumber) << std::endl;
+//                    std::cout << "alphaInt_EvtNumber_Weight.at(" << -a4Int << ").at(" << -a5Int << ").at(" << globalEventNumber << ")" << alphaInt_EvtNumber_Weight.at(-a4Int).at(-a5Int).at(globalEventNumber) << std::endl;
+//                    std::cout << "alphaInt_EvtNumber_Weight.at(" << a4Int << ").at(" << -a5Int << ").at(" << globalEventNumber << ")" << alphaInt_EvtNumber_Weight.at(a4Int).at(-a5Int).at(globalEventNumber) << std::endl;
+//                    std::cout << "alphaInt_EvtNumber_Weight.at(" << -a4Int << ").at(" << a5Int << ").at(" << globalEventNumber << ")" << alphaInt_EvtNumber_Weight.at(-a4Int).at(a5Int).at(globalEventNumber) << std::endl;
 
 //                    std::cout << "alphaInt_HistW[" << a4Int << "][" << a5Int << "]->Fill(" << cosThetaStarW << "," << weight << "*" << matrixElementWeight << ");" << std::endl;
                     alphaInt_HistW[a4Int][a5Int]->Fill(cosThetaStarW,weight*matrixElementWeight);
-
-                    for (DoubleVector::iterator it = cosThetaStarWJets->begin(); it != cosThetaStarWJets->end(); it++)
-                    {
-                        double cosThetaStarWJet(*it);
-//                        std::cout << "alphaInt_HistWJ[" << a4Int << "][" << a5Int << "]->Fill(" << cosThetaStarWJet << "," << weight <<"*" << matrixElementWeight << ");" << std::endl;
-                        alphaInt_HistWJ[a4Int][a5Int]->Fill(cosThetaStarWJet,weight*matrixElementWeight);
-                    }
+                    alphaInt_HistWJ[a4Int][a5Int]->Fill(cosThetaStarWJet1, weight*matrixElementWeight);
+                    alphaInt_HistWJ[a4Int][a5Int]->Fill(cosThetaStarWJet2, weight*matrixElementWeight);
                 }
             }
         }
@@ -190,7 +171,7 @@ void Fit::FillDistribution()
             const int a5Int(iter->first);
             std::cout << "a5Int : " << a5Int << std::endl;
             TH1F *pTH1F = iter->second;
-/*
+
             TCanvas *pTCanvas = new TCanvas();
             pTCanvas->Draw();
             pTCanvas->Divide(2,1);
@@ -199,8 +180,9 @@ void Fit::FillDistribution()
             pTCanvas->cd(2);
             m_pTH1F_DistributionJ_Sample->Draw();
             pTCanvas->SaveAs("Test.png");
+            pTCanvas->SaveAs("Test.C");
             Pause();
-*/
+
             double nll(0.f);
             this->CalculateLogLikelihood1D(pTH1F,m_pTH1F_DistributionJ_Sample,nll);
             m_Alpah4.push_back(a4Int*a4Step);
@@ -208,148 +190,6 @@ void Fit::FillDistribution()
             m_NLLJ.push_back(nll);
         }
     } 
-
-/*
-    for (ProcessVector::const_iterator it = m_processVector.begin(); it != m_processVector.end(); it ++)
-    {
-        const Process *pProcess(*it);
-//        double weight(pProcess->GetProcessWeight());
-        double weight(pProcess->GetPostBDTProcessWeight());
-//        TChain *pTChain(pProcess->GetTChain());
-        TChain *pTChain(pProcess->GetPostBDTTChain());
-
-        CouplingAnalysis *pCouplingAnalysis = NULL;
-
-        if (pProcess->GetEventType() == "ee_nunuqqqq")
-            pCouplingAnalysis = new CouplingAnalysis(pProcess->GetEventType(),this->NumberToString(pProcess->GetEnergy()));
-
-        double cosThetaStarW(0.0);
-        DoubleVector *cosThetaStarWJets(NULL);
-        double cosThetaStarZ(0.0);
-        DoubleVector *cosThetaStarZJets(NULL);
-        double bdt(std::numeric_limits<double>::max());
-        int generatorSerialInt(std::numeric_limits<int>::max());
-
-        pTChain->SetBranchAddress("CosThetaStarWBosons", &cosThetaStarW);
-        pTChain->SetBranchAddress("CosThetaStarWJets", &cosThetaStarWJets);
-        pTChain->SetBranchAddress("CosThetaStarZBosons", &cosThetaStarZ);
-        pTChain->SetBranchAddress("CosThetaStarZJets", &cosThetaStarZJets);
-        pTChain->SetBranchAddress("BDT", &bdt);
-        pTChain->SetBranchAddress("GeneratorSerialNumber", &generatorSerialInt);
-
-        int eventCounter(0);
-*/
-/*
-    for (int a4Int = -5; a4Int < 6; a4Int++)
-    {
-        for (int a5Int = -5; a5Int < 6; a5Int++)
-        {
-            const double a4Current((float)(a4Int) * 0.01);
-            const double a5Current((float)(a5Int) * 0.01);
-
-            TH1F *pTH1F_DistributionJ = new TH1F("CosThetaJets","Cos#theta_{Jets}",100,0,1);
-            TH1F *pTH1F_DistributionW = new TH1F("CosThetaW","Cos#theta_{W}",100,0,1);
-
-            for (ProcessVector::const_iterator it = m_processVector.begin(); it != m_processVector.end(); it ++)
-            {
-                const Process *pProcess(*it);
-//        double weight(pProcess->GetProcessWeight());
-                double weight(pProcess->GetPostBDTProcessWeight());
-//        TChain *pTChain(pProcess->GetTChain());
-                TChain *pTChain(pProcess->GetPostBDTTChain());
-
-                CouplingAnalysis *pCouplingAnalysis = NULL;
-
-                if (pProcess->GetEventType() == "ee_nunuqqqq")
-                    pCouplingAnalysis = new CouplingAnalysis(pProcess->GetEventType(),this->NumberToString(pProcess->GetEnergy()));
-
-                double cosThetaStarW(0.0);
-                DoubleVector *cosThetaStarWJets(NULL);
-                double cosThetaStarZ(0.0);
-                DoubleVector *cosThetaStarZJets(NULL);
-                double bdt(std::numeric_limits<double>::max());
-                int generatorSerialInt(std::numeric_limits<int>::max());
-
-                pTChain->SetBranchAddress("CosThetaStarWBosons", &cosThetaStarW);
-                pTChain->SetBranchAddress("CosThetaStarWJets", &cosThetaStarWJets);
-                pTChain->SetBranchAddress("CosThetaStarZBosons", &cosThetaStarZ);
-                pTChain->SetBranchAddress("CosThetaStarZJets", &cosThetaStarZJets);
-                pTChain->SetBranchAddress("BDT", &bdt);
-                pTChain->SetBranchAddress("GeneratorSerialNumber", &generatorSerialInt);
-
-                int eventCounter(0);
-                IntVector readInSGN;
-
-                for (unsigned int event = 0; event < pTChain->GetEntries(); event++)
-                {
-                    pTChain->GetEntry(event);
-                    eventCounter++;
-
-                    if (std::find(readInSGN.begin(), readInSGN.end(), generatorSerialInt) == readInSGN.end())
-                    {
-                        readInSGN.push_back(generatorSerialInt);
-                        eventCounter = 1;
-                    }
-
-                    if (bdt > 0.4) // and pProcess->DoesEventPassCuts(event))
-                    {
-                        float matrixElementWeight(1.f);
-
-                        if (pProcess->GetEventType() == "ee_nunuqqqq")
-                        {
-//                        std::cout << "Getting weight " << generatorSerialInt << std::endl; 
-                            const int eventNumber(1000*(generatorSerialInt-1) + eventCounter);
-//                        std::cout << "GeneratorSerialInt " << generatorSerialInt << std::endl;
-//                        std::cout << "eventCounter " << eventCounter << std::endl;
-//                        std::cout << "eventNumber " << eventNumber << std::endl;
-
-                            pCouplingAnalysis->GetWeight(eventNumber, a4Current, a5Current, matrixElementWeight);
-                        }
-
-                        pTH1F_DistributionW->Fill(cosThetaStarW,weight*matrixElementWeight);
-
-                        for (DoubleVector::iterator it = cosThetaStarWJets->begin(); it != cosThetaStarWJets->end(); it++)
-                        {
-                            const double cosThetaStarWJet(*it);
-                            pTH1F_DistributionJ->Fill(cosThetaStarWJet,weight*matrixElementWeight);
-                        }
-                    }
-                }
-            }
- 
-            double nllJ(0.0), nllW(0.0);
-
-            std::cout << "a4Current : " << a4Current << std::endl;
-            std::cout << "a5Current : " << a5Current << std::endl;
-
-            this->CalculateLogLikelihood1D(pTH1F_DistributionJ, m_pTH1F_DistributionJ_Sample, nllJ);
-            this->CalculateLogLikelihood1D(pTH1F_DistributionW, m_pTH1F_DistributionW_Sample, nllW);
-
-            TCanvas *pTCanvas = new TCanvas();
-            pTCanvas->Draw();
-            pTCanvas->Divide(2);
-            pTCanvas->cd(0);
-            pTH1F_DistributionJ->Draw();
-            pTCanvas->cd(1);
-            m_pTH1F_DistributionJ_Sample->Draw();
-
-            Pause();
-
-            m_Alpah4.push_back(a4Current);
-            m_Alpah5.push_back(a5Current);
-            m_NLLW.push_back(nllW);
-            m_NLLJ.push_back(nllJ);
-        }
-    }
-*/
-}
-
-//=====================================================================
-
-std::string Fit::GetGeneratorSerialNumber(std::string filename)
-{
-    std::size_t position = filename.find("GenNumber");
-    return filename.substr(position+10,3);
 }
 
 //=====================================================================

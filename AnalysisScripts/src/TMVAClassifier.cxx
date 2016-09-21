@@ -14,47 +14,55 @@ int main(int argc, char **argv)
 {
     typedef std::vector<const Process*> ProcessVector;
 
-    const Process *pProcess_ee_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_nunuqqqq",22.16,1500,1400,3);
+    // Signal, luminoscity copied from nunuqqqq final state
+    //const Process *pProcess_ee_nunuww_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_nunuww_nunuqqqq",24.7,1500,1400,3);
+    //const Process *pProcess_ee_nunuzz_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_nunuzz_nunuqqqq",24.7,1500,1400,3);
+//    const Process *pProcess_ee_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_nunuqqqq",22.16,1500,1400,5);
     //const Process *pProcess_CLIC_ee_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","CLIC_ee_nunuqqqq",24.7,1500,1400,3); // <-CLIC
 
     // CLIC Backgrounds
-    const Process *pProcess_ee_lnuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_lnuqqqq",115.3,1500,1400,3);
-    const Process *pProcess_ee_llqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_llqqqq",71.7,1500,1400,3);
-    const Process *pProcess_ee_qqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_qqqq",1328.1,1500,1400,3);
 
-    const Process *pProcess_ee_nunuqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_nunuqq",933.9,1500,1400,3);
-    const Process *pProcess_ee_lnuqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_lnuqq",4309.7,1500,1400,3);
-    const Process *pProcess_ee_ll = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_ll",2725.8,1500,1400,3);
-    const Process *pProcess_ee_qq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_qq",4009.5,1500,1400,3);
+//    const Process *pProcess_ee_lnuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_lnuqqqq",115.3,1500,1400,5);
+//    const Process *pProcess_ee_llqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_llqqqq",71.7,1500,1400,5);
+    const Process *pProcess_ee_qqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_qqqq",1328.1,1500,1400,5);
+/*
+    const Process *pProcess_ee_nunuqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_nunuqq",933.9,1500,1400,5);
+    const Process *pProcess_ee_lnuqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_lnuqq",4309.7,1500,1400,5);
+    const Process *pProcess_ee_qqll = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_qqll",2725.8,1500,1400,5);
+    const Process *pProcess_ee_qq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_qq",4009.5,1500,1400,5);
 
-    const Process *pProcess_egamma_qqqqe_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","egamma_qqqqe_EPA",287.1,1500,1400,3);
-    const Process *pProcess_egamma_qqqqe_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","egamma_qqqqe_BS",1160.7,1500,1400,3);
-    const Process *pProcess_gammae_qqqqe_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","gammae_qqqqe_EPA",286.9,1500,1400,3);
-    const Process *pProcess_gammae_qqqqe_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","gammae_qqqqe_BS",1156.3,1500,1400,3);
+    const Process *pProcess_egamma_qqqqe_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","egamma_qqqqe_EPA",287.1,1500,1400,5);
+    const Process *pProcess_egamma_qqqqe_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","egamma_qqqqe_BS",1160.7,1500,1400,5);
+    const Process *pProcess_gammae_qqqqe_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","gammae_qqqqe_EPA",286.9,1500,1400,5);
+    const Process *pProcess_gammae_qqqqe_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","gammae_qqqqe_BS",1156.3,1500,1400,5);
 
-    const Process *pProcess_egamma_qqqqnu_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","egamma_qqqqnu_EPA",32.6,1500,1400,3);
-    const Process *pProcess_egamma_qqqqnu_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","egamma_qqqqnu_BS",136.9,1500,1400,3);
-    const Process *pProcess_gammae_qqqqnu_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","gammae_qqqqnu_EPA",32.6,1500,1400,3);
-    const Process *pProcess_gammae_qqqqnu_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","gammae_qqqqnu_BS",136.4,1500,1400,3);
+    const Process *pProcess_egamma_qqqqnu_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","egamma_qqqqnu_EPA",32.6,1500,1400,5);
+    const Process *pProcess_egamma_qqqqnu_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","egamma_qqqqnu_BS",136.9,1500,1400,5);
+    const Process *pProcess_gammae_qqqqnu_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","gammae_qqqqnu_EPA",32.6,1500,1400,5);
+    const Process *pProcess_gammae_qqqqnu_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","gammae_qqqqnu_BS",136.4,1500,1400,5);
 
-    const Process *pProcess_gammagamma_qqqq_EPA_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","gammagamma_qqqq_EPA_EPA",753.0,1500,1400,3);
-    const Process *pProcess_gammagamma_qqqq_EPA_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","gammagamma_qqqq_EPA_BS",4034.8,1500,1400,3);
-    const Process *pProcess_gammagamma_qqqq_BS_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","gammagamma_qqqq_BS_EPA",4018.7,1500,1400,3);
-    const Process *pProcess_gammagamma_qqqq_BS_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","gammagamma_qqqq_BS_BS",4009.5,1500,1400,3);
+    const Process *pProcess_gammagamma_qqqq_EPA_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","gammagamma_qqqq_EPA_EPA",753.0,1500,1400,5);
+    const Process *pProcess_gammagamma_qqqq_EPA_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","gammagamma_qqqq_EPA_BS",4034.8,1500,1400,5);
+    const Process *pProcess_gammagamma_qqqq_BS_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","gammagamma_qqqq_BS_EPA",4018.7,1500,1400,5);*/
+    const Process *pProcess_gammagamma_qqqq_BS_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","gammagamma_qqqq_BS_BS",4009.5,1500,1400,5);
 
     ProcessVector sigProcesses;
     ProcessVector bkgProcesses;
 
-    sigProcesses.push_back(pProcess_ee_nunuqqqq);
+//    sigProcesses.push_back(pProcess_ee_nunuqqqq);
 //    processes.push_back(pProcess_CLIC_ee_nunuqqqq);
+    sigProcesses.push_back(pProcess_ee_qqqq);
 
+
+/*
     bkgProcesses.push_back(pProcess_ee_lnuqqqq);
     bkgProcesses.push_back(pProcess_ee_llqqqq);
     bkgProcesses.push_back(pProcess_ee_qqqq);
 
+
     bkgProcesses.push_back(pProcess_ee_nunuqq);
     bkgProcesses.push_back(pProcess_ee_lnuqq);
-    bkgProcesses.push_back(pProcess_ee_ll);
+    bkgProcesses.push_back(pProcess_ee_qqll);
     bkgProcesses.push_back(pProcess_ee_qq);
 
     bkgProcesses.push_back(pProcess_egamma_qqqqe_EPA);
@@ -69,7 +77,7 @@ int main(int argc, char **argv)
 
     bkgProcesses.push_back(pProcess_gammagamma_qqqq_EPA_EPA);
     bkgProcesses.push_back(pProcess_gammagamma_qqqq_EPA_BS);
-    bkgProcesses.push_back(pProcess_gammagamma_qqqq_BS_EPA);
+    bkgProcesses.push_back(pProcess_gammagamma_qqqq_BS_EPA);*/
     bkgProcesses.push_back(pProcess_gammagamma_qqqq_BS_BS);
 
     TMVAClassifier *pTMVAClassifier = new TMVAClassifier(sigProcesses, bkgProcesses);
@@ -83,20 +91,52 @@ TMVAClassifier::TMVAClassifier(ProcessVector sigProcesses, ProcessVector bkgProc
     TFile* outputFile = TFile::Open( outfileName, "RECREATE" );
     TMVA::Factory *factory = new TMVA::Factory( "TMVAClassification", outputFile, "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
 
-//    factory->AddVariable( "myvar1 := var1+var2", 'F' );
-//    factory->AddVariable( "myvar2 := var1-var2", "Expression 2", "", 'F' );
-//    factory->AddVariable( "var3",                "Variable 3", "units", 'F' );
-//    factory->AddVariable( "var4",                "Variable 4", "units", 'F' );
+//    factory->AddVariable( "myvar1 := var1+var2", 'D' );
+//    factory->AddVariable( "myvar2 := var1-var2", "Expression 2", "", 'D' );
+//    factory->AddVariable( "var3",                "Variable 3", "units", 'D' );
+//    factory->AddVariable( "var4",                "Variable 4", "units", 'D' );
 
-    factory->AddVariable( "RecoilMass", "Recoil Mass", "GeV", 'F');
-    factory->AddVariable( "TransverseMomentum", "Transverse Momentum", "GeV", 'F');
-    factory->AddVariable( "TransverseEnergy", "Transverse Energy", "GeV", 'F');
-    factory->AddVariable( "CosThetaMissing", "Cosine Theta Of Missing Momentum", "", 'F');
-    factory->AddVariable( "CosThetaMostEnergeticTrack", "Cosine Theta Of Most Energetic Track", "", 'F');
-    factory->AddVariable( "y34", "Jet Clustering Parameter Y34", "", 'F');
-    factory->AddVariable( "InvariantMassSystem", "Invariant Mass of the System", "GeV", 'F');
-    factory->AddVariable( "CosThetaStarWBosons", "Cosine Theta Star of W Boson with W Pairing", "", 'F');
-    factory->AddVariable( "CosThetaStarZBosons", "Cosine Theta Star of Z Boson with Z Pairing", "", 'F');
+    factory->AddVariable( "NPfos := NParticlesJet1+NParticlesJet2+NParticlesJet3+NParticlesJet4", "Numer of PFOs", "", 'I');
+    factory->AddVariable( "InvMassWVector1", "Invariant Mass W Boson 1", "GeV", 'D');
+    factory->AddVariable( "InvMassWVector2", "Invariant Mass W Boson 2", "GeV", 'D');
+    factory->AddVariable( "InvMassZVector1", "Invariant Mass Z Boson 1", "GeV", 'D');
+    factory->AddVariable( "InvMassZVector2", "Invariant Mass Z Boson 2", "GeV", 'D');
+    factory->AddVariable( "TransverseMomentum", "Transverse Momentum", "GeV", 'D');
+    factory->AddVariable( "TransverseMomentumBosonW1", "Transverse Momentum W Boson 1", "GeV", 'D');
+    factory->AddVariable( "TransverseMomentumBosonW2", "Transverse Momentum W Boson 2", "GeV", 'D');
+    factory->AddVariable( "TransverseMomentumBosonZ1", "Transverse Momentum Z Boson 1", "GeV", 'D');
+    factory->AddVariable( "TransverseMomentumBosonZ2", "Transverse Momentum Z Boson 2", "GeV", 'D');
+    factory->AddVariable( "TransverseEnergy", "Transverse Energy", "GeV", 'D');
+    factory->AddVariable( "TransverseEnergyBosonW1", "Transverse Energy W Boson 1", "GeV", 'D');
+    factory->AddVariable( "TransverseEnergyBosonW2", "Transverse Energy W Boson 2", "GeV", 'D');
+    factory->AddVariable( "TransverseEnergyBosonZ1", "Transverse Energy Z Boson 1", "GeV", 'D');
+    factory->AddVariable( "TransverseEnergyBosonZ2", "Transverse Energy Z Boson 2", "GeV", 'D');
+    factory->AddVariable( "CosThetaMissing", "Cosine Theta Of Missing Momentum", "", 'D');
+    factory->AddVariable( "CosThetaMostEnergeticTrack", "Cosine Theta Of Most Energetic Track", "", 'D');
+    factory->AddVariable( "y12", "Jet Clustering Parameter Y12", "", 'D');
+    factory->AddVariable( "y23", "Jet Clustering Parameter Y23", "", 'D');
+    factory->AddVariable( "y34", "Jet Clustering Parameter Y34", "", 'D');
+    factory->AddVariable( "y45", "Jet Clustering Parameter Y45", "", 'D');
+    factory->AddVariable( "y56", "Jet Clustering Parameter Y56", "", 'D');
+    factory->AddVariable( "y67", "Jet Clustering Parameter Y67", "", 'D');
+    factory->AddVariable( "InvariantMassSystem", "Invariant Mass of the System", "GeV", 'D');
+    factory->AddVariable( "CosThetaStarWBosons", "Cosine Theta Star of W Boson with W Pairing", "", 'D');
+    factory->AddVariable( "CosThetaStarZBosons", "Cosine Theta Star of Z Boson with Z Pairing", "", 'D');
+    factory->AddVariable( "CosThetaStarWJet1", "Cosine Theta Star of Jets from W Boson 1 with W Pairing", "", 'D');
+    factory->AddVariable( "CosThetaStarWJet2", "Cosine Theta Star of Jets from W Boson 2 with W Pairing", "", 'D');
+    factory->AddVariable( "CosThetaStarZJet1", "Cosine Theta Star of Jets from Z Boson 1 with W Pairing", "", 'D');
+    factory->AddVariable( "CosThetaStarZJet2", "Cosine Theta Star of Jets from Z Boson 2 with W Pairing", "", 'D');
+    factory->AddVariable( "AcolinearityJetsW1", "Acolinearity Jets From W Boson 1", "", 'D');
+    factory->AddVariable( "AcolinearityJetsW2", "Acolinearity Jets From W Boson 2", "", 'D');
+    factory->AddVariable( "AcolinearityJetsZ1", "Acolinearity Jets From Z Boson 1", "", 'D');
+    factory->AddVariable( "AcolinearityJetsZ2", "Acolinearity Jets From Z Boson 2", "", 'D');
+    factory->AddVariable( "AcolinearityBosonsW", "Acolinearity W Bosons", "", 'D');
+    factory->AddVariable( "AcolinearityBosonsZ", "Acolinearity Z Bosons", "", 'D');
+    factory->AddVariable( "PrincipleThrustValue", "PrincipleThrustValue", "", 'D');
+    factory->AddVariable( "MajorThrustValue", "MajorThrustValue", "", 'D');
+    factory->AddVariable( "MinorThrustValue", "MinorThrustValue", "", 'D');
+    factory->AddVariable( "Sphericity", "Sphericity", "", 'D');
+    factory->AddVariable( "Aplanarity", "Aplanarity", "", 'D');
 
     for (ProcessVector::iterator itPro = sigProcesses.begin(); itPro != sigProcesses.end(); itPro++)
     {
@@ -118,56 +158,17 @@ TMVAClassifier::TMVAClassifier(ProcessVector sigProcesses, ProcessVector bkgProc
         factory->AddBackgroundTree(pTrainingTChain, weight);
     }
 
-    TCut mycuts = ""; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
-    TCut mycutb = ""; // for example: TCut mycutb = "abs(var1)<0.5";
+    TCut mycuts = "InvMassWVector1>0 && InvMassWVector1<500 && InvMassWVector2>0 && InvMassWVector2<500 && InvMassZVector1>0 && InvMassZVector1<500 && InvMassZVector2>0 && InvMassZVector2<500 && TransverseMomentum>100 && TransverseMomentum<10000 && InvariantMassSystem>100 && InvariantMassSystem<10000"; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
+    TCut mycutb = "InvMassWVector1>0 && InvMassWVector1<500 && InvMassWVector2>0 && InvMassWVector2<500 && InvMassZVector1>0 && InvMassZVector1<500 && InvMassZVector2>0 && InvMassZVector2<500 && TransverseMomentum>100 && TransverseMomentum<10000 && InvariantMassSystem<10000 && InvariantMassSystem>100"; // for example: TCut mycutb = "abs(var1)<0.5";
 
-
-
-/*
-    TString signalRootFiles = "/r06/lc/sg568/PhysicsAnalysis/MarlinJobs/Detector_Model_clic_ild_cdr/Reconstruction_Variant_clic_ild_cdr_ggHadBkg/ee_nunuqqqq/1400GeV/DetModel_clic_ild_cdr_RecoVar_clic_ild_cdr_ggHadBkg_ee_nunuqqqq_1400GeV_GenNumber_*_Analysis_3_Selected.root";
-
-    const float signalXs(22.16);
-    const float luminosity(1500);
-
-    TChain *pTChainSig = new TChain("SelectionProcessorTree");
-    pTChainSig->Add(signalRootFiles);
-
-    const float bkgXs(115.3);
-
-    TString backgroundRootFiles = "/r06/lc/sg568/PhysicsAnalysis/MarlinJobs/Detector_Model_clic_ild_cdr/Reconstruction_Variant_clic_ild_cdr_ggHadBkg/ee_lnuqqqq/1400GeV/ProdID_5594_ee_lnuqqqq_1400GeV_Analysis_3_Number_*_Of_7531_Selected.root";
-    TChain *pTChainBkg = new TChain("SelectionProcessorTree");
-    pTChainBkg->Add(backgroundRootFiles);
-
-    // --- Register the training and test trees
-
-    // global event weights per tree (see below for setting event-wise weights)
-    Double_t signalWeight     = 2 * signalXs * luminosity / pTChainSig->GetEntries(); //1.0; // Cross section x luminosity / number of events 
-    Double_t backgroundWeight = 2 * bkgXs * luminosity / pTChainSig->GetEntries(); //1.0; // Cross section x luminosity / number of events (x2 for cheating thing)
-
-    // You can add an arbitrary number of signal or background trees
-    factory->AddSignalTree    ( pTChainSig,     signalWeight     );
-    factory->AddBackgroundTree( pTChainBkg,     backgroundWeight );
-*/
-    // Set individual event weights (the variables must exist in the original TTree)
-    //    for signal    : factory->SetSignalWeightExpression    ("weight1*weight2");
-    //    for background: factory->SetBackgroundWeightExpression("weight1*weight2");
-    //factory->SetBackgroundWeightExpression("weight");
-
-    // Apply additional cuts on the signal and background samples (can be different)
-    TCut mycuts = ""; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
-    TCut mycutb = ""; // for example: TCut mycutb = "abs(var1)<0.5";
-
-    // Tell the factory how to use the training and testing events
-    //
-    // If no numbers of events are given, half of the events in the tree are used
-    // for training, and the other half for testing:
-    //    factory->PrepareTrainingAndTestTree( mycut, "SplitMode=random:!V" );
-    // To also specify the number of testing events, use:
-    //    factory->PrepareTrainingAndTestTree( mycut,
-    //                                         "NSigTrain=3000:NBkgTrain=3000:NSigTest=3000:NBkgTest=3000:SplitMode=Random:!V" );
     factory->PrepareTrainingAndTestTree( mycuts, mycutb, "nTrain_Signal=0:nTrain_Background=0:SplitMode=Random:NormMode=NumEvents:!V" );
 
     factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=1000:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20" );
+    factory->BookMethod( TMVA::Types::kCuts, "Cuts", "!H:!V:FitMethod=MC:EffSel:SampleSize=200000:VarProp=FSmart" );
+    factory->BookMethod( TMVA::Types::kLikelihood, "Likelihood", "H:!V:!TransformOutput:PDFInterpol=Spline2:NSmoothSig[0]=20:NSmoothBkg[0]=20:NSmoothBkg[1]=10:NSmooth=1:NAvEvtPerBin=50" );
+    factory->BookMethod( TMVA::Types::kPDERS, "PDERS", "!H:!V:NormTree=T:VolumeRangeMode=Adaptive:KernelEstimator=Gauss:GaussSigma=0.3:NEventsMin=400:NEventsMax=600" );
+    factory->BookMethod( TMVA::Types::kKNN, "KNN", "H:nkNN=20:ScaleFrac=0.8:SigmaFact=1.0:Kernel=Gaus:UseKernel=F:UseWeight=T:!Trim" );
+    factory->BookMethod( TMVA::Types::kCFMlpANN, "CFMlpANN", "!H:!V:NCycles=2000:HiddenLayers=N+1,N"  );
 
     // --------------------------------------------------------------------------------------------------
 

@@ -1,121 +1,118 @@
 /**
-  *  @file   AnalysisScripts/src/MakePlots.cc 
+  *  @file   AnalysisScripts/src/MakeSimplePlots.cc 
   * 
   *  @brief  Implementation of the make plots class.
   * 
   *  $Log: $
   */
 
-#include "MakePlots.h"
+#include "MakeSimplePlots.h"
 
 //=====================================================================
 
-MakePlots::MakePlots(const ProcessVector &processVector) :
+MakeSimplePlots::MakeSimplePlots(const ProcessVector &processVector) :
     m_processVector(processVector)
 {
     for (ProcessVector::const_iterator it = m_processVector.begin(); it != m_processVector.end(); it ++)
     {
         const Process *pProcess(*it);
 
-        this->Register1DPlot(pProcess,"CosThetaMissing","double",200,-1.f,1.f);
-        this->Register1DPlot(pProcess,"CosThetaMostEnergeticTrack","double",200,0.f,1.f);
-        this->Register1DPlot(pProcess,"TransverseMomentum","double",140,0.f,1400.f);
-        this->Register1DPlot(pProcess,"MCTransverseMomentum","double",140,0.f,1400.f);
-        this->Register1DPlot(pProcess,"TransverseEnergy","double",140,0.f,1400.f);
-        this->Register1DPlot(pProcess,"MCTransverseEnergy","double",140,0.f,1400.f);
-        this->Register1DPlot(pProcess,"RecoilMass","double",140,0.f,1400.f);
-        this->Register1DPlot(pProcess,"InvariantMassSystem","double",140,0.f,1400.f);
-        this->Register1DPlot(pProcess,"MCInvariantMassSystem","double",140,0.f,1400.f);
-        this->Register1DPlot(pProcess,"y34","double",100,0.f,10.f);
-        this->Register1DPlot(pProcess,"EnergyAroundMostEnergeticTrack","double",100,0.f,1000.f);
-        this->Register1DPlot(pProcess,"CosThetaStarWBosons","double",100,0.f,1.f);
-        this->Register1DPlot(pProcess,"MCCosThetaStarWBosons","double",100,0.f,1.f);
-        this->Register1DPlot(pProcess,"CosThetaStarZBosons","double",100,0.f,1.f);
-        this->Register1DPlot(pProcess,"MCCosThetaStarZBosons","double",100,0.f,1.f);
+        this->Register1DPlot(pProcess, "TransverseMomentum", "double", 140, 0.f, 1400.f);
+        this->Register1DPlot(pProcess, "MCTransverseMomentum", "double", 140, 0.f, 1400.f);
+        this->Register1DPlot(pProcess, "TransverseEnergy", "double", 140, 0.f, 1400.f);
+        this->Register1DPlot(pProcess, "MCTransverseEnergy", "double", 140, 0.f, 1400.f);
+        this->Register1DPlot(pProcess, "CosThetaMissing", "double", 200, -1.f, 1.f);
+        this->Register1DPlot(pProcess, "MCCosThetaMissing", "double", 200, -1.f, 1.f);
+        this->Register1DPlot(pProcess, "CosThetaMostEnergeticTrack", "double", 200, -1.f, 1.f);
+        this->Register1DPlot(pProcess, "RecoilMass", "double", 140, 0.f, 1400.f);
+        this->Register1DPlot(pProcess, "MCRecoilMass", "double", 140, 0.f, 1400.f);
+        this->Register1DPlot(pProcess, "EnergyAroundMostEnergeticTrack", "double", 140, 0.f, 1400.f);
+        this->Register1DPlot(pProcess, "y12", "double", 100, 0.f, 10.f);
+        this->Register1DPlot(pProcess, "y23", "double", 100, 0.f, 10.f);
+        this->Register1DPlot(pProcess, "y34", "double", 100, 0.f, 10.f);
+        this->Register1DPlot(pProcess, "y45", "double", 100, 0.f, 10.f);
+        this->Register1DPlot(pProcess, "y56", "double", 100, 0.f, 10.f);
+        this->Register1DPlot(pProcess, "y67", "double", 100, 0.f, 10.f);
+        this->Register1DPlot(pProcess, "InvariantMassSystem", "double", 140, 0.f, 1400.f);
+        this->Register1DPlot(pProcess, "MCInvariantMassSystem", "double", 140, 0.f, 1400.f);
+        this->Register1DPlot(pProcess, "CosThetaStarWBosons", "double", 100, 0.f, 1.f);
+        this->Register1DPlot(pProcess, "MCCosThetaStarWBosons", "double", 100, 0.f, 1.f);
+        this->Register1DPlot(pProcess, "CosThetaStarZBosons", "double", 100, 0.f, 1.f);
+        this->Register1DPlot(pProcess, "MCCosThetaStarZBosons", "double", 100, 0.f, 1.f);
+        this->Register1DPlot(pProcess, "AcolinearityBosonsW", "double", 90, 0.f, 180.f);
+        this->Register1DPlot(pProcess, "AcolinearityBosonsZ", "double", 90, 0.f, 180.f);
+        this->Register1DPlot(pProcess, "PrincipleThrustValue", "double", 100, 0.f, 1.f);
+        this->Register1DPlot(pProcess, "MajorThrustValue", "double", 100, 0.f, 1.f);
+        this->Register1DPlot(pProcess, "MinorThrustValue", "double", 100, 0.f, 1.f);
+        this->Register1DPlot(pProcess, "XThrustAxis", "double", 100, 0.f, 1.f);
+        this->Register1DPlot(pProcess, "YThrustAxis", "double", 100, 0.f, 1.f);
+        this->Register1DPlot(pProcess, "ZThrustAxis", "double", 100, 0.f, 1.f);
+        this->Register1DPlot(pProcess, "Sphericity", "double", 100, 0.f, 1.f);
+        this->Register1DPlot(pProcess, "Aplanarity", "double", 100, 0.f, 1.f);
+        this->Register1DPlot(pProcess, "NPFOs", "double", 100, 0.f, 100.f);
 
-        this->Register1DPlot(pProcess,"NParticlesJets","intvector",150,0,150);
-        this->Register1DPlot(pProcess,"NChargedParticlesJets","intvector",150,0,150);
 
-        this->Register1DPlot(pProcess,"EnergyJets","doublevector",100,0.f,1000.f);
-        this->Register1DPlot(pProcess,"CosThetaStarWJets","doublevector",100,0.f,1.f);
-        this->Register1DPlot(pProcess,"CosThetaStarZJets","doublevector",100,0.f,1.f);
-        this->Register1DPlot(pProcess,"InvMassWVectors","doublevector",140,0.f,1400.f);
-        this->Register1DPlot(pProcess,"MCInvMassWVectors","doublevector",140,0.f,1400.f);
-        this->Register1DPlot(pProcess,"InvMassZVectors","doublevector",140,0.f,1400.f);
-        this->Register1DPlot(pProcess,"MCInvMassZVectors","doublevector",140,0.f,1400.f);
 
-        this->Register2DVectorPlot(pProcess,"CosThetaStarWJets",100,0.f,1.f);
-        this->Register2DVectorPlot(pProcess,"CosThetaStarZJets",100,0.f,1.f);
-        this->Register2DVectorPlot(pProcess,"InvMassWVectors",125,0.f,500.f);
-        this->Register2DVectorPlot(pProcess,"MCInvMassWVectors",125,0.f,500.f);
-        this->Register2DVectorPlot(pProcess,"InvMassZVectors",125,0.f,500.f);
-        this->Register2DVectorPlot(pProcess,"MCInvMassZVectors",125,0.f,500.f);
-
-/*
-        this->Register2DPlot(pProcess,"RecoilMass","InvariantMassSystem","double",140,0.f,1400.f,140,0.f,1400.f);
-*/
+        this->Register2DPlot(pProcess, "InvMassWVector1", "InvMassWVector2", 100, 0.f, 500.f, 100, 0.f, 500.f);
+        this->Register2DPlot(pProcess, "InvMassZVector1", "InvMassZVector2", 100, 0.f, 500.f, 100, 0.f, 500.f);
     }
 
     this->LoadData();
-    this->WritePlots();
-    this->WriteIndividualPlots();
-
-//    this->Make2DBoxPlot("InvMassWVector1","InvMassWVector2","ee_nunuww_nunuqqqq","ee_nunuqqqq");
-//    this->Make2DBoxPlot("InvMassZVector1","InvMassZVector2","ee_nunuzz_nunuqqqq","ee_nunuqqqq");
-//    this->Make2DBoxPlot("InvMassZVector1","InvMassZVector2","ee_nunuww_nunuqqqq","ee_nunuzz_nunuqqqq");
+    this->WritePlots(); // Stacks and multi plots
+//    this->WriteIndividualPlots(); <-- Makes too many plots really
 }
 
 //=====================================================================
 /*
-run             = 1     
- event           = 1     
- IsAppropriateEvent = 0  
- IsEventWW       = 0     
- IsMCEventWW     = 0     
- IsEventZZ       = 0     
- IsMCEventZZ     = 0     
- NPfosBosonW1    = 34    
- NPfosBosonW2    = 28    
- NPfosBosonZ1    = 22    
- NPfosBosonZ2    = 40    
- WBosonJet1Is    = 0     
- WBosonJet2Is    = 1     
- WBosonJet3Is    = 2     
- WBosonJet4Is    = 3     
- ZBosonJet1Is    = 0     
- ZBosonJet2Is    = 3     
- ZBosonJet3Is    = 1     
- ZBosonJet4Is    = 2     
- NParticlesJet1  = 31    
- NParticlesJet2  = 3     
- NParticlesJet3  = 19    
- NParticlesJet4  = 9     
- NParticlesJet1  = 8     
- NParticlesJet2  = 3     
- NParticlesJet3  = 13    
- NParticlesJet4  = 4     
+run             = 1
+ event           = 1
+ IsAppropriateEvent = 0
+ IsEventWW       = 0
+ IsMCEventWW     = 0
+ IsEventZZ       = 0
+ IsMCEventZZ     = 0
+ NPfosBosonW1    = 34
+ NPfosBosonW2    = 28
+ NPfosBosonZ1    = 22
+ NPfosBosonZ2    = 40
+ WBosonJet1Is    = 0
+ WBosonJet2Is    = 1
+ WBosonJet3Is    = 2
+ WBosonJet4Is    = 3
+ ZBosonJet1Is    = 0
+ ZBosonJet2Is    = 3
+ ZBosonJet3Is    = 1
+ ZBosonJet4Is    = 2
+ NParticlesJet1  = 31
+ NParticlesJet2  = 3
+ NParticlesJet3  = 19
+ NParticlesJet4  = 9
+ NParticlesJet1  = 8
+ NParticlesJet2  = 3
+ NParticlesJet3  = 13
+ NParticlesJet4  = 4
  TransverseMomentum = 213.034
  TransverseMomentumBosonW1 = 172.821
- TransverseMomentumBosonW2 = 40.213 
+ TransverseMomentumBosonW2 = 40.213
  TransverseMomentumBosonZ1 = 60.8325
  TransverseMomentumBosonZ2 = 152.201
  MCTransverseMomentum = 1.79769e+308
- TransverseEnergy = 214.56          
- TransverseEnergyBosonW1 = 173.678  
- TransverseEnergyBosonW2 = 40.8817  
- TransverseEnergyBosonZ1 = 61.422   
- TransverseEnergyBosonZ2 = 153.138  
- MCTransverseEnergy = 1.79769e+308  
- CosThetaMissing = -0.753999        
- MCCosThetaMissing = 1.79769e+308   
+ TransverseEnergy = 214.56
+ TransverseEnergyBosonW1 = 173.678
+ TransverseEnergyBosonW2 = 40.8817
+ TransverseEnergyBosonZ1 = 61.422
+ TransverseEnergyBosonZ2 = 153.138
+ MCTransverseEnergy = 1.79769e+308
+ CosThetaMissing = -0.753999
+ MCCosThetaMissing = 1.79769e+308
  CosThetaMostEnergeticTrack = 0.926763
- RecoilMass      = 1063               
- MCRecoilMass    = 1.79769e+308       
- EnergyAroundMostEnergeticTrack = 0   
- y12             = 0.378918           
- y23             = 3.96335            
- y34             = 2.26813            
- y45             = 3.4356             
+ RecoilMass      = 1063
+ MCRecoilMass    = 1.79769e+308
+ EnergyAroundMostEnergeticTrack = 0
+ y12             = 0.378918
+ y23             = 3.96335
+ y34             = 2.26813
+ y45             = 3.4356
  y56             = 3.66944
  y67             = 4.23
  InvariantMassSystem = 280.273
@@ -162,12 +159,13 @@ run             = 1
  CTagForJet2     = 0.118742
  CTagForJet3     = 0.602369
  CTagForJet4     = 0.0939233
+
 */
 //=====================================================================
 
-void MakePlots::WritePlots()
+void MakeSimplePlots::WritePlots()
 {
-    std::cout << "Begin: MakePlots::WritePlots" << std::endl;
+    std::cout << "Begin: MakeSimplePlots::WritePlots" << std::endl;
 
     static const float redArray[] = {0.0, 0.00392156862745, 0.835294117647, 1.0, 0.619607843137, 0.0549019607843, 1.0, 0.0, 0.0, 0.58431372549, 1.0, 0.643137254902, 0.0, 0.56862745098, 0.38431372549, 0.419607843137, 0.0, 0.0, 0.41568627451, 0.0, 0.760784313725, 0.745098039216, 0.0, 0.372549019608, 1.0, 1.0, 1.0, 0.407843137255, 1.0, 0.588235294118, 0.596078431373, 0.654901960784, 0.00392156862745, 1.0, 0.996078431373, 0.741176470588, 0.00392156862745, 0.733333333333, 0.458823529412, 0.647058823529, 1.0, 0.466666666667, 0.478431372549, 0.149019607843, 0.0, 0.262745098039, 0.709803921569, 1.0, 1.0, 0.564705882353, 0.494117647059, 0.741176470588, 0.898039215686, 0.870588235294, 0.0, 0.0, 0.0, 0.0, 0.521568627451, 0.0, 0.470588235294, 0.0, 1.0, 0.909803921569};
     static const float greenArray[] = {0.0, 0.0, 1.0, 0.0, 0.0, 0.298039215686, 0.898039215686, 0.372549019608, 1.0, 0.0, 0.576470588235, 0.141176470588, 0.0823529411765, 0.81568627451, 0.0549019607843, 0.407843137255, 0.0, 0.490196078431, 0.509803921569, 0.682352941176, 0.549019607843, 0.6, 0.560784313725, 0.678431372549, 0.0, 0.0, 0.0078431372549, 0.239215686275, 0.454901960784, 0.541176470588, 1.0, 0.341176470588, 1.0, 0.933333333333, 0.537254901961, 0.776470588235, 0.81568627451, 0.533333333333, 0.266666666667, 1.0, 0.650980392157, 0.301960784314, 0.278431372549, 0.203921568627, 0.278431372549, 0.0, 0.0, 0.694117647059, 0.858823529412, 0.98431372549, 0.176470588235, 0.827450980392, 0.435294117647, 1.0, 1.0, 0.607843137255, 0.392156862745, 0.462745098039, 0.662745098039, 0.725490196078, 0.509803921569, 1.0, 0.43137254902, 0.36862745098};
@@ -304,132 +302,14 @@ void MakePlots::WritePlots()
         pTCanvas->SaveAs(plotName.c_str());
     }
 
-    for (Double1DPlotToProcessMap::iterator iterI = m_vecInt1DPlotToProcess.begin(); iterI != m_vecInt1DPlotToProcess.end(); iterI++)
-    {
-        TH1F *pTH1F_I_Init = iterI->first;
-        const int position_I(m_1DVecIntPlots.at(pTH1F_I_Init));
-        std::string variableName_I(m_vecIntVariablesToRead.at(position_I));
-        THStack *pTHStack = new THStack(this->RandomName().c_str(),variableName_I.c_str());
-
-        if (std::find(plottedVariableNames.begin(), plottedVariableNames.end(), variableName_I) != plottedVariableNames.end())
-            continue;
-
-        plottedVariableNames.push_back(variableName_I);
-
-        TCanvas *pTCanvas = new TCanvas(variableName_I.c_str(),variableName_I.c_str());
-        TLegend *pTLegend = new TLegend(0.5,0.7,0.9,0.9);
-        int colourCounter(0);
-
-        for (Double1DPlotToProcessMap::iterator iterJ = iterI; iterJ != m_vecInt1DPlotToProcess.end(); iterJ++)
-        {
-            TH1F *pTH1F_J_Init = iterI->first;
-            TH1F *pTH1F_J = (TH1F*)(iterI->first->Clone());
-            pTH1F_J->SetName(this->RandomName().c_str());
-            const Process *pActiveProcess_J = iterJ->second;
-            const int position_J(m_1DVecIntPlots.at(pTH1F_J_Init));
-            std::string variableName_J(m_vecIntVariablesToRead.at(position_J));
-
-            if (variableName_I == variableName_J)
-            {
-                Color_t color = TColor::GetColor(red.at(colourCounter), green.at(colourCounter), blue.at(colourCounter));
-                colourCounter++;
-                pTH1F_J->SetLineColor(color);
-                pTH1F_J->SetFillColor(color);
-                pTH1F_J->SetFillStyle(fillStyle.at(colourCounter));
-                pTH1F_J->SetMinimum(0.001);
-                pTH1F_J->SetMaximum(2*pTH1F_J->GetBinContent(pTH1F_J->GetMaximumBin()));
-                pTH1F_J->Draw("same");
-                pTHStack->Add(pTH1F_J);
-                std::string processName(pActiveProcess_J->GetEventType());
-                pTLegend->AddEntry(pTH1F_J,processName.c_str(),"f");
-            }
-        }
-        std::string plotName = variableName_I + "_MultiPlot.C";
-        gStyle->SetOptStat(0);
-        pTLegend->Draw("same");
-        pTCanvas->SetLogy();
-        pTCanvas->Update();
-        pTCanvas->SaveAs(plotName.c_str());
-
-        plotName = variableName_I + "_StackPlot.C";
-        pTCanvas = new TCanvas(variableName_I.c_str(),variableName_I.c_str());
-        pTHStack->SetMinimum(0.001);
-        pTHStack->Draw();
-        pTHStack->GetXaxis()->SetTitle(variableName_I.c_str());
-        pTHStack->GetYaxis()->SetTitle("Entries");
-        pTLegend->Draw("same");
-        pTCanvas->SetLogy();
-        pTCanvas->Update();
-        pTCanvas->SaveAs(plotName.c_str());
-    }
-
-    for (Double1DPlotToProcessMap::iterator iterI = m_vecDouble1DPlotToProcess.begin(); iterI != m_vecDouble1DPlotToProcess.end(); iterI++)
-    {   
-        TH1F *pTH1F_I_Init = iterI->first;
-        const int position_I(m_1DVecDoublePlots.at(pTH1F_I_Init));
-        std::string variableName_I(m_vecDoubleVariablesToRead.at(position_I));
-        THStack *pTHStack = new THStack(this->RandomName().c_str(),variableName_I.c_str());
-
-        if (std::find(plottedVariableNames.begin(), plottedVariableNames.end(), variableName_I) != plottedVariableNames.end())
-            continue;
-        
-        plottedVariableNames.push_back(variableName_I);
-        
-        TCanvas *pTCanvas = new TCanvas(variableName_I.c_str(),variableName_I.c_str());
-        TLegend *pTLegend = new TLegend(0.5,0.7,0.9,0.9);
-        int colourCounter(0);
-        
-        for (Double1DPlotToProcessMap::iterator iterJ = iterI; iterJ != m_vecDouble1DPlotToProcess.end(); iterJ++)
-        {   
-            TH1F *pTH1F_J_Init = iterJ->first;
-            TH1F *pTH1F_J = (TH1F*)(iterJ->first->Clone());
-            pTH1F_J->SetName(this->RandomName().c_str());
-            const Process *pActiveProcess_J = iterJ->second;
-            const int position_J(m_1DVecDoublePlots.at(pTH1F_J_Init));
-            std::string variableName_J(m_vecDoubleVariablesToRead.at(position_J));
-            
-            if (variableName_I == variableName_J)
-            {   
-                Color_t color = TColor::GetColor(red.at(colourCounter), green.at(colourCounter), blue.at(colourCounter));
-                colourCounter++;
-                pTH1F_J->SetLineColor(color);
-                pTH1F_J->SetFillColor(color);
-                pTH1F_J->SetFillStyle(fillStyle.at(colourCounter));
-                pTH1F_J->SetMinimum(0.001);
-                pTH1F_J->SetMaximum(2*pTH1F_J->GetBinContent(pTH1F_J->GetMaximumBin()));
-                pTH1F_J->Draw("same");
-                pTHStack->Add(pTH1F_J);
-                std::string processName(pActiveProcess_J->GetEventType());
-                pTLegend->AddEntry(pTH1F_J,processName.c_str(),"f");
-            }
-        }
-        std::string plotName = variableName_I + "_MultiPlot.C";
-        gStyle->SetOptStat(0);
-        pTLegend->Draw("same");
-        pTCanvas->SetLogy();
-        pTCanvas->Update();
-        pTCanvas->SaveAs(plotName.c_str());
-
-        plotName = variableName_I + "_StackPlot.C";
-        pTCanvas = new TCanvas(variableName_I.c_str(),variableName_I.c_str());
-        pTHStack->SetMinimum(0.001);
-        pTHStack->Draw();
-        pTHStack->GetXaxis()->SetTitle(variableName_I.c_str());
-        pTHStack->GetYaxis()->SetTitle("Entries");
-        pTLegend->Draw("same");
-        pTCanvas->SetLogy();
-        pTCanvas->Update();
-        pTCanvas->SaveAs(plotName.c_str());
-    }
-
-    std::cout << "End: MakePlots::WritePlots" << std::endl;
+    std::cout << "End: MakeSimplePlots::WritePlots" << std::endl;
 }
 
 //=====================================================================
 
-void MakePlots::WriteIndividualPlots()
+void MakeSimplePlots::WriteIndividualPlots()
 {
-    std::cout << "Begin: MakePlots::WriteIndividualPlots" << std::endl;
+    std::cout << "Begin: MakeSimplePlots::WriteIndividualPlots" << std::endl;
     for (Double1DPlotToProcessMap::iterator iter = m_int1DPlotToProcess.begin(); iter != m_int1DPlotToProcess.end(); iter++)
     {
         TH1F *pTH1F = (TH1F*)(iter->first->Clone());
@@ -454,30 +334,6 @@ void MakePlots::WriteIndividualPlots()
         pTH1F->SetName(this->RandomName().c_str());
     }
 
-    for (Double1DPlotToProcessMap::iterator iter = m_vecInt1DPlotToProcess.begin(); iter != m_vecInt1DPlotToProcess.end(); iter++)
-    {
-        TH1F *pTH1F = (TH1F*)(iter->first->Clone());
-        const Process *pProcess = iter->second;
-        std::string processName = pTH1F->GetName();
-        std::string saveName = processName + ".C";
-        TCanvas *pTCanvas = new TCanvas();
-        pTH1F->Draw();
-        pTCanvas->SaveAs(saveName.c_str());
-        pTH1F->SetName(this->RandomName().c_str());
-    }
-
-    for (Double1DPlotToProcessMap::iterator iter = m_vecDouble1DPlotToProcess.begin(); iter != m_vecDouble1DPlotToProcess.end(); iter++)
-    {
-        TH1F *pTH1F = (TH1F*)(iter->first->Clone());
-        const Process *pProcess = iter->second;
-        std::string processName = pTH1F->GetName();
-        std::string saveName = processName + ".C";
-        TCanvas *pTCanvas = new TCanvas();
-        pTH1F->Draw();
-        pTCanvas->SaveAs(saveName.c_str());
-        pTH1F->SetName(this->RandomName().c_str());
-    }
-
     for (Double2DPlotToProcessMap::iterator iter = m_double2DPlotToProcess.begin(); iter != m_double2DPlotToProcess.end(); iter++)
     {
         TH2F *pTH2F = (TH2F*)(iter->first->Clone());
@@ -490,25 +346,14 @@ void MakePlots::WriteIndividualPlots()
         pTH2F->SetName(this->RandomName().c_str());
     }
 
-    for (Double2DPlotToProcessMap::iterator iter = m_vecDouble2DPlotToProcess.begin(); iter != m_vecDouble2DPlotToProcess.end(); iter++)
-    {
-        TH2F *pTH2F = (TH2F*)(iter->first->Clone());
-        const Process *pProcess = iter->second;
-        std::string processName = pTH2F->GetName();
-        std::string saveName = processName + ".C";
-        TCanvas *pTCanvas = new TCanvas();
-        pTH2F->Draw("COLZ");
-        pTCanvas->SaveAs(saveName.c_str());
-        pTH2F->SetName(this->RandomName().c_str());
-    }
-    std::cout << "End: MakePlots::WriteIndividualPlots" << std::endl;
+    std::cout << "End: MakeSimplePlots::WriteIndividualPlots" << std::endl;
 }
 
 //=====================================================================
 
-void MakePlots::LoadData()
+void MakeSimplePlots::LoadData()
 {
-    std::cout << "Begin: MakePlots::LoadData" << std::endl;
+    std::cout << "Begin: MakeSimplePlots::LoadData" << std::endl;
 
     for (ProcessVector::const_iterator it = m_processVector.begin(); it != m_processVector.end(); it++)
     {
@@ -516,21 +361,8 @@ void MakePlots::LoadData()
         TChain *pTChain(pProcess->GetTChain());
 
         double weight(pProcess->GetProcessWeight());
-
         int intsToRead[m_intVariablesToRead.size()];
-        IntVector *intVectorsToRead[m_vecIntVariablesToRead.size()];
         double doublesToRead[m_doubleVariablesToRead.size()];
-        DoubleVector *doubleVectorsToRead[m_vecDoubleVariablesToRead.size()];
-
-        for (unsigned int i = 0; i < m_vecIntVariablesToRead.size(); i++)
-        {
-            intVectorsToRead[i] = NULL;
-        }
-
-        for (unsigned int i = 0; i < m_vecDoubleVariablesToRead.size(); i++)
-        {
-            doubleVectorsToRead[i] = NULL;
-        }
 
         for (StringVector::iterator iter = m_intVariablesToRead.begin(); iter != m_intVariablesToRead.end(); iter++)
         {
@@ -544,20 +376,6 @@ void MakePlots::LoadData()
             std::string variableName(*iter);
             int position(iter-m_doubleVariablesToRead.begin());
             pTChain->SetBranchAddress(variableName.c_str(), &doublesToRead[position]);
-        }
-
-        for (StringVector::iterator iter = m_vecIntVariablesToRead.begin(); iter != m_vecIntVariablesToRead.end(); iter++)
-        {
-            std::string variableName(*iter);
-            int position(iter-m_vecIntVariablesToRead.begin());
-            pTChain->SetBranchAddress(variableName.c_str(), &intVectorsToRead[position]);
-        }
-
-        for (StringVector::iterator iter = m_vecDoubleVariablesToRead.begin(); iter != m_vecDoubleVariablesToRead.end(); iter++)
-        {
-            std::string variableName(*iter);
-            int position(iter-m_vecDoubleVariablesToRead.begin());
-            pTChain->SetBranchAddress(variableName.c_str(), &doubleVectorsToRead[position]);
         }
 
         for (unsigned int event = 0; event < pTChain->GetEntries(); event++)
@@ -585,36 +403,6 @@ void MakePlots::LoadData()
                     pTH1F->Fill(doublesToRead[position], weight);
             }
 
-            for (Int1DPlotToPositionMap::iterator iter = m_1DVecIntPlots.begin(); iter != m_1DVecIntPlots.end(); iter++)
-            {
-                TH1F *pTH1F = iter->first;
-                int position = iter->second;
-                const Process *pActiveProcess = m_vecInt1DPlotToProcess.at(pTH1F);
-                if (&*pActiveProcess == &*pProcess)
-                {
-                    for (IntVector::iterator iterFill = intVectorsToRead[position]->begin(); iterFill != intVectorsToRead[position]->end(); iterFill++)
-                    {
-                        double intToFill(*iterFill);
-                        pTH1F->Fill(intToFill, weight);
-                    }
-                }
-            }
-
-            for (Double1DPlotToPositionMap::iterator iter = m_1DVecDoublePlots.begin(); iter != m_1DVecDoublePlots.end(); iter++)
-            {
-                TH1F *pTH1F = iter->first;
-                int position = iter->second;
-                const Process *pActiveProcess = m_vecDouble1DPlotToProcess.at(pTH1F);
-                if (&*pActiveProcess == &*pProcess)
-                {
-                    for (DoubleVector::iterator iterFill = doubleVectorsToRead[position]->begin(); iterFill != doubleVectorsToRead[position]->end(); iterFill++)
-                    {
-                        double doubleToFill(*iterFill);
-                        pTH1F->Fill(doubleToFill, weight);
-                    }
-                }
-            }
-
             for (Double2DPlotToPositionMap::iterator iter = m_2DDoublePlots.begin(); iter != m_2DDoublePlots.end(); iter++)
             {
                 TH2F *pTH2F(iter->first);
@@ -624,74 +412,16 @@ void MakePlots::LoadData()
                 if (&*pActiveProcess == &*pProcess)
                     pTH2F->Fill(doublesToRead[positionX], doublesToRead[positionY], weight);
             }
-
-            for (Double2DPlotToPositionMap::iterator iter = m_2DVecDoublePlots.begin(); iter != m_2DVecDoublePlots.end(); iter++)
-            {
-                TH2F *pTH2F(iter->first);
-                int positionX(iter->second.first);
-                int positionY(iter->second.second);
-                const Process *pActiveProcess = m_vecDouble2DPlotToProcess.at(pTH2F);
-                if (&*pActiveProcess == &*pProcess and doubleVectorsToRead[positionX]->size() == 2)
-                    pTH2F->Fill(doubleVectorsToRead[positionX]->at(0), doubleVectorsToRead[positionX]->at(1), weight);
-            }
         }
     }
-    std::cout << "End: MakePlots::LoadData" << std::endl;
+    std::cout << "End: MakeSimplePlots::LoadData" << std::endl;
 }
 
 //=====================================================================
 
-void MakePlots::Make2DBoxPlot(std::string variableX, std::string variableY, std::string process1, std::string process2)
+void MakeSimplePlots::Register2DPlot(const Process *pProcess, const std::string &variableNameX, const std::string &variableNameY, const int &nBinsX, const double &lowBinX, const double &highBinX, const int &nBinsY, const double &lowBinY, const double &highBinY)
 {
-    std::cout << "Begin: MakePlots::Make2DBoxPlot" << std::endl;
-
-    int positionInVectorX = std::find(m_doubleVariablesToRead.begin(), m_doubleVariablesToRead.end(), variableX) - m_doubleVariablesToRead.begin();
-    int positionInVectorY = std::find(m_doubleVariablesToRead.begin(), m_doubleVariablesToRead.end(), variableY) - m_doubleVariablesToRead.begin();
-
-    TH2F *pToPlot1 = NULL;
-    TH2F *pToPlot2 = NULL;
-
-    for (Double2DPlotToPositionMap::iterator iter = m_2DDoublePlots.begin(); iter != m_2DDoublePlots.end(); iter++)
-    {
-        TH2F *pTH2F(iter->first);
-        int positionX(iter->second.first);
-        int positionY(iter->second.second);
-        if (positionX == positionInVectorX and positionY == positionInVectorY)
-        {
-            const Process *pProcess = m_double2DPlotToProcess.at(pTH2F);
-            if (pProcess->GetEventType() == process1)
-            {
-                pToPlot1 = (TH2F*)(pTH2F->Clone());
-            }
-            else if (pProcess->GetEventType() == process2)
-            {
-                pToPlot2 = (TH2F*)(pTH2F->Clone());
-            }
-        }
-    }
-
-    TCanvas *pTCanvas = new TCanvas();
-    TLegend *pTLegend = new TLegend(0.5,0.7,0.9,0.9);
-    pTLegend->AddEntry(pToPlot1,process1.c_str(),"f");
-    pTLegend->AddEntry(pToPlot2,process2.c_str(),"f");
-    pToPlot1->SetLineColor(kBlue);
-    pToPlot1->SetFillColor(kBlue);
-    pToPlot1->Draw("BOX");
-    pToPlot2->SetLineColor(kRed);
-    pToPlot2->Draw("BOX same");
-    std::string plotName = variableX + "_" + variableY + "_" + process1 + "_" + process2 + ".C";
-    pTLegend->Draw("same");
-    pTCanvas->Update();
-    pTCanvas->SaveAs(plotName.c_str());
-
-    std::cout << "End: MakePlots::Make2DBoxPlot" << std::endl;
-}
-
-//=====================================================================
-
-void MakePlots::Register2DPlot(const Process *pProcess, const std::string &variableNameX, const std::string &variableNameY, const int &nBinsX, const double &lowBinX, const double &highBinX, const int &nBinsY, const double &lowBinY, const double &highBinY)
-{
-    std::cout << "Begin: MakePlots::Register2DPlot" << std::endl;
+    std::cout << "Begin: MakeSimplePlots::Register2DPlot" << std::endl;
 
     int positionInVectorX = std::find(m_doubleVariablesToRead.begin(), m_doubleVariablesToRead.end(), variableNameX) - m_doubleVariablesToRead.begin();
     int positionX(std::numeric_limits<int>::max());
@@ -729,70 +459,30 @@ void MakePlots::Register2DPlot(const Process *pProcess, const std::string &varia
 
     m_2DDoublePlots.insert(std::make_pair(pTH2F,std::make_pair(positionX,positionY)));
     m_double2DPlotToProcess.insert(std::make_pair(pTH2F,pProcess));
-    std::cout << "End: MakePlots::Register2DPlot" << std::endl;
+    std::cout << "End: MakeSimplePlots::Register2DPlot" << std::endl;
 }
 
 //=====================================================================
 
-void MakePlots::Register2DVectorPlot(const Process *pProcess, const std::string &variableNameX, const int &nBinsX, const double &lowBinX, const double &highBinX)
+void MakeSimplePlots::Register1DPlot(const Process *pProcess, const std::string &variableName, const std::string &objectType, const int &nBins, const double &lowBin, const double &highBin) 
 {
-    std::cout << "Begin: MakePlots::Register2DVectorPlot" << std::endl;
-
-    int positionInVector = std::find(m_vecDoubleVariablesToRead.begin(), m_vecDoubleVariablesToRead.end(), variableNameX) - m_vecDoubleVariablesToRead.begin();
-    int position(std::numeric_limits<int>::max());
-
-    if (positionInVector != m_vecDoubleVariablesToRead.size())
-    {
-        position = positionInVector;
-    }
-    else
-    {
-        position = m_vecDoubleVariablesToRead.size();
-        m_vecDoubleVariablesToRead.push_back(variableNameX);
-    }
-
-    std::string plotName = variableNameX + "_vs_" + variableNameX +  "_" + pProcess->GetEventType();
-    std::string plotTitle = variableNameX + " vs " + variableNameX +  " " + pProcess->GetEventType();
-    const char* name(plotName.c_str());
-    const char* title(plotTitle.c_str());
-    TH2F *pTH2F = new TH2F(name, title, nBinsX, lowBinX, highBinX, nBinsX, lowBinX, highBinX);
-    pTH2F->GetXaxis()->SetTitle(variableNameX.c_str());
-    pTH2F->GetYaxis()->SetTitle(variableNameX.c_str());
-
-    m_2DVecDoublePlots.insert(std::make_pair(pTH2F,std::make_pair(position,position)));
-    m_vecDouble2DPlotToProcess.insert(std::make_pair(pTH2F,pProcess));
-    std::cout << "End: MakePlots::Register2DVectorPlot" << std::endl;
-}
-
-//=====================================================================
-
-void MakePlots::Register1DPlot(const Process *pProcess, const std::string &variableName, const std::string &objectType, const int &nBins, const double &lowBin, const double &highBin) 
-{
-    std::cout << "Begin: MakePlots::Register1DPlot" << std::endl;
+    std::cout << "Begin: MakeSimplePlots::Register1DPlot" << std::endl;
     if (objectType == "int")
     {
         this->Register1DIntPlot(pProcess,variableName,nBins,lowBin,highBin);
     }
-    else if (objectType == "double")
+    if (objectType == "double")
     {
         this->Register1DDoublePlot(pProcess,variableName,nBins,lowBin,highBin);
     }
-    else if (objectType == "intvector")
-    {   
-        this->Register1DIntVectorPlot(pProcess,variableName,nBins,lowBin,highBin);
-    }
-    else if (objectType == "doublevector")
-    {   
-        this->Register1DDoubleVectorPlot(pProcess,variableName,nBins,lowBin,highBin);
-    }
-    std::cout << "End: MakePlots::Register1DPlot" << std::endl;
+    std::cout << "End: MakeSimplePlots::Register1DPlot" << std::endl;
 }
 
 //=====================================================================
 
-void MakePlots::Register1DIntPlot(const Process *pProcess, const std::string &variableName, const int &nBins, const double &lowBin, const double &highBin)
+void MakeSimplePlots::Register1DIntPlot(const Process *pProcess, const std::string &variableName, const int &nBins, const double &lowBin, const double &highBin)
 {
-    std::cout << "Begin: MakePlots::Register1DIntPlot" << std::endl;
+    std::cout << "Begin: MakeSimplePlots::Register1DIntPlot" << std::endl;
     int positionInVector = std::find(m_intVariablesToRead.begin(), m_intVariablesToRead.end(), variableName) - m_intVariablesToRead.begin();
     int position(std::numeric_limits<int>::max());
 
@@ -816,14 +506,14 @@ void MakePlots::Register1DIntPlot(const Process *pProcess, const std::string &va
 
     m_1DIntPlots.insert(std::make_pair(pTH1F,position));
     m_int1DPlotToProcess.insert(std::make_pair(pTH1F,pProcess));
-    std::cout << "End: MakePlots::Register1DIntPlot" << std::endl;
+    std::cout << "End: MakeSimplePlots::Register1DIntPlot" << std::endl;
 }
 
 //=====================================================================
 
-void MakePlots::Register1DDoublePlot(const Process *pProcess, const std::string &variableName, const int &nBins, const double &lowBin, const double &highBin)
+void MakeSimplePlots::Register1DDoublePlot(const Process *pProcess, const std::string &variableName, const int &nBins, const double &lowBin, const double &highBin)
 {
-    std::cout << "Begin: MakePlots::Register1DDoublePlot" << std::endl;
+    std::cout << "Begin: MakeSimplePlots::Register1DDoublePlot" << std::endl;
     int positionInVector = std::find(m_doubleVariablesToRead.begin(), m_doubleVariablesToRead.end(), variableName) - m_doubleVariablesToRead.begin();
     int position(std::numeric_limits<int>::max());
 
@@ -847,74 +537,12 @@ void MakePlots::Register1DDoublePlot(const Process *pProcess, const std::string 
 
     m_1DDoublePlots.insert(std::make_pair(pTH1F,position));
     m_double1DPlotToProcess.insert(std::make_pair(pTH1F,pProcess));
-    std::cout << "End: MakePlots::Register1DDoublePlot" << std::endl;
+    std::cout << "End: MakeSimplePlots::Register1DDoublePlot" << std::endl;
 }
 
 //=====================================================================
 
-void MakePlots::Register1DIntVectorPlot(const Process *pProcess, const std::string &variableName, const int &nBins, const double &lowBin, const double &highBin)
-{   
-    std::cout << "Begin: MakePlots::Register1DIntVectorPlot" << std::endl;
-    int positionInVector = std::find(m_vecIntVariablesToRead.begin(), m_vecIntVariablesToRead.end(), variableName) - m_vecIntVariablesToRead.begin();
-    int position(std::numeric_limits<int>::max());
-    
-    if (positionInVector != m_vecIntVariablesToRead.size())
-    {   
-        position = positionInVector;
-    }
-    else
-    {
-        position = m_vecIntVariablesToRead.size();
-        m_vecIntVariablesToRead.push_back(variableName);
-    }
-
-    std::string plotName = variableName + "_" + pProcess->GetEventType();
-    std::string plotTitle = variableName + " " + pProcess->GetEventType();
-    const char* name(plotName.c_str());
-    const char* title(plotTitle.c_str());
-    TH1F *pTH1F = new TH1F(name, title, nBins, lowBin, highBin);
-    pTH1F->GetXaxis()->SetTitle(variableName.c_str());
-    pTH1F->GetYaxis()->SetTitle("Entries");
-
-    m_1DVecIntPlots.insert(std::make_pair(pTH1F,position));
-    m_vecInt1DPlotToProcess.insert(std::make_pair(pTH1F,pProcess));
-    std::cout << "End: MakePlots::Register1DIntVectorPlot" << std::endl;
-}
-
-//=====================================================================
-
-void MakePlots::Register1DDoubleVectorPlot(const Process *pProcess, const std::string &variableName, const int &nBins, const double &lowBin, const double &highBin)
-{
-    std::cout << "Begin: MakePlots::Register1DDoubleVectorPlot" << std::endl;
-    int positionInVector = std::find(m_vecDoubleVariablesToRead.begin(), m_vecDoubleVariablesToRead.end(), variableName) - m_vecDoubleVariablesToRead.begin();
-    int position(std::numeric_limits<int>::max());
-
-    if (positionInVector != m_vecDoubleVariablesToRead.size())
-    {
-        position = positionInVector;
-    }
-    else
-    {
-        position = m_vecDoubleVariablesToRead.size();
-        m_vecDoubleVariablesToRead.push_back(variableName);
-    }
-
-    std::string plotName = variableName + "_" + pProcess->GetEventType();
-    std::string plotTitle = variableName + " " + pProcess->GetEventType();
-    const char* name(plotName.c_str());
-    const char* title(plotTitle.c_str());
-    TH1F *pTH1F = new TH1F(name, title, nBins, lowBin, highBin);
-    pTH1F->GetXaxis()->SetTitle(variableName.c_str());
-    pTH1F->GetYaxis()->SetTitle("Entries");
-
-    m_1DVecDoublePlots.insert(std::make_pair(pTH1F,position));
-    m_vecDouble1DPlotToProcess.insert(std::make_pair(pTH1F,pProcess));
-    std::cout << "End: MakePlots::Register1DDoubleVectorPlot" << std::endl;
-}
-
-//=====================================================================
-
-std::string MakePlots::RandomName()
+std::string MakeSimplePlots::RandomName()
 {
     static const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     int strLen = sizeof(alphabet)-1;
@@ -931,7 +559,7 @@ std::string MakePlots::RandomName()
 //=====================================================================
 
 template <class T>
-std::string MakePlots::NumberToString(const T &number)
+std::string MakeSimplePlots::NumberToString(const T &number)
 {
     std::ostringstream ss;
     ss << number;

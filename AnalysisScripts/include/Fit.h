@@ -52,13 +52,6 @@ class Fit
         void FillDistribution();
 
         /**
-         *  @brief Extract the generator serial number for a given file
-         *
-         *  @param filename to extract generator serial number from
-         */
-        std::string GetGeneratorSerialNumber(std::string filename);
-
-        /**
          *  @brief Calculate negative log likelihood for a given distribution for non-zero alpha4 and alpha5 based on distribution with zero alpha4 and alpah5
          *
          *  @param pTH1F_Distribution distribution with non zero alpha4 and alpha5

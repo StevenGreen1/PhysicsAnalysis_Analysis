@@ -20,6 +20,13 @@
 #include "TSystemDirectory.h"
 #include "TSystemFile.h"
 
+namespace analysis_namespace
+{
+    typedef std::vector<int> IntVector;
+    typedef std::vector<float> FloatVector;
+    typedef std::vector<double> DoubleVector;
+}
+
 class Process
 {
     typedef std::vector<int> IntVector;
@@ -57,7 +64,7 @@ class Process
         /**
          *  @brief Return pointer to TChain made from input root files that will be used for training
          */
-        TChain* GetPostBDTTChain() const;
+        TChain* GetPostMVATChain() const;
 
         /**
          *  @brief Return the weight for the given process
@@ -65,9 +72,9 @@ class Process
         float GetProcessWeight() const;
 
         /**
-         *  @brief Return the weight for the given process post BDT training
+         *  @brief Return the weight for the given process post MVA training
          */
-        float GetPostBDTProcessWeight() const;
+        float GetPostMVAProcessWeight() const;
 
         /**
          *  @brief Return the event type for the given process
@@ -126,9 +133,9 @@ class Process
         void MakeSelection();
 
         /**
-         *  @breif Set the post BDT tchain
+         *  @breif Set the post MVA tchain
          */
-        void SetBDTRootFiles();
+        void SetMVARootFiles();
 
         const std::string     m_jobDescription;          ///< Job description
         const std::string     m_detectorModel;           ///< Detector model
@@ -140,10 +147,10 @@ class Process
         const int             m_analysisTag;             ///< Analysis tag for bookeeping
         TChain*               m_pTChain;                 ///< Chain of analysis root files
         TChain*               m_pTrainTChain;            ///< Chain of analysis root files for training TMVA
-        TChain*               m_pPostBDTTChain;          ///< Chain of analysis root files post DBT training 
+        TChain*               m_pPostMVATChain;          ///< Chain of analysis root files post DBT training 
         int                   m_numberOfEntries;         ///< Number of entries in tree
         float                 m_processWeight;           ///< Weight to give required luminosity
-        float                 m_postBDTProcessWeight;    ///< Weight to give required luminosity for post BDT
+        float                 m_postMVAProcessWeight;    ///< Weight to give required luminosity for post MVA
         std::string           m_pathToFiles;             ///< Path to analysis root files
         std::map<int,bool>    m_doesEventPassSelection;  ///< Does event number pass the selection cuts
 };
