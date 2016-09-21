@@ -366,17 +366,19 @@ void JetAnalysis::FindInvariantMass(ParticleVector &jetVector, double &invariant
 
 void JetAnalysis::CalculateTransverseEnergy()
 {
-    double transverseEnergy(0.0);
+    double px(0.0), py(0.0), pz(0.0), energy(0.0);
+
     for (ParticleVector::iterator iter = m_jetVector.begin(); iter != m_jetVector.end(); iter++)
     {
         const EVENT::ReconstructedParticle* pReconstructedParticle(*iter);
-        const double px(pReconstructedParticle->getMomentum()[0]);
-        const double py(pReconstructedParticle->getMomentum()[1]);
-        const double pz(pReconstructedParticle->getMomentum()[2]);
-        const double p(sqrt(px * px + py * py + pz * pz));
-        const double energy(pReconstructedParticle->getEnergy());
-        transverseEnergy += energy * sqrt(px*px + py*py) / p;
+        px += pReconstructedParticle->getMomentum()[0];
+        py += pReconstructedParticle->getMomentum()[1];
+        pz += pReconstructedParticle->getMomentum()[2];
+        energy += pReconstructedParticle->getEnergy();
     }
+
+    const double p(sqrt(px * px + py * py + pz * pz));
+    const double transverseEnergy(energy * sqrt(px*px + py*py) / p);
     m_pVariables->SetTransverseEnergy(transverseEnergy);
 
     double transverseEnergyBosonW1(0.0), transverseEnergyBosonW2(0.0), transverseEnergyBosonZ1(0.0), transverseEnergyBosonZ2(0.0);
@@ -399,31 +401,35 @@ void JetAnalysis::CalculateTransverseEnergy()
 void JetAnalysis::CalculateTransverseEnergyObject(ParticleVector particleVector, double &transverseEnergy)
 {
     transverseEnergy = 0.0;
+    double px(0.0), py(0.0), pz(0.0), energy(0.0);
+
     for (ParticleVector::iterator iter = particleVector.begin(); iter != particleVector.end(); iter++)
     {
         const EVENT::ReconstructedParticle* pReconstructedParticle(*iter);
-        const double px(pReconstructedParticle->getMomentum()[0]);
-        const double py(pReconstructedParticle->getMomentum()[1]);
-        const double pz(pReconstructedParticle->getMomentum()[2]);
-        const double p(sqrt(px * px + py * py + pz * pz));
-        const double energy(pReconstructedParticle->getEnergy());
-        transverseEnergy += energy * sqrt(px*px + py*py) / p;
+        px += pReconstructedParticle->getMomentum()[0];
+        py += pReconstructedParticle->getMomentum()[1];
+        pz += pReconstructedParticle->getMomentum()[2];
+        energy += pReconstructedParticle->getEnergy();
     }
+
+    const double p(sqrt(px * px + py * py + pz * pz));
+    transverseEnergy += energy * sqrt(px*px + py*py) / p;
 }
 
 //===========================================================
 
 void JetAnalysis::CalculateTransverseMomentum()
 {
-    double transverseMomentum(0.0);
+    double px(0.0), py(0.0);
+
     for (ParticleVector::iterator iter = m_jetVector.begin(); iter != m_jetVector.end(); iter++)
     {
         const EVENT::ReconstructedParticle* pReconstructedParticle(*iter);
-        const double px(pReconstructedParticle->getMomentum()[0]);
-        const double py(pReconstructedParticle->getMomentum()[1]);
-
-        transverseMomentum += sqrt(px*px + py*py);
+        px += pReconstructedParticle->getMomentum()[0];
+        py += pReconstructedParticle->getMomentum()[1];
     }
+
+    const double transverseMomentum(sqrt(px*px + py*py));
     m_pVariables->SetTransverseMomentum(transverseMomentum);
 
     double transverseMomentumBosonW1(0.0), transverseMomentumBosonW2(0.0), transverseMomentumBosonZ1(0.0), transverseMomentumBosonZ2(0.0);
@@ -446,16 +452,16 @@ void JetAnalysis::CalculateTransverseMomentum()
 void JetAnalysis::CalculateTransverseMomentumObject(ParticleVector particleVector, double &transverseMomentum)
 {
     transverseMomentum = 0.0;
+    double px(0.0), py(0.0);
+
     for (ParticleVector::iterator iter = particleVector.begin(); iter != particleVector.end(); iter++)
     {
         const EVENT::ReconstructedParticle* pReconstructedParticle(*iter);
-        const double px(pReconstructedParticle->getMomentum()[0]);
-        const double py(pReconstructedParticle->getMomentum()[1]);
-        const double pz(pReconstructedParticle->getMomentum()[2]);
-        const double p(sqrt(px * px + py * py + pz * pz));
-        const double energy(pReconstructedParticle->getEnergy());
-        transverseMomentum += sqrt(px*px + py*py);
+        px += pReconstructedParticle->getMomentum()[0];
+        py += pReconstructedParticle->getMomentum()[1];
     }
+
+    transverseMomentum += sqrt(px*px + py*py);
 }
 
 //===========================================================
