@@ -31,9 +31,15 @@ AnalysisProcessor::AnalysisProcessor() : Processor("AnalysisProcessor")
                             std::string());
 
     registerInputCollection(LCIO::MCPARTICLE,
-                            "MCParticleCollection",
+                            "MCParticleCollectionName",
                             "Name of mc particle collections",
                             m_particleCollectionMC,
+                            std::string());
+
+    registerInputCollection(LCIO::RECONSTRUCTEDPARTICLE,
+                            "IsolatedPFOsCollectionName",
+                            "Name of input isolated lepton PFO collection",
+                            m_particleCollectionIsolatedLeptonPFOs,
                             std::string());
 
     registerInputCollection(LCIO::RECONSTRUCTEDPARTICLE,
@@ -85,16 +91,70 @@ void AnalysisProcessor::processRunHeader(LCRunHeader* run)
 
 void AnalysisProcessor::processEvent(LCEvent *pLCEvent) 
 { 
-    m_pVariables->Clear();
-
-    const LCParameters &lcParameters(pLCEvent->getCollection(m_particleCollectionPFOs)->parameters());
-    m_pVariables->SetLCParameterInfo(lcParameters);
-
     if (m_nEvent%10 == 0)
     {
         std::cout << "Processing event number : " << m_nEvent << std::endl;
     }
 
+
+    m_pVariables->Clear();
+
+    const LCParameters &lcParameters(pLCEvent->getCollection(m_particleCollectionPFOs)->parameters());
+    m_pVariables->SetLCParameterInfo(lcParameters);
+
+    // PFO Collection
+    const EVENT::LCCollection *pLCCollectionPFOs = NULL;
+
+    try
+    {
+        pLCCollectionPFOs = pLCEvent->getCollection(m_particleCollectionPFOs);
+    }
+    catch (...)
+    {
+        streamlog_out(ERROR) << "Could not extract input particle collection: " << m_particleCollectionPFOs << std::endl;
+    }
+
+    // Perform PFO Analysis
+    if (pLCCollectionPFOs != NULL)
+    {
+        try
+        {
+            PfoAnalysis *pfoAnalysis = new PfoAnalysis(pLCCollectionPFOs, m_pVariables);
+            delete pfoAnalysis;
+        }
+        catch (...)
+        {
+            streamlog_out(ERROR) << "Problem in Pfo Analysis involving collection: " << m_particleCollectionPFOs << std::endl;
+        }
+    }
+
+    // Isolated Lepton PFO Collection
+    const EVENT::LCCollection *pLCCollectionIsolatedLeptonPFOs = NULL;
+
+    try
+    {
+        pLCCollectionIsolatedLeptonPFOs = pLCEvent->getCollection(m_particleCollectionIsolatedLeptonPFOs);
+    }
+    catch (...)
+    {
+        streamlog_out(ERROR) << "Could not extract input particle collection: " << m_particleCollectionIsolatedLeptonPFOs << std::endl;
+    }
+
+    // Perform Isolated Lepton PFO Analysis
+    if (pLCCollectionIsolatedLeptonPFOs != NULL)
+    {
+        try
+        {
+            IsolatedLeptonPfoAnalysis *isolatedLeptonPfoAnalysis = new IsolatedLeptonPfoAnalysis(pLCCollectionIsolatedLeptonPFOs, m_pVariables);
+            delete isolatedLeptonPfoAnalysis;
+        }
+        catch (...)
+        {
+            streamlog_out(ERROR) << "Problem in isolated lepton pfo analysis involving collection: " << m_particleCollectionIsolatedLeptonPFOs << std::endl;
+        }
+    }
+
+    // Jet Clustered Collections
     const EVENT::LCCollection *pLCCollection6Jet = NULL;
     const EVENT::LCCollection *pLCCollection4Jet = NULL;
     const EVENT::LCCollection *pLCCollection2Jet = NULL;
@@ -110,52 +170,52 @@ void AnalysisProcessor::processEvent(LCEvent *pLCEvent)
         streamlog_out(ERROR) << "Could not extract input particle collection: " << m_particleCollection6Jet << ", " << m_particleCollection4Jet << " or " << m_particleCollection2Jet << std::endl;
     }
 
-    // Check clustering has produced correct number of jets
+    // Perform Checks and Jet Analysis
     if (pLCCollection6Jet != NULL or pLCCollection4Jet != NULL or pLCCollection2Jet != NULL)
     {
         try
         {
-            std::cout << "Here" << std::endl;
             if (pLCCollection6Jet->getNumberOfElements() != 6)
                 throw pLCCollection6Jet->getNumberOfElements();
-            std::cout << "Here6" << std::endl;
             if (pLCCollection4Jet->getNumberOfElements() != 4)
                 throw pLCCollection4Jet->getNumberOfElements();
-            std::cout << "Here4" << std::endl;
             if (pLCCollection2Jet->getNumberOfElements() != 2)
                 throw pLCCollection2Jet->getNumberOfElements();
-            std::cout << "Here2" << std::endl;
 
-            // Perform Full Jet Analysis
-            std::cout << "JetAnalysis" << std::endl;
             JetAnalysis *pJetAnalysis = new JetAnalysis(pLCCollection4Jet, m_pVariables);
-
-            // Perform Partial Jet Analysis on Differently Clustered Jets
-            std::cout << "PartialJetAnalysis" << std::endl;
             PartialJetAnalysis *pPartialJetAnalysis6Jet =  new PartialJetAnalysis(pLCCollection6Jet, m_pVariables, 6);
             PartialJetAnalysis *pPartialJetAnalysis2Jet =  new PartialJetAnalysis(pLCCollection2Jet, m_pVariables, 2);
-
             delete pJetAnalysis, pPartialJetAnalysis6Jet, pPartialJetAnalysis2Jet;
         }
         catch (int error)
         {
-            streamlog_out(ERROR) << "Error in jet clustering.  " << error << " jets found.  Expecting 6, 4 or 2 jets." << std::endl;
+            streamlog_out(ERROR) << "Error in jet clusteringi or jet analyses.  " << error << " jets found.  Expecting 6, 4 or 2 jets." << std::endl;
         }
     }
 
-    // Extract MC Information
+    // MC Collection 
     const EVENT::LCCollection *pLCMCCollection = NULL;
-
     try
     {
         pLCMCCollection = pLCEvent->getCollection(m_particleCollectionMC);
-        // Perform MC Analysis
-        MCAnalysis *pMCAnalysis = new MCAnalysis(pLCMCCollection,m_pVariables);
-        delete pMCAnalysis;
     }
     catch (...)
     {
-        streamlog_out(ERROR) << "Problem in MC analysis involving collection: " << m_particleCollectionMC << std::endl;
+        streamlog_out(ERROR) << "Could not extract input particle collection: " << m_particleCollectionMC << std::endl;
+    }
+
+    // Perform MC Analysis
+    if (pLCMCCollection != NULL)
+    {
+        try
+        {
+            MCAnalysis *pMCAnalysis = new MCAnalysis(pLCMCCollection,m_pVariables);
+            delete pMCAnalysis;
+        }
+        catch (...)
+        {
+            streamlog_out(ERROR) << "Problem in MC analysis involving collection: " << m_particleCollectionMC << std::endl;
+        }
     }
 
     m_nEvent++;

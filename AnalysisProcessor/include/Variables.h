@@ -669,6 +669,198 @@ class Variables
          */
         double GetAcolinearityBosonsZ() const;
 
+        /**
+         *  @brief Set m_highestEnergyElectronE
+         *
+         *  @param highestEnergyElectronE Energy of highest energy electron
+         */
+        void SetHighestEnergyElectronEnergy(double highestEnergyElectronE);
+
+        /**
+         *  @brief Get m_highestEnergyElectronE
+         */
+        double GetHighestEnergyElectronEnergy() const;
+
+        /**
+         *  @brief Set m_highestEnergyElectronP
+         *
+         *  @param highestEnergyElectronP Magnitude of momentum of highest energy electron
+         */
+        void SetHighestEnergyElectronMomentum(double highestEnergyElectronP);
+
+        /**
+         *  @brief Get m_highestEnergyElectronP
+         */
+        double GetHighestEnergyElectronMomentum() const;
+
+        /**
+         *  @brief Set m_highestEnergyElectronPt
+         *
+         *  @param highestEnergyElectronPt Transverse momentum of highest energy electron
+         */
+        void SetHighestEnergyElectronTransverseMomentum(double highestEnergyElectronPt);
+
+        /**
+         *  @brief Get m_highestEnergyElectronPt
+         */
+        double GetHighestEnergyElectronTransverseMomentum() const;
+
+        /**
+         *  @brief Set m_highestEnergyElectronCosTheta
+         *
+         *  @param highestEnergyElectronCosTheta Consine theta of highest energy electron
+         */
+        void SetHighestEnergyElectronCosTheta(double highestEnergyElectronCosTheta);
+
+        /**
+         *  @brief Get m_highestEnergyElectronCosTheta
+         */
+        double GetHighestEnergyElectronCosTheta() const;
+
+        /**
+         *  @brief Set m_highestEnergyMuonE
+         *
+         *  @param highestEnergyMuonE Energy of highest energy muon
+         */
+        void SetHighestEnergyMuonEnergy(double highestEnergyMuonE);
+
+        /**
+         *  @brief Get m_highestEnergyMuonE
+         */
+        double GetHighestEnergyMuonEnergy() const;
+
+        /**
+         *  @brief Set m_highestEnergyMuonP
+         *
+         *  @param highestEnergyMuonP Magnitude of momentum of highest energy muon
+         */
+        void SetHighestEnergyMuonMomentum(double highestEnergyMuonP);
+
+        /**
+         *  @brief Get m_highestEnergyMuonP
+         */
+        double GetHighestEnergyMuonMomentum() const;
+
+        /**
+         *  @brief Set m_highestEnergyMuonPt
+         *
+         *  @param highestEnergyMuonPt Transverse momentum of highest energy muon
+         */
+        void SetHighestEnergyMuonTransverseMomentum(double highestEnergyMuonPt);
+
+        /**
+         *  @brief Get m_highestEnergyMuonPt
+         */
+        double GetHighestEnergyMuonTransverseMomentum() const;
+
+        /**
+         *  @brief Set m_highestEnergyMuonCosTheta
+         *
+         *  @param highestEnergyMuonCosTheta Consine theta of highest energy muon
+         */
+        void SetHighestEnergyMuonCosTheta(double highestEnergyMuonCosTheta);
+
+        /**
+         *  @brief Get m_highestEnergyMuonCosTheta
+         */
+        double GetHighestEnergyMuonCosTheta() const;
+
+        /**
+         *  @brief Set m_highestEnergyPhotonE
+         *
+         *  @param highestEnergyPhotonE Energy of highest energy photon
+         */
+        void SetHighestEnergyPhotonEnergy(double highestEnergyPhotonE);
+
+        /**
+         *  @brief Get m_highestEnergyPhotonE
+         */
+        double GetHighestEnergyPhotonEnergy() const;
+
+        /**
+         *  @brief Set m_highestEnergyPhotonP
+         *
+         *  @param highestEnergyPhotonP Magnitude of momentum of highest energy photon
+         */
+        void SetHighestEnergyPhotonMomentum(double highestEnergyPhotonP);
+
+        /**
+         *  @brief Get m_highestEnergyPhotonP
+         */
+        double GetHighestEnergyPhotonMomentum() const;
+
+        /**
+         *  @brief Set m_highestEnergyPhotonPt
+         *
+         *  @param highestEnergyPhotonPt Transverse momentum of highest energy photon
+         */
+        void SetHighestEnergyPhotonTransverseMomentum(double highestEnergyPhotonPt);
+
+        /**
+         *  @brief Get m_highestEnergyPhotonPt
+         */
+        double GetHighestEnergyPhotonTransverseMomentum() const;
+
+        /**
+         *  @brief Set m_highestEnergyPhotonCosTheta
+         *
+         *  @param highestEnergyPhotonCosTheta Consine theta of highest energy photon
+         */
+        void SetHighestEnergyPhotonCosTheta(double highestEnergyPhotonCosTheta);
+
+        /**
+         *  @brief Get m_highestEnergyPhotonCosTheta
+         */
+        double GetHighestEnergyPhotonCosTheta() const;
+
+        /**
+         *  @brief Set m_highestEnergyPfoE
+         *
+         *  @param highestEnergyPfoE Energy of highest energy pfo
+         */
+        void SetHighestEnergyPfoEnergy(double highestEnergyPfoE);
+
+        /**
+         *  @brief Get m_highestEnergyPfoE
+         */
+        double GetHighestEnergyPfoEnergy() const;
+
+        /**
+         *  @brief Set m_highestEnergyPfoP
+         *
+         *  @param highestEnergyPfoP Magnitude of momentum of highest energy pfo
+         */
+        void SetHighestEnergyPfoMomentum(double highestEnergyPfoP);
+
+        /**
+         *  @brief Get m_highestEnergyPfoP
+         */
+        double GetHighestEnergyPfoMomentum() const;
+
+        /**
+         *  @brief Set m_highestEnergyPfoPt
+         *
+         *  @param highestEnergyPfoPt Transverse momentum of highest energy pfo
+         */
+        void SetHighestEnergyPfoTransverseMomentum(double highestEnergyPfoPt);
+
+        /**
+         *  @brief Get m_highestEnergyPfoPt
+         */
+        double GetHighestEnergyPfoTransverseMomentum() const;
+
+        /**
+         *  @brief Set m_highestEnergyPfoCosTheta
+         *
+         *  @param highestEnergyPfoCosTheta Consine theta of highest energy pfo
+         */
+        void SetHighestEnergyPfoCosTheta(double highestEnergyPfoCosTheta);
+
+        /**
+         *  @brief Get m_highestEnergyPfoCosTheta
+         */
+        double GetHighestEnergyPfoCosTheta() const;
+
 // DoubleVectors
 
         /**
@@ -854,6 +1046,22 @@ class Variables
         double           m_zThrustAxis;                      ///< Z Thrust axis value from ThrustReconstruction processor - SelectionProcessor
         double           m_sphericity;                       ///< Sphericity from Sphere processor - SelectionProcessor
         double           m_aplanarity;                       ///< Aplnarity from Sphere processor - SelectionProcessor
+        double           m_highestEnergyElectronE;           ///< Energy of highest energy electron - PfoAnalysis
+        double           m_highestEnergyElectronP;           ///< Magnitude of momentum of highest energy electron - PfoAnalysis
+        double           m_highestEnergyElectronPt;          ///< Transverse momentum of highest energy electron - PfoAnalysis
+        double           m_highestEnergyElectronCosTheta;    ///< Consine theta of highest energy electron - PfoAnalysis
+        double           m_highestEnergyMuonE;               ///< Energy of highest energy electron - PfoAnalysis
+        double           m_highestEnergyMuonP;               ///< Magnitude of momentum of highest energy electron - PfoAnalysis
+        double           m_highestEnergyMuonPt;              ///< Transverse momentum of highest energy electron - PfoAnalysis
+        double           m_highestEnergyMuonCosTheta;        ///< Consine theta of highest energy electron - PfoAnalysis
+        double           m_highestEnergyPhotonE;             ///< Energy of highest energy electron - PfoAnalysis
+        double           m_highestEnergyPhotonP;             ///< Magnitude of momentum of highest energy electron - PfoAnalysis
+        double           m_highestEnergyPhotonPt;            ///< Transverse momentum of highest energy electron - PfoAnalysis
+        double           m_highestEnergyPhotonCosTheta;      ///< Consine theta of highest energy electron - PfoAnalysis
+        double           m_highestEnergyPfoE;                ///< Energy of highest energy electron - PfoAnalysis
+        double           m_highestEnergyPfoP;                ///< Magnitude of momentum of highest energy electron - PfoAnalysis
+        double           m_highestEnergyPfoPt;               ///< Transverse momentum of highest energy electron - PfoAnalysis
+        double           m_highestEnergyPfoCosTheta;         ///< Consine theta of highest energy electron - PfoAnalysis
         DoubleVector     m_invariantMassWBosons;             ///< Invariant mass of first and second pair of W paired jets - JetAnalysis
         DoubleVector     m_invariantMassWBosonsMC;           ///< Invariant mass of first and second pair of W paired quarks - MCAnalysis
         DoubleVector     m_invariantMassZBosons;             ///< Invariant mass of first and second pair of Z paired jets - JetAnalysis

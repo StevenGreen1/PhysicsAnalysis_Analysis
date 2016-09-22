@@ -65,7 +65,23 @@ Variables::Variables() :
     m_yThrustAxis(std::numeric_limits<double>::max()),
     m_zThrustAxis(std::numeric_limits<double>::max()),
     m_sphericity(std::numeric_limits<double>::max()),
-    m_aplanarity(std::numeric_limits<double>::max())
+    m_aplanarity(std::numeric_limits<double>::max()),
+    m_highestEnergyElectronE(std::numeric_limits<double>::max()),
+    m_highestEnergyElectronP(std::numeric_limits<double>::max()),
+    m_highestEnergyElectronPt(std::numeric_limits<double>::max()),
+    m_highestEnergyElectronCosTheta(std::numeric_limits<double>::max()),
+    m_highestEnergyMuonE(std::numeric_limits<double>::max()),
+    m_highestEnergyMuonP(std::numeric_limits<double>::max()),
+    m_highestEnergyMuonPt(std::numeric_limits<double>::max()),
+    m_highestEnergyMuonCosTheta(std::numeric_limits<double>::max()),
+    m_highestEnergyPhotonE(std::numeric_limits<double>::max()),
+    m_highestEnergyPhotonP(std::numeric_limits<double>::max()),
+    m_highestEnergyPhotonPt(std::numeric_limits<double>::max()),
+    m_highestEnergyPhotonCosTheta(std::numeric_limits<double>::max()),
+    m_highestEnergyPfoE(std::numeric_limits<double>::max()),
+    m_highestEnergyPfoP(std::numeric_limits<double>::max()),
+    m_highestEnergyPfoPt(std::numeric_limits<double>::max()),
+    m_highestEnergyPfoCosTheta(std::numeric_limits<double>::max())
 {
 }
 
@@ -164,6 +180,22 @@ void Variables::SetBranches(TTree *pTTree)
     pTTree->Branch("ZThrustAxis", &m_zThrustAxis, "ZThrustAxis/D");
     pTTree->Branch("Sphericity", &m_sphericity, "Sphericity/D");
     pTTree->Branch("Aplanarity", &m_aplanarity, "Aplanarity/D");
+    pTTree->Branch("HighestEnergyElectronEnergy", &m_highestEnergyElectronE, "HighestEnergyElectronEnergy/D");
+    pTTree->Branch("HighestEnergyElectronMomentum", &m_highestEnergyElectronP, "HighestEnergyElectronMomentum/D");
+    pTTree->Branch("HighestEnergyElectronTransverseMomentum", &m_highestEnergyElectronPt, "HighestEnergyElectronTransverseMomentum/D");
+    pTTree->Branch("HighestEnergyElectronCosTheta", &m_highestEnergyElectronCosTheta, "HighestEnergyElectronCosTheta/D");
+    pTTree->Branch("HighestEnergyMuonEnergy", &m_highestEnergyMuonE, "HighestEnergyMuonEnergy/D");
+    pTTree->Branch("HighestEnergyMuonMomentum", &m_highestEnergyMuonP, "HighestEnergyMuonMomentum/D");
+    pTTree->Branch("HighestEnergyMuonTransverseMomentum", &m_highestEnergyMuonPt, "HighestEnergyMuonTransverseMomentum/D");
+    pTTree->Branch("HighestEnergyMuonCosTheta", &m_highestEnergyMuonCosTheta, "HighestEnergyMuonCosTheta/D");
+    pTTree->Branch("HighestEnergyPhotonEnergy", &m_highestEnergyPhotonE, "HighestEnergyPhotonEnergy/D");
+    pTTree->Branch("HighestEnergyPhotonMomentum", &m_highestEnergyPhotonP, "HighestEnergyPhotonMomentum/D");
+    pTTree->Branch("HighestEnergyPhotonTransverseMomentum", &m_highestEnergyPhotonPt, "HighestEnergyPhotonTransverseMomentum/D");
+    pTTree->Branch("HighestEnergyPhotonCosTheta", &m_highestEnergyPhotonCosTheta, "HighestEnergyPhotonCosTheta/D");
+    pTTree->Branch("HighestEnergyPfoEnergy", &m_highestEnergyPfoE, "HighestEnergyPfoEnergy/D");
+    pTTree->Branch("HighestEnergyPfoMomentum", &m_highestEnergyPfoP, "HighestEnergyPfoMomentum/D");
+    pTTree->Branch("HighestEnergyPfoTransverseMomentum", &m_highestEnergyPfoPt, "HighestEnergyPfoTransverseMomentum/D");
+    pTTree->Branch("HighestEnergyPfoCosTheta", &m_highestEnergyPfoCosTheta, "HighestEnergyPfoCosTheta/D");
     m_invariantMassWBosons.resize(2);
     pTTree->Branch("InvMassWVector1", &m_invariantMassWBosons.at(0), "InvMassWVector1/D");
     pTTree->Branch("InvMassWVector2", &m_invariantMassWBosons.at(1), "InvMassWVector2/D");
@@ -317,6 +349,22 @@ void Variables::Clear()
     m_zThrustAxis = std::numeric_limits<double>::max();
     m_sphericity = std::numeric_limits<double>::max();
     m_aplanarity = std::numeric_limits<double>::max();
+    m_highestEnergyElectronE = std::numeric_limits<double>::max();
+    m_highestEnergyElectronP = std::numeric_limits<double>::max();
+    m_highestEnergyElectronPt = std::numeric_limits<double>::max();
+    m_highestEnergyElectronCosTheta = std::numeric_limits<double>::max();
+    m_highestEnergyMuonE = std::numeric_limits<double>::max();
+    m_highestEnergyMuonP = std::numeric_limits<double>::max();
+    m_highestEnergyMuonPt = std::numeric_limits<double>::max();
+    m_highestEnergyMuonCosTheta = std::numeric_limits<double>::max();
+    m_highestEnergyPhotonE = std::numeric_limits<double>::max();
+    m_highestEnergyPhotonP = std::numeric_limits<double>::max();
+    m_highestEnergyPhotonPt = std::numeric_limits<double>::max();
+    m_highestEnergyPhotonCosTheta = std::numeric_limits<double>::max();
+    m_highestEnergyPfoE = std::numeric_limits<double>::max();
+    m_highestEnergyPfoP = std::numeric_limits<double>::max();
+    m_highestEnergyPfoPt = std::numeric_limits<double>::max();
+    m_highestEnergyPfoCosTheta = std::numeric_limits<double>::max();
 
     m_invariantMassWBosons.clear();
     m_invariantMassWBosonsMC.clear();
@@ -1075,6 +1123,230 @@ void Variables::SetAcolinearityBosonsZ(double acolinearityBosonsZ)
 double Variables::GetAcolinearityBosonsZ() const
 {
     return m_acolinearityBosonsZ;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyElectronEnergy(double highestEnergyElectronE)
+{
+    m_highestEnergyElectronE = highestEnergyElectronE;
+}
+
+//===========================================================
+
+double Variables::GetHighestEnergyElectronEnergy() const
+{
+    return m_highestEnergyElectronE;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyElectronMomentum(double highestEnergyElectronP)
+{
+    m_highestEnergyElectronP = highestEnergyElectronP;
+}
+
+//===========================================================
+
+double Variables::GetHighestEnergyElectronMomentum() const
+{
+    return m_highestEnergyElectronP;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyElectronTransverseMomentum(double highestEnergyElectronPt)
+{
+    m_highestEnergyElectronPt = highestEnergyElectronPt;
+}
+
+//===========================================================
+
+double Variables::GetHighestEnergyElectronTransverseMomentum() const
+{
+    return m_highestEnergyElectronPt;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyElectronCosTheta(double highestEnergyElectronCosTheta)
+{
+    m_highestEnergyElectronCosTheta = highestEnergyElectronCosTheta;
+}
+
+//===========================================================
+
+double Variables::GetHighestEnergyElectronCosTheta() const
+{
+    return m_highestEnergyElectronCosTheta;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyMuonEnergy(double highestEnergyMuonE)
+{
+    m_highestEnergyMuonE = highestEnergyMuonE;
+}
+
+//===========================================================
+
+double Variables::GetHighestEnergyMuonEnergy() const
+{
+    return m_highestEnergyMuonE;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyMuonMomentum(double highestEnergyMuonP)
+{
+    m_highestEnergyMuonP = highestEnergyMuonP;
+}
+
+//===========================================================
+
+double Variables::GetHighestEnergyMuonMomentum() const
+{
+    return m_highestEnergyMuonP;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyMuonTransverseMomentum(double highestEnergyMuonPt)
+{
+    m_highestEnergyMuonPt = highestEnergyMuonPt;
+}
+
+//===========================================================
+
+double Variables::GetHighestEnergyMuonTransverseMomentum() const
+{
+    return m_highestEnergyMuonPt;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyMuonCosTheta(double highestEnergyMuonCosTheta)
+{
+    m_highestEnergyMuonCosTheta = highestEnergyMuonCosTheta;
+}
+
+//===========================================================
+
+double Variables::GetHighestEnergyMuonCosTheta() const
+{
+    return m_highestEnergyMuonCosTheta;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyPhotonEnergy(double highestEnergyPhotonE)
+{
+    m_highestEnergyPhotonE = highestEnergyPhotonE;
+}
+
+//===========================================================
+
+double Variables::GetHighestEnergyPhotonEnergy() const
+{
+    return m_highestEnergyPhotonE;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyPhotonMomentum(double highestEnergyPhotonP)
+{
+    m_highestEnergyPhotonP = highestEnergyPhotonP;
+}
+
+//===========================================================
+
+double Variables::GetHighestEnergyPhotonMomentum() const
+{
+    return m_highestEnergyPhotonP;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyPhotonTransverseMomentum(double highestEnergyPhotonPt)
+{
+    m_highestEnergyPhotonPt = highestEnergyPhotonPt;
+}
+
+//===========================================================
+
+double Variables::GetHighestEnergyPhotonTransverseMomentum() const
+{
+    return m_highestEnergyPhotonPt;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyPhotonCosTheta(double highestEnergyPhotonCosTheta)
+{
+    m_highestEnergyPhotonCosTheta = highestEnergyPhotonCosTheta;
+}
+
+//===========================================================
+
+double Variables::GetHighestEnergyPhotonCosTheta() const
+{
+    return m_highestEnergyPhotonCosTheta;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyPfoEnergy(double highestEnergyPfoE)
+{
+    m_highestEnergyPfoE = highestEnergyPfoE;
+}
+
+//===========================================================
+
+double Variables::GetHighestEnergyPfoEnergy() const
+{
+    return m_highestEnergyPfoE;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyPfoMomentum(double highestEnergyPfoP)
+{
+    m_highestEnergyPfoP = highestEnergyPfoP;
+}
+
+//===========================================================
+
+double Variables::GetHighestEnergyPfoMomentum() const
+{
+    return m_highestEnergyPfoP;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyPfoTransverseMomentum(double highestEnergyPfoPt)
+{
+    m_highestEnergyPfoPt = highestEnergyPfoPt;
+}
+
+//===========================================================
+
+double Variables::GetHighestEnergyPfoTransverseMomentum() const
+{
+    return m_highestEnergyPfoPt;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyPfoCosTheta(double highestEnergyPfoCosTheta)
+{
+    m_highestEnergyPfoCosTheta = highestEnergyPfoCosTheta;
+}
+
+//===========================================================
+
+double Variables::GetHighestEnergyPfoCosTheta() const
+{
+    return m_highestEnergyPfoCosTheta;
 }
 
 //=========================================================== DoubleVector

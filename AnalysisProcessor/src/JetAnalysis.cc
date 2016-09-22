@@ -461,7 +461,7 @@ void JetAnalysis::CalculateTransverseMomentumObject(ParticleVector particleVecto
         py += pReconstructedParticle->getMomentum()[1];
     }
 
-    transverseMomentum += sqrt(px*px + py*py);
+    transverseMomentum = sqrt(px*px + py*py);
 }
 
 //===========================================================
