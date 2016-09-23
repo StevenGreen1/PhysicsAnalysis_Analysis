@@ -96,11 +96,7 @@ void AnalysisProcessor::processEvent(LCEvent *pLCEvent)
         std::cout << "Processing event number : " << m_nEvent << std::endl;
     }
 
-
     m_pVariables->Clear();
-
-    const LCParameters &lcParameters(pLCEvent->getCollection(m_particleCollectionPFOs)->parameters());
-    m_pVariables->SetLCParameterInfo(lcParameters);
 
     // PFO Collection
     const EVENT::LCCollection *pLCCollectionPFOs = NULL;
@@ -114,13 +110,15 @@ void AnalysisProcessor::processEvent(LCEvent *pLCEvent)
         streamlog_out(ERROR) << "Could not extract input particle collection: " << m_particleCollectionPFOs << std::endl;
     }
 
-    // Perform PFO Analysis
+    // Perform Raw PFO Analysis
     if (pLCCollectionPFOs != NULL)
     {
         try
         {
-            PfoAnalysis *pfoAnalysis = new PfoAnalysis(pLCCollectionPFOs, m_pVariables);
-            delete pfoAnalysis;
+            const LCParameters &lcParameters(pLCEvent->getCollection(m_particleCollectionPFOs)->parameters());
+            m_pVariables->SetLCParameterInfo(lcParameters);
+            RawPfoAnalysis *rawPfoAnalysis = new RawPfoAnalysis(pLCCollectionPFOs, m_pVariables);
+            delete rawPfoAnalysis;
         }
         catch (...)
         {

@@ -28,11 +28,11 @@
 #include "TTree.h"
 #include "TVector3.h"
 
-#include "IsolatedLeptonPfoAnalysis."
+#include "IsolatedLeptonPfoAnalysis.h"
 #include "JetAnalysis.h"
 #include "MCAnalysis.h"
 #include "PartialJetAnalysis.h"
-#include "PfoAnalysis.h"
+#include "RawPfoAnalysis.h"
 #include "Variables.h"
 
 //#include "UTIL/PIDHandler.h"

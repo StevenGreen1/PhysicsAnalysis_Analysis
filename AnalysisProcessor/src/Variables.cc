@@ -22,6 +22,10 @@ Variables::Variables() :
     m_nPfosBosonW2(std::numeric_limits<int>::max()),
     m_nPfosBosonZ1(std::numeric_limits<int>::max()),
     m_nPfosBosonZ2(std::numeric_limits<int>::max()),
+    m_highestEnergyPfoPDG(std::numeric_limits<int>::max()),
+    m_nIsolatedLeptons(std::numeric_limits<int>::max()),
+    m_highestEnergyIsolatedLeptonPDG(std::numeric_limits<int>::max()),
+    m_secondHighestEnergyIsolatedLeptonPDG(std::numeric_limits<int>::max()),
     m_transverseMomentum(std::numeric_limits<double>::max()),
     m_transverseMomentumBosonW1(std::numeric_limits<double>::max()),
     m_transverseMomentumBosonW2(std::numeric_limits<double>::max()),
@@ -130,6 +134,10 @@ void Variables::SetBranches(TTree *pTTree)
     pTTree->Branch("NChargedParticlesJet2", &m_nChargedParticlesJets.at(1), "NChargedParticlesJet2/I");
     pTTree->Branch("NChargedParticlesJet3", &m_nChargedParticlesJets.at(2), "NChargedParticlesJet3/I");
     pTTree->Branch("NChargedParticlesJet4", &m_nChargedParticlesJets.at(3), "NChargedParticlesJet4/I");
+    pTTree->Branch("HighestEnergyPfoPDG", &m_highestEnergyPfoPDG, "HighestEnergyPfoPDG/I");
+    pTTree->Branch("NumberOfIsolatedLeptons", &m_nIsolatedLeptons, "NumberOfIsolatedLeptons/I");
+    pTTree->Branch("HighestEnergyIsolatedLeptonPDG", &m_highestEnergyIsolatedLeptonPDG, "HighestEnergyIsolatedLeptonPDG/I");
+    pTTree->Branch("SecondHighestEnergyIsolatedLeptonPDG", &m_secondHighestEnergyIsolatedLeptonPDG, "SecondHighestEnergyIsolatedLeptonPDG/I");
 
 // IntVectors
 //    pTTree->Branch("NParticlesJets", &m_nParticlesJets);
@@ -196,6 +204,14 @@ void Variables::SetBranches(TTree *pTTree)
     pTTree->Branch("HighestEnergyPfoMomentum", &m_highestEnergyPfoP, "HighestEnergyPfoMomentum/D");
     pTTree->Branch("HighestEnergyPfoTransverseMomentum", &m_highestEnergyPfoPt, "HighestEnergyPfoTransverseMomentum/D");
     pTTree->Branch("HighestEnergyPfoCosTheta", &m_highestEnergyPfoCosTheta, "HighestEnergyPfoCosTheta/D");
+    pTTree->Branch("HighestEnergyIsolatedLeptonEnergy", &m_highestEnergyIsolatedLeptonE, "HighestEnergyIsolatedLeptonEnergy/D");
+    pTTree->Branch("HighestEnergyIsolatedLeptonMomentum", &m_highestEnergyIsolatedLeptonP, "HighestEnergyIsolatedLeptonMomentum/D");
+    pTTree->Branch("HighestEnergyIsolatedLeptonTransverseMomentum", &m_highestEnergyIsolatedLeptonPt, "HighestEnergyIsolatedLeptonTransverseMomentum/D");
+    pTTree->Branch("HighestEnergyIsolatedLeptonCosTheta", &m_highestEnergyIsolatedLeptonCosTheta, "HighestEnergyIsolatedLeptonCosTheta/D");
+    pTTree->Branch("SecondHighestEnergyIsolatedLeptonEnergy", &m_secondHighestEnergyIsolatedLeptonE, "SecondHighestEnergyIsolatedLeptonEnergy/D");
+    pTTree->Branch("SecondHighestEnergyIsolatedLeptonMomentum", &m_secondHighestEnergyIsolatedLeptonP, "SecondHighestEnergyIsolatedLeptonMomentum/D");
+    pTTree->Branch("SecondHighestEnergyIsolatedLeptonTransverseMomentum", &m_secondHighestEnergyIsolatedLeptonPt, "SecondHighestEnergyIsolatedLeptonTransverseMomentum/D");
+    pTTree->Branch("SecondHighestEnergyIsolatedLeptonCosTheta", &m_secondHighestEnergyIsolatedLeptonCosTheta, "SecondHighestEnergyIsolatedLeptonCosTheta/D");
     m_invariantMassWBosons.resize(2);
     pTTree->Branch("InvMassWVector1", &m_invariantMassWBosons.at(0), "InvMassWVector1/D");
     pTTree->Branch("InvMassWVector2", &m_invariantMassWBosons.at(1), "InvMassWVector2/D");
@@ -299,6 +315,10 @@ void Variables::Clear()
     m_nPfosBosonW2 = std::numeric_limits<int>::max();
     m_nPfosBosonZ1 = std::numeric_limits<int>::max();
     m_nPfosBosonZ2 = std::numeric_limits<int>::max();
+    m_highestEnergyPfoPDG = std::numeric_limits<int>::max();
+    m_highestEnergyIsolatedLeptonPDG = std::numeric_limits<int>::max();
+    m_secondHighestEnergyIsolatedLeptonPDG = std::numeric_limits<int>::max();
+    m_nIsolatedLeptons = std::numeric_limits<int>::max();
 
     m_combinationWJets.clear();
     m_combinationZJets.clear();
@@ -365,6 +385,14 @@ void Variables::Clear()
     m_highestEnergyPfoP = std::numeric_limits<double>::max();
     m_highestEnergyPfoPt = std::numeric_limits<double>::max();
     m_highestEnergyPfoCosTheta = std::numeric_limits<double>::max();
+    m_highestEnergyIsolatedLeptonE = std::numeric_limits<double>::max();
+    m_highestEnergyIsolatedLeptonP = std::numeric_limits<double>::max();
+    m_highestEnergyIsolatedLeptonPt = std::numeric_limits<double>::max();
+    m_highestEnergyIsolatedLeptonCosTheta = std::numeric_limits<double>::max();
+    m_secondHighestEnergyIsolatedLeptonE = std::numeric_limits<double>::max();
+    m_secondHighestEnergyIsolatedLeptonP = std::numeric_limits<double>::max();
+    m_secondHighestEnergyIsolatedLeptonPt = std::numeric_limits<double>::max();
+    m_secondHighestEnergyIsolatedLeptonCosTheta = std::numeric_limits<double>::max();
 
     m_invariantMassWBosons.clear();
     m_invariantMassWBosonsMC.clear();
@@ -527,6 +555,62 @@ void Variables::SetNPfosBosonZ2(int nPfosBosonZ2)
 int Variables::GetNPfosBosonZ2() const
 {
     return m_nPfosBosonZ2;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyPfoPDG(int highestEnergyPfoPDG)
+{
+    m_highestEnergyPfoPDG = highestEnergyPfoPDG; 
+}
+
+//===========================================================
+
+int Variables::GetHighestEnergyPfoPDG() const
+{
+    return m_highestEnergyPfoPDG;
+}
+
+//===========================================================
+
+void Variables::SetNumberOfIsolatedLeptons(int nIsolatedLeptons)
+{
+    m_nIsolatedLeptons = nIsolatedLeptons;
+}
+
+//===========================================================
+
+int Variables::GetNumberOfIsolatedLeptons() const
+{
+    return m_nIsolatedLeptons;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyIsolatedLeptonPDG(int highestEnergyIsolatedLeptonPDG)
+{
+    m_highestEnergyIsolatedLeptonPDG = highestEnergyIsolatedLeptonPDG;
+}
+
+//===========================================================
+
+int Variables::GetHighestEnergyIsolatedLeptonPDG() const
+{
+    return m_highestEnergyIsolatedLeptonPDG;
+}
+
+//===========================================================
+
+void Variables::SetSecondHighestEnergyIsolatedLeptonPDG(int secondHighestEnergyIsolatedLeptonPDG)
+{
+    m_secondHighestEnergyIsolatedLeptonPDG = secondHighestEnergyIsolatedLeptonPDG;
+}
+
+//===========================================================
+
+int Variables::GetSecondHighestEnergyIsolatedLeptonPDG() const
+{
+    return m_secondHighestEnergyIsolatedLeptonPDG;
 }
 
 //=========================================================== IntVector
@@ -1347,6 +1431,118 @@ void Variables::SetHighestEnergyPfoCosTheta(double highestEnergyPfoCosTheta)
 double Variables::GetHighestEnergyPfoCosTheta() const
 {
     return m_highestEnergyPfoCosTheta;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyIsolatedLeptonEnergy(double highestEnergyIsolatedLeptonE)
+{
+    m_highestEnergyIsolatedLeptonE = highestEnergyIsolatedLeptonE;
+}
+
+//===========================================================
+
+double Variables::GetHighestEnergyIsolatedLeptonEnergy() const
+{
+    return m_highestEnergyIsolatedLeptonE;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyIsolatedLeptonMomentum(double highestEnergyIsolatedLeptonP)
+{
+    m_highestEnergyIsolatedLeptonP = highestEnergyIsolatedLeptonP;
+}
+
+//===========================================================
+
+double Variables::GetHighestEnergyIsolatedLeptonMomentum() const
+{
+    return m_highestEnergyIsolatedLeptonP;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyIsolatedLeptonTransverseMomentum(double highestEnergyIsolatedLeptonPt)
+{
+    m_highestEnergyIsolatedLeptonPt = highestEnergyIsolatedLeptonPt;
+}
+
+//===========================================================
+
+double Variables::GetHighestEnergyIsolatedLeptonTransverseMomentum() const
+{
+    return m_highestEnergyIsolatedLeptonPt;
+}
+
+//===========================================================
+
+void Variables::SetHighestEnergyIsolatedLeptonCosTheta(double highestEnergyIsolatedLeptonCosTheta)
+{
+    m_highestEnergyIsolatedLeptonCosTheta = highestEnergyIsolatedLeptonCosTheta;
+}
+
+//===========================================================
+
+double Variables::GetHighestEnergyIsolatedLeptonCosTheta() const
+{
+    return m_highestEnergyIsolatedLeptonCosTheta;
+}
+
+//===========================================================
+
+void Variables::SetSecondHighestEnergyIsolatedLeptonEnergy(double secondHighestEnergyIsolatedLeptonE)
+{
+    m_secondHighestEnergyIsolatedLeptonE = secondHighestEnergyIsolatedLeptonE;
+}
+
+//===========================================================
+
+double Variables::GetSecondHighestEnergyIsolatedLeptonEnergy() const
+{
+    return m_secondHighestEnergyIsolatedLeptonE;
+}
+
+//===========================================================
+
+void Variables::SetSecondHighestEnergyIsolatedLeptonMomentum(double secondHighestEnergyIsolatedLeptonP)
+{
+    m_secondHighestEnergyIsolatedLeptonP = secondHighestEnergyIsolatedLeptonP;
+}
+
+//===========================================================
+
+double Variables::GetSecondHighestEnergyIsolatedLeptonMomentum() const
+{
+    return m_secondHighestEnergyIsolatedLeptonP;
+}
+
+//===========================================================
+
+void Variables::SetSecondHighestEnergyIsolatedLeptonTransverseMomentum(double secondHighestEnergyIsolatedLeptonPt)
+{
+    m_secondHighestEnergyIsolatedLeptonPt = secondHighestEnergyIsolatedLeptonPt;
+}
+
+//===========================================================
+
+double Variables::GetSecondHighestEnergyIsolatedLeptonTransverseMomentum() const
+{
+    return m_secondHighestEnergyIsolatedLeptonPt;
+}
+
+//===========================================================
+
+void Variables::SetSecondHighestEnergyIsolatedLeptonCosTheta(double secondHighestEnergyIsolatedLeptonCosTheta)
+{
+    m_secondHighestEnergyIsolatedLeptonCosTheta = secondHighestEnergyIsolatedLeptonCosTheta;
+}
+
+//===========================================================
+
+double Variables::GetSecondHighestEnergyIsolatedLeptonCosTheta() const
+{
+    return m_secondHighestEnergyIsolatedLeptonCosTheta;
 }
 
 //=========================================================== DoubleVector

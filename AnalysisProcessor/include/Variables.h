@@ -84,7 +84,7 @@ class Variables
          */
         void SetIsEventWW(bool isEventWW);
 
-        /*
+        /**
          *  @brief Get m_isEventWW
          */
         bool GetIsEventWW() const;
@@ -96,7 +96,7 @@ class Variables
          */
         void SetIsEventWWMC(bool isEventWWMC);
 
-        /*
+        /**
          *  @brief Get m_isEventWWMC
          */
         bool GetIsEventWWMC() const;
@@ -108,7 +108,7 @@ class Variables
          */
         void SetIsEventZZ(bool isEventZZ);
 
-        /*
+        /**
          *  @brief Get m_isEventZZ
          */
         bool GetIsEventZZ() const;
@@ -120,7 +120,7 @@ class Variables
          */
         void SetIsEventZZMC(bool isEventZZMC);
 
-        /*
+        /**
          *  @brief Get m_isEventZZMC
          */
         bool GetIsEventZZMC() const;
@@ -134,7 +134,7 @@ class Variables
          */
         void SetNPfosBosonW1(int nPfosBosonW1);
 
-        /*
+        /**
          *  @brief Get m_nPfosBosonW1
          */
         int GetNPfosBosonW1() const;
@@ -146,7 +146,7 @@ class Variables
          */
         void SetNPfosBosonW2(int nPfosBosonW2);
 
-        /*
+        /**
          *  @brief Get m_nPfosBosonW2
          */
         int GetNPfosBosonW2() const;
@@ -158,7 +158,7 @@ class Variables
          */
         void SetNPfosBosonZ1(int nPfosBosonZ1);
 
-        /*
+        /**
          *  @brief Get m_nPfosBosonZ1
          */
         int GetNPfosBosonZ1() const;
@@ -170,10 +170,58 @@ class Variables
          */
         void SetNPfosBosonZ2(int nPfosBosonZ2);
 
-        /*
+        /**
          *  @brief Get m_nPfosBosonZ2
          */
         int GetNPfosBosonZ2() const;
+
+        /**
+         *  @brief Set m_highestEnergyPfoPDG
+         *
+         *  @param highestEnergyPfoPDG PDG code of highest energy PFO in evnet 
+         */
+        void SetHighestEnergyPfoPDG(int highestEnergyPfoPDG);
+
+        /**
+         *  @brief Get m_highestEnergyPfoPDG
+         */
+        int GetHighestEnergyPfoPDG() const;
+
+        /**
+         *  @brief Set m_nIsolatedLeptons
+         *
+         *  @param nIsolatedLeptons Number of isolated leptons identified in isolated lepton finder
+         */
+        void SetNumberOfIsolatedLeptons(int nIsolatedLeptons);
+
+        /**
+         *  @brief Get m_nIsolatedLeptons
+         */
+        int GetNumberOfIsolatedLeptons() const;
+
+        /**
+         *  @brief Set m_highestEnergyIsolatedLeptonPDG
+         *
+         *  @param highestEnergyIsolatedLeptonPDG PDG of highest energy PFO from isolated lepton finder
+         */
+        void SetHighestEnergyIsolatedLeptonPDG(int highestEnergyIsolatedLeptonPDG);
+
+        /**
+         *  @brief Get m_highestEnergyIsolatedLeptonPDG
+         */
+        int GetHighestEnergyIsolatedLeptonPDG() const;
+
+        /**
+         *  @brief Set m_secondHighestEnergyIsolatedLeptonPDG
+         *
+         *  @param secondHighestEnergyIsolatedLeptonPDG PDG of second highest energy PFO from isolated lepton finder 
+         */
+        void SetSecondHighestEnergyIsolatedLeptonPDG(int secondHighestEnergyIsolatedLeptonPDG);
+
+        /**
+         *  @brief Get m_secondHighestEnergyIsolatedLeptonPDG
+         */
+        int GetSecondHighestEnergyIsolatedLeptonPDG() const;
 
 // IntVectors
 
@@ -861,6 +909,102 @@ class Variables
          */
         double GetHighestEnergyPfoCosTheta() const;
 
+        /**
+         *  @brief Set m_highestEnergyIsolatedLeptonE
+         *
+         *  @param highestEnergyIsolatedLeptonE Energy of highest energy lepton from isolated lepton finding
+         */
+        void SetHighestEnergyIsolatedLeptonEnergy(double highestEnergyIsolatedLeptonE);
+
+        /**
+         *  @brief Get m_highestEnergyIsolatedLeptonE
+         */
+        double GetHighestEnergyIsolatedLeptonEnergy() const;
+
+        /**
+         *  @brief Set m_highestEnergyIsolatedLeptonP
+         *
+         *  @param highestEnergyIsolatedLeptonP Magnitude of momentum of highest energy lepton from isolated lepton finding
+         */
+        void SetHighestEnergyIsolatedLeptonMomentum(double highestEnergyIsolatedLeptonP);
+
+        /**
+         *  @brief Get m_highestEnergyIsolatedLeptonP
+         */
+        double GetHighestEnergyIsolatedLeptonMomentum() const;
+
+        /**
+         *  @brief Set m_highestEnergyIsolatedLeptonPt
+         *
+         *  @param highestEnergyIsolatedLeptonPt Transverse momentum of highest energy lepton from isolated lepton finding
+         */
+        void SetHighestEnergyIsolatedLeptonTransverseMomentum(double highestEnergyIsolatedLeptonPt);
+
+        /**
+         *  @brief Get m_highestEnergyIsolatedLeptonPt
+         */
+        double GetHighestEnergyIsolatedLeptonTransverseMomentum() const;
+
+        /**
+         *  @brief Set m_highestEnergyIsolatedLeptonCosTheta
+         *
+         *  @param highestEnergyIsolatedLeptonCosTheta Consine theta of highest energy lepton from isolated lepton finding 
+         */
+        void SetHighestEnergyIsolatedLeptonCosTheta(double highestEnergyIsolatedLeptonCosTheta);
+
+        /**
+         *  @brief Get m_highestEnergyIsolatedLeptonCosTheta
+         */
+        double GetHighestEnergyIsolatedLeptonCosTheta() const;
+
+        /**
+         *  @brief Set m_secondHighestEnergyIsolatedLeptonE
+         *
+         *  @param secondHighestEnergyIsolatedLeptonE Energy of highest energy lepton from isolated lepton finding
+         */
+        void SetSecondHighestEnergyIsolatedLeptonEnergy(double secondHighestEnergyIsolatedLeptonE);
+
+        /**
+         *  @brief Get m_secondHighestEnergyIsolatedLeptonE
+         */
+        double GetSecondHighestEnergyIsolatedLeptonEnergy() const;
+
+        /**
+         *  @brief Set m_secondHighestEnergyIsolatedLeptonP
+         *
+         *  @param secondHighestEnergyIsolatedLeptonP Magnitude of momentum of highest energy lepton from isolated lepton finding
+         */
+        void SetSecondHighestEnergyIsolatedLeptonMomentum(double secondHighestEnergyIsolatedLeptonP);
+
+        /**
+         *  @brief Get m_secondHighestEnergyIsolatedLeptonP
+         */
+        double GetSecondHighestEnergyIsolatedLeptonMomentum() const;
+
+        /**
+         *  @brief Set m_secondHighestEnergyIsolatedLeptonPt
+         *
+         *  @param secondHighestEnergyIsolatedLeptonPt Transverse momentum of highest energy lepton from isolated lepton finding
+         */
+        void SetSecondHighestEnergyIsolatedLeptonTransverseMomentum(double secondHighestEnergyIsolatedLeptonPt);
+
+        /**
+         *  @brief Get m_secondHighestEnergyIsolatedLeptonPt
+         */
+        double GetSecondHighestEnergyIsolatedLeptonTransverseMomentum() const;
+
+        /**
+         *  @brief Set m_secondHighestEnergyIsolatedLeptonCosTheta
+         *
+         *  @param secondHighestEnergyIsolatedLeptonCosTheta Consine theta of highest energy lepton from isolated lepton finding
+         */
+        void SetSecondHighestEnergyIsolatedLeptonCosTheta(double secondHighestEnergyIsolatedLeptonCosTheta);
+
+        /**
+         *  @brief Get m_secondHighestEnergyIsolatedLeptonCosTheta
+         */
+        double GetSecondHighestEnergyIsolatedLeptonCosTheta() const;
+
 // DoubleVectors
 
         /**
@@ -989,88 +1133,100 @@ class Variables
 //        DoubleVector Get();
 
     private:
-        bool             m_appropriateEvent;                 ///< Does event pass a series of cuts suggesting it has a vvqqqq final state? - JetAnalysis
-        bool             m_isEventWW;                        ///< Are the invariant masses of the jets close to the W boson mass? - JetAnalysis
-        bool             m_isEventWWMC;                      ///< Are the invariant masses of the quark pairs close to the W boson mass? - MCAnalysis
-        bool             m_isEventZZ;                        ///< Are the invariant masses of the jets close to the Z boson mass? - JetAnalysis
-        bool             m_isEventZZMC;                      ///< Are the invariant masses of the quark pairs close to the Z boson mass? - MCAnalysis
-        int              m_nPfosBosonW1;                     ///< Number of pfos in W boson 1 in W pairing - JetAnalysis
-        int              m_nPfosBosonW2;                     ///< Number of pfos in W boson 2 in W pairing - JetAnalysis
-        int              m_nPfosBosonZ1;                     ///< Number of pfos in W boson 1 in Z pairing - JetAnalysis
-        int              m_nPfosBosonZ2;                     ///< Number of pfos in W boson 2 in Z pairing - JetAnalysis
-        IntVector        m_combinationWJets;                 ///< Combination of jets to form W bosons - JetAnalysis
-        IntVector        m_combinationZJets;                 ///< Combination of jets to form Z bosons - JetAnalysis
-        IntVector        m_nParticlesJets;                   ///< Number of particles in reconstructed jet - JetAnalysis
-        IntVector        m_nChargedParticlesJets;            ///< Number of charged particles in reconstructed jet - JetAnalysis
-        double           m_transverseMomentum;               ///< Transverse momentum of reconstructed system - JetAnalysis
-        double           m_transverseMomentumBosonW1;        ///< Transverse momentum of W boson 1 in W pairing - JetAnalysis
-        double           m_transverseMomentumBosonW2;        ///< Transverse momentum of W boson 2 in W pairing - JetAnalysis
-        double           m_transverseMomentumBosonZ1;        ///< Transverse momentum of W boson 1 in Z pairing - JetAnalysis
-        double           m_transverseMomentumBosonZ2;        ///< Transverse momentum of W boson 2 in Z pairing - JetAnalysis
-        double           m_transverseMomentumMC;             ///< Transverse momentum of quark system - MCAnalysis
-        double           m_transverseEnergy;                 ///< Transverse energy of reconstructed system - JetAnalysis
-        double           m_transverseEnergyBosonW1;          ///< Transverse energy of W boson 1 in W pairing - JetAnalysis
-        double           m_transverseEnergyBosonW2;          ///< Transverse energy of W boson 2 in W pairing - JetAnalysis
-        double           m_transverseEnergyBosonZ1;          ///< Transverse energy of Z boson 1 in Z pairing - JetAnalysis
-        double           m_transverseEnergyBosonZ2;          ///< Transverse energy of Z boson 2 in Z pairing - JetAnalysis
-        double           m_transverseEnergyMC;               ///< Transverse energy of quark system - MCAnalysis
-        double           m_cosThetaMissing;                  ///< Cosine theta of missing energy - JetAnalysis
-        double           m_cosThetaMissingMC;                ///< Cosine theta of neutrino energy - MCAnalysis
-        double           m_cosThetaMostEnergeticTrack;       ///< Cosine theta of highest energy track in system - JetAnalysis
-        double           m_recoilMass;                       ///< Recoil mass of reconstructed system - JetAnalysis
-        double           m_recoilMassMC;                     ///< Recoil mass of quark system - MCAnalysis
-        double           m_energyAroundMostEnergeticPfo;     ///< Energy in cone around most energetic pfo - JetAnalysis
-        double           m_y12;                              ///< Jet grouping parameter
-        double           m_y23;                              ///< Jet grouping parameter
-        double           m_y34;                              ///< Jet grouping parameter
-        double           m_y45;                              ///< Jet grouping parameter
-        double           m_y56;                              ///< Jet grouping parameter
-        double           m_y67;                              ///< Jet grouping parameter
-        double           m_invariantMassSystem;              ///< Invariant mass of the jet system - JetAnalysis
-        double           m_invariantMassSystemMC;            ///< Invariant mass of the quark system - MCAnalysis
-        double           m_cosThetaStarWBosons;              ///< Cosine of the polar angle of the W bosons in the reference frame of the WW boson pairs - JetAnalysis
-        double           m_cosThetaStarWBosonsMC;            ///< Cosine of the polar angle of the W bosons in the reference frame of the WW boson pairs - MCAnalysis
-        double           m_cosThetaStarZBosons;              ///< Cosine of the polar angle of the Z bosons in the reference frame of the ZZ boson pairs - JetAnalysis
-        double           m_cosThetaStarZBosonsMC;            ///< Cosine of the polar angle of the Z bosons in the reference frame of the ZZ boson pairs - MCAnalysis
-        double           m_acolinearityJetsW1;               ///< Acolinearity of the jets from boson 1 in W pairing - JetAnalysis
-        double           m_acolinearityJetsW2;               ///< Acolinearity of the jets from boson 2 in W pairing - JetAnalysis
-        double           m_acolinearityJetsZ1;               ///< Acolinearity of the jets from boson 1 in Z pairing - JetAnalysis
-        double           m_acolinearityJetsZ2;               ///< Acolinearity of the jets from boson 2 in Z pairing - JetAnalysis
-        double           m_acolinearityBosonsW;              ///< Acolinearity of the W bosons in W pairing - JetAnalysis- SelectionProcessor
-        double           m_acolinearityBosonsZ;              ///< Acolinearity of the W bosons in Z pairing - JetAnalysis- SelectionProcessor
-        double           m_principleThrustValue;             ///< Principle thrust value from ThrustReconstruction processor- SelectionProcessor
-        double           m_majorThrustValue;                 ///< Major thrust value from ThrustReconstruction processor- SelectionProcessor
-        double           m_minorThrustValue;                 ///< Minor thrust value from ThrustReconstruction processor - SelectionProcessor
-        double           m_xThrustAxis;                      ///< X Thrust axis value from ThrustReconstruction processor - SelectionProcessor
-        double           m_yThrustAxis;                      ///< Y Thrust axis value from ThrustReconstruction processor  - SelectionProcessor
-        double           m_zThrustAxis;                      ///< Z Thrust axis value from ThrustReconstruction processor - SelectionProcessor
-        double           m_sphericity;                       ///< Sphericity from Sphere processor - SelectionProcessor
-        double           m_aplanarity;                       ///< Aplnarity from Sphere processor - SelectionProcessor
-        double           m_highestEnergyElectronE;           ///< Energy of highest energy electron - PfoAnalysis
-        double           m_highestEnergyElectronP;           ///< Magnitude of momentum of highest energy electron - PfoAnalysis
-        double           m_highestEnergyElectronPt;          ///< Transverse momentum of highest energy electron - PfoAnalysis
-        double           m_highestEnergyElectronCosTheta;    ///< Consine theta of highest energy electron - PfoAnalysis
-        double           m_highestEnergyMuonE;               ///< Energy of highest energy electron - PfoAnalysis
-        double           m_highestEnergyMuonP;               ///< Magnitude of momentum of highest energy electron - PfoAnalysis
-        double           m_highestEnergyMuonPt;              ///< Transverse momentum of highest energy electron - PfoAnalysis
-        double           m_highestEnergyMuonCosTheta;        ///< Consine theta of highest energy electron - PfoAnalysis
-        double           m_highestEnergyPhotonE;             ///< Energy of highest energy electron - PfoAnalysis
-        double           m_highestEnergyPhotonP;             ///< Magnitude of momentum of highest energy electron - PfoAnalysis
-        double           m_highestEnergyPhotonPt;            ///< Transverse momentum of highest energy electron - PfoAnalysis
-        double           m_highestEnergyPhotonCosTheta;      ///< Consine theta of highest energy electron - PfoAnalysis
-        double           m_highestEnergyPfoE;                ///< Energy of highest energy electron - PfoAnalysis
-        double           m_highestEnergyPfoP;                ///< Magnitude of momentum of highest energy electron - PfoAnalysis
-        double           m_highestEnergyPfoPt;               ///< Transverse momentum of highest energy electron - PfoAnalysis
-        double           m_highestEnergyPfoCosTheta;         ///< Consine theta of highest energy electron - PfoAnalysis
-        DoubleVector     m_invariantMassWBosons;             ///< Invariant mass of first and second pair of W paired jets - JetAnalysis
-        DoubleVector     m_invariantMassWBosonsMC;           ///< Invariant mass of first and second pair of W paired quarks - MCAnalysis
-        DoubleVector     m_invariantMassZBosons;             ///< Invariant mass of first and second pair of Z paired jets - JetAnalysis
-        DoubleVector     m_invariantMassZBosonsMC;           ///< Invariant mass of first and second pair of Z paired quarks - MCAnalysis
-        DoubleVector     m_energyJets;                       ///< Energy of reconstructed jets  - JetAnalysis
-        DoubleVector     m_cosThetaStarWJets;                ///< Cosine of the polar angle of the q jets in the reference frome of the W bosons - JetAnalysis
-        DoubleVector     m_cosThetaStarZJets;                ///< Cosine of the polar angle of the q jets in the reference frome of the Z bosons - JetAnalysis
-        DoubleVector     m_bTagForJets;                      ///< B tag value for the jets in the event
-        DoubleVector     m_cTagForJets;                      ///< C tag value for the jets in the event
+        bool             m_appropriateEvent;                             ///< Does event pass a series of cuts suggesting it has a vvqqqq final state? - JetAnalysis
+        bool             m_isEventWW;                                    ///< Are the invariant masses of the jets close to the W boson mass? - JetAnalysis
+        bool             m_isEventWWMC;                                  ///< Are the invariant masses of the quark pairs close to the W boson mass? - MCAnalysis
+        bool             m_isEventZZ;                                    ///< Are the invariant masses of the jets close to the Z boson mass? - JetAnalysis
+        bool             m_isEventZZMC;                                  ///< Are the invariant masses of the quark pairs close to the Z boson mass? - MCAnalysis
+        int              m_nPfosBosonW1;                                 ///< Number of pfos in W boson 1 in W pairing - JetAnalysis
+        int              m_nPfosBosonW2;                                 ///< Number of pfos in W boson 2 in W pairing - JetAnalysis
+        int              m_nPfosBosonZ1;                                 ///< Number of pfos in W boson 1 in Z pairing - JetAnalysis
+        int              m_nPfosBosonZ2;                                 ///< Number of pfos in W boson 2 in Z pairing - JetAnalysis
+        int              m_highestEnergyPfoPDG;                          ///< PDG of highest energy PFO - RawPfoAnalysis
+        int              m_nIsolatedLeptons;                             ///< Number of isolated leptons identified in isolated lepton finder - IsolatedLeptonPfoAnalysis
+        int              m_highestEnergyIsolatedLeptonPDG;               ///< PDG of highest energy PFO from isolated lepton finder - IsolatedLeptonPfoAnalysis
+        int              m_secondHighestEnergyIsolatedLeptonPDG;         ///< PDG of second highest energy PFO from isolated lepton finder - IsolatedLeptonPfoAnalysis
+        IntVector        m_combinationWJets;                             ///< Combination of jets to form W bosons - JetAnalysis
+        IntVector        m_combinationZJets;                             ///< Combination of jets to form Z bosons - JetAnalysis
+        IntVector        m_nParticlesJets;                               ///< Number of particles in reconstructed jet - JetAnalysis
+        IntVector        m_nChargedParticlesJets;                        ///< Number of charged particles in reconstructed jet - JetAnalysis
+        double           m_transverseMomentum;                           ///< Transverse momentum of reconstructed system - JetAnalysis
+        double           m_transverseMomentumBosonW1;                    ///< Transverse momentum of W boson 1 in W pairing - JetAnalysis
+        double           m_transverseMomentumBosonW2;                    ///< Transverse momentum of W boson 2 in W pairing - JetAnalysis
+        double           m_transverseMomentumBosonZ1;                    ///< Transverse momentum of W boson 1 in Z pairing - JetAnalysis
+        double           m_transverseMomentumBosonZ2;                    ///< Transverse momentum of W boson 2 in Z pairing - JetAnalysis
+        double           m_transverseMomentumMC;                         ///< Transverse momentum of quark system - MCAnalysis
+        double           m_transverseEnergy;                             ///< Transverse energy of reconstructed system - JetAnalysis
+        double           m_transverseEnergyBosonW1;                      ///< Transverse energy of W boson 1 in W pairing - JetAnalysis
+        double           m_transverseEnergyBosonW2;                      ///< Transverse energy of W boson 2 in W pairing - JetAnalysis
+        double           m_transverseEnergyBosonZ1;                      ///< Transverse energy of Z boson 1 in Z pairing - JetAnalysis
+        double           m_transverseEnergyBosonZ2;                      ///< Transverse energy of Z boson 2 in Z pairing - JetAnalysis
+        double           m_transverseEnergyMC;                           ///< Transverse energy of quark system - MCAnalysis
+        double           m_cosThetaMissing;                              ///< Cosine theta of missing energy - JetAnalysis
+        double           m_cosThetaMissingMC;                            ///< Cosine theta of neutrino energy - MCAnalysis
+        double           m_cosThetaMostEnergeticTrack;                   ///< Cosine theta of highest energy track in system - JetAnalysis
+        double           m_recoilMass;                                   ///< Recoil mass of reconstructed system - JetAnalysis
+        double           m_recoilMassMC;                                 ///< Recoil mass of quark system - MCAnalysis
+        double           m_energyAroundMostEnergeticPfo;                 ///< Energy in cone around most energetic pfo - JetAnalysis
+        double           m_y12;                                          ///< Jet grouping parameter
+        double           m_y23;                                          ///< Jet grouping parameter
+        double           m_y34;                                          ///< Jet grouping parameter
+        double           m_y45;                                          ///< Jet grouping parameter
+        double           m_y56;                                          ///< Jet grouping parameter
+        double           m_y67;                                          ///< Jet grouping parameter
+        double           m_invariantMassSystem;                          ///< Invariant mass of the jet system - JetAnalysis
+        double           m_invariantMassSystemMC;                        ///< Invariant mass of the quark system - MCAnalysis
+        double           m_cosThetaStarWBosons;                          ///< Cosine of the polar angle of the W bosons in the reference frame of the WW boson pairs - JetAnalysis
+        double           m_cosThetaStarWBosonsMC;                        ///< Cosine of the polar angle of the W bosons in the reference frame of the WW boson pairs - MCAnalysis
+        double           m_cosThetaStarZBosons;                          ///< Cosine of the polar angle of the Z bosons in the reference frame of the ZZ boson pairs - JetAnalysis
+        double           m_cosThetaStarZBosonsMC;                        ///< Cosine of the polar angle of the Z bosons in the reference frame of the ZZ boson pairs - MCAnalysis
+        double           m_acolinearityJetsW1;                           ///< Acolinearity of the jets from boson 1 in W pairing - JetAnalysis
+        double           m_acolinearityJetsW2;                           ///< Acolinearity of the jets from boson 2 in W pairing - JetAnalysis
+        double           m_acolinearityJetsZ1;                           ///< Acolinearity of the jets from boson 1 in Z pairing - JetAnalysis
+        double           m_acolinearityJetsZ2;                           ///< Acolinearity of the jets from boson 2 in Z pairing - JetAnalysis
+        double           m_acolinearityBosonsW;                          ///< Acolinearity of the W bosons in W pairing - JetAnalysis- SelectionProcessor
+        double           m_acolinearityBosonsZ;                          ///< Acolinearity of the W bosons in Z pairing - JetAnalysis- SelectionProcessor
+        double           m_principleThrustValue;                         ///< Principle thrust value from ThrustReconstruction processor- SelectionProcessor
+        double           m_majorThrustValue;                             ///< Major thrust value from ThrustReconstruction processor- SelectionProcessor
+        double           m_minorThrustValue;                             ///< Minor thrust value from ThrustReconstruction processor - SelectionProcessor
+        double           m_xThrustAxis;                                  ///< X Thrust axis value from ThrustReconstruction processor - SelectionProcessor
+        double           m_yThrustAxis;                                  ///< Y Thrust axis value from ThrustReconstruction processor  - SelectionProcessor
+        double           m_zThrustAxis;                                  ///< Z Thrust axis value from ThrustReconstruction processor - SelectionProcessor
+        double           m_sphericity;                                   ///< Sphericity from Sphere processor - SelectionProcessor
+        double           m_aplanarity;                                   ///< Aplnarity from Sphere processor - SelectionProcessor
+        double           m_highestEnergyElectronE;                       ///< Energy of highest energy electron - RawPfoAnalysis
+        double           m_highestEnergyElectronP;                       ///< Magnitude of momentum of highest energy electron - RawPfoAnalysis
+        double           m_highestEnergyElectronPt;                      ///< Transverse momentum of highest energy electron - RawPfoAnalysis
+        double           m_highestEnergyElectronCosTheta;                ///< Consine theta of highest energy electron - RawPfoAnalysis
+        double           m_highestEnergyMuonE;                           ///< Energy of highest energy electron - RawPfoAnalysis
+        double           m_highestEnergyMuonP;                           ///< Magnitude of momentum of highest energy electron - RawPfoAnalysis
+        double           m_highestEnergyMuonPt;                          ///< Transverse momentum of highest energy electron - RawPfoAnalysis
+        double           m_highestEnergyMuonCosTheta;                    ///< Consine theta of highest energy electron - RawPfoAnalysis
+        double           m_highestEnergyPhotonE;                         ///< Energy of highest energy electron - RawPfoAnalysis
+        double           m_highestEnergyPhotonP;                         ///< Magnitude of momentum of highest energy electron - RawPfoAnalysis
+        double           m_highestEnergyPhotonPt;                        ///< Transverse momentum of highest energy electron - RawPfoAnalysis
+        double           m_highestEnergyPhotonCosTheta;                  ///< Consine theta of highest energy electron - RawPfoAnalysis
+        double           m_highestEnergyPfoE;                            ///< Energy of highest energy electron - RawPfoAnalysis
+        double           m_highestEnergyPfoP;                            ///< Magnitude of momentum of highest energy electron - RawPfoAnalysis
+        double           m_highestEnergyPfoPt;                           ///< Transverse momentum of highest energy electron - RawPfoAnalysis
+        double           m_highestEnergyPfoCosTheta;                     ///< Consine theta of highest energy electron - RawPfoAnalysis
+        double           m_highestEnergyIsolatedLeptonE;                 ///< Energy of highest energy lepton from isolated lepton finding - IsolatedLeptonPfoAnalysis
+        double           m_highestEnergyIsolatedLeptonP;                 ///< Magnitude of momentum of highest energy lepton from isolated lepton finding - IsolatedLeptonPfoAnalysis
+        double           m_highestEnergyIsolatedLeptonPt;                ///< Transverse momentum of highest energy lepton from isolated lepton finding - IsolatedLeptonPfoAnalysis
+        double           m_highestEnergyIsolatedLeptonCosTheta;          ///< Consine theta of highest energy lepton from isolated lepton finding - IsolatedLeptonPfoAnalysis
+        double           m_secondHighestEnergyIsolatedLeptonE;           ///< Energy of second highest energy lepton from isolated lepton finding - IsolatedLeptonPfoAnalysis
+        double           m_secondHighestEnergyIsolatedLeptonP;           ///< Magnitude of momentum of second highest energy lepton from isolated lepton finding - IsolatedLeptonPfoAnalysis
+        double           m_secondHighestEnergyIsolatedLeptonPt;          ///< Transverse momentum of second highest energy lepton from isolated lepton finding - IsolatedLeptonPfoAnalysis
+        double           m_secondHighestEnergyIsolatedLeptonCosTheta;    ///< Consine theta of second highest energy lepton from isolated lepton finding - IsolatedLeptonPfoAnalysis
+        DoubleVector     m_invariantMassWBosons;                         ///< Invariant mass of first and second pair of W paired jets - JetAnalysis
+        DoubleVector     m_invariantMassWBosonsMC;                       ///< Invariant mass of first and second pair of W paired quarks - MCAnalysis
+        DoubleVector     m_invariantMassZBosons;                         ///< Invariant mass of first and second pair of Z paired jets - JetAnalysis
+        DoubleVector     m_invariantMassZBosonsMC;                       ///< Invariant mass of first and second pair of Z paired quarks - MCAnalysis
+        DoubleVector     m_energyJets;                                   ///< Energy of reconstructed jets  - JetAnalysis
+        DoubleVector     m_cosThetaStarWJets;                            ///< Cosine of the polar angle of the q jets in the reference frome of the W bosons - JetAnalysis
+        DoubleVector     m_cosThetaStarZJets;                            ///< Cosine of the polar angle of the q jets in the reference frome of the Z bosons - JetAnalysis
+        DoubleVector     m_bTagForJets;                                  ///< B tag value for the jets in the event
+        DoubleVector     m_cTagForJets;                                  ///< C tag value for the jets in the event
 };
 
 #endif // #ifndef VARIABLES_H
