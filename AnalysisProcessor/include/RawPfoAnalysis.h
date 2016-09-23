@@ -6,8 +6,8 @@
  *  $Log: $
  */
 
-#ifndef PFO_ANALYSIS_H
-#define PFO_ANALYSIS_H 1
+#ifndef RAW_PFO_ANALYSIS_H
+#define RAW_PFO_ANALYSIS_H 1
 
 #include <cmath>
 #include <string>
@@ -74,4 +74,4 @@ class RawPfoAnalysis
         const EVENT::ReconstructedParticle *m_pHighestEnergyPfo;        ///< Highest energy pfo
 };
 
-#endif // #ifndef PFO_ANALYSIS_H
+#endif // #ifndef RAW_PFO_ANALYSIS_H
