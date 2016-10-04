@@ -2,13 +2,31 @@
 
 //============================================================================
 
-CouplingAnalysis::CouplingAnalysis(std::string process, std::string energy) : 
-    m_process(process),
-    m_energy(energy),
-    m_NumberUniqueAlpha4(0),
-    m_NumberUniqueAlpha5(0)
+CouplingAnalysis::CouplingAnalysis(const ProcessVector &processVector, PostMVASelection *pPostMVASelection) : 
+    m_processVector(processVector),
+    m_pPostMVASelection(pPostMVASelection),
+    m_eventsNeedingWeights(pPostMVASelection->GetEventsNeedingWeightsList()),
+    m_numberUniqueAlpha4(0),
+    m_numberUniqueAlpha5(0),
+    m_a4IntMin(-5),
+    m_a4IntMax(4),
+    m_a4Step(0.01f),
+    m_a5IntMin(-5),
+    m_a5IntMax(4),
+    m_a5Step(0.01f)
 {
-    this->LoadXml();
+    for (int a4Int = m_a4IntMin; a4Int < m_a4IntMax; a4Int++)
+    {
+        m_alpha4Vector.push_back((float)(m_a4Step*a4Int));
+    }
+
+    for (int a5Int = m_a5IntMin; a5Int < m_a5IntMax; a5Int++)
+    {
+        m_alpha5Vector.push_back((float)(m_a5Step*a5Int));
+    }
+
+    std::sort(m_alpha4Vector.begin(), m_alpha4Vector.end());
+    std::sort(m_alpha5Vector.begin(), m_alpha5Vector.end());
 }
 
 //============================================================================
@@ -17,168 +35,204 @@ CouplingAnalysis::~CouplingAnalysis()
 {
 }
 
-//============================================================================
+//============================================================================ Concatenate Data
 
-void CouplingAnalysis::GetWeight(const int eventNumber, const float alpha4, const float alpha5, float &eventWeight) const  
+void CouplingAnalysis::GetWeightsFromFiles()
 {
-//    std::cout << "Getting weight " << eventNumber << " alpha4 " << alpha4 << " alpha5 " << alpha5 << " " << std::endl; 
-
-    float lowerA4Bound(-1.f*std::numeric_limits<float>::max());
-    int lowerA4Key(std::numeric_limits<int>::max());
-
-    float upperA4Bound(std::numeric_limits<float>::max());
-    int upperA4Key(std::numeric_limits<int>::max());
-
-    float lowerA5Bound(-1.f*std::numeric_limits<float>::max());
-    int lowerA5Key(std::numeric_limits<int>::max());
-
-    float upperA5Bound(std::numeric_limits<float>::max());
-    int upperA5Key(std::numeric_limits<int>::max());
-
-//    if (alpha4 <= *m_Alpha4Vector.begin() or m_Alpha4Vector.back() <= alpha4 or alpha5 <= *m_Alpha5Vector.begin() or m_Alpha5Vector.back() <= alpha5)
-    if (alpha4 < *m_Alpha4Vector.begin() or m_Alpha4Vector.back() < alpha4 or alpha5 < *m_Alpha5Vector.begin() or m_Alpha5Vector.back() < alpha5)
+    for (ProcessVector::const_iterator it = m_processVector.begin(); it != m_processVector.end(); it++)
     {
-        std::cout << "Unable to apply bilinear interpolation to event, please add more weight samples.  Setting event weight to 1." << std::endl;
-        eventWeight = 1.f;
+        const Process *pProcess(*it);
+        if (pProcess->GetEventType() != "ee_nunuqqqq")
+            continue;
 
-    }
-
-    for (FloatVector::const_iterator iter = m_Alpha4Vector.begin(); iter != m_Alpha4Vector.end(); iter++)
-    {
-        int position(iter - m_Alpha4Vector.begin());
-        //if (m_Alpha4Vector.at(position) <= alpha4 and alpha4 < m_Alpha4Vector.at(position+1))
-        if (m_Alpha4Vector.at(position) <= alpha4 and alpha4 <= m_Alpha4Vector.at(position+1))
+        IntVector generatorNumbersToRead;
+    
+        for (IntVector::iterator enIt = m_eventsNeedingWeights.begin(); enIt != m_eventsNeedingWeights.end(); enIt++)
         {
-            lowerA4Bound = m_Alpha4Vector.at(position);
-            upperA4Bound = m_Alpha4Vector.at(position+1);
-            this->GetAlpha4Key(lowerA4Bound,lowerA4Key);
-            this->GetAlpha4Key(upperA4Bound,upperA4Key);
+            const int eventNumber(*enIt);
+
+            int generatorNumber(std::numeric_limits<int>::max());
+std::cout << "eventNumber : " << eventNumber << std::endl;
+            if (eventNumber % 1000 == 0)
+            {
+                generatorNumber = (int)(eventNumber/1000.0) - 1;
+std::cout << "generatorNumber = (eventNumber/1000.f) - 1; " << eventNumber/1000.f << " " << generatorNumber << std::endl;
+            }
+            else
+            {
+                const double doubleNumber(eventNumber/1000.0);
+                generatorNumber = floor(doubleNumber);
+std::cout << "generatorNumber = dn " << doubleNumber << " " << generatorNumber << std::endl;
+            }
+
+std::cout << "generatorNumber : " << generatorNumber << std::endl;
+            if (std::find(generatorNumbersToRead.begin(), generatorNumbersToRead.end(), generatorNumber) == generatorNumbersToRead.end())
+            {
+                std::cout << "Reading in generatorNumber : " << generatorNumber << std::endl;
+                this->LoadXmlData(generatorNumber, pProcess);
+                generatorNumbersToRead.push_back(generatorNumber);
+
+                for (IntVector::iterator it = generatorNumbersToRead.begin(); it != generatorNumbersToRead.end(); it++)
+                {
+                    std::cout << *it << " ";
+                }
+                std::cout << std::endl;
+                this->SaveXmlData(generatorNumber);
+            }
         }
     }
-
-    for (FloatVector::const_iterator iter = m_Alpha5Vector.begin(); iter != m_Alpha5Vector.end(); iter++)
-    {
-        int position(iter - m_Alpha5Vector.begin());
-        //if (m_Alpha5Vector.at(position) <= alpha5 and alpha5 < m_Alpha5Vector.at(position+1))
-        if (m_Alpha5Vector.at(position) <= alpha5 and alpha5 < m_Alpha5Vector.at(position+1))
-        {
-            lowerA5Bound = m_Alpha5Vector.at(position);
-            upperA5Bound = m_Alpha5Vector.at(position+1);
-            this->GetAlpha5Key(lowerA5Bound,lowerA5Key);
-            this->GetAlpha5Key(upperA5Bound,upperA5Key);
-        }
-    }
-/*
-    std::cout << "lowerA4Bound " << lowerA4Bound << std::endl;
-    std::cout << "upperA4Bound " << upperA4Bound << std::endl;
-    std::cout << "lowerA5Bound " << lowerA5Bound << std::endl;
-    std::cout << "upperA5Bound " << upperA5Bound << std::endl;
-
-    std::cout << "lowerA4Key " << lowerA4Key << std::endl;
-    std::cout << "upperA4Key " << upperA4Key << std::endl;
-    std::cout << "lowerA5Key " << lowerA5Key << std::endl;
-    std::cout << "upperA5Key " << upperA5Key << std::endl;
-*/
-    IntToIntToIntToFloatMap::const_iterator it = m_EventToAlpha4ToAlpha5ToWeightMap.find(eventNumber);
-
-    if (it == m_EventToAlpha4ToAlpha5ToWeightMap.end())
-        std::cout << "Missing event number " << eventNumber << std::endl;
-
-    const float lowerA4lowerA5(m_EventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(lowerA4Key).at(lowerA5Key));
-    const float lowerA4upperA5(m_EventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(upperA4Key).at(lowerA5Key));
-    const float upperA4lowerA5(m_EventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(lowerA4Key).at(upperA5Key));
-    const float upperA4upperA5(m_EventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(upperA4Key).at(upperA5Key));
-
-//    std::cout << "calculating eventWeight" << std::endl;
-    eventWeight = this->BilinearInterpolation(lowerA4lowerA5,lowerA4upperA5,upperA4lowerA5,upperA4upperA5,alpha4,lowerA4Bound,upperA4Bound,alpha5,lowerA5Bound,upperA5Bound);
-
-//    std::cout << "eventWeight : " << eventWeight << std::endl;
 }
 
 //============================================================================
 
-float CouplingAnalysis::BilinearInterpolation(const float f11, const float f12, const float f21, const float f22, const float x, const float x1, const float x2, const float y, const float y1, const float y2) const
+void CouplingAnalysis::LoadXmlData(const int genN, const Process *pProcess)
 {
-    const float numerator((x2-x) * ((f11 * (y2-y)) + (f12 * (y-y1))) + (x-x1) * ((f21 * (y2-y)) + (f22 * (y-y1))));
-    const float denominator((x2-x1)*(y2-y1));
-    return numerator/denominator;
-}
+    m_Events.clear();
 
-//============================================================================
-
-void CouplingAnalysis::LoadXml()
-{
-    for (int i = -5; i < -2; i++)
+    for (int a4Int = m_a4IntMin; a4Int < m_a4IntMax; a4Int++)
     {
-        for (int j = -5; j < -2; j++)
+        float alpha4(a4Int*m_a4Step);
+
+        for (int a5Int = m_a5IntMin; a5Int < m_a5IntMax; a5Int++)
         {
-            std::cout << i << " " << j << std::endl;
-            const float alpha4(i * 0.01);
-            const float alpha5(j * 0.01);
-            std::cout << "Loading : (Alpha4,Alpha5) = (" << this->AlphasToString(alpha4) << "," << this->AlphasToString(alpha5) << ")" << std::endl;
-            this->LoadIndividualXml(alpha4,alpha5);
+            float alpha5(a5Int*m_a5Step);
+//std::cout << "alpha4 " << alpha4 << std::endl;
+//std::cout << "alpha5 " << alpha5 << std::endl;
+            this->LoadIndividualXmlData(genN,alpha4,alpha5,pProcess);
         }
     }
-
-    std::sort(m_Alpha4Vector.begin(), m_Alpha4Vector.end());
-    std::sort(m_Alpha5Vector.begin(), m_Alpha5Vector.end());
 }
 
 //============================================================================
 
-void CouplingAnalysis::LoadIndividualXml(const float alpha4, const float alpha5)
+void CouplingAnalysis::LoadIndividualXmlData(const int &genN, const float &alpha4, const float &alpha5, const Process *pProcess)
 {
-    //for (unsigned int whizardJobSet = 350; whizardJobSet <=350; whizardJobSet++)
-    for (unsigned int whizardJobSet = 1; whizardJobSet <=350; whizardJobSet++)
+    const std::string processName(pProcess->GetEventType());
+    const int energy(pProcess->GetEnergy());
+    const int whizardJobSet(floor(genN/1000));
+
+std::cout << "whizardJobSet : " << whizardJobSet << std::endl;
+
+    std::string pathToResults("/r06/lc/sg568/PhysicsAnalysis/Generator/" + processName + "/" + this->NumberToString(energy) + "GeV/WhizardJobSet" + this->NumberToString(whizardJobSet) + "/Alpha4_" + this->AlphasToString(alpha4) + "_Alpha5_" + this->AlphasToString(alpha5) + "/");
+    std::string fileName(pathToResults + "Reweighting_GenN" + this->NumberToString(genN) + "_" + processName + "_" + this->NumberToString(energy) + "GeV_Alpha4_" + this->AlphasToString(alpha4) + "_Alpha5_" + this->AlphasToString(alpha5) + ".xml");
+std::cout << fileName << std::endl;
+
+    TiXmlDocument *pTiXmlDocument = new TiXmlDocument();
+
+    if (!pTiXmlDocument->LoadFile(fileName.c_str()))
     {
-        std::string pathToResults("/r06/lc/sg568/PhysicsAnalysis/Generator/" + m_process + "/" + m_energy + "GeV/WhizardJobSet" + this->NumberToString(whizardJobSet) + "/Alpha4_" + this->AlphasToString(alpha4) + "_Alpha5_" + this->AlphasToString(alpha5) + "/");
-        std::string fileName(pathToResults + "Reweighting_WhizardJobSet" + this->NumberToString(whizardJobSet) + "_" + m_process + "_" + m_energy + "GeV_Alpha4_" + this->AlphasToString(alpha4) + "_Alpha5_" + this->AlphasToString(alpha5) + ".xml");
+        std::cerr << pTiXmlDocument->ErrorDesc() << std::endl;
+    }
 
-        TiXmlDocument *pTiXmlDocument = new TiXmlDocument();
+    TiXmlElement* pHeadTiXmlElement = pTiXmlDocument->FirstChildElement();
 
-        if(!pTiXmlDocument->LoadFile(fileName.c_str()))
-        {
-            std::cerr << pTiXmlDocument->ErrorDesc() << std::endl;
-        }
+    if (pHeadTiXmlElement == NULL)
+    {
+        std::cerr << "Failed to load file: No root element." << std::endl;
+        pTiXmlDocument->Clear();
+    }
 
-        TiXmlElement* pHeadTiXmlElement = pTiXmlDocument->FirstChildElement();
+    std::string process(pHeadTiXmlElement->Attribute("Process"));
+    std::string energyFromXml(pHeadTiXmlElement->Attribute("Energy"));
+    const double currentAlpha4(atof(pHeadTiXmlElement->Attribute("Alpha_Four")));
+    const double currentAlpha5(atof(pHeadTiXmlElement->Attribute("Alpha_Five")));
 
-        if(pHeadTiXmlElement == NULL)
-        {
-            std::cerr << "Failed to load file: No root element." << std::endl;
-            pTiXmlDocument->Clear();
-        }
+    for (TiXmlElement* pTiXmlElement = pHeadTiXmlElement->FirstChildElement(); pTiXmlElement != NULL; pTiXmlElement = pTiXmlElement->NextSiblingElement())
+    {
+        const int eventNumber((1e3*genN) + atoi(pTiXmlElement->Attribute("Event_Number")));
+        const double weight(atof(pTiXmlElement->Attribute("Ratio_of_Integrands")));
+        CouplingAnalysis::Event *pEvent = new CouplingAnalysis::Event();
+        pEvent->SetProcess(process);
+        pEvent->SetEnergy(energyFromXml);
+        pEvent->SetAlpha4(currentAlpha4);
+        pEvent->SetAlpha5(currentAlpha5);
+        pEvent->SetEventNumber(eventNumber);
+        pEvent->SetWeight(weight);
+        m_Events.push_back(pEvent);
+    }
 
+    pTiXmlDocument->Clear();
+    delete pTiXmlDocument;
+}
+
+//============================================================================
+
+void CouplingAnalysis::SaveXmlData(int generatorNumber)
+{
+    std::string weightsFileName("ConcatenatedWeights" + this->NumberToString(generatorNumber) + ".xml");
+
+    TiXmlDocument tiXmlDocument;
+    TiXmlElement *pHeadTiXmlElement = new TiXmlElement("Event");
+    tiXmlDocument.LinkEndChild(pHeadTiXmlElement);
+
+    for (EventVector::iterator iter = m_Events.begin(); iter != m_Events.end(); iter++)
+    {
+        CouplingAnalysis::Event *pEvent(*iter);
+        const int eventNumber(pEvent->GetEventNumber());
+
+        if (std::find(m_eventsNeedingWeights.begin(), m_eventsNeedingWeights.end(), eventNumber) == m_eventsNeedingWeights.end())
+            continue;
+
+        TiXmlElement* pTiXmlElement = new TiXmlElement("Event");
+        pTiXmlElement->SetAttribute("Event_Number", pEvent->GetEventNumber());
+        pTiXmlElement->SetAttribute("Process", pEvent->GetProcess().c_str());
+        pTiXmlElement->SetAttribute("Energy", pEvent->GetEnergy().c_str());
+        pTiXmlElement->SetDoubleAttribute("Alpha_Four", pEvent->GetAlpha4());
+        pTiXmlElement->SetDoubleAttribute("Alpha_Five", pEvent->GetAlpha5());
+        pTiXmlElement->SetDoubleAttribute("Ratio_of_Integrands", pEvent->GetWeight());
+        pHeadTiXmlElement->LinkEndChild(pTiXmlElement);
+    }
+
+    bool success = tiXmlDocument.SaveFile(weightsFileName.c_str());
+
+    tiXmlDocument.Clear();
+}
+
+//============================================================================ Read in Concatenated Data
+
+void CouplingAnalysis::LoadData()
+{
+    std::string pathToResults("/var/clus/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin");
+    std::string fileName(pathToResults + "ConcatenatedWeights.xml");
+
+    TiXmlDocument *pTiXmlDocument = new TiXmlDocument();
+
+    if(!pTiXmlDocument->LoadFile(fileName.c_str()))
+    {
+        std::cerr << pTiXmlDocument->ErrorDesc() << std::endl;
+    }
+
+    TiXmlElement* pHeadTiXmlElement = pTiXmlDocument->FirstChildElement();
+
+    if(pHeadTiXmlElement == NULL)
+    {
+        std::cerr << "Failed to load file: No root element." << std::endl;
+        pTiXmlDocument->Clear();
+    }
+
+    for (TiXmlElement* pTiXmlElement = pHeadTiXmlElement->FirstChildElement(); pTiXmlElement != NULL; pTiXmlElement = pTiXmlElement->NextSiblingElement())
+    {
+        const int eventNumber(atoi(pTiXmlElement->Attribute("Event_Number")));
         std::string process(pHeadTiXmlElement->Attribute("Process"));
         std::string energy(pHeadTiXmlElement->Attribute("Energy"));
-        const double currentAlpha4(atof(pHeadTiXmlElement->Attribute("Alpha_Four")));
-        const double currentAlpha5(atof(pHeadTiXmlElement->Attribute("Alpha_Five")));
+        const double alpha4(atof(pHeadTiXmlElement->Attribute("Alpha_Four")));
+        const double alpha5(atof(pHeadTiXmlElement->Attribute("Alpha_Five")));
+        const double weight(atof(pTiXmlElement->Attribute("Ratio_of_Integrands")));
 
-        if (process != m_process or energy != m_energy)
-            return;
+        if (!this->DoesAlpha4KeyExist(alpha4))
+            this->SetAlpha4Key(alpha4);
 
-        int alpha4Key(0);
-        int alpha5Key(0);
-        this->SetAlpha4Key(alpha4,alpha4Key);
-        this->SetAlpha5Key(alpha5,alpha5Key);
+        if (!this->DoesAlpha5KeyExist(alpha5))
+            this->SetAlpha5Key(alpha5);
 
-        for (TiXmlElement* pTiXmlElement = pHeadTiXmlElement->FirstChildElement(); pTiXmlElement != NULL; pTiXmlElement = pTiXmlElement->NextSiblingElement())
-        {
-            const int eventNumber((1e6*whizardJobSet) + atoi(pTiXmlElement->Attribute("Event_Number")));
-            const double weight(atof(pTiXmlElement->Attribute("Ratio_of_Integrands")));
+        const int alpha4Key(this->GetAlpha4Key(alpha4));
+        const int alpha5Key(this->GetAlpha5Key(alpha5));
 
-//            std::cout << "atoi(pTiXmlElement->Attribute(\"Event_Number\")) : " << atoi(pTiXmlElement->Attribute("Event_Number")) << std::endl;
-//            std::cout << "whizardJobSet : " << whizardJobSet << std::endl;
-//            std::cout << "eventNumber : " << eventNumber << std::endl;
-
-//        if (eventNumber > 5)
-//          continue;
-            m_EventToAlpha4ToAlpha5ToWeightMap[eventNumber][alpha4Key][alpha5Key] = weight;
-        }
-
-        pTiXmlDocument->Clear();
-        delete pTiXmlDocument;
+        m_eventToAlpha4ToAlpha5ToWeightMap[eventNumber][alpha4Key][alpha5Key] = weight;
     }
+
+    pTiXmlDocument->Clear();
+    delete pTiXmlDocument;
 }
 
 //============================================================================
@@ -193,97 +247,34 @@ bool CouplingAnalysis::DoFloatsMatch(float a, float b) const
 
 //============================================================================
 
-void CouplingAnalysis::SetAlpha4Key(const float alpha4, int &alpha4Key)
+bool CouplingAnalysis::DoesAlpha4KeyExist(const float alpha4) const
 {
-//    if (m_KeyToAlpha4Map.size() != 0)
-//    {
-        for (IntToFloatMap::const_iterator iter = m_KeyToAlpha4Map.begin(); iter != m_KeyToAlpha4Map.end(); ++iter)
-        {
-            if (this->DoFloatsMatch(iter->second, alpha4))
-            {
-                alpha4Key = iter->first;
-                return;
-             }
-        }
-//    }
-
-//    std::cout << m_NumberUniqueAlpha4 << std::endl;
-//    std::cout << alpha4 << std::endl;
-
-    m_KeyToAlpha4Map.insert(std::make_pair(m_NumberUniqueAlpha4,alpha4));
-    m_NumberUniqueAlpha4++;
-    m_Alpha4Vector.push_back(alpha4);
-
-        for (IntToFloatMap::const_iterator iter = m_KeyToAlpha4Map.begin(); iter != m_KeyToAlpha4Map.end(); ++iter)
-        {
-            if (this->DoFloatsMatch(iter->second, alpha4))
-            {
-                alpha4Key = iter->first;
-                return;
-             }
-        }
-
-    std::cout << "m_NumberUniqueAlpha4 : " << m_NumberUniqueAlpha4 << std::endl;
-    std::cout << "Adding alpha4 : " << alpha4 << " to the list." << std::endl;
+    for (IntToFloatMap::const_iterator iter = m_keyToAlpha4Map.begin(); iter != m_keyToAlpha4Map.end(); ++iter)
+    {
+        if (this->DoFloatsMatch(iter->second, alpha4))
+            return true;
+    }
+    return false;
 }
 
 //============================================================================
 
-void CouplingAnalysis::GetAlpha4Key(const float alpha4, int &alpha4Key) const 
+void CouplingAnalysis::SetAlpha4Key(const float alpha4)
 {
-    for (IntToFloatMap::const_iterator iter = m_KeyToAlpha4Map.begin(); iter != m_KeyToAlpha4Map.end(); ++iter)
+    m_keyToAlpha4Map.insert(std::make_pair(m_numberUniqueAlpha4,alpha4));
+    m_numberUniqueAlpha4++;
+    m_alpha4Vector.push_back(alpha4);
+}
+
+//============================================================================
+
+int CouplingAnalysis::GetAlpha4Key(const float alpha4) const
+{
+    for (IntToFloatMap::const_iterator iter = m_keyToAlpha4Map.begin(); iter != m_keyToAlpha4Map.end(); ++iter)
     {
         if (this->DoFloatsMatch(iter->second, alpha4))
         {
-            alpha4Key = iter->first;
-            return;
-        }
-    }
-}
-
-//============================================================================
-
-void CouplingAnalysis::SetAlpha5Key(const float alpha5, int &alpha5Key)
-{
-//    if (m_KeyToAlpha5Map.size() != 0)
-//    {
-        for (IntToFloatMap::const_iterator iter = m_KeyToAlpha5Map.begin(); iter != m_KeyToAlpha5Map.end(); ++iter)
-        {
-            if (this->DoFloatsMatch(iter->second, alpha5))
-            {
-                alpha5Key = iter->first;
-                return;
-            }
-        }
-//    }
-
-    m_KeyToAlpha5Map.insert(std::make_pair(m_NumberUniqueAlpha5,alpha5));
-    m_NumberUniqueAlpha5++;
-    m_Alpha5Vector.push_back(alpha5);
-
-        for (IntToFloatMap::const_iterator iter = m_KeyToAlpha5Map.begin(); iter != m_KeyToAlpha5Map.end(); ++iter)
-        {
-            if (this->DoFloatsMatch(iter->second, alpha5))
-            {
-                alpha5Key = iter->first;
-                return;
-            }
-        }
-
-    std::cout << "m_NumberUniqueAlpha5 : " << m_NumberUniqueAlpha5 << std::endl;
-    std::cout << "Adding alpha5 : " << alpha5 << " to the list." << std::endl;
-}
-
-//============================================================================
-
-void CouplingAnalysis::GetAlpha5Key(const float alpha5, int &alpha5Key) const
-{
-    for (IntToFloatMap::const_iterator iter = m_KeyToAlpha5Map.begin(); iter != m_KeyToAlpha5Map.end(); ++iter)
-    {
-        if (this->DoFloatsMatch(iter->second, alpha5))
-        {
-            alpha5Key = iter->first;
-            return;
+            return iter->first;
         }
     }
 }
@@ -292,17 +283,127 @@ void CouplingAnalysis::GetAlpha5Key(const float alpha5, int &alpha5Key) const
 
 float CouplingAnalysis::GetAlpha4(int key) const
 {
-    return m_KeyToAlpha4Map.at(key);
+    return m_keyToAlpha4Map.at(key);
+}
+
+//============================================================================
+
+bool CouplingAnalysis::DoesAlpha5KeyExist(const float alpha5) const
+{
+    for (IntToFloatMap::const_iterator iter = m_keyToAlpha5Map.begin(); iter != m_keyToAlpha5Map.end(); ++iter)
+    {
+        if (this->DoFloatsMatch(iter->second, alpha5))
+            return true;
+    }
+    return false;
+}
+
+//============================================================================
+
+void CouplingAnalysis::SetAlpha5Key(const float alpha5)
+{
+    m_keyToAlpha5Map.insert(std::make_pair(m_numberUniqueAlpha5,alpha5));
+    m_numberUniqueAlpha5++;
+    m_alpha5Vector.push_back(alpha5);
+}
+
+//============================================================================
+
+int CouplingAnalysis::GetAlpha5Key(const float alpha5) const
+{
+    for (IntToFloatMap::const_iterator iter = m_keyToAlpha5Map.begin(); iter != m_keyToAlpha5Map.end(); ++iter)
+    {
+        if (this->DoFloatsMatch(iter->second, alpha5))
+        {
+            return iter->first;
+        }
+    }
 }
 
 //============================================================================
 
 float CouplingAnalysis::GetAlpha5(int key) const
 {
-    return m_KeyToAlpha5Map.at(key);
+    return m_keyToAlpha5Map.at(key);
+}
+
+//============================================================================ Do Weighting
+
+void CouplingAnalysis::GetWeight(const int eventNumber, const float alpha4, const float alpha5, float &eventWeight) const 
+{
+    if (alpha4 < *m_alpha4Vector.begin() or m_alpha4Vector.back() <= alpha4 or alpha5 < *m_alpha5Vector.begin() or m_alpha5Vector.back() <= alpha5)
+    {
+        std::cout << "Unable to apply bilinear interpolation to event, please add more weight samples.  Setting event weight to 1." << std::endl;
+        eventWeight = 1.f;
+    }
+
+    int lowAlpha4Key(std::numeric_limits<int>::max());
+    int highAlpha4Key(std::numeric_limits<int>::max());
+    int lowAlpha5Key(std::numeric_limits<int>::max());
+    int highAlpha5Key(std::numeric_limits<int>::max());
+
+    this->SetAlpha4BoundingKeys(alpha4, lowAlpha4Key, highAlpha4Key);
+    this->SetAlpha5BoundingKeys(alpha5, lowAlpha5Key, highAlpha5Key);
+
+    IntToIntToIntToFloatMap::const_iterator it = m_eventToAlpha4ToAlpha5ToWeightMap.find(eventNumber);
+
+    if (it == m_eventToAlpha4ToAlpha5ToWeightMap.end())
+        std::cout << "Missing event number " << eventNumber << std::endl;
+
+    const float lowerA4(this->GetAlpha4(lowAlpha4Key));
+    const float upperA4(this->GetAlpha4(highAlpha4Key));
+    const float lowerA5(this->GetAlpha4(lowAlpha5Key));
+    const float upperA5(this->GetAlpha4(highAlpha5Key));
+    const float lowerA4lowerA5(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(lowAlpha4Key).at(lowAlpha5Key));
+    const float lowerA4upperA5(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(highAlpha4Key).at(lowAlpha5Key));
+    const float upperA4lowerA5(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(lowAlpha4Key).at(highAlpha5Key));
+    const float upperA4upperA5(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(highAlpha4Key).at(highAlpha5Key));
+    eventWeight = this->BilinearInterpolation(lowerA4lowerA5,lowerA4upperA5,upperA4lowerA5,upperA4upperA5,alpha4,lowerA4,upperA4,alpha5,lowerA5,upperA5);
 }
 
 //============================================================================
+
+void CouplingAnalysis::SetAlpha4BoundingKeys(const float alpha4, int &lowAlpha4Key, int &highAlpha4Key) const
+{
+    for (FloatVector::const_iterator iter = m_alpha4Vector.begin(); iter != m_alpha4Vector.end() - 1; iter++)
+    {
+        int position(iter - m_alpha4Vector.begin());
+
+        if (m_alpha4Vector.at(position) <= alpha4 and alpha4 < m_alpha4Vector.at(position+1))
+        { 
+            lowAlpha4Key = this->GetAlpha4Key(m_alpha4Vector.at(position));
+            highAlpha4Key = this->GetAlpha4Key(m_alpha4Vector.at(position+1));
+            return;
+        }
+    }
+}
+
+//============================================================================
+
+void CouplingAnalysis::SetAlpha5BoundingKeys(const float alpha5, int &lowAlpha5Key, int &highAlpha5Key) const 
+{
+    for (FloatVector::const_iterator iter = m_alpha5Vector.begin(); iter != m_alpha5Vector.end() - 1; iter++)
+    {
+        int position(iter - m_alpha5Vector.begin());
+        if (m_alpha5Vector.at(position) <= alpha5 and alpha5 < m_alpha5Vector.at(position+1))
+        {
+            lowAlpha5Key = this->GetAlpha5Key(m_alpha5Vector.at(position));
+            highAlpha5Key = this->GetAlpha4Key(m_alpha5Vector.at(position+1));
+            return;
+        }
+    }
+}
+
+//============================================================================
+
+float CouplingAnalysis::BilinearInterpolation(const float f11, const float f12, const float f21, const float f22, const float x, const float x1, const float x2, const float y, const float y1, const float y2) const
+{
+    const float numerator((x2-x) * ((f11 * (y2-y)) + (f12 * (y-y1))) + (x-x1) * ((f21 * (y2-y)) + (f22 * (y-y1))));
+    const float denominator((x2-x1)*(y2-y1));
+    return numerator/denominator;
+}
+
+//============================================================================ Helper
 
 template <class T>
 std::string CouplingAnalysis::NumberToString(T Number) const 
@@ -318,7 +419,7 @@ template <class T>
 std::string CouplingAnalysis::FileNumberToString(T Number) const 
 {
     std::ostringstream ss;
-    ss << setfill('0') << setw(3) << Number;
+    ss << std::setfill('0') << std::setw(3) << Number;
     return ss.str();
 }
 

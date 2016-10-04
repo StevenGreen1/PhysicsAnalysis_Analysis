@@ -18,6 +18,7 @@
 #include "TInterpreter.h"
 #include "TTree.h"
 
+#include "PreSelection.h"
 #include "Process.h"
 
 using namespace analysis_namespace;
@@ -30,7 +31,7 @@ class PostMVASelection
         /**
          *  @brief Constructor
          */
-        PostMVASelection(const ProcessVector &processVector);
+        PostMVASelection(const ProcessVector &processVector, PreSelection *pPreSelection);
 
         /**
          *  @brief Destructor
@@ -50,11 +51,39 @@ class PostMVASelection
          */
         void ApplyBDTCut(double low, double high);
 
+        /**
+         *  @brief Make a list of global event numbers for events passing the event selection
+         */
+        void MakeWeightList();
+ 
+        /**
+         *  @brief Get list of global event numbers for events passing the event selection
+         */
+        IntVector GetEventsNeedingWeightsList() const;
+
+        /**
+         *  @brief Return m_pPreSelection
+         */
+        PreSelection* GetPreSelection();
+
+        /**
+         *  @brief Return m_bdtLow
+         */
+        double GetBDTLowCut() const;
+
+        /**
+         *  @brief Return m_bdtHigh
+         */
+        double GetBDTHighCut() const;
+
+    private:
+        PreSelection *m_pPreSelection;            ///< PreSelection object containing preselection cuts <- Can and should move to private variable
+        ProcessVector m_processVector;            ///< Processes including TChains to apply cuts on
+        IntVector     m_eventsNeedingWeights;     ///< List of global event numbers requiring weights
+
         double        m_bdtLow;                   ///< Low bdt cut
         double        m_bdtHigh;                  ///< High bdt cut
 
-    private:
-        ProcessVector m_processVector;            ///< Processes including TChains to apply cuts on
 };
 
 #endif // #ifndef POST_MVA_SELECTION_H

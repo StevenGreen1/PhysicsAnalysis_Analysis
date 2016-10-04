@@ -12,10 +12,11 @@ using namespace analysis_namespace;
 
 //===========================================================
 
-PostMVASelection::PostMVASelection(const ProcessVector &processVector) : 
+PostMVASelection::PostMVASelection(const ProcessVector &processVector, PreSelection *pPreSelection) : 
     m_bdtLow(-std::numeric_limits<double>::max()),
     m_bdtHigh(std::numeric_limits<double>::max()),
-    m_processVector(processVector)
+    m_processVector(processVector),
+    m_pPreSelection(pPreSelection)
 {
 }
 
@@ -36,9 +37,15 @@ void PostMVASelection::ApplyPostMVASelection()
         const Process *pProcess(*it);
         TChain *pTChain(pProcess->GetPostMVATChain());
 
-        double bdt(std::numeric_limits<double>::max());
+        Int_t nIsolatedLeptons(std::numeric_limits<float>::max());
+        Double_t transverseMomentum(std::numeric_limits<float>::max());
+        Double_t invariantMassSystem(std::numeric_limits<float>::max());
+        Double_t bdt(std::numeric_limits<double>::max());
 
+        pTChain->SetBranchAddress("NumberOfIsolatedLeptons", &nIsolatedLeptons);
         pTChain->SetBranchAddress("BDT", &bdt);
+        pTChain->SetBranchAddress("TransverseMomentum", &transverseMomentum);
+        pTChain->SetBranchAddress("InvariantMassSystem", &invariantMassSystem);
 
         int counter(0);
 
@@ -46,7 +53,13 @@ void PostMVASelection::ApplyPostMVASelection()
         {
             pTChain->GetEntry(i);
 
-            if (bdt < m_bdtLow  or m_bdtHigh < bdt)
+            if (bdt < m_bdtLow or m_bdtHigh < bdt)
+                continue;
+            if (nIsolatedLeptons < m_pPreSelection->GetNumberOfIsolatedLeptonsLowCut() or m_pPreSelection->GetNumberOfIsolatedLeptonsHighCut() < nIsolatedLeptons)
+                continue;
+            if (transverseMomentum < m_pPreSelection->GetTransverseMomentumLowCut() or m_pPreSelection->GetTransverseMomentumHighCut() < transverseMomentum)
+                continue;
+            if (invariantMassSystem < m_pPreSelection->GetInvariantMassSystemLowCut() or m_pPreSelection->GetInvariantMassSystemHighCut() < invariantMassSystem)
                 continue;
 
             counter++;
@@ -67,6 +80,78 @@ void PostMVASelection::ApplyBDTCut(double low, double high)
 {
     m_bdtLow = low;
     m_bdtHigh = high;
+}
+
+//===========================================================
+
+void PostMVASelection::MakeWeightList()
+{
+    m_eventsNeedingWeights.clear();
+
+    for (ProcessVector::const_iterator it = m_processVector.begin(); it != m_processVector.end(); it++)
+    {
+        const Process *pProcess(*it);
+        if (pProcess->GetEventType() != "ee_nunuqqqq")
+            continue;
+
+        TChain *pTChain(pProcess->GetPostMVATChain());
+
+        Int_t globalEventNumber(std::numeric_limits<int>::max());
+        Int_t nIsolatedLeptons(std::numeric_limits<int>::max());
+        Double_t transverseMomentum(std::numeric_limits<double>::max());
+        Double_t invariantMassSystem(std::numeric_limits<double>::max());
+        Double_t bdt(std::numeric_limits<double>::max());
+
+        pTChain->SetBranchAddress("GlobalEventNumber", &globalEventNumber);
+        pTChain->SetBranchAddress("NumberOfIsolatedLeptons", &nIsolatedLeptons);
+        pTChain->SetBranchAddress("TransverseMomentum", &transverseMomentum);
+        pTChain->SetBranchAddress("InvariantMassSystem", &invariantMassSystem);
+        pTChain->SetBranchAddress("BDT", &bdt);
+
+        for (unsigned int i = 0; i < pTChain->GetEntries(); i++)
+        {
+            pTChain->GetEntry(i);
+
+            if (bdt < m_bdtLow or m_bdtHigh < bdt)
+                continue;
+            if (nIsolatedLeptons < m_pPreSelection->GetNumberOfIsolatedLeptonsLowCut() or m_pPreSelection->GetNumberOfIsolatedLeptonsHighCut() < nIsolatedLeptons)
+                continue;
+            if (transverseMomentum < m_pPreSelection->GetTransverseMomentumLowCut() or m_pPreSelection->GetTransverseMomentumHighCut() < transverseMomentum)
+                continue;
+            if (invariantMassSystem < m_pPreSelection->GetInvariantMassSystemLowCut() or m_pPreSelection->GetInvariantMassSystemHighCut() < invariantMassSystem)
+                continue;
+
+            m_eventsNeedingWeights.push_back(globalEventNumber);
+        }
+    }
+}
+
+//===========================================================
+
+IntVector PostMVASelection::GetEventsNeedingWeightsList() const
+{
+    return m_eventsNeedingWeights;
+}
+
+//===========================================================
+
+PreSelection* PostMVASelection::GetPreSelection()
+{
+    return m_pPreSelection;
+}
+
+//===========================================================
+
+double PostMVASelection::GetBDTLowCut() const
+{
+    return m_bdtLow;
+}
+
+//===========================================================
+
+double PostMVASelection::GetBDTHighCut() const
+{
+    return m_bdtHigh;
 }
 
 //===========================================================

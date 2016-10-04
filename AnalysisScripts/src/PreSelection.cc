@@ -13,6 +13,8 @@ using namespace analysis_namespace;
 //===========================================================
 
 PreSelection::PreSelection(const ProcessVector &processVector) : 
+    m_nIsolatedLeptonsLow(-std::numeric_limits<int>::max()),
+    m_nIsolatedLeptonsHigh(std::numeric_limits<int>::max()),
     m_transverseMomentumLow(-std::numeric_limits<double>::max()),
     m_transverseMomentumHigh(std::numeric_limits<double>::max()),
     m_invariantMassSystemLow(-std::numeric_limits<double>::max()),
@@ -42,6 +44,7 @@ void PreSelection::ApplyPreSelection()
         const Process *pProcess(*it);
         TChain *pTChain(pProcess->GetTrainingTChain());
 
+        int nIsolatedLeptons(std::numeric_limits<int>::max());
         double transverseMomentum(std::numeric_limits<double>::max());
         double invariantMassSystem(std::numeric_limits<double>::max());
         double bTag1(std::numeric_limits<double>::max());
@@ -53,6 +56,7 @@ void PreSelection::ApplyPreSelection()
         double invMassZ1(std::numeric_limits<double>::max());
         double invMassZ2(std::numeric_limits<double>::max());
 
+        pTChain->SetBranchAddress("NumberOfIsolatedLeptons", &nIsolatedLeptons);
         pTChain->SetBranchAddress("TransverseMomentum", &transverseMomentum);
         pTChain->SetBranchAddress("InvariantMassSystem", &invariantMassSystem);
         pTChain->SetBranchAddress("BTagForJet1", &bTag1);
@@ -69,6 +73,9 @@ void PreSelection::ApplyPreSelection()
         for (unsigned int i = 0; i < pTChain->GetEntries(); i++)
         {
             pTChain->GetEntry(i);
+
+            if (nIsolatedLeptons < m_nIsolatedLeptonsLow or m_nIsolatedLeptonsHigh < nIsolatedLeptons)
+                continue;
 
             if (transverseMomentum < m_transverseMomentumLow  or m_transverseMomentumHigh < transverseMomentum)
                 continue;
@@ -137,6 +144,14 @@ void PreSelection::ApplyBTagCut(double low, double high)
 
 //===========================================================
 
+void PreSelection::ApplyNIsolatedLeptonCut(int low, int high)
+{
+    m_nIsolatedLeptonsLow = low;
+    m_nIsolatedLeptonsHigh = high;
+}
+
+//===========================================================
+
 void PreSelection::Print()
 {
     std::cout << "m_transverseMomentumLow        : " << m_transverseMomentumLow << std::endl;
@@ -158,4 +173,73 @@ void PreSelection::Clear()
 
 //===========================================================
 
+int PreSelection::GetNumberOfIsolatedLeptonsLowCut() const
+{
+    return m_nIsolatedLeptonsLow;
+}
+
+//===========================================================
+
+int PreSelection::GetNumberOfIsolatedLeptonsHighCut() const
+{
+    return m_nIsolatedLeptonsHigh;
+}
+
+//===========================================================
+
+double PreSelection::GetTransverseMomentumLowCut() const
+{
+    return m_transverseMomentumLow;
+}
+
+//===========================================================
+
+double PreSelection::GetTransverseMomentumHighCut() const
+{
+    return m_transverseMomentumHigh;
+}
+
+//===========================================================
+
+double PreSelection::GetInvariantMassSystemLowCut() const
+{
+    return m_invariantMassSystemLow;
+}
+
+//===========================================================
+
+double PreSelection::GetInvariantMassSystemHighCut() const
+{
+    return m_invariantMassSystemHigh;
+}
+
+//===========================================================
+
+double PreSelection::GetInvariantMassBosonLowCut() const
+{
+    return m_invariantMassBosonLow;
+}
+
+//===========================================================
+
+double PreSelection::GetInvariantMassBosonHighCut() const
+{
+    return m_invariantMassBosonHigh;
+}
+
+//===========================================================
+
+double PreSelection::GetBTagLowCut() const
+{
+    return m_bTagLow;
+}
+
+//===========================================================
+
+double PreSelection::GetBTagHighCut() const
+{
+    return m_bTagHigh;
+}
+
+//===========================================================
 

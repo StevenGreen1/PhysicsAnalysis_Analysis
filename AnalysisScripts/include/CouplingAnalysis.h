@@ -33,27 +33,33 @@
 
 #include "tinyxml.h"
 
-using namespace std;
+#include "Process.h"
+#include "PostMVASelection.h"
 
-enum SuccessEnum {FAILURE, SUCCESS};
+using namespace analysis_namespace;
 
 class CouplingAnalysis
 {
-    typedef std::vector<float> FloatVector;
     typedef std::map<int, float> IntToFloatMap;
     typedef std::map<int, IntToFloatMap > IntToIntToFloatMap;
     typedef std::map<int, IntToIntToFloatMap > IntToIntToIntToFloatMap;
+    typedef std::vector<const Process*> ProcessVector;
 
     public:
         /**
-         * @brief Constructor
+         *  @brief Constructor
          */
-        CouplingAnalysis(std::string process, std::string energy);
+        CouplingAnalysis(const ProcessVector &processVector, PostMVASelection *pPostMVASelection);
 
         /**
-         * @brief Destructor
+         *  @brief Destructor
          */
         ~CouplingAnalysis();
+
+        /**
+         *  @brief Read in all event weights from file and concatenate data into one xml file
+         */ 
+        void GetWeightsFromFiles();
 
         /**
          * @brief  Get the event weight for a specific event and a given value of alpha4 and alpha5
@@ -66,18 +72,117 @@ class CouplingAnalysis
         void GetWeight(const int eventNumber, const float alpha4, const float alpha5, float &eventWeight) const;
 
     private:
-        /**
-         * @brief Load all the xml files containing the reweighting information
-         */
-        void LoadXml();
+         /**
+          *  @brief Load files for all alpha 4 and alpha 5 values sharing same generator number for a given process
+          *
+          *  @param genN Generator number to link to xml file to load
+          *  @param pProcess Process indicating which data to load 
+          */
+        void LoadXmlData(const int genN, const Process *pProcess);
+
+         /**
+          *  @brief Load files for a single alpha 4 and alpha 5 values sharing same generator number for a given process
+          *
+          *  @param genN Generator number to link to xml file to load
+          *  @param alpha4 value to link to xml file to load
+          *  @param alpha5 value to link to xml file to load
+          *  @param pProcess Process indicating which data to load
+          */
+        void LoadIndividualXmlData(const int &genN, const float &alpha4, const float &alpha5, const Process *pProcess);
+
+         /**
+          *  @brief Save concatenated xml data for event weights
+          *
+          *  @param generatorNumber 
+          */
+        void SaveXmlData(int generatorNumber);
+
+         /**
+          *  @brief Load concatenated xml data for event weights
+          */
+        void LoadData();
 
         /**
-         * @brief Load a single xml file containing the reweighting information
+         *  @brief Check to see if two floats are identical to floating point precision
          *
-         * @param alpha4 value used in weight information for the loaded xml file
-         * @param alpha5 value used in weight information for the loaded xml file
+         *  @param a float to compare
+         *  @param b float to compare
          */
-        void LoadIndividualXml(const float alpha4, const float alpha5);
+        bool DoFloatsMatch(float a, float b) const;
+
+        /**
+         *  @brief Retrun a bool asking does a key already exist for this value of alpha4
+         *
+         *  @param alpha4 value in question
+         */
+        bool DoesAlpha4KeyExist(const float alpha4) const;
+
+        /**
+         * @brief Set a new int key for the given value of alpha4
+         *
+         * @param alpha4 value to set key for
+         */
+        void SetAlpha4Key(const float alpha4);
+
+        /**
+         * @brief Return the int key for the given value of alpha4
+         *
+         * @param alpha4 value to get key for
+         */
+        int GetAlpha4Key(const float alpha4) const;
+
+        /**
+         * @brief Get the value of alpha4 for the given key
+         *
+         * @param alpha4Key integer key to the alpha4 value requested
+         */
+        float GetAlpha4(int key) const;
+
+        /**
+         *  @brief Retrun a bool asking does a key already exist for this value of alpha5
+         *
+         *  @param alpha5 value in question
+         */
+        bool DoesAlpha5KeyExist(const float alpha5) const;
+
+        /**
+         * @brief Set a new int key for the given value of alpha5
+         *
+         * @param alpha5 value to set key for
+         */
+        void SetAlpha5Key(const float alpha5);
+
+        /**
+         * @brief Return the int key for the given value of alpha5
+         *
+         * @param alpha5 value to get key for
+         */
+        int GetAlpha5Key(const float alpha5) const;
+
+        /**
+         * @brief Get the value of alpha5 for the given key
+         *
+         * @param key integer key to the alpha5 value requested
+         */
+        float GetAlpha5(int key) const;
+
+        /**
+         *  @brief Set the bounding key values, for key->float value with recorded weights, for the given value of alpha4 requested
+         *
+         *  @param alpha4 value in question
+         *  @param lowAlpha4Key Lower bound of requested alpha value
+         *  @param highAlpha4Key High bound of requested alpha value
+         */
+        void SetAlpha4BoundingKeys(const float alpha4, int &lowAlpha4Key, int &highAlpha4Key) const;
+
+        /**
+         *  @brief Set the bounding key values, for key->float value with recorded weights, for the given value of alpha5 requested
+         *
+         *  @param alpha5 value in question
+         *  @param lowAlpha5Key Lower bound of requested alpha value
+         *  @param highAlpha5Key High bound of requested alpha value
+         */
+        void SetAlpha5BoundingKeys(const float alpha5, int &lowAlpha5Key, int &highAlpha5Key) const;
 
         /**
          * @brief Perform bilinear interpolation based on the bounding weight values for the requested x and y
@@ -94,54 +199,6 @@ class CouplingAnalysis
          * @param y2 Upper bounding value of interpolated point
          */
         float BilinearInterpolation(const float f11, const float f12, const float f21, const float f22, const float x, const float x1, const float x2, const float y, const float y1, const float y2) const;
-
-        bool DoFloatsMatch(float a, float b) const;
-
-        /**
-         * @brief Find the int key to the stored values of alpha4 that were simulated in whizard.  If not in m_Alpha4Vector add to vector and make new key.
-         *
-         * @param alpha4 value simulated in whizard
-         * @param alpha4Key integer key to alpha4 value simulated in whizard
-         */
-        void SetAlpha4Key(const float alpha4, int &alpha4Key);
-
-        /**
-         * @brief Find the int key to the stored values of alpha4 that were simulated in whizard.  Do nothing if not found in m_Alpha4Vector.
-         *
-         * @param alpha4 value simulated in whizard
-         * @param alpha4Key integer key to alpha4 value simulated in whizard
-         */
-        void GetAlpha4Key(const float alpha4, int &alpha4Key) const;
-
-        /**
-         * @brief Find the int key to the stored values of alpha5 that were simulated in whizard.  If not in m_Alpha5Vector add to vector and make new key.
-         *
-         * @param alpha5 value simulated in whizard
-         * @param alpha5Key integer key to alpha4 value simulated in whizard
-         */
-        void SetAlpha5Key(const float alpha5, int &alpha5Key);
-
-        /**
-         * @brief Find the int key to the stored values of alpha5 that were simulated in whizard.  Do nothing if not found in m_Alpha4Vector.
-         *
-         * @param alpha5 value simulated in whizard
-         * @param alpha5Key integer key to alpha4 value simulated in whizard
-         */
-        void GetAlpha5Key(const float alpha5, int &alpha5Key) const;
-
-        /**
-         * @brief Get the value of alpha4 for a given alpha4 integer key
-         *
-         * @param alpha4Key integer key to the alpha4 value requested
-         */
-        float GetAlpha4(int alpha4Key) const;
-
-        /**
-         * @brief Get the value of alpha5 for a given alpha4 integer key
-         *
-         * @param alpha5Key integer key to the alpha5 value requested
-         */
-        float GetAlpha5(int alpha5Key) const;
 
         /**
          * @brief Convert number to string in specific format for reading in xml files
@@ -167,15 +224,54 @@ class CouplingAnalysis
         template <class T>
         std::string NumberToString(T Number) const;
 
-        std::string             m_process;                          ///< String of process under consideration
-        std::string             m_energy;                           ///< Energy of process under consideration
-        int                     m_NumberUniqueAlpha4;               ///< Number of unique values of alpha4 simulated in whizard and read in
-        int                     m_NumberUniqueAlpha5;               ///< Number of unique values of alpha5 simulated in whizard and read in
-        FloatVector             m_Alpha4Vector;                     ///< Vector of unique values of alpha4 simulated in whizard and read in
-        FloatVector             m_Alpha5Vector;                     ///< Vector of unique values of alpha5 simulated in whizard and read in
-        IntToFloatMap           m_KeyToAlpha4Map;                   ///< Map of integer keys to unique values of alpha4 simulated in whizard 
-        IntToFloatMap           m_KeyToAlpha5Map;                   ///< Map of integer keys to unique values of alpha5 simulated in whizard
-        IntToIntToIntToFloatMap m_EventToAlpha4ToAlpha5ToWeightMap; ///< Map of event number to alpha4 to alpha5 to event weight 
+//        std::string             m_process;                          ///< String of process under consideration
+//        std::string             m_energy;                           ///< Energy of process under consideration
+
+        ProcessVector           m_processVector;
+        PostMVASelection       *m_pPostMVASelection;
+        IntVector               m_eventsNeedingWeights;
+
+        int                     m_numberUniqueAlpha4;               ///< Number of unique values of alpha4 simulated in whizard and read in
+        int                     m_numberUniqueAlpha5;               ///< Number of unique values of alpha5 simulated in whizard and read in
+        int                     m_a4IntMin;                         ///< Min int to use for stepping alpha4 values
+        int                     m_a4IntMax;                         ///< Max int to use for stepping alpha4 values
+        float                   m_a4Step;                           ///< Step value for alpha4
+        int                     m_a5IntMin;                         ///< Min int to use for stepping alpha5 values
+        int                     m_a5IntMax;                         ///< Max int to use for stepping alpha5 values
+        float                   m_a5Step;                           ///< Step value for alpha5
+        IntVector               m_readInGenNumbers;                 ///< GenN values read in
+        FloatVector             m_alpha4Vector;                     ///< Vector of unique values of alpha4 simulated in whizard and read in
+        FloatVector             m_alpha5Vector;                     ///< Vector of unique values of alpha5 simulated in whizard and read in
+        IntToFloatMap           m_keyToAlpha4Map;                   ///< Map of integer keys to unique values of alpha4 simulated in whizard 
+        IntToFloatMap           m_keyToAlpha5Map;                   ///< Map of integer keys to unique values of alpha5 simulated in whizard
+        IntToIntToIntToFloatMap m_eventToAlpha4ToAlpha5ToWeightMap; ///< Map of event number to alpha4 to alpha5 to event weight 
+
+        class Event
+        {
+            private:
+                std::string m_Process;
+                std::string m_Energy;
+                int m_EventNumber;
+                float m_Alpha4;
+                float m_Alpha5;
+                float m_Weight;
+            public:
+                void SetEventNumber(int eventNumber) { m_EventNumber = eventNumber; }
+                void SetAlpha4(float alpha4) { m_Alpha4 = alpha4; }
+                void SetAlpha5(float alpha5) { m_Alpha5 = alpha5; }
+                void SetWeight(float weight) { m_Weight = weight; }
+                void SetProcess(std::string process) { m_Process = process; }
+                void SetEnergy(std::string energy) { m_Energy = energy; }
+                int GetEventNumber() { return m_EventNumber; }
+                float GetAlpha4() { return m_Alpha4; }
+                float GetAlpha5() { return m_Alpha5; }
+                float GetWeight() { return m_Weight; }
+                std::string GetProcess() { return m_Process; }
+                std::string GetEnergy() { return m_Energy; }
+        };
+
+        typedef std::vector<CouplingAnalysis::Event*> EventVector;
+        EventVector m_Events;
 };
 
 #endif

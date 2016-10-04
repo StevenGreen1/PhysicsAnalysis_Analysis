@@ -75,6 +75,14 @@ class PreSelection
         void ApplyBTagCut(double low, double high);
 
         /**
+         *  @brief Set number of isolated leptons cut
+         *
+         *  @param low number of isolated leptons
+         *  @param high number of isolated leptons
+         */
+        void ApplyNIsolatedLeptonCut(int low, int high);
+
+        /**
          *  @brief Print to screen all bool, int, double and selected vector member variables
          */
         void Print();
@@ -85,17 +93,59 @@ class PreSelection
         void Clear();
 
         /**
-         *  @brief Set
-         *
-         *  @param
+         *  @brief Return m_nIsolatedLeptonsLow
          */
-//        void Set(DoubleVector );
+        int GetNumberOfIsolatedLeptonsLowCut() const;
 
         /**
-         *  @brief Get
+         *  @brief Return m_nIsolatedLeptonsHigh
          */
-//        DoubleVector Get();
+        int GetNumberOfIsolatedLeptonsHighCut() const;
 
+        /**
+         *  @brief Return m_transverseMomentumLow
+         */
+        double GetTransverseMomentumLowCut() const;
+
+        /**
+         *  @brief Return m_transverseMomentumHigh
+         */
+        double GetTransverseMomentumHighCut() const;
+
+        /**
+         *  @brief Return m_invariantMassSystemLow
+         */
+        double GetInvariantMassSystemLowCut() const;
+
+        /**
+         *  @brief Return m_invariantMassSystemHigh
+         */
+        double GetInvariantMassSystemHighCut() const;
+
+        /**
+         *  @brief Return m_invariantMassBosonLow
+         */
+        double GetInvariantMassBosonLowCut() const;
+
+        /**
+         *  @brief Return m_invariantMassBosonHigh
+         */
+        double GetInvariantMassBosonHighCut() const;
+
+        /**
+         *  @brief Return m_bTagLow
+         */
+        double GetBTagLowCut() const;
+
+        /**
+         *  @brief Return m_bTagHigh
+         */
+        double GetBTagHighCut() const;
+
+    private:
+        ProcessVector m_processVector;            ///< Processes including TChains to apply cuts on
+        int           m_nIsolatedLeptonsLow;      ///< Low number of isolated leptons cut
+        int           m_nIsolatedLeptonsHigh;     ///< High number of isolated leptons cut
         double        m_transverseMomentumLow;    ///< Low transverse momentum cut
         double        m_transverseMomentumHigh;   ///< High transverse momentum cut
         double        m_invariantMassSystemLow;   ///< Low invariant mass cut
@@ -105,8 +155,6 @@ class PreSelection
         double        m_bTagLow;                  ///< Low b tag cut
         double        m_bTagHigh;                 ///< High b tag cut
 
-    private:
-        ProcessVector m_processVector;            ///< Processes including TChains to apply cuts on
 };
 
 #endif // #ifndef PRE_SELECTION_H

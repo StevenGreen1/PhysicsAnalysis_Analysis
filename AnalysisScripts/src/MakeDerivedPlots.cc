@@ -10,7 +10,7 @@
 
 //=====================================================================
 
-MakeDerivedPlots::MakeDerivedPlots(const ProcessVector &processVector, PreSelection *pPreSelection) :
+MakeDerivedPlots::MakeDerivedPlots(const ProcessVector &processVector, PreSelection *pPreSelection, PostMVASelection *pPostMVASelection) :
     m_pPreSelection(pPreSelection),
     m_processVector(processVector)
 {
@@ -58,42 +58,84 @@ MakeDerivedPlots::MakeDerivedPlots(const ProcessVector &processVector, PreSelect
     MakeDerivedPlots::PlotContainer *pHighestCTagZPlotContainer = new MakeDerivedPlots::PlotContainer("HighestCTagZ", 100, 0.0, 1.0);
     MakeDerivedPlots::PlotContainer *pLowestCTagZPlotContainer = new MakeDerivedPlots::PlotContainer("LowestCTagZ", 100, 0.0, 1.0);
 
+    MakeDerivedPlots::PlotContainer *pNumberOfIsolatedLeptons = new MakeDerivedPlots::PlotContainer("NumberOfIsolatedLeptons", 5, 0, 5);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyIsolatedLeptonEnergy = new MakeDerivedPlots::PlotContainer("HighestEnergyIsolatedLeptonEnergy", 700, 0, 700);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyIsolatedLeptonMomentum = new MakeDerivedPlots::PlotContainer("HighestEnergyIsolatedLeptonTransverseMomentum", 700, 0, 700);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyIsolatedLeptonTransverseMomentum = new MakeDerivedPlots::PlotContainer("HighestEnergyIsolatedLeptonCosTheta", 700, 0, 700);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyIsolatedLeptonCosTheta = new MakeDerivedPlots::PlotContainer("HighestEnergyIsolatedLeptonCosTheta", 100, 0, 1);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyPfoEnergy = new MakeDerivedPlots::PlotContainer("HighestEnergyPfoEnergy", 700, 0, 700);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyPfoMomentum = new MakeDerivedPlots::PlotContainer("HighestEnergyPfoMomentum", 700, 0, 700);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyPfoTransverseMomentum = new MakeDerivedPlots::PlotContainer("HighestEnergyPfoTransverseMomentum", 700, 0, 700);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyPfoCosTheta = new MakeDerivedPlots::PlotContainer("HighestEnergyPfoCosTheta", 100, 0, 1);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyElectronEnergy = new MakeDerivedPlots::PlotContainer("HighestEnergyElectronEnergy", 700, 0, 700);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyElectronMomentum = new MakeDerivedPlots::PlotContainer("HighestEnergyElectronMomentum", 700, 0, 700);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyElectronTransverseMomentum = new MakeDerivedPlots::PlotContainer("HighestEnergyElectronTransverseMomentum", 700, 0, 700);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyElectronCosTheta = new MakeDerivedPlots::PlotContainer("HighestEnergyElectronCosTheta", 100, 0, 1);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyMuonEnergy = new MakeDerivedPlots::PlotContainer("HighestEnergyMuonEnergy", 700, 0, 700);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyMuonMomentum = new MakeDerivedPlots::PlotContainer("HighestEnergyMuonMomentum", 700, 0, 700);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyMuonTransverseMomentum = new MakeDerivedPlots::PlotContainer("HighestEnergyMuonTransverseMomentum", 700, 0, 700);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyMuonCosTheta = new MakeDerivedPlots::PlotContainer("HighestEnergyMuonCosTheta", 100, 0, 1);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyPhotonEnergy = new MakeDerivedPlots::PlotContainer("HighestEnergyPhotonEnergy", 700, 0, 700);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyPhotonMomentum = new MakeDerivedPlots::PlotContainer("HighestEnergyPhotonMomentum", 700, 0, 700);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyPhotonTransverseMomentum = new MakeDerivedPlots::PlotContainer("HighestEnergyPhotonTransverseMomentum", 700, 0, 700);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyPhotonCosTheta = new MakeDerivedPlots::PlotContainer("HighestEnergyPhotonCosTheta", 100, 0, 1);
+
     for (ProcessVector::const_iterator it = m_processVector.begin(); it != m_processVector.end(); it ++)
     {
         const Process *pProcess(*it);
         double weight(pProcess->GetProcessWeight());
 
-        TChain *pTChain = pProcess->GetTChain(); 
+        TChain *pTChain; 
         Variables *pVariables = new Variables();
-        pVariables->SetBranchAddresses(pTChain);
+
+        if (pPostMVASelection != NULL)
+        {
+            pTChain = pProcess->GetPostMVATChain(); 
+            pVariables->SetBranchAddresses(pTChain, true);
+        }
+        else
+        {
+            pTChain = pProcess->GetTChain(); 
+            pVariables->SetBranchAddresses(pTChain, false);
+        }
 
         for (int entry = 0; entry < pTChain->GetEntries(); entry++)
         {
             pTChain->GetEntry(entry);
 
-            if (pVariables->m_transverseMomentum < m_pPreSelection->m_transverseMomentumLow or m_pPreSelection->m_transverseMomentumHigh < pVariables->m_transverseMomentum)
+            if (pVariables->m_nIsolatedLeptons < m_pPreSelection->GetNumberOfIsolatedLeptonsLowCut() or m_pPreSelection->GetNumberOfIsolatedLeptonsHighCut() < pVariables->m_nIsolatedLeptons)
                 continue;
 
-            if (pVariables->m_invariantMassSystem < m_pPreSelection->m_invariantMassSystemLow or m_pPreSelection->m_invariantMassSystemHigh < pVariables->m_invariantMassSystem)
+            if (pVariables->m_transverseMomentum < m_pPreSelection->GetTransverseMomentumLowCut() or m_pPreSelection->GetTransverseMomentumHighCut() < pVariables->m_transverseMomentum)
                 continue;
 
-            if (pVariables->m_invariantMassWBosons1 < m_pPreSelection->m_invariantMassBosonLow or m_pPreSelection->m_invariantMassBosonHigh < pVariables->m_invariantMassWBosons1)
+            if (pVariables->m_invariantMassSystem < m_pPreSelection->GetInvariantMassSystemLowCut() or m_pPreSelection->GetInvariantMassSystemHighCut() < pVariables->m_invariantMassSystem)
                 continue;
 
-            if (pVariables->m_invariantMassWBosons2 < m_pPreSelection->m_invariantMassBosonLow or m_pPreSelection->m_invariantMassBosonHigh < pVariables->m_invariantMassWBosons2)
+            if (pVariables->m_invariantMassWBosons1 < m_pPreSelection->GetInvariantMassBosonLowCut() or m_pPreSelection->GetInvariantMassBosonHighCut() < pVariables->m_invariantMassWBosons1)
                 continue;
 
-            if (pVariables->m_invariantMassZBosons1 < m_pPreSelection->m_invariantMassBosonLow or m_pPreSelection->m_invariantMassBosonHigh < pVariables->m_invariantMassZBosons1)
+            if (pVariables->m_invariantMassWBosons2 < m_pPreSelection->GetInvariantMassBosonLowCut() or m_pPreSelection->GetInvariantMassBosonHighCut() < pVariables->m_invariantMassWBosons2)
                 continue;
 
-            if (pVariables->m_invariantMassZBosons2 < m_pPreSelection->m_invariantMassBosonLow or m_pPreSelection->m_invariantMassBosonHigh < pVariables->m_invariantMassZBosons2)
+            if (pVariables->m_invariantMassZBosons1 < m_pPreSelection->GetInvariantMassBosonLowCut() or m_pPreSelection->GetInvariantMassBosonHighCut() < pVariables->m_invariantMassZBosons1)
                 continue;
+
+            if (pVariables->m_invariantMassZBosons2 < m_pPreSelection->GetInvariantMassBosonLowCut() or m_pPreSelection->GetInvariantMassBosonHighCut() < pVariables->m_invariantMassZBosons2)
+                continue;
+
+            if (pPostMVASelection != NULL)
+            {
+                if (pVariables->m_bdt < pPostMVASelection->GetBDTLowCut() or pPostMVASelection->GetBDTHighCut() < pVariables->m_bdt)
+                    continue;
+            }
 
             pNPfosPlotContainer->Fill(pVariables->m_nPfosBosonW1 + pVariables->m_nPfosBosonW2, weight);
             pNPfosBosonWPlotContainer->Fill(pVariables->m_nPfosBosonW1, weight);
             pNPfosBosonWPlotContainer->Fill(pVariables->m_nPfosBosonW2, weight);
             pNPfosBosonZPlotContainer->Fill(pVariables->m_nPfosBosonZ1, weight);
             pNPfosBosonZPlotContainer->Fill(pVariables->m_nPfosBosonZ2, weight);
+            pNumberOfIsolatedLeptons->Fill(pVariables->m_nIsolatedLeptons, weight);
 
             double jetEW11(std::numeric_limits<double>::max());
             double jetEW12(std::numeric_limits<double>::max());
@@ -142,6 +184,26 @@ MakeDerivedPlots::MakeDerivedPlots(const ProcessVector &processVector, PreSelect
             pMinorThrustValuePlotContainer->Fill(pVariables->m_minorThrustValue, weight);
             pSphericityPlotContainer->Fill(pVariables->m_sphericity, weight);
             pAplanarityPlotContainer->Fill(pVariables->m_aplanarity, weight);
+            pHighestEnergyIsolatedLeptonEnergy->Fill(pVariables->m_highestEnergyIsolatedLeptonE, weight);
+            pHighestEnergyIsolatedLeptonMomentum->Fill(pVariables->m_highestEnergyIsolatedLeptonP, weight);
+            pHighestEnergyIsolatedLeptonTransverseMomentum->Fill(pVariables->m_highestEnergyIsolatedLeptonPt, weight);
+            pHighestEnergyIsolatedLeptonCosTheta->Fill(pVariables->m_highestEnergyIsolatedLeptonCosTheta, weight);
+            pHighestEnergyPfoEnergy->Fill(pVariables->m_highestEnergyPfoE, weight);
+            pHighestEnergyPfoMomentum->Fill(pVariables->m_highestEnergyPfoP, weight);
+            pHighestEnergyPfoTransverseMomentum->Fill(pVariables->m_highestEnergyPfoPt, weight);
+            pHighestEnergyPfoCosTheta->Fill(pVariables->m_highestEnergyPfoCosTheta, weight);
+            pHighestEnergyElectronEnergy->Fill(pVariables->m_highestEnergyElectronE, weight);
+            pHighestEnergyElectronMomentum->Fill(pVariables->m_highestEnergyElectronP, weight);
+            pHighestEnergyElectronTransverseMomentum->Fill(pVariables->m_highestEnergyElectronPt, weight);
+            pHighestEnergyElectronCosTheta->Fill(pVariables->m_highestEnergyElectronCosTheta, weight);
+            pHighestEnergyMuonEnergy->Fill(pVariables->m_highestEnergyMuonE, weight);
+            pHighestEnergyMuonMomentum->Fill(pVariables->m_highestEnergyMuonP, weight);
+            pHighestEnergyMuonTransverseMomentum->Fill(pVariables->m_highestEnergyMuonPt, weight);
+            pHighestEnergyMuonCosTheta->Fill(pVariables->m_highestEnergyMuonCosTheta, weight);
+            pHighestEnergyPhotonEnergy->Fill(pVariables->m_highestEnergyPhotonE, weight);
+            pHighestEnergyPhotonMomentum->Fill(pVariables->m_highestEnergyPhotonP, weight);
+            pHighestEnergyPhotonTransverseMomentum->Fill(pVariables->m_highestEnergyPhotonPt, weight);
+            pHighestEnergyPhotonCosTheta->Fill(pVariables->m_highestEnergyPhotonCosTheta, weight);
             pInvariantMassWPlotContainer->Fill(pVariables->m_invariantMassWBosons1, weight);
             pInvariantMassWPlotContainer->Fill(pVariables->m_invariantMassWBosons2, weight);
             pInvariantMassZPlotContainer->Fill(pVariables->m_invariantMassZBosons1, weight);
@@ -191,6 +253,7 @@ MakeDerivedPlots::MakeDerivedPlots(const ProcessVector &processVector, PreSelect
         pNPfosPlotContainer->DrawHistograms(pProcess->GetEventType());
         pNPfosBosonWPlotContainer->DrawHistograms(pProcess->GetEventType());
         pNPfosBosonZPlotContainer->DrawHistograms(pProcess->GetEventType());
+        pNumberOfIsolatedLeptons->DrawHistograms(pProcess->GetEventType());
         pTransverseMomentumPlotContainer->DrawHistograms(pProcess->GetEventType());
         pTransverseMomentumBosonWPlotContainer->DrawHistograms(pProcess->GetEventType());
         pTransverseMomentumBosonZPlotContainer->DrawHistograms(pProcess->GetEventType());
@@ -217,6 +280,26 @@ MakeDerivedPlots::MakeDerivedPlots(const ProcessVector &processVector, PreSelect
         pMinorThrustValuePlotContainer->DrawHistograms(pProcess->GetEventType());
         pSphericityPlotContainer->DrawHistograms(pProcess->GetEventType());
         pAplanarityPlotContainer->DrawHistograms(pProcess->GetEventType());
+        pHighestEnergyIsolatedLeptonEnergy->DrawHistograms(pProcess->GetEventType());
+        pHighestEnergyIsolatedLeptonMomentum->DrawHistograms(pProcess->GetEventType());
+        pHighestEnergyIsolatedLeptonTransverseMomentum->DrawHistograms(pProcess->GetEventType());
+        pHighestEnergyIsolatedLeptonCosTheta->DrawHistograms(pProcess->GetEventType());
+        pHighestEnergyPfoEnergy->DrawHistograms(pProcess->GetEventType());
+        pHighestEnergyPfoMomentum->DrawHistograms(pProcess->GetEventType());
+        pHighestEnergyPfoTransverseMomentum->DrawHistograms(pProcess->GetEventType());
+        pHighestEnergyPfoCosTheta->DrawHistograms(pProcess->GetEventType());
+        pHighestEnergyElectronEnergy->DrawHistograms(pProcess->GetEventType());
+        pHighestEnergyElectronMomentum->DrawHistograms(pProcess->GetEventType());
+        pHighestEnergyElectronTransverseMomentum->DrawHistograms(pProcess->GetEventType());
+        pHighestEnergyElectronCosTheta->DrawHistograms(pProcess->GetEventType());
+        pHighestEnergyMuonEnergy->DrawHistograms(pProcess->GetEventType());
+        pHighestEnergyMuonMomentum->DrawHistograms(pProcess->GetEventType());
+        pHighestEnergyMuonTransverseMomentum->DrawHistograms(pProcess->GetEventType());
+        pHighestEnergyMuonCosTheta->DrawHistograms(pProcess->GetEventType());
+        pHighestEnergyPhotonEnergy->DrawHistograms(pProcess->GetEventType());
+        pHighestEnergyPhotonMomentum->DrawHistograms(pProcess->GetEventType());
+        pHighestEnergyPhotonTransverseMomentum->DrawHistograms(pProcess->GetEventType());
+        pHighestEnergyPhotonCosTheta->DrawHistograms(pProcess->GetEventType());
         pInvariantMassWPlotContainer->DrawHistograms(pProcess->GetEventType());
         pInvariantMassZPlotContainer->DrawHistograms(pProcess->GetEventType());
         pCosThetaStarWJetPlotContainer->DrawHistograms(pProcess->GetEventType());
@@ -229,11 +312,11 @@ MakeDerivedPlots::MakeDerivedPlots(const ProcessVector &processVector, PreSelect
         pLowestCTagWPlotContainer->DrawHistograms(pProcess->GetEventType());
         pHighestCTagZPlotContainer->DrawHistograms(pProcess->GetEventType());
         pLowestCTagZPlotContainer->DrawHistograms(pProcess->GetEventType());
-
     }
     pNPfosPlotContainer->SavePlots();
     pNPfosBosonWPlotContainer->SavePlots();
     pNPfosBosonZPlotContainer->SavePlots();
+    pNumberOfIsolatedLeptons->SavePlots();
     pTransverseMomentumPlotContainer->SavePlots();
     pTransverseMomentumBosonWPlotContainer->SavePlots();
     pTransverseMomentumBosonZPlotContainer->SavePlots();
@@ -260,6 +343,26 @@ MakeDerivedPlots::MakeDerivedPlots(const ProcessVector &processVector, PreSelect
     pMinorThrustValuePlotContainer->SavePlots();
     pSphericityPlotContainer->SavePlots();
     pAplanarityPlotContainer->SavePlots();
+    pHighestEnergyIsolatedLeptonEnergy->SavePlots();
+    pHighestEnergyIsolatedLeptonMomentum->SavePlots();
+    pHighestEnergyIsolatedLeptonTransverseMomentum->SavePlots();
+    pHighestEnergyIsolatedLeptonCosTheta->SavePlots();
+    pHighestEnergyPfoEnergy->SavePlots();
+    pHighestEnergyPfoMomentum->SavePlots();
+    pHighestEnergyPfoTransverseMomentum->SavePlots();
+    pHighestEnergyPfoCosTheta->SavePlots();
+    pHighestEnergyElectronEnergy->SavePlots();
+    pHighestEnergyElectronMomentum->SavePlots();
+    pHighestEnergyElectronTransverseMomentum->SavePlots();
+    pHighestEnergyElectronCosTheta->SavePlots();
+    pHighestEnergyMuonEnergy->SavePlots();
+    pHighestEnergyMuonMomentum->SavePlots();
+    pHighestEnergyMuonTransverseMomentum->SavePlots();
+    pHighestEnergyMuonCosTheta->SavePlots();
+    pHighestEnergyPhotonEnergy->SavePlots();
+    pHighestEnergyPhotonMomentum->SavePlots();
+    pHighestEnergyPhotonTransverseMomentum->SavePlots();
+    pHighestEnergyPhotonCosTheta->SavePlots();
     pInvariantMassWPlotContainer->SavePlots();
     pInvariantMassZPlotContainer->SavePlots();
     pCosThetaStarWJetPlotContainer->SavePlots();
@@ -359,15 +462,18 @@ void MakeDerivedPlots::PlotContainer::DrawHistograms(std::string processName)
     m_pTH1F->SetFillColor(color);
     m_pTH1F->SetFillStyle(m_fillStyle.at(m_colourCounter));
 
-    TH1F *pCloneTH1F = (TH1F*)(m_pTH1F->Clone());
-    pCloneTH1F->Scale(1/pCloneTH1F->Integral());
-    pCloneTH1F->Draw("same");
+    if (m_pTH1F->GetEntries() > 0)
+    {
+        TH1F *pCloneTH1F = (TH1F*)(m_pTH1F->Clone());
+        pCloneTH1F->Scale(1/pCloneTH1F->Integral());
+        pCloneTH1F->Draw("same");
 
-    pTLegend->AddEntry(m_pTH1F, processName.c_str(), "f");
-    pTLegend->Draw("same");
+        pTLegend->AddEntry(m_pTH1F, processName.c_str(), "f");
+        pTLegend->Draw("same");
 
-    m_pTHStack->Add(m_pTH1F);
-    m_pTLegend->AddEntry(m_pTH1F, processName.c_str(), "f");
+        m_pTHStack->Add(m_pTH1F);
+        m_pTLegend->AddEntry(m_pTH1F, processName.c_str(), "f");
+    }
     m_pTH1F = new TH1F(this->RandomName().c_str(), m_variableName.c_str(), m_nBins, m_xLow, m_xHigh);
 }
 

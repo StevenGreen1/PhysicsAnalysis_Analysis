@@ -21,7 +21,9 @@
 #include "TGraph2D.h"
 #include "TFile.h"
 #include "TH2F.h"
+#include "TLegend.h"
 
+#include "PostMVASelection.h"
 #include "Process.h"
 #include "CouplingAnalysis.h"
 
@@ -38,7 +40,7 @@ class Fit
          *
          *  @param processVector vector of processes to include in analysis
          */
-        Fit(const ProcessVector &processVector);
+        Fit(const ProcessVector &processVector, PostMVASelection *pPostMVASelection);
 
         /**
          *  @brief Default destructor
@@ -79,6 +81,13 @@ class Fit
         std::string NumberToString(T Number);
 
         ProcessVector         m_processVector;              ///< Vector of all processes
+        PostMVASelection     *m_pPostMVASelection;          ///< Container for all selection cuts
+        int                   m_a4IntMin;                   ///< Minimum integer step for alpha 4 sensitivity
+        int                   m_a4IntMax;                   ///< Maximum integer step for alpha 4 sensitivity
+        float                 m_a4Step;                     ///< Step in alpha 4 per integer move
+        int                   m_a5IntMin;                   ///< Minimum integer step for alpha 5 sensitivity
+        int                   m_a5IntMax;                   ///< Maximum integer step for alpha 5 sensitivity
+        float                 m_a5Step;                     ///< Step in alpha 5 per integer move
         TH1F                 *m_pTH1F_DistributionJ_Sample; ///< 1D distribution of sigma against cos theta star jet(from W/Z)
         TH1F                 *m_pTH1F_DistributionW_Sample; ///< 1D distribution of sigma against cos theta star W/Z
         DoubleVector          m_Alpah4;

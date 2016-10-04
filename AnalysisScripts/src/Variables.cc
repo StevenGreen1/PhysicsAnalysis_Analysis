@@ -38,6 +38,11 @@ Variables::Variables() :
     m_nChargedParticlesJets2(std::numeric_limits<int>::max()),
     m_nChargedParticlesJets3(std::numeric_limits<int>::max()),
     m_nChargedParticlesJets4(std::numeric_limits<int>::max()),
+    m_highestEnergyPfoPDG(std::numeric_limits<int>::max()),
+    m_nIsolatedLeptons(std::numeric_limits<int>::max()),
+    m_highestEnergyIsolatedLeptonPDG(std::numeric_limits<int>::max()),
+    m_secondHighestEnergyIsolatedLeptonPDG(std::numeric_limits<int>::max()),
+    m_globalEventNumber(std::numeric_limits<int>::max()),
     m_transverseMomentum(std::numeric_limits<double>::max()),
     m_transverseMomentumBosonW1(std::numeric_limits<double>::max()),
     m_transverseMomentumBosonW2(std::numeric_limits<double>::max()),
@@ -82,6 +87,30 @@ Variables::Variables() :
     m_zThrustAxis(std::numeric_limits<double>::max()),
     m_sphericity(std::numeric_limits<double>::max()),
     m_aplanarity(std::numeric_limits<double>::max()),
+    m_highestEnergyElectronE(std::numeric_limits<double>::max()),
+    m_highestEnergyElectronP(std::numeric_limits<double>::max()),
+    m_highestEnergyElectronPt(std::numeric_limits<double>::max()),
+    m_highestEnergyElectronCosTheta(std::numeric_limits<double>::max()),
+    m_highestEnergyMuonE(std::numeric_limits<double>::max()),
+    m_highestEnergyMuonP(std::numeric_limits<double>::max()),
+    m_highestEnergyMuonPt(std::numeric_limits<double>::max()),
+    m_highestEnergyMuonCosTheta(std::numeric_limits<double>::max()),
+    m_highestEnergyPhotonE(std::numeric_limits<double>::max()),
+    m_highestEnergyPhotonP(std::numeric_limits<double>::max()),
+    m_highestEnergyPhotonPt(std::numeric_limits<double>::max()),
+    m_highestEnergyPhotonCosTheta(std::numeric_limits<double>::max()),
+    m_highestEnergyPfoE(std::numeric_limits<double>::max()),
+    m_highestEnergyPfoP(std::numeric_limits<double>::max()),
+    m_highestEnergyPfoPt(std::numeric_limits<double>::max()),
+    m_highestEnergyPfoCosTheta(std::numeric_limits<double>::max()),
+    m_highestEnergyIsolatedLeptonE(std::numeric_limits<double>::max()),
+    m_highestEnergyIsolatedLeptonP(std::numeric_limits<double>::max()),
+    m_highestEnergyIsolatedLeptonPt(std::numeric_limits<double>::max()),
+    m_highestEnergyIsolatedLeptonCosTheta(std::numeric_limits<double>::max()),
+    m_secondHighestEnergyIsolatedLeptonE(std::numeric_limits<double>::max()),
+    m_secondHighestEnergyIsolatedLeptonP(std::numeric_limits<double>::max()),
+    m_secondHighestEnergyIsolatedLeptonPt(std::numeric_limits<double>::max()),
+    m_secondHighestEnergyIsolatedLeptonCosTheta(std::numeric_limits<double>::max()),
     m_invariantMassWBosons1(std::numeric_limits<double>::max()),
     m_invariantMassWBosons2(std::numeric_limits<double>::max()),
     m_invariantMassWBosonsMC1(std::numeric_limits<double>::max()),
@@ -105,7 +134,8 @@ Variables::Variables() :
     m_cTagForJets1(std::numeric_limits<double>::max()),
     m_cTagForJets2(std::numeric_limits<double>::max()),
     m_cTagForJets3(std::numeric_limits<double>::max()),
-    m_cTagForJets4(std::numeric_limits<double>::max())
+    m_cTagForJets4(std::numeric_limits<double>::max()),
+    m_bdt(std::numeric_limits<double>::max())
 {
 }
 
@@ -117,11 +147,10 @@ Variables::~Variables()
 
 //===========================================================
 
-void Variables::SetBranchAddresses(TChain *pTChain)
+void Variables::SetBranchAddresses(TChain *pTChain, bool postMVA)
 {
 // Variables Of Interest
 // Bools
-
     pTChain->SetBranchAddress("IsAppropriateEvent", &m_appropriateEvent);
     pTChain->SetBranchAddress("IsEventWW", &m_isEventWW);
     pTChain->SetBranchAddress("IsMCEventWW", &m_isEventWWMC);
@@ -149,6 +178,11 @@ void Variables::SetBranchAddresses(TChain *pTChain)
     pTChain->SetBranchAddress("NChargedParticlesJet2", &m_nChargedParticlesJets2);
     pTChain->SetBranchAddress("NChargedParticlesJet3", &m_nChargedParticlesJets3);
     pTChain->SetBranchAddress("NChargedParticlesJet4", &m_nChargedParticlesJets4);
+    pTChain->SetBranchAddress("HighestEnergyPfoPDG", &m_highestEnergyPfoPDG);
+    pTChain->SetBranchAddress("NumberOfIsolatedLeptons", &m_nIsolatedLeptons);
+    pTChain->SetBranchAddress("HighestEnergyIsolatedLeptonPDG", &m_highestEnergyIsolatedLeptonPDG);
+    pTChain->SetBranchAddress("SecondHighestEnergyIsolatedLeptonPDG", &m_secondHighestEnergyIsolatedLeptonPDG);
+
 // Doubles
     pTChain->SetBranchAddress("TransverseMomentum", &m_transverseMomentum);
     pTChain->SetBranchAddress("TransverseMomentumBosonW1", &m_transverseMomentumBosonW1);
@@ -194,6 +228,30 @@ void Variables::SetBranchAddresses(TChain *pTChain)
     pTChain->SetBranchAddress("ZThrustAxis", &m_zThrustAxis);
     pTChain->SetBranchAddress("Sphericity", &m_sphericity);
     pTChain->SetBranchAddress("Aplanarity", &m_aplanarity);
+    pTChain->SetBranchAddress("HighestEnergyElectronEnergy", &m_highestEnergyElectronE);
+    pTChain->SetBranchAddress("HighestEnergyElectronMomentum", &m_highestEnergyElectronP);
+    pTChain->SetBranchAddress("HighestEnergyElectronTransverseMomentum", &m_highestEnergyElectronPt);
+    pTChain->SetBranchAddress("HighestEnergyElectronCosTheta", &m_highestEnergyElectronCosTheta);
+    pTChain->SetBranchAddress("HighestEnergyMuonEnergy", &m_highestEnergyMuonE);
+    pTChain->SetBranchAddress("HighestEnergyMuonMomentum", &m_highestEnergyMuonP);
+    pTChain->SetBranchAddress("HighestEnergyMuonTransverseMomentum", &m_highestEnergyMuonPt);
+    pTChain->SetBranchAddress("HighestEnergyMuonCosTheta", &m_highestEnergyMuonCosTheta);
+    pTChain->SetBranchAddress("HighestEnergyPhotonEnergy", &m_highestEnergyPhotonE);
+    pTChain->SetBranchAddress("HighestEnergyPhotonMomentum", &m_highestEnergyPhotonP);
+    pTChain->SetBranchAddress("HighestEnergyPhotonTransverseMomentum", &m_highestEnergyPhotonPt);
+    pTChain->SetBranchAddress("HighestEnergyPhotonCosTheta", &m_highestEnergyPhotonCosTheta);
+    pTChain->SetBranchAddress("HighestEnergyPfoEnergy", &m_highestEnergyPfoE);
+    pTChain->SetBranchAddress("HighestEnergyPfoMomentum", &m_highestEnergyPfoP);
+    pTChain->SetBranchAddress("HighestEnergyPfoTransverseMomentum", &m_highestEnergyPfoPt);
+    pTChain->SetBranchAddress("HighestEnergyPfoCosTheta", &m_highestEnergyPfoCosTheta);
+    pTChain->SetBranchAddress("HighestEnergyIsolatedLeptonEnergy", &m_highestEnergyIsolatedLeptonE);
+    pTChain->SetBranchAddress("HighestEnergyIsolatedLeptonMomentum", &m_highestEnergyIsolatedLeptonP);
+    pTChain->SetBranchAddress("HighestEnergyIsolatedLeptonTransverseMomentum", &m_highestEnergyIsolatedLeptonPt);
+    pTChain->SetBranchAddress("HighestEnergyIsolatedLeptonCosTheta", &m_highestEnergyIsolatedLeptonCosTheta);
+    pTChain->SetBranchAddress("SecondHighestEnergyIsolatedLeptonEnergy", &m_secondHighestEnergyIsolatedLeptonE);
+    pTChain->SetBranchAddress("SecondHighestEnergyIsolatedLeptonMomentum", &m_secondHighestEnergyIsolatedLeptonP);
+    pTChain->SetBranchAddress("SecondHighestEnergyIsolatedLeptonTransverseMomentum", &m_secondHighestEnergyIsolatedLeptonPt);
+    pTChain->SetBranchAddress("SecondHighestEnergyIsolatedLeptonCosTheta", &m_secondHighestEnergyIsolatedLeptonCosTheta);
     pTChain->SetBranchAddress("InvMassWVector1", &m_invariantMassWBosons1);
     pTChain->SetBranchAddress("InvMassWVector2", &m_invariantMassWBosons2);
     pTChain->SetBranchAddress("MCInvMassWVector1", &m_invariantMassWBosonsMC1);
@@ -218,6 +276,12 @@ void Variables::SetBranchAddresses(TChain *pTChain)
     pTChain->SetBranchAddress("CTagForJet2", &m_cTagForJets2);
     pTChain->SetBranchAddress("CTagForJet3", &m_cTagForJets3);
     pTChain->SetBranchAddress("CTagForJet4", &m_cTagForJets4);
+
+    if (postMVA)
+    {
+        pTChain->SetBranchAddress("GlobalEventNumber", &m_globalEventNumber);
+        pTChain->SetBranchAddress("BDT", &m_bdt);
+    }
 }
 
 //===========================================================
@@ -279,6 +343,11 @@ void Variables::Clear()
     m_nChargedParticlesJets2= std::numeric_limits<int>::max();
     m_nChargedParticlesJets3= std::numeric_limits<int>::max();
     m_nChargedParticlesJets4= std::numeric_limits<int>::max();
+    m_highestEnergyPfoPDG = std::numeric_limits<int>::max();
+    m_nIsolatedLeptons = std::numeric_limits<int>::max();
+    m_highestEnergyIsolatedLeptonPDG = std::numeric_limits<int>::max();
+    m_secondHighestEnergyIsolatedLeptonPDG = std::numeric_limits<int>::max();
+    m_globalEventNumber = std::numeric_limits<int>::max();
 
     m_transverseMomentum = std::numeric_limits<double>::max();
     m_transverseMomentumBosonW1 = std::numeric_limits<double>::max();
@@ -324,6 +393,30 @@ void Variables::Clear()
     m_zThrustAxis = std::numeric_limits<double>::max();
     m_sphericity = std::numeric_limits<double>::max();
     m_aplanarity = std::numeric_limits<double>::max();
+    m_highestEnergyElectronE = std::numeric_limits<double>::max();
+    m_highestEnergyElectronP = std::numeric_limits<double>::max();
+    m_highestEnergyElectronPt = std::numeric_limits<double>::max();
+    m_highestEnergyElectronCosTheta = std::numeric_limits<double>::max();
+    m_highestEnergyMuonE = std::numeric_limits<double>::max();
+    m_highestEnergyMuonP = std::numeric_limits<double>::max();
+    m_highestEnergyMuonPt = std::numeric_limits<double>::max();
+    m_highestEnergyMuonCosTheta = std::numeric_limits<double>::max();
+    m_highestEnergyPhotonE = std::numeric_limits<double>::max();
+    m_highestEnergyPhotonP = std::numeric_limits<double>::max();
+    m_highestEnergyPhotonPt = std::numeric_limits<double>::max();
+    m_highestEnergyPhotonCosTheta = std::numeric_limits<double>::max();
+    m_highestEnergyPfoE = std::numeric_limits<double>::max();
+    m_highestEnergyPfoP = std::numeric_limits<double>::max();
+    m_highestEnergyPfoPt = std::numeric_limits<double>::max();
+    m_highestEnergyPfoCosTheta = std::numeric_limits<double>::max();
+    m_highestEnergyIsolatedLeptonE = std::numeric_limits<double>::max();
+    m_highestEnergyIsolatedLeptonP = std::numeric_limits<double>::max();
+    m_highestEnergyIsolatedLeptonPt = std::numeric_limits<double>::max();
+    m_highestEnergyIsolatedLeptonCosTheta = std::numeric_limits<double>::max();
+    m_secondHighestEnergyIsolatedLeptonE = std::numeric_limits<double>::max();
+    m_secondHighestEnergyIsolatedLeptonP = std::numeric_limits<double>::max();
+    m_secondHighestEnergyIsolatedLeptonPt = std::numeric_limits<double>::max();
+    m_secondHighestEnergyIsolatedLeptonCosTheta = std::numeric_limits<double>::max();
     m_invariantMassWBosons1 = std::numeric_limits<double>::max();
     m_invariantMassWBosons2 = std::numeric_limits<double>::max();
     m_invariantMassWBosonsMC1 = std::numeric_limits<double>::max();
@@ -348,6 +441,7 @@ void Variables::Clear()
     m_cTagForJets2 = std::numeric_limits<double>::max();
     m_cTagForJets3 = std::numeric_limits<double>::max();
     m_cTagForJets4 = std::numeric_limits<double>::max();
+    m_bdt = std::numeric_limits<double>::max();
 }
 
 //===========================================================

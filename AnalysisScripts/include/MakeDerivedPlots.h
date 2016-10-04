@@ -26,6 +26,7 @@
 #include "TROOT.h"
 #include "TStyle.h"
 
+#include "PostMVASelection.h"
 #include "PreSelection.h"
 #include "Process.h"
 #include "Variables.h"
@@ -44,8 +45,10 @@ class MakeDerivedPlots
          *  @brief Constructor 
          *
          *  @param processVector vector of processes to include in analysis
+         *  @param pPreSelection pointer to class containing preselection information
+         *  @param pPostMVASelection optional pointer to class containing post MVA selection information.  Applies the Will overwrite preselection pointer specifed in second argument
          */
-        MakeDerivedPlots(const ProcessVector &processVector, PreSelection *pPreSelection);
+        MakeDerivedPlots(const ProcessVector &processVector, PreSelection *pPreSelection, PostMVASelection *pPostMVASelection = NULL);
 
         /**
          *  @brief Destructor 
