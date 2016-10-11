@@ -21,6 +21,7 @@ int main(int argc, char* argv[])
         {
             const float alpha4(i * 0.01);
             const float alpha5(j * 0.01);
+std::cout << alpha4 << " " << alpha5 << std::endl;
             WeightToXmlConverter *pWeightToXmlConverter = new WeightToXmlConverter(process,energy,alpha4,alpha5,atoi(argv[1]));
         }
     }
@@ -43,6 +44,7 @@ WeightToXmlConverter::WeightToXmlConverter(const std::string process, const int 
 
 void WeightToXmlConverter::LoadASCII()
 {
+std::cout << m_alpha4 << " " << m_alpha5 << std::endl;
     std::string folder("/r06/lc/sg568/PhysicsAnalysis/Generator/" + m_eventType + "/" + this->NumberToString(m_energy) + "GeV/WhizardJobSet" + this->NumberToString(m_whizardJobSet) + "/Alpha4_" + this->AlphasToStringReading(m_alpha4) + "_Alpha5_" + this->AlphasToStringReading(m_alpha5));
     std::cout << folder << std::endl;
 
@@ -93,7 +95,7 @@ void WeightToXmlConverter::LoadASCII()
             std::cout << "For event number : " << eventNumber << ", the weight is " << weight << std::endl;
         }
 
-        int generatorNumber = 1e3*m_whizardJobSet + i;
+        int generatorNumber = (1e3*m_whizardJobSet) + i;
         std::string weightsFileName("/r06/lc/sg568/PhysicsAnalysis/Generator/" + m_eventType + "/" + this->NumberToString(m_energy) + "GeV/WhizardJobSet" + this->NumberToString(m_whizardJobSet) + "/Alpha4_" + this->AlphasToStringReading(m_alpha4) + "_Alpha5_" + this->AlphasToStringReading(m_alpha5) + "/Reweighting_GenN" + this->NumberToString(generatorNumber) + "_" + m_eventType + "_" + this->NumberToString(m_energy) + "GeV_Alpha4_" + this->AlphasToStringWriting(m_alpha4) + "_Alpha5_" + this->AlphasToStringWriting(m_alpha5) + ".xml");
         this->SaveXml(weightsFileName);
     }

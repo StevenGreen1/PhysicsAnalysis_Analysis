@@ -10,7 +10,7 @@
 
 //=====================================================================
 
-Process::Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag) :
+Process::Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag, bool quickLoad) :
     m_jobDescription(jobDescription),
     m_detectorModel(detectorModel),
     m_reconstructionVariant(reconstructionVariant),
@@ -28,8 +28,9 @@ Process::Process(std::string jobDescription, std::string detectorModel, std::str
 {
     m_pathToFiles = "/r06/lc/sg568/" + jobDescription + "/MarlinJobs/Detector_Model_" + detectorModel + "/Reconstruction_Variant_" + reconstructionVariant + "/" + eventType + "/" + this->NumberToString(energy) + "GeV/AnalysisTag" + this->NumberToString(analysisTag) + "/";
 
-    this->MakeTChain();
-    this->MakeSelection();
+    if (!quickLoad)
+        this->MakeTChain();
+
     this->SetMVARootFiles();
 }
 
@@ -126,16 +127,6 @@ bool Process::DoesEventPassCuts(int eventNumber) const
 
 //=====================================================================
 
-/*
-RootFiles_MVA_ee_ll_1400GeV.root       RootFiles_MVA_ee_nunuqqqq_1400GeV.root       RootFiles_MVA_egamma_qqqqnu_BS_1400GeV.root   RootFiles_MVA_gammae_qqqqnu_EPA_1400GeV.root
-RootFiles_MVA_ee_llqqqq_1400GeV.root   RootFiles_MVA_ee_qq_1400GeV.root             RootFiles_MVA_egamma_qqqqnu_EPA_1400GeV.root  RootFiles_MVA_gammagamma_qqqq_BS_BS_1400GeV.root
-RootFiles_MVA_ee_lnuqq_1400GeV.root    RootFiles_MVA_ee_qqqq_1400GeV.root           RootFiles_MVA_gammae_qqqqe_BS_1400GeV.root    RootFiles_MVA_gammagamma_qqqq_BS_EPA_1400GeV.root
-RootFiles_MVA_ee_lnuqqqq_1400GeV.root  RootFiles_MVA_egamma_qqqqe_BS_1400GeV.root   RootFiles_MVA_gammae_qqqqe_EPA_1400GeV.root   RootFiles_MVA_gammagamma_qqqq_EPA_BS_1400GeV.root
-RootFiles_MVA_ee_nunuqq_1400GeV.root   RootFiles_MVA_egamma_qqqqe_EPA_1400GeV.root  RootFiles_MVA_gammae_qqqqnu_BS_1400GeV.root   RootFiles_MVA_gammagamma_qqqq_EPA_EPA_1400GeV.root
--bash-4.1$ pwd
-/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/RootFilesPostMVA
-*/
-
 void Process::SetMVARootFiles()
 {
     m_pPostMVATChain = new TChain("MVATree");
@@ -198,111 +189,6 @@ std::string Process::NumberToString(T number)
     std::ostringstream ss;
     ss << number;
     return ss.str();
-}
-
-//=====================================================================
-
-void Process::MakeSelection()
-{
-/*
-    double recoilMass(std::numeric_limits<double>::max());
-    double transverseMomentum(std::numeric_limits<double>::max());
-    double transverseEnergy(std::numeric_limits<double>::max());
-    double cosThetaMissing(std::numeric_limits<double>::max());
-    double cosThetaMostEnergeticTrack(std::numeric_limits<double>::max());
-    double energyAroundMostEnergeticTrack(std::numeric_limits<double>::max());
-    double y34(std::numeric_limits<double>::max());
-
-    IntVector *nParticlesJets(NULL);
-    IntVector *nChargedParticlesJets(NULL);
-
-    DoubleVector *energyJets(NULL);
-    DoubleVector *invMassWVectors(NULL);
-    DoubleVector *invMassZVectors(NULL);
-
-    m_pTChain->SetBranchAddress("RecoilMass", &recoilMass);
-    m_pTChain->SetBranchAddress("TransverseMomentum", &transverseMomentum);
-    m_pTChain->SetBranchAddress("TransverseEnergy", &transverseEnergy);
-    m_pTChain->SetBranchAddress("CosThetaMissing", &cosThetaMissing);
-    m_pTChain->SetBranchAddress("CosThetaMostEnergeticTrack",&cosThetaMostEnergeticTrack);
-    m_pTChain->SetBranchAddress("EnergyAroundMostEnergeticTrack",&energyAroundMostEnergeticTrack);
-    m_pTChain->SetBranchAddress("y34",&y34);
-    m_pTChain->SetBranchAddress("NParticlesJets",&nParticlesJets);
-    m_pTChain->SetBranchAddress("NChargedParticlesJets",&nChargedParticlesJets);
-    m_pTChain->SetBranchAddress("EnergyJets",&energyJets);
-    m_pTChain->SetBranchAddress("InvMassWVectors", &invMassWVectors);
-    m_pTChain->SetBranchAddress("InvMassZVectors", &invMassZVectors);
-
-    bool doesEventPassSelection(true);
-
-    for (unsigned int event = 0; event < m_pTChain->GetEntries(); event++)
-    {
-        doesEventPassSelection = true;
-        m_pTChain->GetEntry(event);
-
-//        std::cout << recoilMass << " 250.0 : " << transverseMomentum << " 40 : " << transverseEnergy << " 150 : " << std::fabs(cosThetaMissing) << " 0.99 : " << std::fabs(cosThetaMostEnergeticTrack) << " 0.99 : " << energyAroundMostEnergeticTrack << " 2.0 : " << y34 << " 3.5 : " << std::endl;
-
-        if (recoilMass < 250.0 or transverseMomentum < 40 or transverseEnergy < 150 or std::fabs(cosThetaMissing) > 0.99 or std::fabs(cosThetaMostEnergeticTrack) > 0.99 or y34 > 3.5) //energyAroundMostEnergeticTrack < 2.0 
-        {
-           doesEventPassSelection = false;
-        }
-        for (IntVector::iterator iter = nParticlesJets->begin(); iter != nParticlesJets->end(); iter++)
-        {
-            int nParticlesJets(*iter);
-            if (nParticlesJets < 3)
-            {
-                doesEventPassSelection = false;
-            }
-        }
-
-        for (IntVector::iterator iter = nChargedParticlesJets->begin(); iter != nChargedParticlesJets->end(); iter++)
-        {
-            int nChargedParticlesJets(*iter);
-            if (nChargedParticlesJets < 2)
-            {
-                doesEventPassSelection = false;
-            }
-        }
-
-        for (DoubleVector::iterator iter = energyJets->begin(); iter != energyJets->end(); iter++)
-        {
-            int energyJet(*iter);
-            if (energyJet < 10.0)
-            {
-                doesEventPassSelection = false;
-            }
-        }
-
-        bool goodBosonsW(true);
-
-        for (DoubleVector::iterator iter = invMassWVectors->begin(); iter != invMassWVectors->end(); iter++)
-        {
-            int invMassW(*iter);
-            if (invMassW < 60 or 88 < invMassW)
-            {
-                goodBosonsW = false;
-            }
-        }
-
-        bool goodBosonsZ(true);
-
-        for (DoubleVector::iterator iter = invMassZVectors->begin(); iter != invMassZVectors->end(); iter++)
-        {
-            int invMassZ(*iter);
-            if (invMassZ < 85 or 100 < invMassZ)
-            {
-                goodBosonsZ = false;
-            }
-        }
-
-        if (!goodBosonsW and !goodBosonsZ)
-            doesEventPassSelection = false;
-
-//        std::cout << "Process : " << m_eventType <<  ", Event number : " << event << ", doesEventPassSelection " << doesEventPassSelection << std::endl;
-
-        m_doesEventPassSelection.insert(std::make_pair(event,doesEventPassSelection));
-    }
-*/
 }
 
 //=====================================================================

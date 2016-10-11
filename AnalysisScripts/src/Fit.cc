@@ -15,20 +15,41 @@ void Pause();
 
 //=====================================================================
 
-Fit::Fit(const ProcessVector &processVector, PostMVASelection *pPostMVASelection) :
+Fit::Fit(const ProcessVector &processVector, CouplingAnalysis *pCouplingAnalysis) : 
     m_processVector(processVector),
-    m_pPostMVASelection(pPostMVASelection),
-    m_a4IntMin(-1),
-    m_a4IntMax(1),
-    m_a4Step(0.005),
-    m_a5IntMin(-1),
-    m_a5IntMax(1),
-    m_a5Step(0.005)
+    m_pPostMVASelection(pCouplingAnalysis->GetPostMVASelection()),
+    m_pCouplingAnalysis(pCouplingAnalysis),
+    m_alpha4IntMin(-19),
+    m_alpha4IntMax(14),
+    m_alpha4Step(0.002),
+    m_alpha5IntMin(-19),
+    m_alpha5IntMax(14),
+    m_alpha5Step(0.002),
+    m_rootFileName("FitData.root")
 {
-    m_pTH1F_DistributionJ_Sample = new TH1F("SampleCosThetaJets","Sample Cos#theta_{Jets}",50,0,1);
-    m_pTH1F_DistributionW_Sample = new TH1F("SampleCosThetaW","Sample Cos#theta_{W}",50,0,1);
+    m_pTFile = new TFile(m_rootFileName.c_str(), "recreate");
+
+    m_pTH1FCosThetaStarWJetsRef = new TH1F("CosThetaStarWJetsRef","Reference Cos#theta_{Jets}",50,0,1);
+    m_pTH1FCosThetaStarWRef = new TH1F("CosThetaStarWRef","Reference Cos#theta_{W}",50,0,1);
+
+    for (int alpha4Int = m_alpha4IntMin; alpha4Int < m_alpha4IntMax+1; alpha4Int++)
+    {
+        for (int alpha5Int = m_alpha5IntMin; alpha5Int < m_alpha5IntMax+1; alpha5Int++)
+        {
+            std::string cosThetaStarWBosonHistName = "CosThetaStarW_" + this->NumberToString(alpha4Int*m_alpha4Step) + "_" + this->NumberToString(alpha5Int*m_alpha5Step);
+            std::string cosThetaStarWBosonHistTitle = "Cos#theta_{W}^{*}";
+            TH1F *pTH1FCosThetaStarWBoson = new TH1F(cosThetaStarWBosonHistName.c_str(), cosThetaStarWBosonHistTitle.c_str(), 50, 0 ,1);
+            m_alphaIntToCosThetaStarW[alpha4Int][alpha5Int] = (TH1F*)(pTH1FCosThetaStarWBoson->Clone());
+
+            std::string cosThetaStarWJetsHistName =  "CosThetaStarWJets_" + this->NumberToString(alpha4Int*m_alpha4Step) + "_" + this->NumberToString(alpha5Int*m_alpha5Step);
+            std::string cosThetaStarWJetsHistTitle = "Cos#theta_{WJets}^{*}";
+            TH1F *pTH1FCosThetaStarWJets = new TH1F(cosThetaStarWJetsHistName.c_str(), cosThetaStarWJetsHistTitle.c_str(), 50, 0 ,1);
+            m_alphaIntToCosThetaStarWJets[alpha4Int][alpha5Int] = (TH1F*)(pTH1FCosThetaStarWJets->Clone());
+        }
+    }
 
     this->FillDistribution();
+    this->AnalyseDistribution();
     this->SaveDistribution();
 }
 
@@ -36,76 +57,6 @@ Fit::Fit(const ProcessVector &processVector, PostMVASelection *pPostMVASelection
 
 void Fit::FillDistribution()
 {
-    std::map<int, std::map<int, std::map<int, float> > > alphaInt_EvtNumber_Weight;
-
-    for (ProcessVector::const_iterator it = m_processVector.begin(); it != m_processVector.end(); it++)
-    {
-        const Process *pProcess(*it);
-        if (pProcess->GetEventType() != "ee_nunuqqqq") 
-            continue;
-
-        TChain *pTChain(pProcess->GetPostMVATChain());
-//        CouplingAnalysis *pCouplingAnalysis = new CouplingAnalysis(pProcess->GetEventType(), this->NumberToString(pProcess->GetEnergy()));
-
-        int globalEventNumber(std::numeric_limits<int>::max());
-        float nIsolatedLeptons(std::numeric_limits<float>::max());
-        float transverseMomentum(std::numeric_limits<float>::max());
-        float invariantMassSystem(std::numeric_limits<float>::max());
-        double bdt(std::numeric_limits<double>::max());
-
-        pTChain->SetBranchAddress("GlobalEventNumber", &globalEventNumber);
-        pTChain->SetBranchAddress("NumberOfIsolatedLeptons", &nIsolatedLeptons);
-        pTChain->SetBranchAddress("TransverseMomentum", &transverseMomentum);
-        pTChain->SetBranchAddress("InvariantMassSystem", &invariantMassSystem);
-        pTChain->SetBranchAddress("BDT", &bdt);
-
-        for (unsigned int event = 0; event < pTChain->GetEntries(); event++)
-        {
-            pTChain->GetEntry(event);               
-
-            if (bdt < m_pPostMVASelection->GetBDTLowCut() or m_pPostMVASelection->GetBDTHighCut() < bdt)
-                continue;
-            if (nIsolatedLeptons < m_pPostMVASelection->GetPreSelection()->GetNumberOfIsolatedLeptonsLowCut() or m_pPostMVASelection->GetPreSelection()->GetNumberOfIsolatedLeptonsHighCut() < nIsolatedLeptons)
-                continue;
-            if (transverseMomentum < m_pPostMVASelection->GetPreSelection()->GetTransverseMomentumLowCut() or m_pPostMVASelection->GetPreSelection()->GetTransverseMomentumHighCut() < transverseMomentum)
-                continue;
-            if (invariantMassSystem < m_pPostMVASelection->GetPreSelection()->GetInvariantMassSystemLowCut() or m_pPostMVASelection->GetPreSelection()->GetInvariantMassSystemHighCut() < invariantMassSystem)
-                continue;
-
-            for (int a4Int = m_a4IntMin; a4Int < m_a4IntMax+1; a4Int++)
-            {
-                for (int a5Int = m_a5IntMin; a5Int < m_a5IntMax+1; a5Int++)
-                {
-                    float a4Current = m_a4Step * (float)(a4Int);
-                    float a5Current = m_a5Step * (float)(a5Int);
-                    float matrixElementWeight(std::numeric_limits<float>::max());
-//                    pCouplingAnalysis->GetWeight(globalEventNumber, a4Current, a5Current, matrixElementWeight);
-                    alphaInt_EvtNumber_Weight[a4Int][a5Int][globalEventNumber] = matrixElementWeight;
-                }
-            }
-        }
-//        delete pCouplingAnalysis, pTChain, pProcess;
-    }
-
-    std::map<int, std::map<int, TH1F*> > alphaInt_HistW;
-    std::map<int, std::map<int, TH1F*> > alphaInt_HistWJ;
-
-    for (int a4Int = m_a4IntMin; a4Int < m_a4IntMax+1; a4Int++)
-    {
-        for (int a5Int = m_a5IntMin; a5Int < m_a5IntMax+1; a5Int++)
-        {
-            TString name1 = "CosThetaStarW_" + this->NumberToString(a4Int) + "_" + this->NumberToString(a5Int);
-            TString title1 = "Cos#theta_{W}^{*}";
-            TH1F *pTH1F1 = new TH1F(name1, title1, 50, 0 ,1);
-            alphaInt_HistW[a4Int][a5Int] = (TH1F*)(pTH1F1->Clone());
-
-            TString name2 = "CosThetaStarWJets_" + this->NumberToString(a4Int) + "_" + this->NumberToString(a5Int);
-            TString title2 = "Cos#theta_{WJets}^{*}";
-            TH1F *pTH1F2 = new TH1F(name2, title2, 50, 0 ,1);
-            alphaInt_HistWJ[a4Int][a5Int] = (TH1F*)(pTH1F2->Clone());
-        }
-    }
-
     for (ProcessVector::const_iterator it = m_processVector.begin(); it != m_processVector.end(); it ++)
     {
         const Process *pProcess(*it);
@@ -113,14 +64,14 @@ void Fit::FillDistribution()
 
         TChain *pTChain(pProcess->GetPostMVATChain());
 
-        int globalEventNumber(std::numeric_limits<int>::max());
-        float nIsolatedLeptons(std::numeric_limits<float>::max());
-        float transverseMomentum(std::numeric_limits<float>::max());
-        float invariantMassSystem(std::numeric_limits<float>::max());
-        float cosThetaStarW(std::numeric_limits<float>::max());
-        float cosThetaStarWJet1(std::numeric_limits<float>::max());
-        float cosThetaStarWJet2(std::numeric_limits<float>::max());
-        double bdt(std::numeric_limits<double>::max());
+        Int_t globalEventNumber(std::numeric_limits<int>::max());
+        Int_t nIsolatedLeptons(std::numeric_limits<float>::max());
+        Double_t transverseMomentum(std::numeric_limits<float>::max());
+        Double_t invariantMassSystem(std::numeric_limits<float>::max());
+        Double_t cosThetaStarW(std::numeric_limits<float>::max());
+        Double_t cosThetaStarWJet1(std::numeric_limits<float>::max());
+        Double_t cosThetaStarWJet2(std::numeric_limits<float>::max());
+        Double_t bdt(std::numeric_limits<double>::max());
 
         pTChain->SetBranchAddress("GlobalEventNumber", &globalEventNumber);
         pTChain->SetBranchAddress("NumberOfIsolatedLeptons", &nIsolatedLeptons);
@@ -135,6 +86,7 @@ void Fit::FillDistribution()
         {
             pTChain->GetEntry(event);
 
+            // Cuts
             if (bdt < m_pPostMVASelection->GetBDTLowCut() or m_pPostMVASelection->GetBDTHighCut() < bdt)
                 continue;
             if (nIsolatedLeptons < m_pPostMVASelection->GetPreSelection()->GetNumberOfIsolatedLeptonsLowCut() or m_pPostMVASelection->GetPreSelection()->GetNumberOfIsolatedLeptonsHighCut() < nIsolatedLeptons)
@@ -144,128 +96,121 @@ void Fit::FillDistribution()
             if (invariantMassSystem < m_pPostMVASelection->GetPreSelection()->GetInvariantMassSystemLowCut() or m_pPostMVASelection->GetPreSelection()->GetInvariantMassSystemHighCut() < invariantMassSystem)
                 continue;
 
-//            std::cout << "m_pTH1F_DistributionW_Sample->Fill(" << cosThetaStarW << "," << weight << ");" << std::endl;
-            m_pTH1F_DistributionW_Sample->Fill(cosThetaStarW,weight);
+            // Fill Reference Distributions
+            m_pTH1FCosThetaStarWRef->Fill(cosThetaStarW,weight);
+            m_pTH1FCosThetaStarWJetsRef->Fill(cosThetaStarWJet1, weight);
+            m_pTH1FCosThetaStarWJetsRef->Fill(cosThetaStarWJet2, weight);
 
-            m_pTH1F_DistributionJ_Sample->Fill(cosThetaStarWJet1, weight);
-            m_pTH1F_DistributionJ_Sample->Fill(cosThetaStarWJet2, weight);
-
-            for (int a4Int = m_a4IntMin; a4Int < m_a4IntMax+1; a4Int++)
+            // Fill Weighted Distribution
+            for (int alpha4Int = m_alpha4IntMin; alpha4Int < m_alpha4IntMax+1; alpha4Int++)
             {
-                for (int a5Int = m_a5IntMin; a5Int < m_a5IntMax+1; a5Int++)
+                for (int alpha5Int = m_alpha5IntMin; alpha5Int < m_alpha5IntMax+1; alpha5Int++)
                 {
                     float matrixElementWeight(1.f);
 
                     if (pProcess->GetEventType() == "ee_nunuqqqq")
-                        matrixElementWeight = alphaInt_EvtNumber_Weight.at(a4Int).at(a5Int).at(globalEventNumber);
+                    {
+                        const float alpha4(m_alpha4Step * (float)(alpha4Int));
+                        const float alpha5(m_alpha5Step * (float)(alpha5Int));
+                        m_pCouplingAnalysis->GetWeight(globalEventNumber, alpha4, alpha5, matrixElementWeight);
+                    }
 
-//                    std::cout << "alphaInt_EvtNumber_Weight.at(a4Int).at(a5Int).at(globalEventNumber)" << std::endl;
-//                    std::cout << "alphaInt_EvtNumber_Weight.at(" << a4Int << ").at(" << a5Int << ").at(" << globalEventNumber << ")" << alphaInt_EvtNumber_Weight.at(a4Int).at(a5Int).at(globalEventNumber) << std::endl;
-//                    std::cout << "alphaInt_EvtNumber_Weight.at(" << -a4Int << ").at(" << -a5Int << ").at(" << globalEventNumber << ")" << alphaInt_EvtNumber_Weight.at(-a4Int).at(-a5Int).at(globalEventNumber) << std::endl;
-//                    std::cout << "alphaInt_EvtNumber_Weight.at(" << a4Int << ").at(" << -a5Int << ").at(" << globalEventNumber << ")" << alphaInt_EvtNumber_Weight.at(a4Int).at(-a5Int).at(globalEventNumber) << std::endl;
-//                    std::cout << "alphaInt_EvtNumber_Weight.at(" << -a4Int << ").at(" << a5Int << ").at(" << globalEventNumber << ")" << alphaInt_EvtNumber_Weight.at(-a4Int).at(a5Int).at(globalEventNumber) << std::endl;
-
-//                    std::cout << "alphaInt_HistW[" << a4Int << "][" << a5Int << "]->Fill(" << cosThetaStarW << "," << weight << "*" << matrixElementWeight << ");" << std::endl;
-                    alphaInt_HistW[a4Int][a5Int]->Fill(cosThetaStarW,weight*matrixElementWeight);
-                    alphaInt_HistWJ[a4Int][a5Int]->Fill(cosThetaStarWJet1, weight*matrixElementWeight);
-                    alphaInt_HistWJ[a4Int][a5Int]->Fill(cosThetaStarWJet2, weight*matrixElementWeight);
+                    m_alphaIntToCosThetaStarW[alpha4Int][alpha5Int]->Fill(cosThetaStarW,weight*matrixElementWeight);
+                    m_alphaIntToCosThetaStarWJets[alpha4Int][alpha5Int]->Fill(cosThetaStarWJet1, weight*matrixElementWeight);
+                    m_alphaIntToCosThetaStarWJets[alpha4Int][alpha5Int]->Fill(cosThetaStarWJet2, weight*matrixElementWeight);
                 }
             }
-        }
-    } 
-
-    for (std::map<int, std::map<int, TH1F*> >::iterator it = alphaInt_HistWJ.begin(); it != alphaInt_HistWJ.end(); it++)
-    {
-        const int a4Int(it->first);
-        std::cout << "a4Int : " << a4Int << std::endl;
-
-        for (std::map<int, TH1F*>::iterator iter = it->second.begin(); iter != it->second.end(); iter++)
-        {
-            const int a5Int(iter->first);
-            std::cout << "a5Int : " << a5Int << std::endl;
-            TH1F *pTH1F = iter->second;
-
-            TCanvas *pTCanvas = new TCanvas();
-            pTCanvas->Draw();
-            m_pTH1F_DistributionJ_Sample->Draw();
-
-            m_pTH1F_DistributionJ_Sample->SetLineColor(kRed);
-            m_pTH1F_DistributionJ_Sample->SetFillColor(kRed);
-            m_pTH1F_DistributionJ_Sample->SetFillStyle(3004);
-
-            pTH1F->SetLineColor(kGreen-2);
-            pTH1F->SetFillColor(kGreen-2);
-            pTH1F->SetFillStyle(3005);
-
-            int binMax1 = m_pTH1F_DistributionJ_Sample->GetBinContent(m_pTH1F_DistributionJ_Sample->GetMaximumBin());
-            int binMax2 = pTH1F->GetBinContent(pTH1F->GetMaximumBin());
-
-            if (binMax1 > binMax2)
-            {
-                m_pTH1F_DistributionJ_Sample->GetYaxis()->SetRangeUser(0,binMax1*1.05);
-                pTH1F->GetYaxis()->SetRangeUser(0,binMax1*1.05);
-                m_pTH1F_DistributionJ_Sample->Draw();
-                pTH1F->Draw("same");
-            }
-
-            else 
-            {
-                m_pTH1F_DistributionJ_Sample->GetYaxis()->SetRangeUser(0,binMax2*1.05);
-                pTH1F->GetYaxis()->SetRangeUser(0,binMax2*1.05);
-                pTH1F->Draw();
-                m_pTH1F_DistributionJ_Sample->Draw("same");
-            }
-
-            TLegend *pTLegend = new TLegend(0.5,0.7,0.9,0.9);
-
-            std::string title1 = "#alpha_{4} = 0, #alpha_{5} = 0";
-            std::string title2 = "#alpha_{4} = " + this->NumberToString(a4Int*m_a4Step) + ", #alpha_{5} = " + this->NumberToString(a5Int*m_a5Step);
-
-            pTLegend->AddEntry(pTH1F,title2.c_str(),"f");
-            pTLegend->AddEntry(m_pTH1F_DistributionJ_Sample,title1.c_str(),"f");
-            pTLegend->Draw("same");
-            pTCanvas->SaveAs("Test.png");
-            pTCanvas->SaveAs("Test.C");
-            Pause();
-
-            double nll(0.f);
-            this->CalculateLogLikelihood1D(pTH1F,m_pTH1F_DistributionJ_Sample,nll);
-            m_Alpah4.push_back(a4Int*m_a4Step);
-            m_Alpah5.push_back(a5Int*m_a5Step);
-            m_NLLJ.push_back(nll);
         }
     } 
 }
 
 //=====================================================================
 
-void Fit::CalculateLogLikelihood1D(TH1F *pTH1F_Distribution, TH1F *pTH1F_Distribution_Sample, double &nll)
+void Fit::AnalyseDistribution()
+{
+    for (IntIntHistMap::iterator it = m_alphaIntToCosThetaStarWJets.begin(); it != m_alphaIntToCosThetaStarWJets.end(); it++)
+    {
+        const int alpha4Int(it->first);
+        std::cout << "alpha4Int : " << alpha4Int << std::endl;
+
+        for (IntHistMap::iterator iter = it->second.begin(); iter != it->second.end(); iter++)
+        {
+            const int alpha5Int(iter->first);
+            std::cout << "alpha5Int : " << alpha5Int << std::endl;
+            TH1F *pTH1FCosThetaStarWJets = iter->second;
+
+            TCanvas *pTCanvas = new TCanvas();
+            pTCanvas->Draw();
+            m_pTH1FCosThetaStarWJetsRef->Draw();
+
+            m_pTH1FCosThetaStarWJetsRef->SetLineColor(kRed);
+            m_pTH1FCosThetaStarWJetsRef->SetFillColor(kRed);
+            m_pTH1FCosThetaStarWJetsRef->SetFillStyle(3004);
+
+            pTH1FCosThetaStarWJets->SetLineColor(kGreen-2);
+            pTH1FCosThetaStarWJets->SetFillColor(kGreen-2);
+            pTH1FCosThetaStarWJets->SetFillStyle(3005);
+
+            int binMaxRef = m_pTH1FCosThetaStarWJetsRef->GetBinContent(m_pTH1FCosThetaStarWJetsRef->GetMaximumBin());
+            int binMax = pTH1FCosThetaStarWJets->GetBinContent(pTH1FCosThetaStarWJets->GetMaximumBin());
+
+            if (binMaxRef > binMax)
+            {
+                m_pTH1FCosThetaStarWJetsRef->GetYaxis()->SetRangeUser(0,binMaxRef*1.05);
+                pTH1FCosThetaStarWJets->GetYaxis()->SetRangeUser(0,binMaxRef*1.05);
+                m_pTH1FCosThetaStarWJetsRef->Draw();
+                pTH1FCosThetaStarWJets->Draw("same");
+            }
+
+            else 
+            {
+                m_pTH1FCosThetaStarWJetsRef->GetYaxis()->SetRangeUser(0,binMax*1.05);
+                pTH1FCosThetaStarWJets->GetYaxis()->SetRangeUser(0,binMax*1.05);
+                pTH1FCosThetaStarWJets->Draw();
+                m_pTH1FCosThetaStarWJetsRef->Draw("same");
+            }
+
+            TLegend *pTLegend = new TLegend(0.5,0.7,0.9,0.9);
+
+            std::string legendDescriptionRef = "#alpha_{4} = 0, #alpha_{5} = 0";
+            std::string legendDescription = "#alpha_{4} = " + this->NumberToString(alpha4Int*m_alpha4Step) + ", #alpha_{5} = " + this->NumberToString(alpha5Int*m_alpha5Step);
+
+            pTLegend->AddEntry(pTH1FCosThetaStarWJets,legendDescription.c_str(),"f");
+            pTLegend->AddEntry(m_pTH1FCosThetaStarWJetsRef,legendDescriptionRef.c_str(),"f");
+            pTLegend->Draw("same");
+
+            m_pTFile->cd();
+            pTH1FCosThetaStarWJets->Write();
+            pTCanvas->Write();
+
+            std::string plotTitlePng("CosThetaStarWJets_Alpha4_" + this->NumberToString(alpha4Int*m_alpha4Step) + "_Alpha5_" + this->NumberToString(alpha5Int*m_alpha5Step) + ".png");
+            std::string plotTitleDotC("CosThetaStarWJets_Alpha4_" + this->NumberToString(alpha4Int*m_alpha4Step) + "_Alpha5_" + this->NumberToString(alpha5Int*m_alpha5Step) + ".C");
+            pTCanvas->SaveAs(plotTitlePng.c_str());
+            pTCanvas->SaveAs(plotTitleDotC.c_str());
+
+            double negativeLogLikelihood(this->CalculateLogLikelihood(pTH1FCosThetaStarWJets,m_pTH1FCosThetaStarWJetsRef));
+            m_alpha4.push_back(alpha4Int*m_alpha4Step);
+            m_alpha5.push_back(alpha5Int*m_alpha5Step);
+            m_nllCosThetaStarWJets.push_back(negativeLogLikelihood);
+        }
+    } 
+}
+
+//=====================================================================
+
+double Fit::CalculateLogLikelihood(TH1F *pTH1F, TH1F *pTH1FRef)
 {
     if (!gApplication) new TApplication("Application", ((int *)0), ((char **)0));
 
-    nll = 0.0;
-    const int nBinsX = pTH1F_Distribution->GetXaxis()->GetNbins();
+    double negativeLogLikelihood(0.0);
+    const int nBinsX = pTH1F->GetXaxis()->GetNbins();
     for (unsigned int xBin = 1; xBin < nBinsX; xBin++)
     {
-//        std::cout << "nll : " << nll << std::endl;
-        const double binContent = pTH1F_Distribution->GetBinContent(xBin);
-        const double binContentSample = pTH1F_Distribution_Sample->GetBinContent(xBin);
-        nll += (-1.0 * binContentSample * log(binContent)) + binContent;
-
-//        std::cout << "ni  : " << binContentSample << std::endl;
-//        std::cout << "mui : " << binContent << std::endl;
-//        std::cout << "ln (mui) : " << log(binContent) << std::endl;
-//        std::cout << "+= -ni*ln(mui) + mui  : " << (-1.0 * binContentSample * log(binContent)) + binContent<< std::endl;
-//        std::cout << "nll : " << nll << std::endl;
+        const double binContent = pTH1F->GetBinContent(xBin);
+        const double binContentRef = pTH1FRef->GetBinContent(xBin);
+        negativeLogLikelihood += (-1.0 * binContentRef * log(binContent)) + binContent;
     }
-/*
-    TCanvas *pTCanvas = new TCanvas("One","One");
-    pTH1F_Distribution->Draw();
-
-    TCanvas *pTCanvas2 = new TCanvas("Two","Two");
-    pTH1F_Distribution_Sample->Draw();
-    Pause();
-*/
+    return negativeLogLikelihood;
 }
 
 //=====================================================================
@@ -273,49 +218,29 @@ void Fit::CalculateLogLikelihood1D(TH1F *pTH1F_Distribution, TH1F *pTH1F_Distrib
 void Fit::SaveDistribution()
 {
     TCanvas *pTCanvas = new TCanvas();
-//    TGraph2D *pTGraph2DW = new TGraph2D();
-    TGraph2D *pTGraph2DJ = new TGraph2D();
+    TGraph2D *pTGraph2DNLLCosThetaStarWJets = new TGraph2D();
 
-    double minnllw(std::numeric_limits<double>::max()), minnllj(std::numeric_limits<double>::max());
+    double minNLLCosThetaStarWJets(std::numeric_limits<double>::max());
 
-    for (DoubleVector::iterator iter = m_Alpah4.begin(); iter != m_Alpah4.end(); iter++)
+    for (DoubleVector::iterator iter = m_alpha4.begin(); iter != m_alpha4.end(); iter++)
     {
-        const int position(iter-m_Alpah4.begin());
-//        if (minnllw > m_NLLW.at(position))
-//            minnllw = m_NLLW.at(position);
-
-        if (minnllj > m_NLLJ.at(position))
-            minnllj = m_NLLJ.at(position);
+        const int position(iter-m_alpha4.begin());
+        if (minNLLCosThetaStarWJets > m_nllCosThetaStarWJets.at(position))
+            minNLLCosThetaStarWJets = m_nllCosThetaStarWJets.at(position);
     }
 
-    for (DoubleVector::iterator iter = m_Alpah4.begin(); iter != m_Alpah4.end(); iter++)
+    for (DoubleVector::iterator iter = m_alpha4.begin(); iter != m_alpha4.end(); iter++)
     {
-        const int position(iter-m_Alpah4.begin());
-//        pTGraph2DW->SetPoint(pTGraph2DW->GetN(), m_Alpah4.at(position), m_Alpah5.at(position), m_NLLW.at(position) - minnllw);
-        pTGraph2DJ->SetPoint(pTGraph2DJ->GetN(), m_Alpah4.at(position), m_Alpah5.at(position), m_NLLJ.at(position) - minnllj);
+        const int position(iter-m_alpha4.begin());
+        pTGraph2DNLLCosThetaStarWJets->SetPoint(pTGraph2DNLLCosThetaStarWJets->GetN(), m_alpha4.at(position), m_alpha5.at(position), m_nllCosThetaStarWJets.at(position) - minNLLCosThetaStarWJets);
     }
-//    pTGraph2DW->Draw("SURF3");
-//    pTCanvas->SaveAs("LoglikelihoddPlotW.C");
 
-    pTGraph2DJ->Draw("SURF3");
-    pTCanvas->SaveAs("LoglikelihoddPlotJ.C");
-/*
-    TH2F *pTH2F = (TH2F*)(m_pTH2F_Distribution_Sample->Clone());
-    std::string processName = pTH2F->GetName();
-    std::string saveName = processName + ".C";
-    pTCanvas = new TCanvas();
-    pTH2F->Draw("COLZ");
-    pTCanvas->SaveAs(saveName.c_str());
-    pTH2F->SetName(this->RandomName().c_str());
+    pTGraph2DNLLCosThetaStarWJets->Draw("SURF3");
 
-    pTH2F = (TH2F*)(m_pTH2F_Derivative_Sample->Clone());
-    processName = pTH2F->GetName();
-    saveName = processName + ".C";
-    pTCanvas = new TCanvas();
-    pTH2F->Draw("COLZ");
-    pTCanvas->SaveAs(saveName.c_str());
-    pTH2F->SetName(this->RandomName().c_str());
-*/
+    m_pTFile->cd();
+    pTGraph2DNLLCosThetaStarWJets->Write();
+
+    pTCanvas->SaveAs("NegativeLogLikelihoodCosThetaStarWJets.C");
 }
 
 //=====================================================================

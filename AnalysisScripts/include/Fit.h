@@ -10,9 +10,6 @@
 #define FIT_H
 
 #include <algorithm>
-//#include <iostream>
-//#include <limits>
-//#include <sstream>
 #include <string>
 #include <vector>
 
@@ -33,6 +30,8 @@ class Fit
     typedef std::vector<int> IntVector;
     typedef std::vector<double> DoubleVector;
     typedef std::vector<std::string> StringVector;
+    typedef std::map<int, TH1F*> IntHistMap;
+    typedef std::map<int, std::map<int, TH1F*> > IntIntHistMap;
 
     public:
         /**
@@ -40,7 +39,7 @@ class Fit
          *
          *  @param processVector vector of processes to include in analysis
          */
-        Fit(const ProcessVector &processVector, PostMVASelection *pPostMVASelection);
+        Fit(const ProcessVector &processVector, CouplingAnalysis *pCouplingAnalysis);
 
         /**
          *  @brief Default destructor
@@ -56,16 +55,20 @@ class Fit
         /**
          *  @brief Calculate negative log likelihood for a given distribution for non-zero alpha4 and alpha5 based on distribution with zero alpha4 and alpah5
          *
-         *  @param pTH1F_Distribution distribution with non zero alpha4 and alpha5
-         *  @param pTH1F_Distribution_Sample distribution to base log likelihood from
-         *  @param nll negative log likelihood to set
+         *  @param pTH1F distribution with non zero alpha4 and alpha5
+         *  @param pTH1FRef reference distribution to base log likelihood from
          */
-        void CalculateLogLikelihood1D(TH1F *pTH1F_Distribution, TH1F *pTH1F_Distribution_Sample, double &nll);
+        double CalculateLogLikelihood(TH1F *pTH1F, TH1F *pTH1FRef);
 
         /**
          *  @brief Save distribution to root macro
          */
         void SaveDistribution();
+
+        /**
+         *  @brief Analyse distributions and look at negative log likelihoods
+         */
+        void AnalyseDistribution();
 
         /**
          *  @brief Make random string for histogram name to prevent root troubles...
@@ -80,21 +83,24 @@ class Fit
         template <class T>
         std::string NumberToString(T Number);
 
-        ProcessVector         m_processVector;              ///< Vector of all processes
-        PostMVASelection     *m_pPostMVASelection;          ///< Container for all selection cuts
-        int                   m_a4IntMin;                   ///< Minimum integer step for alpha 4 sensitivity
-        int                   m_a4IntMax;                   ///< Maximum integer step for alpha 4 sensitivity
-        float                 m_a4Step;                     ///< Step in alpha 4 per integer move
-        int                   m_a5IntMin;                   ///< Minimum integer step for alpha 5 sensitivity
-        int                   m_a5IntMax;                   ///< Maximum integer step for alpha 5 sensitivity
-        float                 m_a5Step;                     ///< Step in alpha 5 per integer move
-        TH1F                 *m_pTH1F_DistributionJ_Sample; ///< 1D distribution of sigma against cos theta star jet(from W/Z)
-        TH1F                 *m_pTH1F_DistributionW_Sample; ///< 1D distribution of sigma against cos theta star W/Z
-        DoubleVector          m_Alpah4;
-        DoubleVector          m_Alpah5;
-        DoubleVector          m_NLLW;
-        DoubleVector          m_NLLJ;
-
+        ProcessVector         m_processVector;                  ///< Vector of all processes
+        PostMVASelection     *m_pPostMVASelection;              ///< Container for all selection cuts
+        CouplingAnalysis     *m_pCouplingAnalysis;              ///< Coupling analysis to use in fit
+        int                   m_alpha4IntMin;                   ///< Minimum integer step for alpha 4 sensitivity
+        int                   m_alpha4IntMax;                   ///< Maximum integer step for alpha 4 sensitivity
+        float                 m_alpha4Step;                     ///< Step in alpha 4 per integer move
+        int                   m_alpha5IntMin;                   ///< Minimum integer step for alpha 5 sensitivity
+        int                   m_alpha5IntMax;                   ///< Maximum integer step for alpha 5 sensitivity
+        float                 m_alpha5Step;                     ///< Step in alpha 5 per integer move
+        TH1F                 *m_pTH1FCosThetaStarWJetsRef;      ///< Distribution of cos theta star from jets (from W/Z bosons)
+        TH1F                 *m_pTH1FCosThetaStarWRef;          ///< Distribution of cos theta star from W/Z bosons
+        IntIntHistMap         m_alphaIntToCosThetaStarW;        ///< Map of alpha4 and alpha5 int to histogram of cos theta star for W bosons with weights given by alpha4 and alpha5 int multiplied by step
+        IntIntHistMap         m_alphaIntToCosThetaStarWJets;    ///< Map of alpha4 and alpha5 int to histogram of cos theta star for W boson jets with weights given by alpha4 and alpha5 int multiplied by step
+        DoubleVector          m_alpha4;                         ///< Vector of alpha4 values to use for plotting
+        DoubleVector          m_alpha5;                         ///< Vector of alpha5 values to use for plotting
+        DoubleVector          m_nllCosThetaStarWJets;           ///< Vector of negative log likelihood values to use for plotting
+        std::string           m_rootFileName;                   ///< Name of output results root file
+        TFile                *m_pTFile;                         ///< Root file for results
 };
 
 #endif

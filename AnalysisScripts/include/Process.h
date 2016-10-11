@@ -44,7 +44,7 @@ class Process
          *  @param energy
          *  @param analysisTag
          */
-        Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag);
+        Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag, bool quickLoad = false);
 
         /**
          *  @brief Default destructor
@@ -126,11 +126,6 @@ class Process
          */
         template <class T>
         std::string NumberToString(T Number);
-
-        /**
-         *  @brief Make map of TChain entry for process to bool determining whether event passes selection cuts
-         */
-        void MakeSelection();
 
         /**
          *  @breif Set the post MVA tchain

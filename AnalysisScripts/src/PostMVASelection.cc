@@ -124,6 +124,40 @@ void PostMVASelection::MakeWeightList()
             m_eventsNeedingWeights.push_back(globalEventNumber);
         }
     }
+
+    this->SaveEventsNeedingWeightingList();
+}
+
+//===========================================================
+
+void PostMVASelection::SaveEventsNeedingWeightingList()
+{
+    IntVector generatorNumbersSaved;
+    std::ofstream generatorNumbersFile;
+    generatorNumbersFile.open("GeneratorNumbersToConcatenate.txt");
+
+    for (IntVector::iterator enIt = m_eventsNeedingWeights.begin(); enIt != m_eventsNeedingWeights.end(); enIt++)
+    {
+        const int eventNumber(*enIt);
+        int generatorNumber(std::numeric_limits<int>::max());
+
+        if (eventNumber % 1000 == 0)
+        {
+            generatorNumber = (int)(eventNumber/1000.0) - 1;
+        }
+        else
+        {
+            const double doubleNumber(eventNumber/1000.0);
+            generatorNumber = floor(doubleNumber);
+        }
+
+        if (std::find(generatorNumbersSaved.begin(), generatorNumbersSaved.end(), generatorNumber) == generatorNumbersSaved.end())
+        {
+            generatorNumbersFile << generatorNumber << std::endl;
+            generatorNumbersSaved.push_back(generatorNumber);
+        }
+    }
+    generatorNumbersFile.close();
 }
 
 //===========================================================

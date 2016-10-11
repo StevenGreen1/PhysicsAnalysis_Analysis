@@ -9,6 +9,8 @@
 #ifndef POST_MVA_SELECTION_H
 #define POST_MVA_SELECTION_H 1
 
+#include <algorithm>
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <limits>
@@ -50,6 +52,11 @@ class PostMVASelection
          *  @param high bdt cut
          */
         void ApplyBDTCut(double low, double high);
+
+        /**
+         *  @breif Save list of generator numbers requiring concatenation of weight information
+         */
+        void SaveEventsNeedingWeightingList();
 
         /**
          *  @brief Make a list of global event numbers for events passing the event selection
