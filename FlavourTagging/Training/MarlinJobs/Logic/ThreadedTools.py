@@ -84,7 +84,7 @@ def SubmitCLICJob(jobInfo):
             skipJob = True
 
     if skipJob:
-        continue
+        return
 
     print 'Submitting ' + eventType + ' ' + str(energy) + 'GeV jobs.  Detector model ' + detectorModel + '.  Reconstruction stage ' + reconstructionVariant + '.  CLIC file ' + clicFile + '.'
 
