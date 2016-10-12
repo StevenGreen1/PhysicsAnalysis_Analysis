@@ -97,6 +97,7 @@ eventsToSimulate = [
 gearFile = 'TemplateSteering/clic_ild_cdr.gear'
 steeringTemplateFile = 'TemplateSteering/FlavourTaggingTrainingTemplate.xml'
 marlinVersion = 'v01-16-02'
+maxThread = 100
 
 ##############
 # Begin
