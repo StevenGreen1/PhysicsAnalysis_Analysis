@@ -184,7 +184,7 @@ for eventSelection in eventsToSimulate:
         jobInfo['jetAlgorithmConfigString'] = jetAlgorithmConfigString
 
         downloadThread = threading.Thread(target=CLICWorker, name=str(clicFile), args=(threadingSemaphore, pool, jobInfo))
-       downloadThread.start()
+        downloadThread.start()
 
 currentThread = threading.currentThread()
 for thread in threading.enumerate():
