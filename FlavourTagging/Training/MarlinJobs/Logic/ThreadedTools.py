@@ -34,6 +34,7 @@ def SubmitCLICJob(jobInfo):
     numberOfFiles = jobInfo['numberOfFiles']
     gearFileLocal = jobInfo['gearFileLocal']
     diracInstance =  jobInfo['diracInstance']
+    marlinVersion = jobInfo['marlinVersion']
     pandoraPFOsToUse = jobInfo['pandoraPFOsToUse']
     shortPandoraPFOsToUse = jobInfo['shortPandoraPFOsToUse']
     jetClusteringMode = jobInfo['jetClusteringMode']

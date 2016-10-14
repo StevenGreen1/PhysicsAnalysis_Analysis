@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import random
+import time
 
 from ILCDIRAC.Interfaces.API.DiracILC import  DiracILC
 from ILCDIRAC.Interfaces.API.NewInterface.UserJob import *
@@ -175,6 +176,7 @@ for eventSelection in eventsToSimulate:
         jobInfo['numberOfFiles'] = numberOfFiles
         jobInfo['gearFileLocal'] = gearFileLocal
         jobInfo['diracInstance'] = diracInstance
+        jobInfo['marlinVersion'] = marlinVersion
         jobInfo['pandoraPFOsToUse'] = pandoraPFOsToUse
         jobInfo['shortPandoraPFOsToUse'] = shortPandoraPFOsToUse
         jobInfo['jetClusteringMode'] = jetClusteringMode
