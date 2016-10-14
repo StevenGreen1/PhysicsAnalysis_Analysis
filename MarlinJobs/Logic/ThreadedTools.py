@@ -36,7 +36,19 @@ def SubmitCLICJob(jobInfo):
     diracInstance =  jobInfo['diracInstance']
 
     clicFileNoPath = os.path.basename(clicFile) 
-    inputSandbox = ['LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/MarlinAnalysisProcessor.tar.gz', 'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/JetsToPFOProcessor.tar.gz', 'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/vtxprob.tar.gz', 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p70.tar.gz','LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_1p00.tar.gz']
+    inputSandbox = [
+                       'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/MarlinAnalysisProcessor.tar.gz', 
+                       'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/JetsToPFOProcessor.tar.gz', 
+                       'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/vtxprob.tar.gz', 
+                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p50.tar.gz',
+                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p70.tar.gz',
+                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p90.tar.gz',
+                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_1p10.tar.gz',
+                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_LoosePFOs_kt_algorithm_2jets_0p70.tar.gz',
+                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_TightPFOs_kt_algorithm_2jets_0p70.tar.gz',
+                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_cambridge_algorithm_2jets_0p70.tar.gz',
+                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_ee_kt_algorithm_2jets_0p70.tar.gz',
+                   ]
 
     #########################
     # Modify Template
@@ -45,18 +57,38 @@ def SubmitCLICJob(jobInfo):
 
     outputPath = '/' + jobDescription + '/MarlinJobs/Detector_Model_' + detectorModel + '/Reconstruction_Variant_' + reconstructionVariant + '/' + eventType + '_ProdID_' + str(prodID) + '/' + str(energy) + 'GeV'
     rootFileName = 'ProdID_' + str(prodID) + '_' + eventType + '_' + str(energy) + 'GeV_Tag' + str(analysisTag) + '_' + str(idx+1) + '_Of_' + str(numberOfFiles)
-    rootFileNameSelectedPFOs_kt_1p0 = rootFileName + '_SPFOs_kt_2jets_1p00.root'
-    rootFileNameSelectedPFOs_kt_0p7 = rootFileName + '_SPFOs_kt_2jets_0p70.root'
+
+    rootFileName_TPFOs_kt_0p70 = rootFileName + 'TPFOs_kt_0p70.root'
+    rootFileName_LPFOs_kt_0p70 = rootFileName + 'LPFOs_kt_0p70.root'
+    rootFileName_SPFOs_cam_0p70 = rootFileName + 'SPFOs_cam_0p70.root'
+    rootFileName_SPFOs_ee_kt_0p70 = rootFileName + 'SPFOs_ee_kt_0p70.root'
+    rootFileName_SPFOs_kt_0p50 = rootFileName + 'SPFOs_kt_0p50.root'
+    rootFileName_SPFOs_kt_0p70 = rootFileName + 'SPFOs_kt_0p70.root'
+    rootFileName_SPFOs_kt_0p90 = rootFileName + 'SPFOs_kt_0p90.root'
+    rootFileName_SPFOs_kt_1p10 = rootFileName + 'SPFOs_kt_1p10.root'
 
     outputFiles = []
-    outputFiles.append(rootFileNameSelectedPFOs_kt_1p0)
-    outputFiles.append(rootFileNameSelectedPFOs_kt_0p7)
+    outputFiles.append(rootFileName_TPFOs_kt_0p70)
+    outputFiles.append(rootFileName_LPFOs_kt_0p70)
+    outputFiles.append(rootFileName_SPFOs_cam_0p70)
+    outputFiles.append(rootFileName_SPFOs_ee_kt_0p70)
+    outputFiles.append(rootFileName_SPFOs_kt_0p50)
+    outputFiles.append(rootFileName_SPFOs_kt_0p70)
+    outputFiles.append(rootFileName_SPFOs_kt_0p90)
+    outputFiles.append(rootFileName_SPFOs_kt_1p10)
 
     steeringTemplate = re.sub('InputSlcioFile',clicFileNoPath,steeringTemplate)
     steeringTemplate = re.sub('GearFile',gearFileLocal,steeringTemplate)
     steeringTemplate = re.sub('MaximumNumberOfEventsToRecord','-1',steeringTemplate)
-    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPFOs_kt_1p0',rootFileNameSelectedPFOs_kt_1p0,steeringTemplate)
-    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPFOs_kt_0p7',rootFileNameSelectedPFOs_kt_0p7,steeringTemplate)
+
+    steeringTemplate = re.sub('AnalysisProcessorRootFile_TightSelectedPandoraPFANewPFOs_kt_algorithm_0p70', rootFileName_TPFOs_kt_0p70, steeringTemplate)
+    steeringTemplate = re.sub('AnalysisProcessorRootFile_LooseSelectedPandoraPFANewPFOs_kt_algorithm_0p70', rootFileName_LPFOs_kt_0p70, steeringTemplate)
+    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_cambridge_algorithm_0p70', rootFileName_SPFOs_cam_0p70, steeringTemplate)
+    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_ee_kt_algorithm_0p70', rootFileName_SPFOs_ee_kt_0p70, steeringTemplate)
+    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_kt_algorithm_0p50', rootFileName_SPFOs_kt_0p50, steeringTemplate)
+    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_kt_algorithm_0p70', rootFileName_SPFOs_kt_0p70, steeringTemplate)
+    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_kt_algorithm_0p90', rootFileName_SPFOs_kt_0p90, steeringTemplate)
+    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_kt_algorithm_1p10', rootFileName_SPFOs_kt_1p10, steeringTemplate)
 
     #########################
     # Check output doesn't exist already
@@ -149,7 +181,19 @@ def SubmitJob(jobInfo):
     slcioFormat = jobInfo['slcioFormat'] 
 
     slcioFileNoPath = os.path.basename(slcioFile)
-    inputSandbox = ['LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/MarlinAnalysisProcessor.tar.gz', 'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/JetsToPFOProcessor.tar.gz', 'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/vtxprob.tar.gz', 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p70.tar.gz','LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_1p00.tar.gz']
+    inputSandbox = [
+                       'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/MarlinAnalysisProcessor.tar.gz',
+                       'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/JetsToPFOProcessor.tar.gz',
+                       'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/vtxprob.tar.gz',
+                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p50.tar.gz',
+                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p70.tar.gz',
+                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p90.tar.gz',
+                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_1p10.tar.gz',
+                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_LoosePFOs_kt_algorithm_2jets_0p70.tar.gz',
+                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_TightPFOs_kt_algorithm_2jets_0p70.tar.gz',
+                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_cambridge_algorithm_2jets_0p70.tar.gz',
+                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_ee_kt_algorithm_2jets_0p70.tar.gz',
+                   ]
 
     #########################
     # Get info from file name
@@ -174,18 +218,38 @@ def SubmitJob(jobInfo):
 
     outputPath = '/' + jobDescription + '/MarlinJobs/Detector_Model_' + detectorModel + '/Reconstruction_Variant_' + reconstructionVariant + '/' + eventType + '/' + str(energy) + 'GeV'
     rootFileName = 'DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_GenN_' + str(generatorSerialNumber) + '_' + str(numberOfEventsInFile) + '_' + str(startEventNumber) + '_Tag' + str(analysisTag)
-    rootFileNameSelectedPFOs_kt_1p0 = rootFileName + '_SPFOs_kt_2jets_1p00.root'
-    rootFileNameSelectedPFOs_kt_0p7 = rootFileName + '_SPFOs_kt_2jets_0p70.root'
+
+    rootFileName_TPFOs_kt_0p70 = rootFileName + 'TPFOs_kt_0p70.root'
+    rootFileName_LPFOs_kt_0p70 = rootFileName + 'LPFOs_kt_0p70.root'
+    rootFileName_SPFOs_cam_0p70 = rootFileName + 'SPFOs_cam_0p70.root'
+    rootFileName_SPFOs_ee_kt_0p70 = rootFileName + 'SPFOs_ee_kt_0p70.root'
+    rootFileName_SPFOs_kt_0p50 = rootFileName + 'SPFOs_kt_0p50.root'
+    rootFileName_SPFOs_kt_0p70 = rootFileName + 'SPFOs_kt_0p70.root'
+    rootFileName_SPFOs_kt_0p90 = rootFileName + 'SPFOs_kt_0p90.root'
+    rootFileName_SPFOs_kt_1p10 = rootFileName + 'SPFOs_kt_1p10.root'
 
     outputFiles = []
-    outputFiles.append(rootFileNameSelectedPFOs_kt_1p0)
-    outputFiles.append(rootFileNameSelectedPFOs_kt_0p7)
+    outputFiles.append(rootFileName_TPFOs_kt_0p70)
+    outputFiles.append(rootFileName_LPFOs_kt_0p70)
+    outputFiles.append(rootFileName_SPFOs_cam_0p70)
+    outputFiles.append(rootFileName_SPFOs_ee_kt_0p70)
+    outputFiles.append(rootFileName_SPFOs_kt_0p50)
+    outputFiles.append(rootFileName_SPFOs_kt_0p70)
+    outputFiles.append(rootFileName_SPFOs_kt_0p90)
+    outputFiles.append(rootFileName_SPFOs_kt_1p10)
 
-    steeringTemplate = re.sub('InputSlcioFile',slcioFileNoPath,steeringTemplate)
+    steeringTemplate = re.sub('InputSlcioFile',clicFileNoPath,steeringTemplate)
     steeringTemplate = re.sub('GearFile',gearFileLocal,steeringTemplate)
     steeringTemplate = re.sub('MaximumNumberOfEventsToRecord','-1',steeringTemplate)
-    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPFOs_kt_1p0',rootFileNameSelectedPFOs_kt_1p0,steeringTemplate)
-    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPFOs_kt_0p7',rootFileNameSelectedPFOs_kt_0p7,steeringTemplate)
+
+    steeringTemplate = re.sub('AnalysisProcessorRootFile_TightSelectedPandoraPFANewPFOs_kt_algorithm_0p70', rootFileName_TPFOs_kt_0p70, steeringTemplate)
+    steeringTemplate = re.sub('AnalysisProcessorRootFile_LooseSelectedPandoraPFANewPFOs_kt_algorithm_0p70', rootFileName_LPFOs_kt_0p70, steeringTemplate)
+    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_cambridge_algorithm_0p70', rootFileName_SPFOs_cam_0p70, steeringTemplate)
+    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_ee_kt_algorithm_0p70', rootFileName_SPFOs_ee_kt_0p70, steeringTemplate)
+    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_kt_algorithm_0p50', rootFileName_SPFOs_kt_0p50, steeringTemplate)
+    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_kt_algorithm_0p70', rootFileName_SPFOs_kt_0p70, steeringTemplate)
+    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_kt_algorithm_0p90', rootFileName_SPFOs_kt_0p90, steeringTemplate)
+    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_kt_algorithm_1p10', rootFileName_SPFOs_kt_1p10, steeringTemplate)
 
     #########################
     # Check output doesn't exist already

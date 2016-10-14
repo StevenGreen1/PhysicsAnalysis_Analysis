@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import random
+import time
 
 from ILCDIRAC.Interfaces.API.DiracILC import  DiracILC
 from ILCDIRAC.Interfaces.API.NewInterface.UserJob import *
@@ -12,6 +13,7 @@ Script.parseCommandLine()
 from DIRAC.Resources.Catalog.FileCatalogClient import FileCatalogClient
 
 from Logic.GridTools import *
+from Logic.ThreadedTools import *
 
 #===== User Input =====
 
@@ -20,13 +22,14 @@ jobDescription = 'PhysicsAnalysis'
 # Always define event type, events per file and energies in same way.  If not CLIC sample set ProdID to 0
 
 eventsToSimulate = [
-                       { 'EventType': "ee_nunuqqqq"         , 'Energy': 1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 4 }
+                       { 'EventType': "ee_nunuqqqq"         , 'Energy': 1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 10 }
                    ]
 
 #===== Second level user input =====
 
 gearFile = 'TemplateSteering/clic_ild_cdr.gear'
-steeringTemplateFile = 'TemplateSteering/AnalysisTemplate_Tag4.xml'
+steeringTemplateFile = 'TemplateSteering/AnalysisTemplate_Tag9.xml'
+maxThread = 100
 
 ##############
 # Begin
@@ -36,6 +39,9 @@ steeringTemplateFile = 'TemplateSteering/AnalysisTemplate_Tag4.xml'
 base = open(steeringTemplateFile,'r')
 steeringTemplateContent = base.read()
 base.close()
+
+pool = ActivePool()
+threadingSemaphore = threading.Semaphore(maxThread)
 
 for eventSelection in eventsToSimulate:
     eventType = eventSelection['EventType']
@@ -51,107 +57,41 @@ for eventSelection in eventsToSimulate:
     diracInstance = DiracILC(withRepo=False)
 
     slcioFormat = 'DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_GenNumber_(.*?)_(.*?)_(.*?)_DST.slcio'
-    slcioFilesToProcess = getDstSlcioFiles(jobDescription,detectorModel,reconstructionVariant,energy,eventType)
+    slcioFiles = getDstSlcioFiles(jobDescription,detectorModel,reconstructionVariant,energy,eventType)
 
-    if not slcioFilesToProcess:
+    if not slcioFiles:
         print 'No slcio files found.  Exiting job submission.'
         sys.exit()
 
-    for slcioFile in slcioFilesToProcess:
-        print 'Checking ' + eventType + ' ' + str(energy) + 'GeV jobs.  Detector model ' + detectorModel + '.  Reconstruction stage ' + reconstructionVariant + '.  Slcio file ' + slcioFile + '.'
-        slcioFileNoPath = os.path.basename(slcioFile)
-        inputSandbox = ['LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/MarlinAnalysisProcessor.tar.gz', 'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/JetsToPFOProcessor.tar.gz', 'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/vtxprob.tar.gz', 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p70.tar.gz','LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_1p00.tar.gz']
+    numberOfFiles = len(slcioFiles)
 
-        #########################
-        # Get info from file name
-        #########################
-        matchObj = re.match(slcioFormat, os.path.basename(slcioFile), re.M|re.I) 
-        generatorSerialNumber = 0
-        numberOfEventsInFile = 0
-        startEventNumber = 0 # In generator level, not reconstruction.  Start event for all reconstruction is 0.
+    for idx, slcioFile in enumerate(slcioFiles):
+        while threading.activeCount() > (maxThread * 2):
+            time.sleep(5)
 
-        if matchObj:
-            generatorSerialNumber = matchObj.group(1)
-            numberOfEventsInFile = matchObj.group(2)
-            startEventNumber = matchObj.group(3)
-        else:
-            print 'Wrong slcio format.  Please check.'
-            continue
+        jobInfo = {}
+        jobInfo['eventType'] = eventType
+        jobInfo['energy'] = energy
+        jobInfo['detectorModel'] = detectorModel
+        jobInfo['reconstructionVariant'] = reconstructionVariant
+        jobInfo['slcioFile'] = slcioFile
+        jobInfo['analysisTag'] = analysisTag
+        jobInfo['jobDescription'] = jobDescription
+        jobInfo['steeringTemplateContent'] = steeringTemplateContent
+        jobInfo['numberOfFiles'] = numberOfFiles
+        jobInfo['gearFileLocal'] = gearFileLocal
+        jobInfo['diracInstance'] = diracInstance
+        jobInfo['slcioFormat'] = slcioFormat
+        jobInfo['idx'] = idx
 
-        #########################
-        # Modify Template
-        #########################
-        steeringTemplate = steeringTemplateContent
+        downloadThread = threading.Thread(target=Worker, name=str(slcioFile), args=(threadingSemaphore, pool, jobInfo))
+        downloadThread.start()
 
-        outputPath = '/' + jobDescription + '/MarlinJobs/Detector_Model_' + detectorModel + '/Reconstruction_Variant_' + reconstructionVariant + '/' + eventType + '/' + str(energy) + 'GeV'
-        rootFileName = 'DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_GenN_' + str(generatorSerialNumber) + '_' + str(numberOfEventsInFile) + '_' + str(startEventNumber) + '_Tag' + str(analysisTag)
-        rootFileNameSelectedPFOs_kt_1p0 = rootFileName + '_SPFOs_kt_2jets_1p00.root'
-        rootFileNameSelectedPFOs_kt_0p7 = rootFileName + '_SPFOs_kt_2jets_0p70.root'
-
-        outputFiles = []
-        outputFiles.append(rootFileNameSelectedPFOs_kt_1p0)
-        outputFiles.append(rootFileNameSelectedPFOs_kt_0p7)
-
-        steeringTemplate = re.sub('InputSlcioFile',slcioFileNoPath,steeringTemplate)
-        steeringTemplate = re.sub('GearFile',gearFileLocal,steeringTemplate)
-        steeringTemplate = re.sub('MaximumNumberOfEventsToRecord','-1',steeringTemplate)
-        steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPFOs_kt_1p0',rootFileNameSelectedPFOs_kt_1p0,steeringTemplate)
-        steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPFOs_kt_0p7',rootFileNameSelectedPFOs_kt_0p7,steeringTemplate)
-
-        #########################
-        # Write Template File
-        #########################
-        with open('MarlinSteering.steer' ,'w') as SteeringFile:
-            SteeringFile.write(steeringTemplate)
-
-        #########################
-        # Check output doesn't exist already
-        #########################
-
-        skipJob = False
-        for outputFile in outputFiles:
-            lfn = '/ilc/user/s/sgreen' + outputPath + '/' + outputFile
-            if doesFileExist(lfn):
-                skipJob = True
-
-        if skipJob:
-            continue
-
-        print 'Submitting ' + eventType + ' ' + str(energy) + 'GeV jobs.  Detector model ' + detectorModel + '.  Reconstruction stage ' + reconstructionVariant + '.  SLCIO file ' + slcioFile + '.'  
-
-        #########################
-        # Setup Marlin Application
-        #########################
-        ma = Marlin()
-        ma.setVersion('v01-16-02')
-        ma.setSteeringFile('MarlinSteering.steer')
-        ma.setGearFile(gearFileLocal)
-        ma.setInputFile('lfn:' + slcioFile)
-        ma.setProcessorsToUse(['libMarlinFastJet.so', 'libJetsToPFOs.so', 'libLCFIPlus.so', 'libAnalysisProcessor.so', 'libMarlinReco.so'])
-
-        #########################
-        # Submit Job
-        #########################
-        jobDetailedName = jobDescription + '_DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_GenNumber_' + str(generatorSerialNumber) + '_' +  str(numberOfEventsInFile) + '_' + str(startEventNumber)
-
-        job = UserJob()
-        job.setJobGroup(jobDescription)
-        job.setInputSandbox(inputSandbox) # Local files
-        job.setOutputSandbox(['*.log','*.gear','*.mac','*.steer','*.xml'])
-        job.setOutputData(outputFiles,OutputPath=outputPath) # On grid
-        job.setName(jobDetailedName)
-        job.setBannedSites(['LCG.IN2P3-CC.fr','LCG.IN2P3-IRES.fr','LCG.KEK.jp','OSG.PNNL.us','OSG.CIT.us','LCG.LAPP.fr','LCG.UKI-LT2-IC-HEP.uk','LCG.Tau.il','LCG.Weizmann.il','OSG.BNL.us','LCG.GRIF.fr'])
-        job.setCPUTime(21600) # 6 hour, should be excessive
-        job.dontPromptMe()
-
-        res = job.append(ma)
-
-        if not res['OK']:
-            print res['Message']
-            exit()
-        job.submit(diracInstance)
-        sys.exit()
+currentThread = threading.currentThread()
+for thread in threading.enumerate():
+    if thread is currentThread:
+        continue
+    thread.join(60)
 
 # Tidy Up
-os.system('rm MarlinSteering.steer')
 os.system('rm ' + gearFileLocal)
