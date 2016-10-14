@@ -430,7 +430,6 @@ template += """
   </group>
 
   <group name="MyIsolatedLeptonFinder">
-  <processor name="MyIsolatedLeptonFinder" type="IsolatedLeptonFinderProcessor">
     <parameter name="UseRectangularIsolation" type="bool">true </parameter>
     <parameter name="CosConeAngle" type="float">0.995 </parameter>
     <parameter name="IsolationMinimumConeEnergy" type="float">0 </parameter>
