@@ -238,7 +238,7 @@ def SubmitJob(jobInfo):
     outputFiles.append(rootFileName_SPFOs_kt_0p90)
     outputFiles.append(rootFileName_SPFOs_kt_1p10)
 
-    steeringTemplate = re.sub('InputSlcioFile',clicFileNoPath,steeringTemplate)
+    steeringTemplate = re.sub('InputSlcioFile',slcioFileNoPath,steeringTemplate)
     steeringTemplate = re.sub('GearFile',gearFileLocal,steeringTemplate)
     steeringTemplate = re.sub('MaximumNumberOfEventsToRecord','-1',steeringTemplate)
 
