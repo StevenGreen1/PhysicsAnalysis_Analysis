@@ -14,7 +14,7 @@ from DIRAC.Core.Utilities.ReturnValues import returnSingleResult
 jobDescription = 'PhysicsAnalysis'
 
 eventsToDownload = [
-                       { 'EventType': "ee_nunuqqqq"         , 'EventsPerFile' : 1000 , 'Energies':  ['1400'], 'DetectorModel': 'clic_ild_cdr', 'ReconstructionVariant': 'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 3 }
+                       { 'EventType': "ee_nunuqqqq"         , 'EventsPerFile' : 1000 , 'Energies':  ['1400'], 'DetectorModel': 'clic_ild_cdr', 'ReconstructionVariant': 'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 9 }
 #                       { 'EventType': 'ee_nunuww_nunuqqqq'  , 'EventsPerFile' : 1000 , 'Energies':  ['1400'], 'DetectorModel': 'clic_ild_cdr', 'ReconstructionVariant': 'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 3 },
 #                       { 'EventType': 'ee_nunuzz_nunuqqqq'  , 'EventsPerFile' : 1000 , 'Energies':  ['1400'], 'DetectorModel': 'clic_ild_cdr', 'ReconstructionVariant': 'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 3 }
                    ]
@@ -65,12 +65,10 @@ for eventSelection in eventsToDownload:
     analysisTag = eventSelection['AnalysisTag']
 
     for energy in eventSelection['Energies']:
-        path = '/r06/lc/sg568/' + jobDescription + '/MarlinJobs/Detector_Model_' + str(detectorModel) + '/Reconstruction_Variant_' + str(reconstructionVariant) + '/' + eventType + '/' + str(energy) + 'GeV' 
+        path = '/r06/lc/sg568/' + jobDescription + '/MarlinJobs/Detector_Model_' + str(detectorModel) + '/Reconstruction_Variant_' + str(reconstructionVariant) + '/' + eventType + '/' + str(energy) + 'GeV/AnalysisTag' + str(analysisTag)
 
         if not os.path.exists(path):
             os.makedirs(path)
-
-#        os.chdir(path)
 
         meta = {}
         meta['JobDescription'] = jobDescription
@@ -87,12 +85,11 @@ for eventSelection in eventsToDownload:
         lfns = res['Value']
 
         for lfn in lfns:
-            analysisString = 'Analysis_' + str(analysisTag)
+            analysisString = 'Tag' + str(analysisTag)
             if analysisString not in lfn:
                 continue
-            localFile = os.path.basename(lfn)
+            localFile = os.path.join(path, os.path.basename(lfn))
             if not os.path.isfile(localFile):
-#                os.system('dirac-dms-get-file ' + lfn)
                 while threading.activeCount() > (maxThread * 2):
                     time.sleep(5)
 

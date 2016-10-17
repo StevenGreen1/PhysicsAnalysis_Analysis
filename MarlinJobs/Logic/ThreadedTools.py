@@ -12,6 +12,7 @@ Script.parseCommandLine()
 from DIRAC.Resources.Catalog.FileCatalogClient import FileCatalogClient
 
 from GridTools import *
+from TemplateWriterTools import * 
 
 ### ----------------------------------------------------------------------------------------------------
 ### Start of SubmitCLICJob function
@@ -28,67 +29,80 @@ def SubmitCLICJob(jobInfo):
     clicFile = jobInfo['clicFile']
     analysisTag = jobInfo['analysisTag']
     jobDescription = jobInfo['jobDescription']
-    steeringTemplateContent = jobInfo['steeringTemplateContent']
     prodID = jobInfo['prodID']
     idx = jobInfo['idx']
     numberOfFiles = jobInfo['numberOfFiles']
     gearFileLocal = jobInfo['gearFileLocal']
     diracInstance =  jobInfo['diracInstance']
+    pandoraPFOsToUse = jobInfo['pandoraPFOsToUse']
+    jetClusteringMode = jobInfo['jetClusteringMode']
+    nJetsToCluster = jobInfo['nJetsToCluster']
+    jetClusteringAlgorithm = jobInfo['jetClusteringAlgorithm']
+    jetClusteringRadius = jobInfo['jetClusteringRadius']
+
+    flavourTaggingWeights = ''
+    rootFileSuffix = ''
+
+    if pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.50':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p50.tar.gz' 
+        rootFileSuffix = 'SPFOs_kt_0p50.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.70':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p70.tar.gz'
+        rootFileSuffix = 'SPFOs_kt_0p70.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.90':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p90.tar.gz'
+        rootFileSuffix = 'SPFOs_kt_0p90.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '1.00':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_1p00.tar.gz'
+        rootFileSuffix = 'SPFOs_kt_1p00.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '1.10':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_1p10.tar.gz'
+        rootFileSuffix = 'SPFOs_kt_1p10.root'
+
+    elif pandoraPFOsToUse == 'TightSelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.70':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_TightPFOs_kt_algorithm_2jets_0p70.tar.gz'
+        rootFileSuffix = 'TPFOs_kt_0p70.root'
+
+    elif pandoraPFOsToUse == 'LooseSelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.70':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_LoosePFOs_kt_algorithm_2jets_0p70.tar.gz'
+        rootFileSuffix = 'LPFOs_kt_0p70.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'cambridge_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.70':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_cambridge_algorithm_2jets_0p70.tar.gz'
+        rootFileSuffix = 'SPFOs_cam_0p70.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'ee_kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.70':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_ee_kt_algorithm_2jets_0p70.tar.gz'
+        rootFileSuffix = 'SPFOs_ee_kt_0p70.root'
+ 
 
     clicFileNoPath = os.path.basename(clicFile) 
     inputSandbox = [
                        'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/MarlinAnalysisProcessor.tar.gz', 
                        'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/JetsToPFOProcessor.tar.gz', 
                        'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/vtxprob.tar.gz', 
-                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p50.tar.gz',
-                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p70.tar.gz',
-                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p90.tar.gz',
-                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_1p10.tar.gz',
-                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_LoosePFOs_kt_algorithm_2jets_0p70.tar.gz',
-                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_TightPFOs_kt_algorithm_2jets_0p70.tar.gz',
-                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_cambridge_algorithm_2jets_0p70.tar.gz',
-                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_ee_kt_algorithm_2jets_0p70.tar.gz',
+                       flavourTaggingWeights
                    ]
 
     #########################
     # Modify Template
     #########################
-    steeringTemplate = steeringTemplateContent
+    steeringTemplate = GetTemplate(jobInfo)
 
     outputPath = '/' + jobDescription + '/MarlinJobs/Detector_Model_' + detectorModel + '/Reconstruction_Variant_' + reconstructionVariant + '/' + eventType + '_ProdID_' + str(prodID) + '/' + str(energy) + 'GeV'
-    rootFileName = 'ProdID_' + str(prodID) + '_' + eventType + '_' + str(energy) + 'GeV_Tag' + str(analysisTag) + '_' + str(idx+1) + '_Of_' + str(numberOfFiles)
-
-    rootFileName_TPFOs_kt_0p70 = rootFileName + 'TPFOs_kt_0p70.root'
-    rootFileName_LPFOs_kt_0p70 = rootFileName + 'LPFOs_kt_0p70.root'
-    rootFileName_SPFOs_cam_0p70 = rootFileName + 'SPFOs_cam_0p70.root'
-    rootFileName_SPFOs_ee_kt_0p70 = rootFileName + 'SPFOs_ee_kt_0p70.root'
-    rootFileName_SPFOs_kt_0p50 = rootFileName + 'SPFOs_kt_0p50.root'
-    rootFileName_SPFOs_kt_0p70 = rootFileName + 'SPFOs_kt_0p70.root'
-    rootFileName_SPFOs_kt_0p90 = rootFileName + 'SPFOs_kt_0p90.root'
-    rootFileName_SPFOs_kt_1p10 = rootFileName + 'SPFOs_kt_1p10.root'
+    rootFileName = 'ProdID_' + str(prodID) + '_' + eventType + '_' + str(energy) + 'GeV_Tag' + str(analysisTag) + '_' + str(idx+1) + '_Of_' + str(numberOfFiles) + rootFileSuffix
 
     outputFiles = []
-    outputFiles.append(rootFileName_TPFOs_kt_0p70)
-    outputFiles.append(rootFileName_LPFOs_kt_0p70)
-    outputFiles.append(rootFileName_SPFOs_cam_0p70)
-    outputFiles.append(rootFileName_SPFOs_ee_kt_0p70)
-    outputFiles.append(rootFileName_SPFOs_kt_0p50)
-    outputFiles.append(rootFileName_SPFOs_kt_0p70)
-    outputFiles.append(rootFileName_SPFOs_kt_0p90)
-    outputFiles.append(rootFileName_SPFOs_kt_1p10)
+    outputFiles.append(rootFileName)
 
     steeringTemplate = re.sub('InputSlcioFile',clicFileNoPath,steeringTemplate)
     steeringTemplate = re.sub('GearFile',gearFileLocal,steeringTemplate)
     steeringTemplate = re.sub('MaximumNumberOfEventsToRecord','-1',steeringTemplate)
-
-    steeringTemplate = re.sub('AnalysisProcessorRootFile_TightSelectedPandoraPFANewPFOs_kt_algorithm_0p70', rootFileName_TPFOs_kt_0p70, steeringTemplate)
-    steeringTemplate = re.sub('AnalysisProcessorRootFile_LooseSelectedPandoraPFANewPFOs_kt_algorithm_0p70', rootFileName_LPFOs_kt_0p70, steeringTemplate)
-    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_cambridge_algorithm_0p70', rootFileName_SPFOs_cam_0p70, steeringTemplate)
-    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_ee_kt_algorithm_0p70', rootFileName_SPFOs_ee_kt_0p70, steeringTemplate)
-    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_kt_algorithm_0p50', rootFileName_SPFOs_kt_0p50, steeringTemplate)
-    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_kt_algorithm_0p70', rootFileName_SPFOs_kt_0p70, steeringTemplate)
-    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_kt_algorithm_0p90', rootFileName_SPFOs_kt_0p90, steeringTemplate)
-    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_kt_algorithm_1p10', rootFileName_SPFOs_kt_1p10, steeringTemplate)
+    steeringTemplate = re.sub('AnalysisProcessorRootFile', rootFileName, steeringTemplate)
 
     #########################
     # Check output doesn't exist already
@@ -130,7 +144,7 @@ def SubmitCLICJob(jobInfo):
     job.setOutputSandbox(['*.log','*.gear','*.mac','*.steer','*.xml'])
     job.setOutputData(outputFiles,OutputPath=outputPath) # On grid
     job.setName(jobDetailedName)
-    job.setBannedSites(['LCG.IN2P3-CC.fr','LCG.IN2P3-IRES.fr','LCG.KEK.jp','OSG.PNNL.us','OSG.CIT.us','LCG.LAPP.fr','LCG.UKI-LT2-IC-HEP.uk','LCG.Tau.il','LCG.Weizmann.il','OSG.BNL.us','LCG.GRIF.fr'])
+    job.setBannedSites(['LCG.IN2P3-CC.fr','LCG.IN2P3-IRES.fr','LCG.KEK.jp','OSG.PNNL.us','OSG.CIT.us','LCG.LAPP.fr','LCG.UKI-LT2-IC-HEP.uk','LCG.Tau.il','LCG.Weizmann.il','OSG.BNL.us','LCG.GRIF.fr','LCG.UKI-SOUTHGRID-RALPP.uk', 'LCG.RAL-LCG2.uk'])
     job.setCPUTime(21600) # 6 hour, should be excessive
     job.dontPromptMe()
 
@@ -173,26 +187,63 @@ def SubmitJob(jobInfo):
     slcioFile = jobInfo['slcioFile']
     analysisTag = jobInfo['analysisTag']
     jobDescription = jobInfo['jobDescription']
-    steeringTemplateContent = jobInfo['steeringTemplateContent']
     idx = jobInfo['idx']
     numberOfFiles = jobInfo['numberOfFiles']
     gearFileLocal = jobInfo['gearFileLocal']
     diracInstance =  jobInfo['diracInstance']
     slcioFormat = jobInfo['slcioFormat'] 
 
+    pandoraPFOsToUse = jobInfo['pandoraPFOsToUse']
+    jetClusteringMode = jobInfo['jetClusteringMode']
+    nJetsToCluster = jobInfo['nJetsToCluster']
+    jetClusteringAlgorithm = jobInfo['jetClusteringAlgorithm']
+    jetClusteringRadius = jobInfo['jetClusteringRadius']
+
+    flavourTaggingWeights = ''
+    rootFileSuffix = ''
+
+    if pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.50':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p50.tar.gz'
+        rootFileSuffix = 'SPFOs_kt_0p50.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.70':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p70.tar.gz'
+        rootFileSuffix = 'SPFOs_kt_0p70.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.90':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p90.tar.gz'
+        rootFileSuffix = 'SPFOs_kt_0p90.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '1.00':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_1p00.tar.gz'
+        rootFileSuffix = 'SPFOs_kt_1p00.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '1.10':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_1p10.tar.gz'
+        rootFileSuffix = 'SPFOs_kt_1p10.root'
+
+    elif pandoraPFOsToUse == 'TightSelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.70':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_TightPFOs_kt_algorithm_2jets_0p70.tar.gz'
+        rootFileSuffix = 'TPFOs_kt_0p70.root'
+
+    elif pandoraPFOsToUse == 'LooseSelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.70':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_LoosePFOs_kt_algorithm_2jets_0p70.tar.gz'
+        rootFileSuffix = 'LPFOs_kt_0p70.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'cambridge_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.70':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_cambridge_algorithm_2jets_0p70.tar.gz'
+        rootFileSuffix = 'SPFOs_cam_0p70.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'ee_kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.70':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_ee_kt_algorithm_2jets_0p70.tar.gz'
+        rootFileSuffix = 'SPFOs_ee_kt_0p70.root'
+
     slcioFileNoPath = os.path.basename(slcioFile)
     inputSandbox = [
                        'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/MarlinAnalysisProcessor.tar.gz',
                        'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/JetsToPFOProcessor.tar.gz',
                        'LFN:/ilc/user/s/sgreen/AnalysisProcessorTarBall/vtxprob.tar.gz',
-                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p50.tar.gz',
-                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p70.tar.gz',
-                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_0p90.tar.gz',
-                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_kt_algorithm_2jets_1p10.tar.gz',
-                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_LoosePFOs_kt_algorithm_2jets_0p70.tar.gz',
-                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_TightPFOs_kt_algorithm_2jets_0p70.tar.gz',
-                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_cambridge_algorithm_2jets_0p70.tar.gz',
-                       'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_ee_kt_algorithm_2jets_0p70.tar.gz',
+                       flavourTaggingWeights
                    ]
 
     #########################
@@ -214,42 +265,18 @@ def SubmitJob(jobInfo):
     #########################
     # Modify Template
     #########################
-    steeringTemplate = steeringTemplateContent
+    steeringTemplate = GetTemplate(jobInfo)
 
     outputPath = '/' + jobDescription + '/MarlinJobs/Detector_Model_' + detectorModel + '/Reconstruction_Variant_' + reconstructionVariant + '/' + eventType + '/' + str(energy) + 'GeV'
-    rootFileName = 'DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_GenN_' + str(generatorSerialNumber) + '_' + str(numberOfEventsInFile) + '_' + str(startEventNumber) + '_Tag' + str(analysisTag)
-
-    rootFileName_TPFOs_kt_0p70 = rootFileName + 'TPFOs_kt_0p70.root'
-    rootFileName_LPFOs_kt_0p70 = rootFileName + 'LPFOs_kt_0p70.root'
-    rootFileName_SPFOs_cam_0p70 = rootFileName + 'SPFOs_cam_0p70.root'
-    rootFileName_SPFOs_ee_kt_0p70 = rootFileName + 'SPFOs_ee_kt_0p70.root'
-    rootFileName_SPFOs_kt_0p50 = rootFileName + 'SPFOs_kt_0p50.root'
-    rootFileName_SPFOs_kt_0p70 = rootFileName + 'SPFOs_kt_0p70.root'
-    rootFileName_SPFOs_kt_0p90 = rootFileName + 'SPFOs_kt_0p90.root'
-    rootFileName_SPFOs_kt_1p10 = rootFileName + 'SPFOs_kt_1p10.root'
+    rootFileName = 'DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_GenN_' + str(generatorSerialNumber) + '_' + str(numberOfEventsInFile) + '_' + str(startEventNumber) + '_Tag' + str(analysisTag) + rootFileSuffix
 
     outputFiles = []
-    outputFiles.append(rootFileName_TPFOs_kt_0p70)
-    outputFiles.append(rootFileName_LPFOs_kt_0p70)
-    outputFiles.append(rootFileName_SPFOs_cam_0p70)
-    outputFiles.append(rootFileName_SPFOs_ee_kt_0p70)
-    outputFiles.append(rootFileName_SPFOs_kt_0p50)
-    outputFiles.append(rootFileName_SPFOs_kt_0p70)
-    outputFiles.append(rootFileName_SPFOs_kt_0p90)
-    outputFiles.append(rootFileName_SPFOs_kt_1p10)
+    outputFiles.append(rootFileName)
 
     steeringTemplate = re.sub('InputSlcioFile',slcioFileNoPath,steeringTemplate)
     steeringTemplate = re.sub('GearFile',gearFileLocal,steeringTemplate)
     steeringTemplate = re.sub('MaximumNumberOfEventsToRecord','-1',steeringTemplate)
-
-    steeringTemplate = re.sub('AnalysisProcessorRootFile_TightSelectedPandoraPFANewPFOs_kt_algorithm_0p70', rootFileName_TPFOs_kt_0p70, steeringTemplate)
-    steeringTemplate = re.sub('AnalysisProcessorRootFile_LooseSelectedPandoraPFANewPFOs_kt_algorithm_0p70', rootFileName_LPFOs_kt_0p70, steeringTemplate)
-    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_cambridge_algorithm_0p70', rootFileName_SPFOs_cam_0p70, steeringTemplate)
-    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_ee_kt_algorithm_0p70', rootFileName_SPFOs_ee_kt_0p70, steeringTemplate)
-    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_kt_algorithm_0p50', rootFileName_SPFOs_kt_0p50, steeringTemplate)
-    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_kt_algorithm_0p70', rootFileName_SPFOs_kt_0p70, steeringTemplate)
-    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_kt_algorithm_0p90', rootFileName_SPFOs_kt_0p90, steeringTemplate)
-    steeringTemplate = re.sub('AnalysisProcessorRootFile_SelectedPandoraPFANewPFOs_kt_algorithm_1p10', rootFileName_SPFOs_kt_1p10, steeringTemplate)
+    steeringTemplate = re.sub('AnalysisProcessorRootFile', rootFileName, steeringTemplate)
 
     #########################
     # Check output doesn't exist already
@@ -291,7 +318,7 @@ def SubmitJob(jobInfo):
     job.setOutputSandbox(['*.log','*.gear','*.mac','*.steer','*.xml'])
     job.setOutputData(outputFiles,OutputPath=outputPath) # On grid
     job.setName(jobDetailedName)
-    job.setBannedSites(['LCG.IN2P3-CC.fr','LCG.IN2P3-IRES.fr','LCG.KEK.jp','OSG.PNNL.us','OSG.CIT.us','LCG.LAPP.fr','LCG.UKI-LT2-IC-HEP.uk','LCG.Tau.il','LCG.Weizmann.il','OSG.BNL.us','LCG.GRIF.fr'])
+    job.setBannedSites(['LCG.IN2P3-CC.fr','LCG.IN2P3-IRES.fr','LCG.KEK.jp','OSG.PNNL.us','OSG.CIT.us','LCG.LAPP.fr','LCG.UKI-LT2-IC-HEP.uk','LCG.Tau.il','LCG.Weizmann.il','OSG.BNL.us','LCG.GRIF.fr','LCG.UKI-SOUTHGRID-RALPP.uk', 'LCG.RAL-LCG2.uk'])
     job.setCPUTime(21600) # 6 hour, should be excessive
     job.dontPromptMe()
 

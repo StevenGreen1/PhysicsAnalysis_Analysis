@@ -2,24 +2,33 @@
 
 import os
 
-eventSelection = [
-                       { 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 9, 'PandoraPFOsToUse': 'TightSelectedPandoraPFANewPFOs', 'JetClusteringMode': 'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
-                       { 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 9, 'PandoraPFOsToUse': 'LooseSelectedPandoraPFANewPFOs', 'JetClusteringMode': 'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
-                       { 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 9, 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode': 'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'cambridge_algorithm', 'JetClusteringRadius': 0.7 },
-                       { 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 9, 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode': 'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'ee_kt_algorithm', 'JetClusteringRadius': 0.7 },
-                       { 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 9, 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode': 'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.5 },
-                       { 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 9, 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode': 'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
-                       { 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 9, 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode': 'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.9 },
-                       { 'Energy':  1400, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 9, 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode': 'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 1.1 }
-                ]
+### ----------------------------------------------------------------------------------------------------
+### Start of GetTemplate function
+### ----------------------------------------------------------------------------------------------------
 
-##############
-# Begin
-##############
+def GetTemplate(jobInfo):
+    pandoraPFOsToUse = jobInfo['pandoraPFOsToUse']
+    jetClusteringMode = jobInfo['jetClusteringMode']
+    nJetsToCluster = jobInfo['nJetsToCluster']
+    jetClusteringAlgorithm = jobInfo['jetClusteringAlgorithm']
+    jetClusteringRadius = jobInfo['jetClusteringRadius']
+    jetAlgorithmConfigString = pandoraPFOsToUse + '_' + jetClusteringAlgorithm + '_' + str(format(jetClusteringRadius,'.2f')).replace('.','p')
+    energy = jobInfo['energy']
 
-print 'Have to remove R for ee_kt'
+    if jetClusteringRadius > 0.0:
+        jetClusteringRadiusString = str(jetClusteringRadius)
+    else:
+        jetClusteringRadiusString = ''
 
-template = """
+    pfos = ''
+    if pandoraPFOsToUse in 'SelectedPandoraPFANewPFOs':
+        pfos = 'SelectedPFOs'
+    elif pandoraPFOsToUse in 'TightSelectedPandoraPFANewPFOs':
+        pfos = 'TightPFOs'
+    elif pandoraPFOsToUse in 'LooseSelectedPandoraPFANewPFOs':
+        pfos = 'LoosePFOs'
+
+    template = """
 <marlin>
   <execute>
     <group name="MyFastJetGroup"/>                    <!-- Make some jets -->
@@ -48,70 +57,26 @@ template = """
   <group name="MyFastJetGroup">
     <parameter name="recombinationScheme" type="string">E_scheme </parameter>
     <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> SelectedPandoraPFANewPFOs </parameter>
-"""
-
-for event in eventSelection:
-    pandoraPFOsToUse = event['PandoraPFOsToUse']
-    jetClusteringMode = event['JetClusteringMode']
-    nJetsToCluster = event['NJetsToCluster']
-    jetClusteringAlgorithm = event['JetClusteringAlgorithm']
-    jetClusteringRadius = event['JetClusteringRadius']
-    jetAlgorithmConfigString = pandoraPFOsToUse + '_' + jetClusteringAlgorithm + '_' + str(format(jetClusteringRadius,'.2f')).replace('.','p') 
-
-    template += """
     <processor name = "MyFastJetProcessor_""" + jetAlgorithmConfigString + """_6jet" type="FastJetProcessor">
       <parameter name="clusteringMode" type="StringVec">""" + jetClusteringMode + """ 6</parameter>
-      <parameter name="algorithm" type="StringVec">""" + jetClusteringAlgorithm + """ """ + str(jetClusteringRadius) + """ </parameter>
+      <parameter name="algorithm" type="StringVec">""" + jetClusteringAlgorithm + """ """ + str(jetClusteringRadiusString) + """ </parameter>
       <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> """ + jetAlgorithmConfigString + """_6jet_Initial </parameter>
     </processor>
     <processor name = "MyFastJetProcessor_""" + jetAlgorithmConfigString + """_4jet" type="FastJetProcessor">
       <parameter name="clusteringMode" type="StringVec">""" + jetClusteringMode + """ 4</parameter>
-      <parameter name="algorithm" type="StringVec">""" + jetClusteringAlgorithm + """ """ + str(jetClusteringRadius) + """ </parameter>
+      <parameter name="algorithm" type="StringVec">""" + jetClusteringAlgorithm + """ """ + str(jetClusteringRadiusString) + """ </parameter>
       <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> """ + jetAlgorithmConfigString + """_4jet_Initial </parameter>
     </processor>
     <processor name = "MyFastJetProcessor_""" + jetAlgorithmConfigString + """_2jet" type="FastJetProcessor">
       <parameter name="clusteringMode" type="StringVec">""" + jetClusteringMode + """ 2</parameter>
-      <parameter name="algorithm" type="StringVec">""" + jetClusteringAlgorithm + """ """ + str(jetClusteringRadius) + """ </parameter>
+      <parameter name="algorithm" type="StringVec">""" + jetClusteringAlgorithm + """ """ + str(jetClusteringRadiusString) + """ </parameter>
       <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> """ + jetAlgorithmConfigString + """_2jet_Initial </parameter>
     </processor>
-"""
-
-template += """
   </group>
 
   <processor name="MyJetsToPFOs" type="JetsToPFOs">
-    <parameter name="JetInputCollectionNames" type="StringVec"> """
-
-for event in eventSelection:
-    pandoraPFOsToUse = event['PandoraPFOsToUse']
-    jetClusteringMode = event['JetClusteringMode']
-    nJetsToCluster = event['NJetsToCluster']
-    jetClusteringAlgorithm = event['JetClusteringAlgorithm']
-    jetClusteringRadius = event['JetClusteringRadius']
-    jetAlgorithmConfigString = pandoraPFOsToUse + '_' + jetClusteringAlgorithm + '_' + str(format(jetClusteringRadius,'.2f')).replace('.','p')
-
-    template += jetAlgorithmConfigString + '_6jet_Initial '
-    template += jetAlgorithmConfigString + '_4jet_Initial '
-    template += jetAlgorithmConfigString + '_2jet_Initial '
-
-template += """
-</parameter>
-    <parameter name="PFOCollectionNames" type="StringVec"> """
-
-for event in eventSelection:
-    pandoraPFOsToUse = event['PandoraPFOsToUse']
-    jetClusteringMode = event['JetClusteringMode']
-    nJetsToCluster = event['NJetsToCluster']
-    jetClusteringAlgorithm = event['JetClusteringAlgorithm']
-    jetClusteringRadius = event['JetClusteringRadius']
-    jetAlgorithmConfigString = pandoraPFOsToUse + '_' + jetClusteringAlgorithm + '_' + str(format(jetClusteringRadius,'.2f')).replace('.','p')
-
-    template += jetAlgorithmConfigString + '_6jet_pfos_Initial '
-    template += jetAlgorithmConfigString + '_4jet_pfos_Initial '
-    template += jetAlgorithmConfigString + '_2jet_pfos_Initial '
-
-template += """
-</parameter>
+    <parameter name="JetInputCollectionNames" type="StringVec"> """ + jetAlgorithmConfigString + """_6jet_Initial """ + jetAlgorithmConfigString + """_4jet_Initial """ + jetAlgorithmConfigString + """_2jet_Initial </parameter>
+    <parameter name="PFOCollectionNames" type="StringVec"> """ + jetAlgorithmConfigString + """_6jet_pfos_Initial """ + jetAlgorithmConfigString + """_4jet_pfos_Initial """ + jetAlgorithmConfigString + """_2jet_pfos_Initial </parameter>
   </processor>
 
   <group name="MyVertexFinderGroup" type="LcfiplusProcessor">
@@ -151,17 +116,6 @@ template += """
     <parameter name="BuildUpVertex.AssocIPTracksChi2RatioSecToPri" type="double" value="2.0" />
     <parameter name="BuildUpVertex.UseV0Selection" type="int" value="1" />
     <!-- specify input collection names -->
-"""
-
-for event in eventSelection:
-    pandoraPFOsToUse = event['PandoraPFOsToUse']
-    jetClusteringMode = event['JetClusteringMode']
-    nJetsToCluster = event['NJetsToCluster']
-    jetClusteringAlgorithm = event['JetClusteringAlgorithm']
-    jetClusteringRadius = event['JetClusteringRadius']
-    jetAlgorithmConfigString = pandoraPFOsToUse + '_' + jetClusteringAlgorithm + '_' + str(format(jetClusteringRadius,'.2f')).replace('.','p')
-
-    template += """
     <processor name="VertexFinder_""" + jetAlgorithmConfigString + """_6jet" type="LcfiplusProcessor">
       <parameter name="PFOCollection" type="string"> """ + jetAlgorithmConfigString + """_6jet_pfos_Initial </parameter>
       <parameter name="PrimaryVertexCollectionName" type="string"> """ + jetAlgorithmConfigString + """_6jet_PrimaryVertex </parameter>
@@ -180,9 +134,6 @@ for event in eventSelection:
       <parameter name="BuildUpVertexCollectionName" type="string"> """ + jetAlgorithmConfigString + """_2jet_BuildUpVertex </parameter>
       <parameter name="BuildUpVertex.V0VertexCollectionName" type="string"> """ + jetAlgorithmConfigString + """_2jet_BuildUpVertex_V0 </parameter>
     </processor>
-"""
-
-template += """
   </group>
 
   <group name="MyJetClusteringGroup" type="LcfiplusProcessor">
@@ -215,17 +166,6 @@ template += """
     <parameter name="JetVertexRefiner.minz0sigSingle" type="double" value="5." />
     <parameter name="JetVertexRefiner.OneVertexProbThreshold" type="double" value="0.001" />
     <parameter name="JetVertexRefiner.MaxCharmFlightLengthPerJetEnergy" type="double" value="0.1" />
-"""
-
-for event in eventSelection:
-    pandoraPFOsToUse = event['PandoraPFOsToUse']
-    jetClusteringMode = event['JetClusteringMode']
-    nJetsToCluster = event['NJetsToCluster']
-    jetClusteringAlgorithm = event['JetClusteringAlgorithm']
-    jetClusteringRadius = event['JetClusteringRadius']
-    jetAlgorithmConfigString = pandoraPFOsToUse + '_' + jetClusteringAlgorithm + '_' + str(format(jetClusteringRadius,'.2f')).replace('.','p')
-
-    template += """
     <processor name="JetClustering_""" + jetAlgorithmConfigString + """_6jet" type="LcfiplusProcessor">
       <parameter name="PFOCollection" type="string"> """ + jetAlgorithmConfigString + """_6jet_pfos_Initial </parameter>
       <parameter name="JetClustering.InputVertexCollectionName" type="string"> """ + jetAlgorithmConfigString + """_6jet_BuildUpVertex </parameter>
@@ -262,9 +202,6 @@ for event in eventSelection:
       <parameter name="JetVertexRefiner.OutputVertexCollectionName" type="string"> """ + jetAlgorithmConfigString + """_2jet_RefinedVertex_Intermediate </parameter>
       <parameter name="PrimaryVertexCollectionName" type="string"> """ + jetAlgorithmConfigString + """_2jet_PrimaryVertex </parameter>
     </processor>
-"""
-
-template += """
   </group>
 
   <group name="MyJetClusteringAndFlavourTagGroup">
@@ -346,26 +283,6 @@ template += """
     <parameter name="FlavorTag.CategorySpectators4" type="stringVec">
       aux nvtx
     </parameter>
-"""
-
-for event in eventSelection:
-    energy = event['Energy']
-    pandoraPFOsToUse = event['PandoraPFOsToUse']
-    jetClusteringMode = event['JetClusteringMode']
-    nJetsToCluster = event['NJetsToCluster']
-    jetClusteringAlgorithm = event['JetClusteringAlgorithm']
-    jetClusteringRadius = event['JetClusteringRadius']
-    jetAlgorithmConfigString = pandoraPFOsToUse + '_' + jetClusteringAlgorithm + '_' + str(format(jetClusteringRadius,'.2f')).replace('.','p')
-    pfos = ''
-
-    if pandoraPFOsToUse in 'SelectedPandoraPFANewPFOs':
-        pfos = 'SelectedPFOs'
-    elif pandoraPFOsToUse in 'TightSelectedPandoraPFANewPFOs':
-        pfos = 'TightPFOs'
-    elif pandoraPFOsToUse in 'LooseSelectedPandoraPFANewPFOs':
-        pfos = 'LoosePFOs'
-
-    template += """
     <processor name="JetClusteringAndFlavourTagGroup_""" + jetAlgorithmConfigString + """_6jet" type="LcfiplusProcessor">
       <parameter name="JetClustering.NJetsRequested" type="intVec" value="6"/>
       <parameter name="PFOCollection" type="string"> """ + jetAlgorithmConfigString + """_6jet_pfos_Initial </parameter>
@@ -411,9 +328,6 @@ for event in eventSelection:
       <parameter name="FlavorTag.JetCollectionName" type="string"> """ + jetAlgorithmConfigString + """_2jet </parameter>
       <parameter name="FlavorTag.WeightsDirectory" type="string">lcfiweights_""" + str(energy) + """GeV_""" + pfos + """_""" + jetClusteringAlgorithm + """_""" + str(nJetsToCluster) + """jets_""" + str(format(jetClusteringRadius,'.2f')).replace('.','p') + """</parameter>
     </processor>
-"""
-
-template += """
   </group>
 
   <group name="MyThrustReconstruction">
@@ -485,30 +399,14 @@ template += """
 
   <group name="MyAnalysisGroup">
     <parameter name="MCParticleCollectionName" type="string" lcioInType="ReconstructedParticle">MCParticlesSkimmed</parameter>
-
-"""
-
-for event in eventSelection:
-    energy = event['Energy']
-    pandoraPFOsToUse = event['PandoraPFOsToUse']
-    jetClusteringMode = event['JetClusteringMode']
-    nJetsToCluster = event['NJetsToCluster']
-    jetClusteringAlgorithm = event['JetClusteringAlgorithm']
-    jetClusteringRadius = event['JetClusteringRadius']
-    jetAlgorithmConfigString = pandoraPFOsToUse + '_' + jetClusteringAlgorithm + '_' + str(format(jetClusteringRadius,'.2f')).replace('.','p')
-
-    template += """
     <processor name="AnalysisProcessor_""" + jetAlgorithmConfigString + """" type="AnalysisProcessor">
       <parameter name="PFOCollectionName" type="string" lcioInType="ReconstructedParticle">""" + pandoraPFOsToUse + """</parameter>
       <parameter name="IsolatedPFOsCollectionName" type="string" lcioInType="ReconstructedParticle">""" + pandoraPFOsToUse + """IsolatedLeptons</parameter>
       <parameter name="6JetCollectionName" type="string" lcioInType="ReconstructedParticle">""" + jetAlgorithmConfigString + """_6jet</parameter>
       <parameter name="4JetCollectionName" type="string" lcioInType="ReconstructedParticle">""" + jetAlgorithmConfigString + """_4jet</parameter>
       <parameter name="2JetCollectionName" type="string" lcioInType="ReconstructedParticle">""" + jetAlgorithmConfigString + """_2jet</parameter>
-      <parameter name="RootFile" type="string">AnalysisProcessorRootFile_""" + jetAlgorithmConfigString + """</parameter>
+      <parameter name="RootFile" type="string">AnalysisProcessorRootFile</parameter>
     </processor>
-"""
-
-template += """
   </group>
 
   <processor name="MyLCIOOutputProcessor" type="LCIOOutputProcessor">
@@ -518,6 +416,9 @@ template += """
   </processor>
 </marlin>"""
 
-file = open("Template.xml", "w")
-file.write(template)
-file.close()
+    return template 
+
+### ----------------------------------------------------------------------------------------------------
+### End of GetTemplate function
+### ----------------------------------------------------------------------------------------------------
+
