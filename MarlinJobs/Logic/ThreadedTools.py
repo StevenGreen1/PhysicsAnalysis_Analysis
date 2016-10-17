@@ -39,6 +39,7 @@ def SubmitCLICJob(jobInfo):
     nJetsToCluster = jobInfo['nJetsToCluster']
     jetClusteringAlgorithm = jobInfo['jetClusteringAlgorithm']
     jetClusteringRadius = jobInfo['jetClusteringRadius']
+    jetAlgorithmConfigString = pandoraPFOsToUse + '_' + jetClusteringAlgorithm + '_' + str(format(jetClusteringRadius,'.2f')).replace('.','p')
 
     flavourTaggingWeights = ''
     rootFileSuffix = ''
@@ -120,7 +121,7 @@ def SubmitCLICJob(jobInfo):
     #########################
     # Write Template File
     #########################
-    marlinSteeringFilename = 'MarlinSteering_' + str(idx+1) + '_' + eventType + '.steer'
+    marlinSteeringFilename = 'MarlinSteering_' + str(idx+1) + '_' + eventType + '_' + jetAlgorithmConfigString + '.steer'
     with open(marlinSteeringFilename ,'w') as SteeringFile:
         SteeringFile.write(steeringTemplate)
 
@@ -198,6 +199,7 @@ def SubmitJob(jobInfo):
     nJetsToCluster = jobInfo['nJetsToCluster']
     jetClusteringAlgorithm = jobInfo['jetClusteringAlgorithm']
     jetClusteringRadius = jobInfo['jetClusteringRadius']
+    jetAlgorithmConfigString = pandoraPFOsToUse + '_' + jetClusteringAlgorithm + '_' + str(format(jetClusteringRadius,'.2f')).replace('.','p')
 
     flavourTaggingWeights = ''
     rootFileSuffix = ''
@@ -294,7 +296,7 @@ def SubmitJob(jobInfo):
     #########################
     # Write Template File
     #########################
-    marlinSteeringFilename = 'MarlinSteering_' + str(idx+1) + '_' + eventType + '.steer'
+    marlinSteeringFilename = 'MarlinSteering_' + str(idx+1) + '_' + eventType + '_' + jetAlgorithmConfigString + '.steer'
     with open(marlinSteeringFilename ,'w') as SteeringFile:
         SteeringFile.write(steeringTemplate)
 
