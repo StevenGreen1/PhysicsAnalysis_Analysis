@@ -86,7 +86,7 @@ for eventSelection in eventsToDownload:
     prodID = eventSelection['ProdID']
     numberOfEvent = eventSelection['NumberOfEvents']
 
-    gridPath = '/ilc/user/s/sgreen/' + jobDescription + '/MarlinJobs/Detector_Model_' + detectorModel + '/Reconstruction_Variant_' + reconstructionVariant + '/' + eventType + '_ProdID_' + str(prodID) + '/' + str(energy) + 'GeV'
+    gridPath = '/ilc/user/s/sgreen/' + jobDescription + '/MarlinJobs/Detector_Model_' + detectorModel + '/Reconstruction_Variant_' + reconstructionVariant + '/' + eventType + '_ProdID_' + str(prodID) + '/' + str(energy) + 'GeV/AnalysisTag' + str(analysisTag)
 
     print 'Downloading from : ' + gridPath
 
