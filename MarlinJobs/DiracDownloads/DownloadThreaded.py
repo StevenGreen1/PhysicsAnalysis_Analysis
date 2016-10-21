@@ -1,4 +1,5 @@
 import os
+import sys
 import re
 import time
 import threading
@@ -14,7 +15,7 @@ from DIRAC.Core.Utilities.ReturnValues import returnSingleResult
 jobDescription = 'PhysicsAnalysis'
 
 eventsToDownload = [
-                       { 'EventType': "ee_nunuqqqq"         , 'EventsPerFile' : 1000 , 'Energies':  ['1400'], 'DetectorModel': 'clic_ild_cdr', 'ReconstructionVariant': 'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 9 }
+                       { 'EventType': "ee_nunuqqqq"         , 'EventsPerFile' : 1000 , 'Energies':  ['1400'], 'DetectorModel': 'clic_ild_cdr', 'ReconstructionVariant': 'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 11 }
 #                       { 'EventType': 'ee_nunuww_nunuqqqq'  , 'EventsPerFile' : 1000 , 'Energies':  ['1400'], 'DetectorModel': 'clic_ild_cdr', 'ReconstructionVariant': 'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 3 },
 #                       { 'EventType': 'ee_nunuzz_nunuqqqq'  , 'EventsPerFile' : 1000 , 'Energies':  ['1400'], 'DetectorModel': 'clic_ild_cdr', 'ReconstructionVariant': 'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 3 }
                    ]
@@ -66,28 +67,21 @@ for eventSelection in eventsToDownload:
 
     for energy in eventSelection['Energies']:
         path = '/r06/lc/sg568/' + jobDescription + '/MarlinJobs/Detector_Model_' + str(detectorModel) + '/Reconstruction_Variant_' + str(reconstructionVariant) + '/' + eventType + '/' + str(energy) + 'GeV/AnalysisTag' + str(analysisTag)
-
         if not os.path.exists(path):
             os.makedirs(path)
 
-        meta = {}
-        meta['JobDescription'] = jobDescription
-        meta['Type'] = 'Rec'
-        meta['DetectorModel'] = str(detectorModel)
-        meta['ReconstructionStage'] = str(reconstructionVariant)
-        meta['Energy'] = str(energy)
-        meta['EvtType'] = eventType
+        gridPath = '/ilc/user/s/sgreen/' + jobDescription + '/MarlinJobs/Detector_Model_' + str(detectorModel) + '/Reconstruction_Variant_' + str(reconstructionVariant) + '/' + eventType + '/' + str(energy) + 'GeV/AnalysisTag' + str(analysisTag)
 
-        res = fc.findFilesByMetadata(meta)
+        meta = {}
+        meta['Owner'] = 'sgreen'
+
+        res = fc.findFilesByMetadata(meta, gridPath)
         if not res['OK']:
             print res['Message']
 
         lfns = res['Value']
 
         for lfn in lfns:
-            analysisString = 'Tag' + str(analysisTag)
-            if analysisString not in lfn:
-                continue
             localFile = os.path.join(path, os.path.basename(lfn))
             if not os.path.isfile(localFile):
                 while threading.activeCount() > (maxThread * 2):
