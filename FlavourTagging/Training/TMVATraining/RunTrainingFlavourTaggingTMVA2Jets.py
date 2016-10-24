@@ -58,9 +58,18 @@ for eventSelection in eventsToMerge:
         print 'Please select a set of PFOs from SelectedPandoraPFANewPFOs, TightSelectedPandoraPFANewPFOs or LooseSelectedPandoraPFANewPFOs.'
         exit()
 
-    rootFileBB = '/r06/lc/sg568/' + jobDescription + '/MarlinJobs/Detector_Model_' + str(detectorModel) + '/Reconstruction_Variant_' + str(reconstructionVariant) + '/ee_Znunu_Zbb/' + str(energy) + 'GeV/' + jetAlgorithmConfigString + '/RootFilesForTrainingFT_ProdID_2804_ee_Znunu_Zbb_' + str(energy) + 'GeV_Analysis_' + str(analysisTag) + '_' + jetAlgorithmConfigString + '.root'
-    rootFileCC = '/r06/lc/sg568/' + jobDescription + '/MarlinJobs/Detector_Model_' + str(detectorModel) + '/Reconstruction_Variant_' + str(reconstructionVariant) + '/ee_Znunu_Zcc/' + str(energy) + 'GeV/' + jetAlgorithmConfigString + '/RootFilesForTrainingFT_ProdID_2807_ee_Znunu_Zcc_' + str(energy) + 'GeV_Analysis_' + str(analysisTag) + '_' + jetAlgorithmConfigString + '.root'
-    rootFileOO = '/r06/lc/sg568/' + jobDescription + '/MarlinJobs/Detector_Model_' + str(detectorModel) + '/Reconstruction_Variant_' + str(reconstructionVariant) + '/ee_Znunu_Zudsqudsq/' + str(energy) + 'GeV/' + jetAlgorithmConfigString + '/RootFilesForTrainingFT_ProdID_2801_ee_Znunu_Zudsqudsq_' + str(energy) + 'GeV_Analysis_' + str(analysisTag) + '_' + jetAlgorithmConfigString + '.root'
+    if energy == 1400:
+        prodID_bb = 2804
+        prodID_cc = 2807
+        prodID_udsuds = 2801
+    elif energy == 3000:
+        prodID_bb = 3039
+        prodID_cc = 3042
+        prodID_udsuds = 3045
+
+    rootFileBB = '/r06/lc/sg568/' + jobDescription + '/MarlinJobs/Detector_Model_' + str(detectorModel) + '/Reconstruction_Variant_' + str(reconstructionVariant) + '/ee_Znunu_Zbb/' + str(energy) + 'GeV/' + jetAlgorithmConfigString + '/RootFilesForTrainingFT_ProdID_' + str(prodID_bb) + '_ee_Znunu_Zbb_' + str(energy) + 'GeV_Analysis_' + str(analysisTag) + '_' + jetAlgorithmConfigString + '.root'
+    rootFileCC = '/r06/lc/sg568/' + jobDescription + '/MarlinJobs/Detector_Model_' + str(detectorModel) + '/Reconstruction_Variant_' + str(reconstructionVariant) + '/ee_Znunu_Zcc/' + str(energy) + 'GeV/' + jetAlgorithmConfigString + '/RootFilesForTrainingFT_ProdID_' + str(prodID_cc) + '_ee_Znunu_Zcc_' + str(energy) + 'GeV_Analysis_' + str(analysisTag) + '_' + jetAlgorithmConfigString + '.root'
+    rootFileOO = '/r06/lc/sg568/' + jobDescription + '/MarlinJobs/Detector_Model_' + str(detectorModel) + '/Reconstruction_Variant_' + str(reconstructionVariant) + '/ee_Znunu_Zudsqudsq/' + str(energy) + 'GeV/' + jetAlgorithmConfigString + '/RootFilesForTrainingFT_ProdID_' + str(prodID_udsuds) + '_ee_Znunu_Zudsqudsq_' + str(energy) + 'GeV_Analysis_' + str(analysisTag) + '_' + jetAlgorithmConfigString + '.root'
 
     steeringTemplate = steeringTemplateContent
     steeringTemplate = re.sub('inputRootFileB',rootFileBB,steeringTemplate)
