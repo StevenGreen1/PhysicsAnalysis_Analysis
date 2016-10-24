@@ -74,6 +74,7 @@ class AnalysisProcessor : public Processor
     
     private:
         // Inputs
+        double              m_eventEnergyMC;                           ///< MC Event Energy
         std::string         m_rootFile;                                ///< Root file output namne
         std::string         m_particleCollectionPFOs;                  ///< Raw PFO collection name
         std::string         m_particleCollectionMC;                    ///< MC particle collection

@@ -12,7 +12,7 @@ using namespace variables_namespace;
 
 //===========================================================
 
-Variables::Variables() : 
+Variables::Variables(const double eventEnergyMC) : 
     m_appropriateEvent(false),
     m_isEventWW(false),
     m_isEventWWMC(false),
@@ -26,6 +26,7 @@ Variables::Variables() :
     m_nIsolatedLeptons(std::numeric_limits<int>::max()),
     m_highestEnergyIsolatedLeptonPDG(std::numeric_limits<int>::max()),
     m_secondHighestEnergyIsolatedLeptonPDG(std::numeric_limits<int>::max()),
+    m_eventEnergyMC(eventEnergyMC),
     m_transverseMomentum(std::numeric_limits<double>::max()),
     m_transverseMomentumBosonW1(std::numeric_limits<double>::max()),
     m_transverseMomentumBosonW2(std::numeric_limits<double>::max()),
@@ -144,6 +145,7 @@ void Variables::SetBranches(TTree *pTTree)
 //    pTTree->Branch("NChargedParticlesJets", &m_nChargedParticlesJets);
 
 // Floats
+    pTTree->Branch("MCEventEnergy", &m_eventEnergyMC, "MCEventEnergy/D");
     pTTree->Branch("TransverseMomentum", &m_transverseMomentum, "TransverseMomentum/D");
     pTTree->Branch("TransverseMomentumBosonW1", &m_transverseMomentumBosonW1, "TransverseMomentumBosonW1/D");
     pTTree->Branch("TransverseMomentumBosonW2", &m_transverseMomentumBosonW2, "TransverseMomentumBosonW2/D");
@@ -706,6 +708,13 @@ int Variables::GetLowestNChargedParticlesJets() const
 }
 
 //=========================================================== double
+
+double Variables::GetEventEnergyMC() const
+{
+    return m_eventEnergyMC;
+}
+
+//===========================================================
 
 void Variables::SetTransverseMomentum(double transverseMomentum)
 {

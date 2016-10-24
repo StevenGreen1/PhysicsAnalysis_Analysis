@@ -15,7 +15,7 @@ JetAnalysis::JetAnalysis(const EVENT::LCCollection *pLCCollection, Variables *&v
     m_wBosonMass(80.385f),
     m_zBosonMass(91.1876f),
     m_crossingAngle(0.01),
-    m_eventMCEnergy(1400.0),
+    m_eventEnergyMC(variables->GetEventEnergyMC()),
     m_coneAngle(10.0),
     m_y34(std::numeric_limits<double>::max())
 {
@@ -487,7 +487,7 @@ void JetAnalysis::FindMissingMomentum(double &pxMis, double &pyMis, double &pzMi
         pyMis -= pReconstructedParticle->getMomentum()[1];
         pzMis -= pReconstructedParticle->getMomentum()[2];
     }
-    const double xFromCrossingAngle(m_eventMCEnergy * sin(m_crossingAngle));
+    const double xFromCrossingAngle(m_eventEnergyMC * sin(m_crossingAngle));
     pxMis + xFromCrossingAngle;
 }
 
@@ -543,8 +543,8 @@ void JetAnalysis::FindMostEnergeticTrack(EVENT::TrackVec &tracksMostEnergeticCha
 
 void JetAnalysis::CalculateRecoilMass()
 {
-    const double xFromCrossingAngle(m_eventMCEnergy * sin(m_crossingAngle));
-    TLorentzVector pInit(xFromCrossingAngle,0,0,m_eventMCEnergy);
+    const double xFromCrossingAngle(m_eventEnergyMC * sin(m_crossingAngle));
+    TLorentzVector pInit(xFromCrossingAngle,0,0,m_eventEnergyMC);
     double px(0.0), py(0.0), pz(0.0), E(0.0);
 
     for (ParticleVector::const_iterator iter = m_jetVector.begin(); iter != m_jetVector.end(); iter++)

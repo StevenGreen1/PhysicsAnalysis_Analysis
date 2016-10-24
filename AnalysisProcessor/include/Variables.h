@@ -32,8 +32,10 @@ class Variables
     public:
         /**
          *  @brief Constructor
+         *
+         *  @param eventEnergyMC MC energy of event
          */
-        Variables();
+        Variables(const double eventEnergyMC);
 
         /**
          *  @brief Destructor
@@ -284,6 +286,10 @@ class Variables
         int GetLowestNChargedParticlesJets() const;
 
 // Floats
+        /**
+         * @brief Get m_eventEnergyMC
+         */ 
+        double GetEventEnergyMC() const;
 
         /**
          *  @brief Set m_transverseMomentum
@@ -1150,6 +1156,7 @@ class Variables
         IntVector        m_combinationZJets;                             ///< Combination of jets to form Z bosons - JetAnalysis
         IntVector        m_nParticlesJets;                               ///< Number of particles in reconstructed jet - JetAnalysis
         IntVector        m_nChargedParticlesJets;                        ///< Number of charged particles in reconstructed jet - JetAnalysis
+        double           m_eventEnergyMC;                                ///< MC event energy
         double           m_transverseMomentum;                           ///< Transverse momentum of reconstructed system - JetAnalysis
         double           m_transverseMomentumBosonW1;                    ///< Transverse momentum of W boson 1 in W pairing - JetAnalysis
         double           m_transverseMomentumBosonW2;                    ///< Transverse momentum of W boson 2 in W pairing - JetAnalysis

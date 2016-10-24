@@ -12,10 +12,10 @@
 
 MCAnalysis::MCAnalysis(const EVENT::LCCollection *pLCCollection, Variables *&variables):
     m_pVariables(variables),
-    m_WBosonMass(80.385f),
-    m_ZBosonMass(91.1876f),
-    m_CrossingAngle(0.01),
-    m_EventMCEnergy(1400.0),
+    m_wBosonMass(80.385f),
+    m_zBosonMass(91.1876f),
+    m_crossingAngle(0.01),
+    m_eventEnergyMC(variables->GetEventEnergyMC()),
     m_y34(std::numeric_limits<double>::max())
 {
     for (unsigned int i = 6; i < 12; i++)
@@ -23,15 +23,15 @@ MCAnalysis::MCAnalysis(const EVENT::LCCollection *pLCCollection, Variables *&var
         const EVENT::MCParticle *pMCParticle(dynamic_cast<EVENT::MCParticle*>(pLCCollection->getElementAt(i)));
         if (std::abs(pMCParticle->getPDG()) == 12 or std::abs(pMCParticle->getPDG()) == 14 or std::abs(pMCParticle->getPDG()) == 16)
         {
-            m_NeutrinoMCParticleVector.push_back(pMCParticle);
+            m_neutrinoMCParticleVector.push_back(pMCParticle);
         }
         else if (0 < std::abs(pMCParticle->getPDG()) and std::abs(pMCParticle->getPDG()) <= 5)
         {
-            m_QuarkMCParticleVector.push_back(pMCParticle);
+            m_quarkMCParticleVector.push_back(pMCParticle);
         }
     }
 
-    if (m_NeutrinoMCParticleVector.size() == 2 and m_QuarkMCParticleVector.size() == 4)
+    if (m_neutrinoMCParticleVector.size() == 2 and m_quarkMCParticleVector.size() == 4)
     {
         this->Process();
     }
@@ -81,23 +81,23 @@ void MCAnalysis::QuarkPairing()
         IntVector combination(*iter);
 
         MCParticleVector trialPair1, trialPair2;
-        trialPair1.push_back(m_QuarkMCParticleVector.at(combination.at(0)));
-        trialPair1.push_back(m_QuarkMCParticleVector.at(combination.at(1)));
-        trialPair2.push_back(m_QuarkMCParticleVector.at(combination.at(2)));
-        trialPair2.push_back(m_QuarkMCParticleVector.at(combination.at(3)));
+        trialPair1.push_back(m_quarkMCParticleVector.at(combination.at(0)));
+        trialPair1.push_back(m_quarkMCParticleVector.at(combination.at(1)));
+        trialPair2.push_back(m_quarkMCParticleVector.at(combination.at(2)));
+        trialPair2.push_back(m_quarkMCParticleVector.at(combination.at(3)));
 
         double invariantMass1(0.0), invariantMass2(0.0);
 
         this->FindMCInvariantMass(trialPair1, invariantMass1);
         this->FindMCInvariantMass(trialPair2, invariantMass2);
 
-        const double wMetric((fabs(invariantMass1-m_WBosonMass))*fabs(invariantMass2-m_WBosonMass));
-        const double zMetric((fabs(invariantMass1-m_ZBosonMass))*fabs(invariantMass2-m_ZBosonMass));
+        const double wMetric((fabs(invariantMass1-m_wBosonMass))*fabs(invariantMass2-m_wBosonMass));
+        const double zMetric((fabs(invariantMass1-m_zBosonMass))*fabs(invariantMass2-m_zBosonMass));
 
         if (wMetric < bestWMetric)
         {
-            m_MCWVector1 = trialPair1;
-            m_MCWVector2 = trialPair2;
+            m_mcWVector1 = trialPair1;
+            m_mcWVector2 = trialPair2;
             bestWMasses.clear();
             bestWMasses.push_back(invariantMass1);
             bestWMasses.push_back(invariantMass2);
@@ -106,8 +106,8 @@ void MCAnalysis::QuarkPairing()
 
         if (zMetric < bestZMetric)
         {
-            m_MCZVector1 = trialPair1;
-            m_MCZVector2 = trialPair2;
+            m_mcZVector1 = trialPair1;
+            m_mcZVector2 = trialPair2;
             bestZMasses.clear();
             bestZMasses.push_back(invariantMass1);
             bestZMasses.push_back(invariantMass2);
@@ -147,7 +147,7 @@ void MCAnalysis::FindMCInvariantMass(MCParticleVector &mcParticleVector, double 
 void MCAnalysis::CalculateMCTransverseMomentum()
 {
     double transverseMomentum(0.0);
-    for (MCParticleVector::iterator iter = m_QuarkMCParticleVector.begin(); iter != m_QuarkMCParticleVector.end(); iter++)
+    for (MCParticleVector::iterator iter = m_quarkMCParticleVector.begin(); iter != m_quarkMCParticleVector.end(); iter++)
     {
         const EVENT::MCParticle* pMCParticle(*iter);
         const double px(pMCParticle->getMomentum()[0]);
@@ -165,7 +165,7 @@ void MCAnalysis::CalculateMCTransverseMomentum()
 void MCAnalysis::CalculateMCTransverseEnergy()
 {
     double transverseEnergy(0.0);
-    for (MCParticleVector::iterator iter = m_QuarkMCParticleVector.begin(); iter != m_QuarkMCParticleVector.end(); iter++)
+    for (MCParticleVector::iterator iter = m_quarkMCParticleVector.begin(); iter != m_quarkMCParticleVector.end(); iter++)
     {
         const EVENT::MCParticle* pMCParticle(*iter);
         const double px(pMCParticle->getMomentum()[0]);
@@ -182,7 +182,7 @@ void MCAnalysis::CalculateMCCosThetaMissingMomentum()
 {
     double pxMis(0.0), pyMis(0.0), pzMis(0.0);
 
-    for (MCParticleVector::iterator iter = m_NeutrinoMCParticleVector.begin(); iter != m_NeutrinoMCParticleVector.end(); iter++)
+    for (MCParticleVector::iterator iter = m_neutrinoMCParticleVector.begin(); iter != m_neutrinoMCParticleVector.end(); iter++)
     {
         const EVENT::MCParticle* pMCParticle(*iter);
         pxMis += pMCParticle->getMomentum()[0];
@@ -198,11 +198,11 @@ void MCAnalysis::CalculateMCCosThetaMissingMomentum()
 
 void MCAnalysis::CalculateMCRecoilMass()
 {
-    const double xFromCrossingAngle(m_EventMCEnergy * sin(m_CrossingAngle));
-    TLorentzVector pInit(xFromCrossingAngle,0,0,m_EventMCEnergy);
+    const double xFromCrossingAngle(m_eventEnergyMC * sin(m_crossingAngle));
+    TLorentzVector pInit(xFromCrossingAngle,0,0,m_eventEnergyMC);
     double px(0.0), py(0.0), pz(0.0), E(0.0);
 
-    for (MCParticleVector::const_iterator iter = m_QuarkMCParticleVector.begin(); iter != m_QuarkMCParticleVector.end(); iter++)
+    for (MCParticleVector::const_iterator iter = m_quarkMCParticleVector.begin(); iter != m_quarkMCParticleVector.end(); iter++)
     {
         const EVENT::MCParticle* pMCParticle(*iter);
         px += pMCParticle->getMomentum()[0];
@@ -258,15 +258,15 @@ void MCAnalysis::IsMCEventZZ()
 void MCAnalysis::DefineMCVariablesOfInterest()
 {
     double invariantMassQuarkSystem(std::numeric_limits<double>::max());
-    this->FindMCInvariantMass(m_QuarkMCParticleVector,invariantMassQuarkSystem);
+    this->FindMCInvariantMass(m_quarkMCParticleVector,invariantMassQuarkSystem);
     m_pVariables->SetInvariantMassSystemMC(invariantMassQuarkSystem);
 
     double mcCosThetaStarWBoson(std::numeric_limits<double>::max());
-    this->CalculateMCCosThetaStar(m_MCWVector1,m_MCWVector2,mcCosThetaStarWBoson);
+    this->CalculateMCCosThetaStar(m_mcWVector1,m_mcWVector2,mcCosThetaStarWBoson);
     m_pVariables->SetCosThetaStarWBosonsMC(mcCosThetaStarWBoson);
 
     double mcCosThetaStarZBoson(std::numeric_limits<double>::max());
-    this->CalculateMCCosThetaStar(m_MCZVector1,m_MCZVector2,mcCosThetaStarZBoson);
+    this->CalculateMCCosThetaStar(m_mcZVector1,m_mcZVector2,mcCosThetaStarZBoson);
     m_pVariables->SetCosThetaStarZBosonsMC(mcCosThetaStarZBoson);
 }
 

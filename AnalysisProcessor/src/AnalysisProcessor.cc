@@ -19,6 +19,11 @@ AnalysisProcessor::AnalysisProcessor() : Processor("AnalysisProcessor")
 {
     _description = "Analysis processor for vector boson scattering physics analysis";
 
+    registerProcessorParameter("EventEnergyMC",
+                            "Event Energy MC",
+                            m_eventEnergyMC,
+                            double(0.f));
+
     registerProcessorParameter("RootFile",
                             "Name of the output root file",
                             m_rootFile,
@@ -65,7 +70,7 @@ AnalysisProcessor::AnalysisProcessor() : Processor("AnalysisProcessor")
 
 void AnalysisProcessor::init() 
 { 
-    m_pVariables = new Variables();
+    m_pVariables = new Variables(m_eventEnergyMC);
 
     m_nRun = 0;
     m_nEvent = 0;
@@ -187,7 +192,7 @@ void AnalysisProcessor::processEvent(LCEvent *pLCEvent)
         }
         catch (int error)
         {
-            streamlog_out(ERROR) << "Error in jet clusteringi or jet analyses.  " << error << " jets found.  Expecting 6, 4 or 2 jets." << std::endl;
+            streamlog_out(ERROR) << "Error in jet clustering or jet analyses.  " << error << " jets found.  Expecting 6, 4 or 2 jets." << std::endl;
         }
     }
 

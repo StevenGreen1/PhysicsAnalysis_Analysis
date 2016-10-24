@@ -250,7 +250,7 @@ class JetAnalysis
         const double          m_wBosonMass;        ///< W boson mass used for jet pairing
         const double          m_zBosonMass;        ///< Z boson mass used for jet pairing
         const double          m_crossingAngle;     ///< Crossing angle for CLIC ILD, radians 
-        const double          m_eventMCEnergy;     ///< MC event energy excluding beam effects
+        const double          m_eventEnergyMC;     ///< MC event energy excluding beam effects
         const double          m_coneAngle;         ///< Cone angle needed for cone energy measurement, degrees
         double                m_y34;               ///< Jet clustering variable
 };

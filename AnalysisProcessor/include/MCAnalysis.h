@@ -56,12 +56,12 @@ class MCAnalysis
         void FindMCInvariantMass(MCParticleVector &mcParticleVector, double &invariantMass) const;
 
         /**
-         *  @brief Calculate the transverse momentum of all particles in m_QuarkMCParticleVector
+         *  @brief Calculate the transverse momentum of all particles in m_quarkMCParticleVector
          */
         void CalculateMCTransverseMomentum();
 
         /**
-         *  @brief Calculate the transverse energy of all particles in m_QuarkMCParticleVector
+         *  @brief Calculate the transverse energy of all particles in m_quarkMCParticleVector
          */
         void CalculateMCTransverseEnergy();
 
@@ -108,17 +108,17 @@ class MCAnalysis
         void DefineMCEnergy4Vec(MCParticleVector &mcParticleVector, TLorentzVector &tLorentzVector) const;
 
         Variables             *m_pVariables;                ///< Variables of interest to set for analysis
-        MCParticleVector       m_NeutrinoMCParticleVector;  ///< Vector of neutrino MC particles 
-        MCParticleVector       m_QuarkMCParticleVector;     ///< Vector of MC particles 
-        MCParticleVector       m_MCWVector1;                ///< First W candidate
-        MCParticleVector       m_MCWVector2;                ///< Second W candidate
-        MCParticleVector       m_MCZVector1;                ///< First Z candidate
-        MCParticleVector       m_MCZVector2;                ///< Second Z candidate
-        const double            m_WBosonMass;                ///< W boson mass used for quark pairing
-        const double            m_ZBosonMass;                ///< Z boson mass used for quark pairing
-        const double            m_CrossingAngle;             ///< Crossing angle for CLIC ILD, radians
-        const double            m_EventMCEnergy;             ///< MC event energy excluding beam effects
-        double                  m_y34;                       ///< Jet clustering variable
+        MCParticleVector       m_neutrinoMCParticleVector;  ///< Vector of neutrino MC particles 
+        MCParticleVector       m_quarkMCParticleVector;     ///< Vector of MC particles 
+        MCParticleVector       m_mcWVector1;                ///< First W candidate
+        MCParticleVector       m_mcWVector2;                ///< Second W candidate
+        MCParticleVector       m_mcZVector1;                ///< First Z candidate
+        MCParticleVector       m_mcZVector2;                ///< Second Z candidate
+        const double           m_wBosonMass;                ///< W boson mass used for quark pairing
+        const double           m_zBosonMass;                ///< Z boson mass used for quark pairing
+        const double           m_crossingAngle;             ///< Crossing angle for CLIC ILD, radians
+        const double           m_eventEnergyMC;             ///< MC event energy excluding beam effects
+        double                 m_y34;                       ///< Jet clustering variable
 };
 
 #endif // #ifndef MC_ANALYSIS_H
