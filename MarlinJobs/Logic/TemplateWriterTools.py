@@ -399,6 +399,7 @@ def GetTemplate(jobInfo):
 
   <group name="MyAnalysisGroup">
     <parameter name="MCParticleCollectionName" type="string" lcioInType="ReconstructedParticle">MCParticlesSkimmed</parameter>
+    <parameter name="EventEnergyMC" type="double">""" + str(energy) + """</parameter> 
     <processor name="AnalysisProcessor_""" + jetAlgorithmConfigString + """" type="AnalysisProcessor">
       <parameter name="PFOCollectionName" type="string" lcioInType="ReconstructedParticle">""" + pandoraPFOsToUse + """</parameter>
       <parameter name="IsolatedPFOsCollectionName" type="string" lcioInType="ReconstructedParticle">""" + pandoraPFOsToUse + """IsolatedLeptons</parameter>

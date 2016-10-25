@@ -22,19 +22,20 @@ jobDescription = 'PhysicsAnalysis'
 # Always define event type, events per file and energies in same way.  If not CLIC sample set ProdID to 0
 
 eventsToSimulate = [
-                       { 'EventType': 'ee_nunuqqqq', 'Energy': 1400, 'DetectorModel': 'clic_ild_cdr', 'ReconstructionVariant': 'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 11 }
+#                       { 'EventType': 'ee_nunuqqqq', 'Energy': 1400, 'DetectorModel': 'clic_ild_cdr', 'ReconstructionVariant': 'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12 }
+                       { 'EventType': 'ee_nunuqqqq', 'Energy': 3000, 'DetectorModel': 'clic_ild_cdr', 'ReconstructionVariant': 'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12 }
                    ]
 
 jetRecoConfigToSimulate = [
-                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.5 },
+#                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.5 },
                               { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
-                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.9 },
-                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 1.0 },
-                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 1.1 },
-                              { 'PandoraPFOsToUse': 'TightSelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
-                              { 'PandoraPFOsToUse': 'LooseSelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
-                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'cambridge_algorithm', 'JetClusteringRadius': 0.7 },
-                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'ee_kt_algorithm', 'JetClusteringRadius': 0.7 }
+#                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.9 },
+#                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 1.0 },
+#                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 1.1 },
+#                              { 'PandoraPFOsToUse': 'TightSelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
+#                              { 'PandoraPFOsToUse': 'LooseSelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
+#                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'cambridge_algorithm', 'JetClusteringRadius': 0.7 },
+#                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'ee_kt_algorithm', 'JetClusteringRadius': 0.0 }
                            ]
 
 #===== Second level user input =====
@@ -72,7 +73,7 @@ for eventSelection in eventsToSimulate:
         slcioFormat = 'DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_GenNumber_(.*?)_(.*?)_(.*?)_DST.slcio'
         slcioFiles = getDstSlcioFiles(jobDescription,detectorModel,reconstructionVariant,energy,eventType)
 
-#        slcioFiles = slcioFiles[:1]
+        slcioFiles = slcioFiles[:1]
 
         if not slcioFiles:
             print 'No slcio files found.  Exiting job submission.'
@@ -105,7 +106,6 @@ for eventSelection in eventsToSimulate:
 
             downloadThread = threading.Thread(target=Worker, name=str(slcioFile), args=(threadingSemaphore, pool, jobInfo))
             downloadThread.start()
-        sys.exit()
 
 currentThread = threading.currentThread()
 for thread in threading.enumerate():

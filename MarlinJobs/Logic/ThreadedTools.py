@@ -76,9 +76,46 @@ def SubmitCLICJob(jobInfo):
         flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_cambridge_algorithm_2jets_0p70.tar.gz'
         rootFileSuffix = 'SPFOs_cam_0p70.root'
 
-    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'ee_kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.70':
-        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_ee_kt_algorithm_2jets_0p70.tar.gz'
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'ee_kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.00':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_ee_kt_algorithm_2jets_0p00.tar.gz'
         rootFileSuffix = 'SPFOs_ee_kt_0p70.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 3000 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.50':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_3000GeV_SelectedPFOs_kt_algorithm_2jets_0p50.tar.gz'
+        rootFileSuffix = 'SPFOs_kt_0p50.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 3000 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.70':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_3000GeV_SelectedPFOs_kt_algorithm_2jets_0p70.tar.gz'
+        rootFileSuffix = 'SPFOs_kt_0p70.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 3000 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.90':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_3000GeV_SelectedPFOs_kt_algorithm_2jets_0p90.tar.gz'
+        rootFileSuffix = 'SPFOs_kt_0p90.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 3000 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '1.00':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_3000GeV_SelectedPFOs_kt_algorithm_2jets_1p00.tar.gz'
+        rootFileSuffix = 'SPFOs_kt_1p00.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 3000 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '1.10':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_3000GeV_SelectedPFOs_kt_algorithm_2jets_1p10.tar.gz'
+        rootFileSuffix = 'SPFOs_kt_1p10.root'
+
+    elif pandoraPFOsToUse == 'TightSelectedPandoraPFANewPFOs' and (int)(energy) == 3000 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.70':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_3000GeV_TightPFOs_kt_algorithm_2jets_0p70.tar.gz'
+        rootFileSuffix = 'TPFOs_kt_0p70.root'
+
+    elif pandoraPFOsToUse == 'LooseSelectedPandoraPFANewPFOs' and (int)(energy) == 3000 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.70':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_3000GeV_LoosePFOs_kt_algorithm_2jets_0p70.tar.gz'
+        rootFileSuffix = 'LPFOs_kt_0p70.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 3000 and jetClusteringAlgorithm == 'cambridge_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.70':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_3000GeV_SelectedPFOs_cambridge_algorithm_2jets_0p70.tar.gz'
+        rootFileSuffix = 'SPFOs_cam_0p70.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 3000 and jetClusteringAlgorithm == 'ee_kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.00':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_3000GeV_SelectedPFOs_ee_kt_algorithm_2jets_0p00.tar.gz'
+        rootFileSuffix = 'SPFOs_ee_kt_0p70.root'
+
  
 
     clicFileNoPath = os.path.basename(clicFile) 
@@ -236,8 +273,44 @@ def SubmitJob(jobInfo):
         flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_cambridge_algorithm_2jets_0p70.tar.gz'
         rootFileSuffix = 'SPFOs_cam_0p70.root'
 
-    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'ee_kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.70':
-        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_ee_kt_algorithm_2jets_0p70.tar.gz'
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 1400 and jetClusteringAlgorithm == 'ee_kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.00':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_1400GeV_SelectedPFOs_ee_kt_algorithm_2jets_0p00.tar.gz'
+        rootFileSuffix = 'SPFOs_ee_kt_0p70.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 3000 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.50':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_3000GeV_SelectedPFOs_kt_algorithm_2jets_0p50.tar.gz'
+        rootFileSuffix = 'SPFOs_kt_0p50.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 3000 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.70':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_3000GeV_SelectedPFOs_kt_algorithm_2jets_0p70.tar.gz'
+        rootFileSuffix = 'SPFOs_kt_0p70.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 3000 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.90':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_3000GeV_SelectedPFOs_kt_algorithm_2jets_0p90.tar.gz'
+        rootFileSuffix = 'SPFOs_kt_0p90.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 3000 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '1.00':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_3000GeV_SelectedPFOs_kt_algorithm_2jets_1p00.tar.gz'
+        rootFileSuffix = 'SPFOs_kt_1p00.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 3000 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '1.10':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_3000GeV_SelectedPFOs_kt_algorithm_2jets_1p10.tar.gz'
+        rootFileSuffix = 'SPFOs_kt_1p10.root'
+
+    elif pandoraPFOsToUse == 'TightSelectedPandoraPFANewPFOs' and (int)(energy) == 3000 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.70':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_3000GeV_TightPFOs_kt_algorithm_2jets_0p70.tar.gz'
+        rootFileSuffix = 'TPFOs_kt_0p70.root'
+
+    elif pandoraPFOsToUse == 'LooseSelectedPandoraPFANewPFOs' and (int)(energy) == 3000 and jetClusteringAlgorithm == 'kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.70':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_3000GeV_LoosePFOs_kt_algorithm_2jets_0p70.tar.gz'
+        rootFileSuffix = 'LPFOs_kt_0p70.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 3000 and jetClusteringAlgorithm == 'cambridge_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.70':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_3000GeV_SelectedPFOs_cambridge_algorithm_2jets_0p70.tar.gz'
+        rootFileSuffix = 'SPFOs_cam_0p70.root'
+
+    elif pandoraPFOsToUse == 'SelectedPandoraPFANewPFOs' and (int)(energy) == 3000 and jetClusteringAlgorithm == 'ee_kt_algorithm' and (int)(nJetsToCluster) == 2 and str(format(jetClusteringRadius,'.2f')) == '0.00':
+        flavourTaggingWeights = 'LFN:/ilc/user/s/sgreen/PhysicsAnalysis/LcfiWeights/lcfiweights_3000GeV_SelectedPFOs_ee_kt_algorithm_2jets_0p00.tar.gz'
         rootFileSuffix = 'SPFOs_ee_kt_0p70.root'
 
     slcioFileNoPath = os.path.basename(slcioFile)
