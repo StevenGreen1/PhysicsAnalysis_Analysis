@@ -111,8 +111,6 @@ for eventSelection in eventsToSimulate:
         clicFiles = getCLICFiles(prodID)
         clicFiles = orderedList(clicFiles)
 
-        clicFiles = clicFiles[:1]
-
         if not clicFiles:
             print 'No clic files with production ID ' + str(prodID) + ' found.  Exiting job submission.'
             continue

@@ -27,15 +27,15 @@ eventsToSimulate = [
                    ]
 
 jetRecoConfigToSimulate = [
-#                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.5 },
+                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.5 },
                               { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
-#                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.9 },
-#                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 1.0 },
-#                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 1.1 },
-#                              { 'PandoraPFOsToUse': 'TightSelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
-#                              { 'PandoraPFOsToUse': 'LooseSelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
-#                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'cambridge_algorithm', 'JetClusteringRadius': 0.7 },
-#                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'ee_kt_algorithm', 'JetClusteringRadius': 0.0 }
+                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.9 },
+                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 1.0 },
+                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 1.1 },
+                              { 'PandoraPFOsToUse': 'TightSelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
+                              { 'PandoraPFOsToUse': 'LooseSelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
+                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'cambridge_algorithm', 'JetClusteringRadius': 0.7 },
+                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'ee_kt_algorithm', 'JetClusteringRadius': 0.0 }
                            ]
 
 #===== Second level user input =====
@@ -72,8 +72,6 @@ for eventSelection in eventsToSimulate:
 
         slcioFormat = 'DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_GenNumber_(.*?)_(.*?)_(.*?)_DST.slcio'
         slcioFiles = getDstSlcioFiles(jobDescription,detectorModel,reconstructionVariant,energy,eventType)
-
-        slcioFiles = slcioFiles[:1]
 
         if not slcioFiles:
             print 'No slcio files found.  Exiting job submission.'
