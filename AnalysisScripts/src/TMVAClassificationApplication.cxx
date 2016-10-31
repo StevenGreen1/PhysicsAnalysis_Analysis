@@ -15,6 +15,19 @@ int main(int argc, char **argv)
 
     typedef std::vector<const Process*> ProcessVector;
 
+    const Process *pProcess_ee_nunuqqqq_1 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.5","ee_nunuqqqq",22.16,1500,1400,11);
+    const Process *pProcess_ee_nunuqqqq_2 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",22.16,1500,1400,11);
+    const Process *pProcess_ee_nunuqqqq_3 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqqqq",22.16,1500,1400,11);
+    const Process *pProcess_ee_nunuqqqq_4 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.0","ee_nunuqqqq",22.16,1500,1400,11);
+    const Process *pProcess_ee_nunuqqqq_5 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_nunuqqqq",22.16,1500,1400,11);
+    const Process *pProcess_ee_nunuqqqq_6 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",22.16,1500,1400,11);
+    const Process *pProcess_ee_nunuqqqq_7 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","LooseSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",22.16,1500,1400,11);
+    const Process *pProcess_ee_nunuqqqq_8 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"ee_kt_algorithm","0.7","ee_nunuqqqq",22.16,1500,1400,11);
+    const Process *pProcess_ee_nunuqqqq_9 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"cambridge_algorithm","0.7","ee_nunuqqqq",22.16,1500,1400,11);
+
+////////
+//
+/*
     const Process *pProcess_ee_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","ee_nunuqqqq",22.16,1500,1400,9);
 
     // CLIC Backgrounds
@@ -68,15 +81,32 @@ int main(int argc, char **argv)
     processes.push_back(pProcess_gammagamma_qqqq_EPA_BS);
     processes.push_back(pProcess_gammagamma_qqqq_BS_EPA);
     processes.push_back(pProcess_gammagamma_qqqq_BS_BS);
+*/
+//
+///////
 
-    TMVAClassificationApplication *pTMVAClassificationApplication = new TMVAClassificationApplication(processes);
+    ProcessVector processes;
+
+    processes.push_back(pProcess_ee_nunuqqqq_1);
+    processes.push_back(pProcess_ee_nunuqqqq_2);
+    processes.push_back(pProcess_ee_nunuqqqq_3);
+    processes.push_back(pProcess_ee_nunuqqqq_4);
+    processes.push_back(pProcess_ee_nunuqqqq_5);
+    processes.push_back(pProcess_ee_nunuqqqq_6);
+    processes.push_back(pProcess_ee_nunuqqqq_7);
+    processes.push_back(pProcess_ee_nunuqqqq_8);
+    processes.push_back(pProcess_ee_nunuqqqq_9);
+
+    TMVAClassificationApplication *pTMVAClassificationApplication = new TMVAClassificationApplication(processes, true);
 }
 
 //=====================================================================
 
-TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector processes)
+TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector processes, bool perfect)
 {
     TMVA::Reader *reader = new TMVA::Reader( "!Color:!Silent" );
+
+    EventNumbers *pEventNumbers = new EventNumbers();
 
     Float_t nPFOs(std::numeric_limits<float>::max());
     Float_t numberOfIsolatedLeptons(std::numeric_limits<float>::max());
@@ -121,54 +151,57 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
     Float_t sphericity(std::numeric_limits<float>::max());
     Float_t aplanarity(std::numeric_limits<float>::max());
 
-    reader->AddVariable("NPfos := NParticlesJet1+NParticlesJet2+NParticlesJet3+NParticlesJet4", &nPFOs);
-    reader->AddVariable("InvMassWVector1", &invMassWVector1);
-    reader->AddVariable("InvMassWVector2", &invMassWVector2);
-    reader->AddVariable("InvMassZVector1", &invMassZVector1);
-    reader->AddVariable("InvMassZVector2", &invMassZVector2);
-    reader->AddVariable("TransverseMomentum", &transverseMomentum);
-    reader->AddVariable("TransverseMomentumBosonW1", &transverseMomentumBosonW1);
-    reader->AddVariable("TransverseMomentumBosonW2", &transverseMomentumBosonW2);
-    reader->AddVariable("TransverseMomentumBosonZ1", &transverseMomentumBosonZ1);
-    reader->AddVariable("TransverseMomentumBosonZ2", &transverseMomentumBosonZ2);
-    reader->AddVariable("TransverseEnergy", &transverseEnergy);
-    reader->AddVariable("TransverseEnergyBosonW1", &transverseEnergyBosonW1);
-    reader->AddVariable("TransverseEnergyBosonW2", &transverseEnergyBosonW2);
-    reader->AddVariable("TransverseEnergyBosonZ1", &transverseEnergyBosonZ1);
-    reader->AddVariable("TransverseEnergyBosonZ2", &transverseEnergyBosonZ2);
-    reader->AddVariable("CosThetaMissing", &cosThetaMissing);
-    reader->AddVariable("CosThetaMostEnergeticTrack", &cosThetaMostEnergeticTrack);
-    reader->AddVariable("y12", &y12);
-    reader->AddVariable("y23", &y23);
-    reader->AddVariable("y34", &y34);
-    reader->AddVariable("y45", &y45);
-    reader->AddVariable("y56", &y56);
-    reader->AddVariable("y67", &y67);
-    reader->AddVariable("InvariantMassSystem", &invariantMassSystem);
-    reader->AddVariable("CosThetaStarWBosons", &cosThetaStarWBosons);
-    reader->AddVariable("CosThetaStarZBosons", &cosThetaStarZBosons);
-    reader->AddVariable("CosThetaStarWJet1", &cosThetaStarWJet1);
-    reader->AddVariable("CosThetaStarWJet2", &cosThetaStarWJet2);
-    reader->AddVariable("CosThetaStarZJet1", &cosThetaStarZJet1);
-    reader->AddVariable("CosThetaStarZJet2", &cosThetaStarZJet2);
-    reader->AddVariable("AcolinearityJetsW1", &acolinearityJetsW1);
-    reader->AddVariable("AcolinearityJetsW2", &acolinearityJetsW2);
-    reader->AddVariable("AcolinearityJetsZ1", &acolinearityJetsZ1);
-    reader->AddVariable("AcolinearityJetsZ2", &acolinearityJetsZ2);
-    reader->AddVariable("AcolinearityBosonsW", &acolinearityBosonsW);
-    reader->AddVariable("AcolinearityBosonsZ", &acolinearityBosonsZ);
-    reader->AddVariable("PrincipleThrustValue", &principleThrustValue);
-    reader->AddVariable("MajorThrustValue", &majorThrustValue);
-    reader->AddVariable("MinorThrustValue", &minorThrustValue);
-    reader->AddVariable("Sphericity", &sphericity);
-    reader->AddVariable("Aplanarity", &aplanarity);
+    if (!perfect)
+    {
+        reader->AddVariable("NPfos := NParticlesJet1+NParticlesJet2+NParticlesJet3+NParticlesJet4", &nPFOs);
+        reader->AddVariable("InvMassWVector1", &invMassWVector1);
+        reader->AddVariable("InvMassWVector2", &invMassWVector2);
+        reader->AddVariable("InvMassZVector1", &invMassZVector1);
+        reader->AddVariable("InvMassZVector2", &invMassZVector2);
+        reader->AddVariable("TransverseMomentum", &transverseMomentum);
+        reader->AddVariable("TransverseMomentumBosonW1", &transverseMomentumBosonW1);
+        reader->AddVariable("TransverseMomentumBosonW2", &transverseMomentumBosonW2);
+        reader->AddVariable("TransverseMomentumBosonZ1", &transverseMomentumBosonZ1);
+        reader->AddVariable("TransverseMomentumBosonZ2", &transverseMomentumBosonZ2);
+        reader->AddVariable("TransverseEnergy", &transverseEnergy);
+        reader->AddVariable("TransverseEnergyBosonW1", &transverseEnergyBosonW1);
+        reader->AddVariable("TransverseEnergyBosonW2", &transverseEnergyBosonW2);
+        reader->AddVariable("TransverseEnergyBosonZ1", &transverseEnergyBosonZ1);
+        reader->AddVariable("TransverseEnergyBosonZ2", &transverseEnergyBosonZ2);
+        reader->AddVariable("CosThetaMissing", &cosThetaMissing);
+        reader->AddVariable("CosThetaMostEnergeticTrack", &cosThetaMostEnergeticTrack);
+        reader->AddVariable("y12", &y12);
+        reader->AddVariable("y23", &y23);
+        reader->AddVariable("y34", &y34);
+        reader->AddVariable("y45", &y45);
+        reader->AddVariable("y56", &y56);
+        reader->AddVariable("y67", &y67);
+        reader->AddVariable("InvariantMassSystem", &invariantMassSystem);
+        reader->AddVariable("CosThetaStarWBosons", &cosThetaStarWBosons);
+        reader->AddVariable("CosThetaStarZBosons", &cosThetaStarZBosons);
+        reader->AddVariable("CosThetaStarWJet1", &cosThetaStarWJet1);
+        reader->AddVariable("CosThetaStarWJet2", &cosThetaStarWJet2);
+        reader->AddVariable("CosThetaStarZJet1", &cosThetaStarZJet1);
+        reader->AddVariable("CosThetaStarZJet2", &cosThetaStarZJet2);
+        reader->AddVariable("AcolinearityJetsW1", &acolinearityJetsW1);
+        reader->AddVariable("AcolinearityJetsW2", &acolinearityJetsW2);
+        reader->AddVariable("AcolinearityJetsZ1", &acolinearityJetsZ1);
+        reader->AddVariable("AcolinearityJetsZ2", &acolinearityJetsZ2);
+        reader->AddVariable("AcolinearityBosonsW", &acolinearityBosonsW);
+        reader->AddVariable("AcolinearityBosonsZ", &acolinearityBosonsZ);
+        reader->AddVariable("PrincipleThrustValue", &principleThrustValue);
+        reader->AddVariable("MajorThrustValue", &majorThrustValue);
+        reader->AddVariable("MinorThrustValue", &minorThrustValue);
+        reader->AddVariable("Sphericity", &sphericity);
+        reader->AddVariable("Aplanarity", &aplanarity);
 
-    reader->BookMVA("BDT method", "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/weights/TMVAClassification_BDT.weights.xml");
+        reader->BookMVA("BDT method", "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/weights/TMVAClassification_BDT.weights.xml");
 //    reader->BookMVA("Cuts method", "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/weights/TMVAClassification_Cuts.weights.xml");
 //    reader->BookMVA("Likelihood method", "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/weights/TMVAClassification_Likelihood.weights.xml");
 //    reader->BookMVA("PDERS method", "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/weights/TMVAClassification_PDERS.weights.xml");
 //    reader->BookMVA("KNN method", "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/weights/TMVAClassification_KNN.weights.xml");
 //    reader->BookMVA("CFMlpANN method", "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/weights/TMVAClassification_CFMlpANN.weights.xml");
+    }
 
     for (ProcessVector::iterator itPro = processes.begin(); itPro != processes.end(); itPro++)
     {
@@ -310,6 +343,7 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
         // To Save
         TTree *pTTree = new TTree("MVATree", "MVATree");
         pTTree->Branch("GlobalEventNumber", &globalEventNumber_ToSave);
+
         pTTree->Branch("BDT", &bdt);
 //        pTTree->Branch("Cuts", &cuts);
 //        pTTree->Branch("Likelihood", &likelihood);
@@ -567,7 +601,7 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
         std::cout << "Number of TChain entries: " << pTChain->GetEntries() << std::endl;
         std::cout << "Number of TrainingTChain entries: " << pProcess->GetTrainingTChain()->GetEntries() << std::endl;
 
-        int eventCounter(0), generatorSerialNumber(std::numeric_limits<int>::max());
+        int jobEventNumber(0), simulationEventNumber(std::numeric_limits<int>::max());
         IntVector readInSGN;
 
         for (unsigned int event = 0; event < pTChain->GetEntries(); event++)
@@ -580,23 +614,24 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
 
             if (pProcess->GetEventType() == "ee_nunuqqqq")
             {
-                generatorSerialNumber = atoi(this->GetGeneratorSerialNumber(activeFileName).c_str());
+                simulationEventNumber = atoi(this->GetGeneratorSerialNumber(activeFileName).c_str());
 
-                if (std::find(readInSGN.begin(), readInSGN.end(), generatorSerialNumber) == readInSGN.end())
+                if (std::find(readInSGN.begin(), readInSGN.end(), simulationEventNumber) == readInSGN.end())
                 {
-                    readInSGN.push_back(generatorSerialNumber);
-                    eventCounter = 0;
+                    readInSGN.push_back(simulationEventNumber);
+                    jobEventNumber = 0;
                 }
             }
             else
             {
-                generatorSerialNumber = 0;
+                simulationEventNumber = 0;
             }
 
-            eventCounter++;
-            globalEventNumber_ToSave = (generatorSerialNumber * 1e3) + eventCounter; // This works, do not alter 
-            //std::cout << "generatorSerialNumber : " << generatorSerialNumber << std::endl;
-            //std::cout << "eventCounter : " << eventCounter << std::endl;
+            jobEventNumber++;
+
+            globalEventNumber_ToSave = pEventNumbers->SetGlobalEventNumber(simulationEventNumber, jobEventNumber);
+            //std::cout << "simulationEventNumber : " << simulationEventNumber << std::endl;
+            //std::cout << "jobEventNumber : " << jobEventNumber << std::endl;
             //std::cout << "globalEventNumber_ToSave : " << globalEventNumber_ToSave << std::endl;
 
             ///< Set all variables needed by MVA reader
@@ -644,17 +679,25 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
             sphericity = (Float_t)(sphericity_ToSaveAndRead);
             aplanarity = (Float_t)(aplanarity_ToSaveAndRead);
 
-            bdt = (Double_t)(reader->EvaluateMVA("BDT method"));
+            if (!perfect)
+            {
+                bdt = (Double_t)(reader->EvaluateMVA("BDT method"));
 //            cuts = reader->EvaluateMVA("Cuts method");
 //            likelihood = reader->EvaluateMVA("Likelihood method");
 //            pders = reader->EvaluateMVA("PDERS method");
 //            knn = reader->EvaluateMVA("KNN method");
 //            cfmlpann = reader->EvaluateMVA("CFMlpANN method");
+            }
+
+            else
+            {
+                bdt = 42.0;
+            }
 
             pTTree->Fill();
         }
 
-        TString filename = "RootFiles_Multivariant_" + pProcess->GetEventType() + "_" + this->NumberToString(pProcess->GetEnergy()) + "GeV.root";
+        TString filename = "RootFiles_Multivariant_" + pProcess->GetEventType() + "_" + this->NumberToString(pProcess->GetEnergy()) + "GeV_" + pProcess->GetRootSuffix() + ".root";
         TFile *pTFile = new TFile(filename, "recreate");
         pTTree->SetDirectory(pTFile);
 
@@ -664,6 +707,7 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
         pTFile->Close();
         delete pTFile;
     }
+    delete pEventNumbers;
 }
 
 //=====================================================================

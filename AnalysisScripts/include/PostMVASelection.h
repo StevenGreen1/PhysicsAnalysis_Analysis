@@ -14,12 +14,14 @@
 #include <iomanip>
 #include <iostream>
 #include <limits>
+#include <memory>
 #include <vector>
 
 #include "TChain.h"
 #include "TInterpreter.h"
 #include "TTree.h"
 
+#include "EventNumbers.h"
 #include "PreSelection.h"
 #include "Process.h"
 
@@ -27,7 +29,7 @@ using namespace analysis_namespace;
 
 class PostMVASelection
 {
-    typedef std::vector<const Process*> ProcessVector;
+    typedef std::vector<std::shared_ptr<const Process> > ProcessVector;
 
     public:
         /**
@@ -54,14 +56,16 @@ class PostMVASelection
         void ApplyBDTCut(double low, double high);
 
         /**
-         *  @breif Save list of generator numbers requiring concatenation of weight information
+         *  @brief Save list of generator numbers requiring concatenation of weight information
          */
         void SaveEventsNeedingWeightingList();
 
         /**
          *  @brief Make a list of global event numbers for events passing the event selection
+         *
+         *  @param saveTxtFile for running condor jobs
          */
-        void MakeWeightList();
+        void MakeWeightList(bool saveTxtFile = false);
  
         /**
          *  @brief Get list of global event numbers for events passing the event selection

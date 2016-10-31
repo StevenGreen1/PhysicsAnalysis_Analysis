@@ -39,9 +39,10 @@ void PreSelection::ApplyPreSelection()
 {
     std::cout << "Process & NEvts & PreSelection NEvts & PreSelection Normalised NEvts \\\\" << std::endl;
 
-    for (ProcessVector::const_iterator it = m_processVector.begin(); it != m_processVector.end(); it++)
+    for (const auto &pProcess: m_processVector)
+//ProcessVector::const_iterator it = m_processVector.begin(); it != m_processVector.end(); it++)
     {
-        const Process *pProcess(*it);
+//        const Process *pProcess(*it);
         TChain *pTChain(pProcess->GetTrainingTChain());
 
         int nIsolatedLeptons(std::numeric_limits<int>::max());

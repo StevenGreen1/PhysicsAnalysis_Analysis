@@ -12,6 +12,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdlib.h>
 #include <string>
@@ -35,7 +36,7 @@ class WeightToXmlConverter
          *  @param alpha4 alpha 5 value to read in
          *  @param whizard job set number to read in
          */
-        WeightToXmlConverter(const std::string process, const int energy, const float alpha4, const float alpha5, const int whizardJobSet);
+        WeightToXmlConverter(const std::string process, const int energy, const float alpha4, const float alpha5, const int generatorNumber);
 
         /**
          *  @brief Destructor
@@ -105,9 +106,10 @@ class WeightToXmlConverter
         };
 
         typedef std::vector<WeightToXmlConverter::Event*> EventVector;
+
         EventVector m_events;              ///< Vector of events 
 
-        const int m_whizardJobSet;         ///< Whizard job set number
+        const int m_generatorNumber;         ///< Whizard job set number
         const float m_alpha4;              ///< Alpha 4
         const float m_alpha5;              ///< Alpha 5
         const std::string m_eventType;     ///< Event type

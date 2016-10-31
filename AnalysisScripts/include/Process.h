@@ -39,12 +39,17 @@ class Process
          *  @param jobDescription
          *  @param detectorModel
          *  @param reconstructionVariant
+         *  @param pandoraPFOs
+         *  @param jetClusteringMode
+         *  @param nJetsToCluster
+         *  @param jetClusteringAlgorithm
+         *  @param jetClusteringRadius
          *  @param eventType
          *  @param crossSection
          *  @param energy
          *  @param analysisTag
          */
-        Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag, bool quickLoad = false);
+        Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string pandoraPFOs, std::string jetClusteringMode, const int nJetsToCluster, std::string jetClusteringAlgorithm, std::string jetClusteringRadius, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag, bool quickLoad = false);
 
         /**
          *  @brief Default destructor
@@ -102,6 +107,11 @@ class Process
         int GetAnalysisTag() const;
 
         /**
+         *  @brief Get the root suffix
+         */
+        std::string GetRootSuffix() const;
+
+        /**
          *  @brief Print out all information about this process
          */
         void Print() const;
@@ -135,11 +145,17 @@ class Process
         const std::string     m_jobDescription;          ///< Job description
         const std::string     m_detectorModel;           ///< Detector model
         const std::string     m_reconstructionVariant;   ///< Reconstruction variant
+        const std::string     m_pandoraPFOs;             ///< Pandora PFOs Selected, Tight or Loose
+        const std::string     m_jetClusteringMode;       ///< Jet clustering mode
+        const int             m_nJetsToCluster;          ///< Number of jets to cluster
+        const std::string     m_jetClusteringAlgorithm;  ///< Jet clustering algorithm to use 
+        const std::string     m_jetClusteringRadius;     ///< Jet clustering radius 
         const std::string     m_eventType;               ///< Process 
         const float           m_crossSection;            ///< Cross section of proces
         const float           m_luminosity;              ///< Luminosity
         const unsigned int    m_energy;                  ///< Energy of process
         const int             m_analysisTag;             ///< Analysis tag for bookeeping
+        std::string           m_rootSuffix;              ///< Root suffix for loading files
         TChain*               m_pTChain;                 ///< Chain of analysis root files
         TChain*               m_pTrainTChain;            ///< Chain of analysis root files for training TMVA
         TChain*               m_pPostMVATChain;          ///< Chain of analysis root files post DBT training 

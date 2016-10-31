@@ -10,10 +10,15 @@
 
 //=====================================================================
 
-Process::Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag, bool quickLoad) :
+Process::Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string pandoraPFOs, std::string jetClusteringMode, const int nJetsToCluster, std::string jetClusteringAlgorithm, std::string jetClusteringRadius, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag, bool quickLoad) :
     m_jobDescription(jobDescription),
     m_detectorModel(detectorModel),
     m_reconstructionVariant(reconstructionVariant),
+    m_pandoraPFOs(pandoraPFOs),
+    m_jetClusteringMode(jetClusteringMode),
+    m_nJetsToCluster(nJetsToCluster),
+    m_jetClusteringAlgorithm(jetClusteringAlgorithm),
+    m_jetClusteringRadius(jetClusteringRadius),
     m_eventType(eventType),
     m_crossSection(crossSection),
     m_luminosity(luminosity),
@@ -28,10 +33,48 @@ Process::Process(std::string jobDescription, std::string detectorModel, std::str
 {
     m_pathToFiles = "/r06/lc/sg568/" + jobDescription + "/MarlinJobs/Detector_Model_" + detectorModel + "/Reconstruction_Variant_" + reconstructionVariant + "/" + eventType + "/" + this->NumberToString(energy) + "GeV/AnalysisTag" + this->NumberToString(analysisTag) + "/";
 
+    if (pandoraPFOs == "SelectedPandoraPFANewPFOs")
+        m_rootSuffix += "S";
+    else if (pandoraPFOs == "TightSelectedPandoraPFANewPFOs")
+        m_rootSuffix += "T";
+    else if (pandoraPFOs == "LooseSelectedPandoraPFANewPFOs")
+        m_rootSuffix += "L";
+
+    m_rootSuffix += "PFOs_";
+
+    if (jetClusteringAlgorithm == "kt_algorithm")
+        m_rootSuffix += "kt";
+    else if (jetClusteringAlgorithm == "cambridge_algorithm")
+        m_rootSuffix += "cam";
+    else if (jetClusteringAlgorithm == "ee_kt_algorithm")
+        m_rootSuffix += "ee_kt";
+
+    if (analysisTag >= 11)
+        m_rootSuffix += "_";
+    else 
+        m_rootSuffix += "_2jets_";
+
+    if (jetClusteringRadius == "0.5")
+        m_rootSuffix += "0p50";
+    else if (jetClusteringRadius == "0.7")
+        m_rootSuffix += "0p70";
+    else if (jetClusteringRadius == "0.9")
+        m_rootSuffix += "0p90";
+    else if (jetClusteringRadius == "1.0")
+        m_rootSuffix += "1p00";
+    else if (jetClusteringRadius == "1.1")
+        m_rootSuffix += "1p10";
+
     if (!quickLoad)
         this->MakeTChain();
 
     this->SetMVARootFiles();
+}
+
+//=====================================================================
+
+Process::~Process()
+{
 }
 
 //=====================================================================
@@ -106,6 +149,13 @@ int Process::GetAnalysisTag() const
 
 //=====================================================================
 
+std::string Process::GetRootSuffix() const
+{
+    return m_rootSuffix;
+}
+
+//=====================================================================
+
 void Process::Print() const 
 {
     std::cout << "For the process   : " << m_eventType << std::endl
@@ -130,7 +180,7 @@ bool Process::DoesEventPassCuts(int eventNumber) const
 void Process::SetMVARootFiles()
 {
     m_pPostMVATChain = new TChain("MVATree");
-    TString fileToAdd = "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/RootFilesPostMVA/RootFiles_Multivariant_" + m_eventType + "_" + this->NumberToString(m_energy) + "GeV.root";
+    TString fileToAdd = "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/RootFilesPostMVA/RootFiles_Multivariant_" + m_eventType + "_" + this->NumberToString(m_energy) + "GeV_" + m_rootSuffix + ".root";
     m_pPostMVATChain->Add(fileToAdd);
     m_postMVAProcessWeight = m_luminosity * m_crossSection / (float)(m_pPostMVATChain->GetEntries());
 }
@@ -159,8 +209,24 @@ void Process::MakeTChain()
             fileCandidate = file->GetName();
             std::string analysisTagString("Tag" + this->NumberToString(m_analysisTag));
 
-            if (!file->IsDirectory() and fileCandidate.EndsWith("root") and fileCandidate.Contains(analysisTagString.c_str()) and fileCandidate.Contains("SPFOs_kt_2jets_0p70")) // and m_pTChain->GetEntries() < 10000) 
+            if (!file->IsDirectory() and fileCandidate.EndsWith("root") and fileCandidate.Contains(analysisTagString.c_str()) and fileCandidate.Contains(m_rootSuffix.c_str()) and m_pTChain->GetEntries() < 50000) 
             {
+                if (m_eventType == "ee_nunuqqqq")
+                {
+                    std::string fileCandidate2 = fileCandidate.Data();
+                    std::string startDel = "GenN_";
+                    std::string stopDel = "_1000_0_";
+                    unsigned firstLim = fileCandidate2.find(startDel);
+                    unsigned lastLim = fileCandidate2.find(stopDel);
+                    std::string strNew = fileCandidate2.substr (firstLim+5,lastLim-firstLim);
+                    int simulationNumber = atoi(strNew.c_str());
+                    //std::cout << "fileCandidate " << fileCandidate << std::endl;
+                    //std::cout << "simulationNumber " << simulationNumber << std::endl;
+                    if (simulationNumber < 1000)
+                        continue;
+                    //std::cout << "simulationNumber passed" << std::endl;
+                }
+
                 TString rootFileToAdd = m_pathToFiles + fileCandidate.Data();
 
                 if (trainingSample)

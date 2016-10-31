@@ -10,19 +10,18 @@
 
 //============================================================================
 
-CouplingAnalysis::CouplingAnalysis(const ProcessVector &processVector, PostMVASelection *pPostMVASelection) : 
-    m_processVector(processVector),
+CouplingAnalysis::CouplingAnalysis(PostMVASelection *pPostMVASelection) : 
     m_pPostMVASelection(pPostMVASelection),
-    m_eventsNeedingWeights(pPostMVASelection->GetEventsNeedingWeightsList()),
     m_numberUniqueAlpha4(0),
     m_numberUniqueAlpha5(0),
-    m_a4IntMin(-5),
-    m_a4IntMax(4),
+    m_a4IntMin(-7),
+    m_a4IntMax(7),
     m_a4Step(0.01f),
-    m_a5IntMin(-5),
-    m_a5IntMax(4),
+    m_a5IntMin(-7),
+    m_a5IntMax(7),
     m_a5Step(0.01f),
-    m_weightsLoaded(false)
+//    m_weightsLoaded(false)
+    m_activeSimulationEventNumber(std::numeric_limits<int>::max())
 {
     m_weightsDirectory = "/r06/lc/sg568/PhysicsAnalysis/Generator/ee_nunuqqqq/1400GeV/ConcatenatedWeightsXml/";
 
@@ -48,100 +47,101 @@ CouplingAnalysis::~CouplingAnalysis()
 
 //============================================================================
 
-void CouplingAnalysis::GetWeight(const int eventNumber, const float alpha4, const float alpha5, float &eventWeight)
+void CouplingAnalysis::GetWeight(const int globalEventNumber, const float alpha4, const float alpha5, float &eventWeight)
 {
-//std::cout << "void CouplingAnalysis::GetWeight(const int eventNumber, const float alpha4, const float alpha5, float &eventWeight)" << std::endl;
-//std::cout << "void CouplingAnalysis::GetWeight(const int " << eventNumber << ", const float " << alpha4 << ", const float " << alpha5 << ", float &" << eventWeight << ")" << std::endl;
-    if (!m_weightsLoaded)
+//std::cout << "void CouplingAnalysis::GetWeight(const int globalEventNumber, const float alpha4, const float alpha5, float &eventWeight)" << std::endl;
+//std::cout << "void CouplingAnalysis::GetWeight(const int " << globalEventNumber << ", const float " << alpha4 << ", const float " << alpha5 << ", float &" << eventWeight << ")" << std::endl;
+
+//    EventNumbers *pEventNumbers = new EventNumbers();
+    std::unique_ptr<EventNumbers> pEventNumbers(new EventNumbers()); 
+    const int simulationEventNumber(pEventNumbers->GetSimulationNumberFromGlobal(globalEventNumber));
+
+//std::cout << "m_activeSimulationEventNumber : " << m_activeSimulationEventNumber << std::endl;
+//std::cout << "simulationEventNumber : " << simulationEventNumber << std::endl;
+
+    if (simulationEventNumber != m_activeSimulationEventNumber)
     {
-        this->LoadConcatenatedWeightXml();
-        m_weightsLoaded = true;
+        m_eventToAlpha4ToAlpha5ToWeightMap.clear(); // Wipe the otherwise huge map every time a new simulation number needs to be read, hopefully makes memory useage easier.
+        this->LoadConcatenatedWeightXml(simulationEventNumber);
+        m_activeSimulationEventNumber = simulationEventNumber;
     }
-//std::cout << "HERE" << std::endl;
-    IntToIntToIntToFloatMap::const_iterator it = m_eventToAlpha4ToAlpha5ToWeightMap.find(eventNumber);
+
+/*
+    if (std::find(m_readInSimulationEventNumbers.begin(), m_readInSimulationEventNumbers.end(), simulationEventNumber) == m_readInSimulationEventNumbers.end())
+    {
+        m_readInSimulationEventNumbers.push_back(simulationEventNumber);
+        this->LoadConcatenatedWeightXml(simulationEventNumber);
+    }
+*/
+    IntToIntToIntToFloatMap::const_iterator it = m_eventToAlpha4ToAlpha5ToWeightMap.find(globalEventNumber);
 
     if (it == m_eventToAlpha4ToAlpha5ToWeightMap.end())
     {
-        //std::cout << "Missing event number " << eventNumber << std::endl;
+        if (std::find(m_missingEventNumbers.begin(), m_missingEventNumbers.end(), globalEventNumber) == m_missingEventNumbers.end())
+        {
+            m_missingEventNumbers.push_back(globalEventNumber);
+            std::cout << "Missing event number " << globalEventNumber << std::endl;
+        }
         return;
     }
 
     if (alpha4 < *(m_alpha4Vector.begin()) or *(m_alpha4Vector.rbegin()) < alpha4 or alpha5 < *(m_alpha5Vector.begin()) or *(m_alpha5Vector.rbegin()) < alpha5)
     {
-        //std::cout << "Unable to apply bilinear interpolation to event, please add more weight samples to be able to reweight (alpha4, alpha5) = (" << alpha4 << ", " << alpha5 << ").  Setting event weight to 1." << std::endl;
+        std::cout << "Unable to apply bilinear interpolation to event, please add more weight samples to be able to reweight (alpha4, alpha5) = (" << alpha4 << ", " << alpha5 << ").  Setting event weight to 1." << std::endl;
         eventWeight = 1.f;
     }
 
     if (alpha4 < *(m_alpha4Vector.begin() + 1) or *(m_alpha4Vector.rbegin() + 1) < alpha4 or alpha5 < *(m_alpha5Vector.begin() + 1) or *(m_alpha5Vector.rbegin() + 1) < alpha5)
     {
-        //std::cout << "Unable to apply bicubic interpolation to event, please add more weight samples to be able to reweight (alpha4, alpha5) = (" << alpha4 << ", " << alpha5 << ").  Setting event weight to 1." << std::endl;
+        std::cout << "Unable to apply bicubic interpolation to event, please add more weight samples to be able to reweight (alpha4, alpha5) = (" << alpha4 << ", " << alpha5 << ").  Setting event weight to 1." << std::endl;
         eventWeight = 1.f;
     }
-
-//std::cout << "HERE2" << std::endl;
 
     IntVector alpha4BoundingKeys = {0, 0, 0, 0}; // alpha 4 between key 1 and 2
     IntVector alpha5BoundingKeys = {0, 0, 0, 0}; // alpha 4 between key 1 and 2
 
-//for (int key : alpha4BoundingKeys)
-//{
-//std::cout << "alpha4BoundingKeys = " << key << std::endl;
-//std::cout << "alpha5BoundingKeys = " << key << std::endl;
-//}
     this->SetAlpha4BoundingKeys(alpha4, alpha4BoundingKeys);
     this->SetAlpha5BoundingKeys(alpha5, alpha5BoundingKeys);
-
-//for (unsigned int i = 0; i < 4; i++)
-//{
-//std::cout << "alpha4BoundingKeys.at(" << i << ") = " << alpha4BoundingKeys.at(i) << std::endl;
-//std::cout << "alpha5BoundingKeys.at(" << i << ") = " << alpha5BoundingKeys.at(i) << std::endl;
-//}
-
-//std::cout << "HERE3" << std::endl;
 
     FloatVector alpha4BoundingValues = {0.f, 0.f, 0.f, 0.f};
     FloatVector alpha5BoundingValues = {0.f, 0.f, 0.f, 0.f};
 
     for (unsigned int i = 0; i < 4; i++)
     {
-        //std::cout << "Getting alpha value for bounding index " << i << std::endl;
-        //std::cout << "Key Value alpha 4 " << alpha4BoundingKeys.at(i) << std::endl;
-        //std::cout << "Key Value alpha 5 " << alpha5BoundingKeys.at(i) << std::endl;
-
         alpha4BoundingValues.at(i) = this->GetAlpha4(alpha4BoundingKeys.at(i));
         alpha5BoundingValues.at(i) = this->GetAlpha5(alpha5BoundingKeys.at(i));
     }
-//std::cout << "HERE4" << std::endl;
 
+/*
     const float lowerA4(alpha4BoundingValues.at(1));
     const float upperA4(alpha4BoundingValues.at(2));
     const float lowerA5(alpha5BoundingValues.at(1));
     const float upperA5(alpha5BoundingValues.at(2));
 
-    const float lowerA4lowerA5(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(alpha4BoundingKeys.at(1)).at(alpha5BoundingKeys.at(1)));
-    const float lowerA4upperA5(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(alpha4BoundingKeys.at(2)).at(alpha5BoundingKeys.at(1)));
-    const float upperA4lowerA5(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(alpha4BoundingKeys.at(1)).at(alpha5BoundingKeys.at(2)));
-    const float upperA4upperA5(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(alpha4BoundingKeys.at(2)).at(alpha5BoundingKeys.at(2)));
+    const float lowerA4lowerA5(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(1)).at(alpha5BoundingKeys.at(1)));
+    const float lowerA4upperA5(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(2)).at(alpha5BoundingKeys.at(1)));
+    const float upperA4lowerA5(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(1)).at(alpha5BoundingKeys.at(2)));
+    const float upperA4upperA5(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(2)).at(alpha5BoundingKeys.at(2)));
 
-//    eventWeight = this->BilinearInterpolation(lowerA4lowerA5,lowerA4upperA5,upperA4lowerA5,upperA4upperA5,alpha4,lowerA4,upperA4,alpha5,lowerA5,upperA5);
+    eventWeight = this->BilinearInterpolation(lowerA4lowerA5,lowerA4upperA5,upperA4lowerA5,upperA4upperA5,alpha4,lowerA4,upperA4,alpha5,lowerA5,upperA5);
+*/
 
-
-    const float p00(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(alpha4BoundingKeys.at(0)).at(alpha5BoundingKeys.at(0)));
-    const float p01(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(alpha4BoundingKeys.at(0)).at(alpha5BoundingKeys.at(1)));
-    const float p02(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(alpha4BoundingKeys.at(0)).at(alpha5BoundingKeys.at(2)));
-    const float p03(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(alpha4BoundingKeys.at(0)).at(alpha5BoundingKeys.at(3)));
-    const float p10(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(alpha4BoundingKeys.at(1)).at(alpha5BoundingKeys.at(0)));
-    const float p11(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(alpha4BoundingKeys.at(1)).at(alpha5BoundingKeys.at(1)));
-    const float p12(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(alpha4BoundingKeys.at(1)).at(alpha5BoundingKeys.at(2)));
-    const float p13(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(alpha4BoundingKeys.at(1)).at(alpha5BoundingKeys.at(3)));
-    const float p20(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(alpha4BoundingKeys.at(2)).at(alpha5BoundingKeys.at(0)));
-    const float p21(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(alpha4BoundingKeys.at(2)).at(alpha5BoundingKeys.at(1)));
-    const float p22(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(alpha4BoundingKeys.at(2)).at(alpha5BoundingKeys.at(2)));
-    const float p23(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(alpha4BoundingKeys.at(2)).at(alpha5BoundingKeys.at(3)));
-    const float p30(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(alpha4BoundingKeys.at(3)).at(alpha5BoundingKeys.at(0)));
-    const float p31(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(alpha4BoundingKeys.at(3)).at(alpha5BoundingKeys.at(1)));
-    const float p32(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(alpha4BoundingKeys.at(3)).at(alpha5BoundingKeys.at(2)));
-    const float p33(m_eventToAlpha4ToAlpha5ToWeightMap.at(eventNumber).at(alpha4BoundingKeys.at(3)).at(alpha5BoundingKeys.at(3)));
+    const float p00(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(0)).at(alpha5BoundingKeys.at(0)));
+    const float p01(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(0)).at(alpha5BoundingKeys.at(1)));
+    const float p02(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(0)).at(alpha5BoundingKeys.at(2)));
+    const float p03(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(0)).at(alpha5BoundingKeys.at(3)));
+    const float p10(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(1)).at(alpha5BoundingKeys.at(0)));
+    const float p11(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(1)).at(alpha5BoundingKeys.at(1)));
+    const float p12(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(1)).at(alpha5BoundingKeys.at(2)));
+    const float p13(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(1)).at(alpha5BoundingKeys.at(3)));
+    const float p20(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(2)).at(alpha5BoundingKeys.at(0)));
+    const float p21(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(2)).at(alpha5BoundingKeys.at(1)));
+    const float p22(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(2)).at(alpha5BoundingKeys.at(2)));
+    const float p23(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(2)).at(alpha5BoundingKeys.at(3)));
+    const float p30(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(3)).at(alpha5BoundingKeys.at(0)));
+    const float p31(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(3)).at(alpha5BoundingKeys.at(1)));
+    const float p32(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(3)).at(alpha5BoundingKeys.at(2)));
+    const float p33(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(3)).at(alpha5BoundingKeys.at(3)));
 
     float p[4][4] = {{p00,p01,p02,p03}, {p10,p11,p12,p13}, {p20,p21,p22,p23}, {p30,p31,p32,p33}};
 
@@ -164,43 +164,49 @@ PostMVASelection *CouplingAnalysis::GetPostMVASelection() const
     
 //============================================================================ Read in Concatenated Data
 
-void CouplingAnalysis::LoadConcatenatedWeightXml()
+void CouplingAnalysis::LoadConcatenatedWeightXml(int simulationEventNumber)
 {
-    TSystemDirectory *pTSystemDirectoryWeightFiles =  new TSystemDirectory(m_weightsDirectory.c_str(), m_weightsDirectory.c_str());
-    TList *pTListWeightFiles = pTSystemDirectoryWeightFiles->GetListOfFiles();
+//    TSystemDirectory *pTSystemDirectoryWeightFiles =  new TSystemDirectory(m_weightsDirectory.c_str(), m_weightsDirectory.c_str());
+    std::unique_ptr<TSystemDirectory> pTSystemDirectoryWeightFiles(new TSystemDirectory(m_weightsDirectory.c_str(), m_weightsDirectory.c_str())); 
+//    TList *pTListWeightFiles = pTSystemDirectoryWeightFiles->GetListOfFiles();
+    std::unique_ptr<TList> pTListWeightFiles(pTSystemDirectoryWeightFiles->GetListOfFiles());
     pTListWeightFiles->Sort(); // Alphabetises the list
 
     if (pTListWeightFiles)
     {
         TSystemFile *pTSystemFileWeightFile;
-        TIter next(pTListWeightFiles);
+        TIter next(pTListWeightFiles.get());
 
         while ((pTSystemFileWeightFile=(TSystemFile*)next()))
         {
             TString weightFileCandidate = pTSystemFileWeightFile->GetName();
-            if (!pTSystemFileWeightFile->IsDirectory() and weightFileCandidate.EndsWith("xml") and weightFileCandidate.Contains("ConcatenatedWeights"))
+            std::string fileNameString("ConcatenatedWeights" + this->NumberToString(simulationEventNumber));
+
+            if (!pTSystemFileWeightFile->IsDirectory() and weightFileCandidate.EndsWith("xml") and weightFileCandidate.Contains(fileNameString.c_str()))
             {
                 std::string weightFileToLoad = m_weightsDirectory + weightFileCandidate.Data();
-//std::cout << "Reading in " << weightFileToLoad << std::endl;
+                std::cout << "Reading in " << weightFileToLoad << std::endl;
                 this->LoadIndividualConcatenatedWeightXml(weightFileToLoad);
             }
         }
     }
-    delete pTListWeightFiles, pTSystemDirectoryWeightFiles;
+//    delete pTListWeightFiles, pTSystemDirectoryWeightFiles;
 }
 
 //============================================================================
 
 void CouplingAnalysis::LoadIndividualConcatenatedWeightXml(std::string weightFileToLoad)
 {
-    TiXmlDocument *pTiXmlDocument = new TiXmlDocument();
+//    TiXmlDocument *pTiXmlDocument = new TiXmlDocument();
+    std::unique_ptr<TiXmlDocument> pTiXmlDocument(new TiXmlDocument()); 
 
     if (!pTiXmlDocument->LoadFile(weightFileToLoad.c_str()))
     {
         std::cerr << pTiXmlDocument->ErrorDesc() << std::endl;
     }
 
-    TiXmlElement *pDocumentTiXmlElement = pTiXmlDocument->FirstChildElement();
+//    TiXmlElement *pDocumentTiXmlElement = pTiXmlDocument->FirstChildElement();
+    std::unique_ptr<TiXmlElement> pDocumentTiXmlElement(pTiXmlDocument->FirstChildElement());
 
     for (TiXmlElement *pHeadTiXmlElement = pDocumentTiXmlElement->FirstChildElement(); pHeadTiXmlElement != NULL; pHeadTiXmlElement = pHeadTiXmlElement->NextSiblingElement())
     {
@@ -215,9 +221,17 @@ void CouplingAnalysis::LoadIndividualConcatenatedWeightXml(std::string weightFil
         const float alpha4(atof(pHeadTiXmlElement->Attribute("Alpha_Four")));
         const float alpha5(atof(pHeadTiXmlElement->Attribute("Alpha_Five")));
 
+        const float lowAlpha4(m_a4IntMin*m_a4Step);
+        const float lowAlpha5(m_a5IntMin*m_a5Step);
+        const float highAlpha4(m_a4IntMax*m_a4Step);
+        const float highAlpha5(m_a5IntMax*m_a5Step);
+
+        if (alpha4 < lowAlpha4 or highAlpha4 < alpha4 or alpha5 < lowAlpha5 or highAlpha5 < alpha5)
+            continue;
+
         for (TiXmlElement *pSubTiXmlElement = pHeadTiXmlElement->FirstChildElement(); pSubTiXmlElement != NULL; pSubTiXmlElement = pSubTiXmlElement->NextSiblingElement())
         {
-            const int eventNumber(atoi(pSubTiXmlElement->Attribute("Event_Number")));
+            const int globalEventNumber(atoi(pSubTiXmlElement->Attribute("Event_Number")));
             const float weight(atof(pSubTiXmlElement->Attribute("Ratio_of_Integrands")));
 
             if (!this->DoesAlpha4KeyExist(alpha4))
@@ -229,12 +243,12 @@ void CouplingAnalysis::LoadIndividualConcatenatedWeightXml(std::string weightFil
             const int alpha4Key(this->GetAlpha4Key(alpha4));
             const int alpha5Key(this->GetAlpha5Key(alpha5));
 
-            m_eventToAlpha4ToAlpha5ToWeightMap[eventNumber][alpha4Key][alpha5Key] = weight;
+            m_eventToAlpha4ToAlpha5ToWeightMap[globalEventNumber][alpha4Key][alpha5Key] = weight;
         }
     }
 
     pTiXmlDocument->Clear();
-    delete pTiXmlDocument, pDocumentTiXmlElement;
+//    delete pTiXmlDocument, pDocumentTiXmlElement;
 }
 
 //============================================================================
@@ -246,6 +260,13 @@ CouplingAnalysis::AlmostEqual(T x, T y, int ulp = 2) const
     // the machine epsilon has to be scaled to the magnitude of the values used
     // and multiplied by the desired precision in ULPs (units in the last place)
     // unless the result is subnormal
+
+//std::cout << std::setprecision(20) << "Comparing = " << x << std::endl;
+//std::cout << std::setprecision(20) << "and       = " << y << std::endl;
+//std::cout << std::setprecision(20) << "machine epsilon = " << std::numeric_limits<T>::epsilon() << std::endl;
+//std::cout << "ulp = " << ulp << std::endl;
+//std::cout << "std::numeric_limits<T>::epsilon() * std::abs(x+y) * ulp = " << std::numeric_limits<T>::epsilon() * std::abs(x+y) * ulp << std::endl;
+
     return std::abs(x-y) < std::numeric_limits<T>::epsilon() * std::abs(x+y) * ulp || std::abs(x-y) < std::numeric_limits<T>::min();
 }
 
@@ -255,14 +276,11 @@ bool CouplingAnalysis::DoesAlpha4KeyExist(const float alpha4) const
 {
     for (IntToFloatMap::const_iterator iter = m_keyToAlpha4Map.begin(); iter != m_keyToAlpha4Map.end(); ++iter)
     {
-//std::cout << "Comparing " << iter->second << " with " << alpha4 << std::endl;
         if (this->AlmostEqual(iter->second, alpha4))
         {
-            //std::cout << "Match!" << std::endl;
             return true;
         }
     }
-    //std::cout << "No Match" << std::endl;
     return false;
 }
 
@@ -286,14 +304,6 @@ int CouplingAnalysis::GetAlpha4Key(const float alpha4) const
             return iter->first;
         }
     }
-
-//std::cout << "int CouplingAnalysis::GetAlpha4Key(const float alpha4) const" << std::endl;
-//std::cout << "int CouplingAnalysis::GetAlpha4Key(const float " << alpha4 << ") const" << std::endl;
-    for (IntToFloatMap::const_iterator iter = m_keyToAlpha4Map.begin(); iter != m_keyToAlpha4Map.end(); ++iter)
-    {
-//std::cout << "Map Contains : (" << iter->first << ", " << iter->second << ")" << std::endl;
-//std::cout << "alpha " << alpha4 << std::endl;
-    }
     return -1;
 }
 
@@ -301,15 +311,7 @@ int CouplingAnalysis::GetAlpha4Key(const float alpha4) const
 
 float CouplingAnalysis::GetAlpha4(int key) const
 {
-//std::cout << "HERE5" << std::endl;
-//std::cout << "key to search " << key << std::endl;
-    for (IntToFloatMap::const_iterator iter = m_keyToAlpha4Map.begin(); iter != m_keyToAlpha4Map.end(); ++iter)
-    {
-//std::cout << "Map Contains : (" << iter->first << ", " << iter->second << std::endl;
-    }
-
     return m_keyToAlpha4Map.at(key);
-//std::cout << "HERE5b" << std::endl;
 }
 
 //============================================================================
@@ -350,7 +352,6 @@ int CouplingAnalysis::GetAlpha5Key(const float alpha5) const
 
 float CouplingAnalysis::GetAlpha5(int key) const
 {
-//std::cout << "HERE6" << std::endl;
     return m_keyToAlpha5Map.at(key);
 }
 
@@ -364,15 +365,7 @@ void CouplingAnalysis::SetAlpha4BoundingKeys(const float alpha4, IntVector &alph
 
         if (m_alpha4Vector.at(position) <= alpha4 and alpha4 < m_alpha4Vector.at(position+1))
         { 
-//std::cout << "position : " << position << std::endl;
-//std::cout << "position-1 : " << position-1 << std::endl;
-//std::cout << "m_alpha4Vector.at(position-1) : " << m_alpha4Vector.at(position-1) << std::endl;
-//std::cout << "m_alpha4Vector.at(position) : " << m_alpha4Vector.at(position) << std::endl;
-//std::cout << "m_alpha4Vector.at(position+1) : " << m_alpha4Vector.at(position+1) << std::endl;
-//std::cout << "m_alpha4Vector.at(position+2) : " << m_alpha4Vector.at(position+2) << std::endl;
-//std::cout << "alpha4BoundingKeys->at(0) " << alpha4BoundingKeys.at(0) << std::endl;
             alpha4BoundingKeys.at(0) = this->GetAlpha4Key(m_alpha4Vector.at(position-1));
-//std::cout << "alpha4BoundingKeys->at(0) " << alpha4BoundingKeys.at(0) << std::endl;
             alpha4BoundingKeys.at(1) = this->GetAlpha4Key(m_alpha4Vector.at(position));
             alpha4BoundingKeys.at(2) = this->GetAlpha4Key(m_alpha4Vector.at(position+1));
             alpha4BoundingKeys.at(3) = this->GetAlpha4Key(m_alpha4Vector.at(position+2));
@@ -390,12 +383,6 @@ void CouplingAnalysis::SetAlpha5BoundingKeys(const float alpha5, IntVector &alph
         const int position(iter - m_alpha5Vector.begin());
         if (m_alpha5Vector.at(position) <= alpha5 and alpha5 < m_alpha5Vector.at(position+1))
         {
-//std::cout << "position : " << position << std::endl;
-//std::cout << "m_alpha5Vector.at(position-1) : " << m_alpha5Vector.at(position-1) << std::endl;
-//std::cout << "m_alpha5Vector.at(position) : " << m_alpha5Vector.at(position) << std::endl;
-//std::cout << "m_alpha5Vector.at(position+1) : " << m_alpha5Vector.at(position+1) << std::endl;
-//std::cout << "m_alpha5Vector.at(position+2) : " << m_alpha5Vector.at(position+2) << std::endl;
-
             alpha5BoundingKeys.at(0) = this->GetAlpha5Key(m_alpha5Vector.at(position-1));
             alpha5BoundingKeys.at(1) = this->GetAlpha5Key(m_alpha5Vector.at(position));
             alpha5BoundingKeys.at(2) = this->GetAlpha5Key(m_alpha5Vector.at(position+1));

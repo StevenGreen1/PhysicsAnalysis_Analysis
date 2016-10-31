@@ -33,6 +33,7 @@
 
 #include "tinyxml.h"
 
+#include "EventNumbers.h"
 #include "Process.h"
 #include "PostMVASelection.h"
 
@@ -57,7 +58,7 @@ class ConcatenateWeights
           *  @param genN Generator number to link to xml file to load
           *  @param pProcess Process indicating which data to load 
           */
-        void LoadWeightXml(const int genN, const Process *pProcess);
+        void LoadWeightXml(const int genN, const std::shared_ptr<const Process> pProcess);
 
     private:
          /**
@@ -68,7 +69,7 @@ class ConcatenateWeights
           *  @param alpha5 value to link to xml file to load
           *  @param pProcess Process indicating which data to load
           */
-        void LoadIndividualWeightXml(const int &genN, const float &alpha4, const float &alpha5, const Process *pProcess);
+        void LoadIndividualWeightXml(const int &genN, const float &alpha4, const float &alpha5, const std::shared_ptr<const Process> pProcess);
 
         /**
          *  @brief Add the xml data being read to the xml document being saved

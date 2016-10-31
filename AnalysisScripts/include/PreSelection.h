@@ -12,6 +12,7 @@
 #include <iomanip>
 #include <iostream>
 #include <limits>
+#include <memory>
 #include <vector>
 
 #include "TChain.h"
@@ -24,7 +25,7 @@ using namespace analysis_namespace;
 
 class PreSelection
 {
-    typedef std::vector<const Process*> ProcessVector;
+    typedef std::vector<std::shared_ptr<const Process> > ProcessVector;
 
     public:
         /**

@@ -14,6 +14,7 @@
 #include <limits>
 #include <map>
 #include <math.h>
+#include <memory>
 #include <sstream>
 #include <stdlib.h>
 #include <string>
@@ -33,6 +34,7 @@
 
 #include "tinyxml.h"
 
+#include "EventNumbers.h"
 #include "Process.h"
 #include "PostMVASelection.h"
 
@@ -43,13 +45,13 @@ class CouplingAnalysis
     typedef std::map<int, float> IntToFloatMap;
     typedef std::map<int, IntToFloatMap > IntToIntToFloatMap;
     typedef std::map<int, IntToIntToFloatMap > IntToIntToIntToFloatMap;
-    typedef std::vector<const Process*> ProcessVector;
 
     public:
         /**
          *  @brief Constructor
          */
-        CouplingAnalysis(const ProcessVector &processVector, PostMVASelection *pPostMVASelection);
+        CouplingAnalysis(PostMVASelection *pPostMVASelection);
+//        CouplingAnalysis(const ProcessVector &processVector, PostMVASelection *pPostMVASelection);
 
         /**
          *  @brief Destructor
@@ -75,7 +77,7 @@ class CouplingAnalysis
          /**
           *  @brief Load concatenated xml data for event weights
           */
-        void LoadConcatenatedWeightXml();
+        void LoadConcatenatedWeightXml(int generatorNumber);
 
          /**
           *  @brief Load individual concatenated xml data for event weights
@@ -233,14 +235,20 @@ class CouplingAnalysis
                 float GetWeight() { return m_weight; }
         };
 
+        class WeightClass
+        {
+            private:
+        };
+
         typedef std::vector<CouplingAnalysis::Event*> EventVector;
 
-        ProcessVector           m_processVector;                    ///< Vector of processes to load
         PostMVASelection       *m_pPostMVASelection;                ///< Post MVA selection
+
         TiXmlDocument          *m_pTiXmlResultsDocument;            ///< Xml document used for saving data
         TiXmlElement           *m_pDocumentTiXmlElement;            ///< Xml element handle for head of results
         EventVector             m_events;                           ///< Vector of events to save to xml
         std::string             m_weightsDirectory;                 ///< Directory to send concatenated weight files to
+
         int                     m_numberUniqueAlpha4;               ///< Number of unique values of alpha4 simulated in whizard and read in
         int                     m_numberUniqueAlpha5;               ///< Number of unique values of alpha5 simulated in whizard and read in
         int                     m_a4IntMin;                         ///< Min int to use for stepping alpha4 values
@@ -249,14 +257,16 @@ class CouplingAnalysis
         int                     m_a5IntMax;                         ///< Max int to use for stepping alpha5 values
         float                   m_a4Step;                           ///< Step value for alpha4
         float                   m_a5Step;                           ///< Step value for alpha5
-        IntVector               m_eventsNeedingWeights;             ///< Vector of event numbers requiring weights
-        IntVector               m_readInGenNumbers;                 ///< GenN values read in
+
+        int                     m_activeSimulationEventNumber;      ///< Weights for this simulation event number are loaded into memory
+        IntVector               m_readInSimulationEventNumbers;     ///< GenN values read in 
+        IntVector               m_missingEventNumbers;              ///< Missing event numbers 
         FloatVector             m_alpha4Vector;                     ///< Vector of unique values of alpha4 simulated in whizard and read in
         FloatVector             m_alpha5Vector;                     ///< Vector of unique values of alpha5 simulated in whizard and read in
         IntToFloatMap           m_keyToAlpha4Map;                   ///< Map of integer keys to unique values of alpha4 simulated in whizard 
         IntToFloatMap           m_keyToAlpha5Map;                   ///< Map of integer keys to unique values of alpha5 simulated in whizard
         IntToIntToIntToFloatMap m_eventToAlpha4ToAlpha5ToWeightMap; ///< Map of event number to alpha4 to alpha5 to event weight 
-        bool                    m_weightsLoaded;                    ///< Bool indicating if concatenated weights have been loaded
+//        bool                    m_weightsLoaded;                    ///< Bool indicating if concatenated weights have been loaded
 };
 
 #endif

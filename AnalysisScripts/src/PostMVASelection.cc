@@ -32,9 +32,8 @@ void PostMVASelection::ApplyPostMVASelection()
 {
     std::cout << "Process & NEvts & PostMVASelection NEvts & PostMVASelection Normalised NEvts \\\\" << std::endl;
 
-    for (ProcessVector::const_iterator it = m_processVector.begin(); it != m_processVector.end(); it++)
+    for (const auto &pProcess: m_processVector)
     {
-        const Process *pProcess(*it);
         TChain *pTChain(pProcess->GetPostMVATChain());
 
         Int_t nIsolatedLeptons(std::numeric_limits<float>::max());
@@ -84,13 +83,12 @@ void PostMVASelection::ApplyBDTCut(double low, double high)
 
 //===========================================================
 
-void PostMVASelection::MakeWeightList()
+void PostMVASelection::MakeWeightList(bool saveTxtFile)
 {
     m_eventsNeedingWeights.clear();
 
-    for (ProcessVector::const_iterator it = m_processVector.begin(); it != m_processVector.end(); it++)
+    for (const auto &pProcess: m_processVector)
     {
-        const Process *pProcess(*it);
         if (pProcess->GetEventType() != "ee_nunuqqqq")
             continue;
 
@@ -125,7 +123,8 @@ void PostMVASelection::MakeWeightList()
         }
     }
 
-    this->SaveEventsNeedingWeightingList();
+    if (saveTxtFile)
+        this->SaveEventsNeedingWeightingList();
 }
 
 //===========================================================
@@ -135,21 +134,11 @@ void PostMVASelection::SaveEventsNeedingWeightingList()
     IntVector generatorNumbersSaved;
     std::ofstream generatorNumbersFile;
     generatorNumbersFile.open("GeneratorNumbersToConcatenate.txt");
+    EventNumbers *pEventNumbers = new EventNumbers();
 
-    for (IntVector::iterator enIt = m_eventsNeedingWeights.begin(); enIt != m_eventsNeedingWeights.end(); enIt++)
+    for (auto eventNumber: m_eventsNeedingWeights)
     {
-        const int eventNumber(*enIt);
-        int generatorNumber(std::numeric_limits<int>::max());
-
-        if (eventNumber % 1000 == 0)
-        {
-            generatorNumber = (int)(eventNumber/1000.0) - 1;
-        }
-        else
-        {
-            const double doubleNumber(eventNumber/1000.0);
-            generatorNumber = floor(doubleNumber);
-        }
+        int generatorNumber(pEventNumbers->GetSimulationNumberFromGlobal(eventNumber));
 
         if (std::find(generatorNumbersSaved.begin(), generatorNumbersSaved.end(), generatorNumber) == generatorNumbersSaved.end())
         {
@@ -158,6 +147,7 @@ void PostMVASelection::SaveEventsNeedingWeightingList()
         }
     }
     generatorNumbersFile.close();
+    delete pEventNumbers;
 }
 
 //===========================================================

@@ -80,9 +80,10 @@ MakeDerivedPlots::MakeDerivedPlots(const ProcessVector &processVector, PreSelect
     MakeDerivedPlots::PlotContainer *pHighestEnergyPhotonTransverseMomentum = new MakeDerivedPlots::PlotContainer("HighestEnergyPhotonTransverseMomentum", 700, 0, 700);
     MakeDerivedPlots::PlotContainer *pHighestEnergyPhotonCosTheta = new MakeDerivedPlots::PlotContainer("HighestEnergyPhotonCosTheta", 100, 0, 1);
 
-    for (ProcessVector::const_iterator it = m_processVector.begin(); it != m_processVector.end(); it ++)
+//    for (ProcessVector::const_iterator it = m_processVector.begin(); it != m_processVector.end(); it ++)
+    for (const auto &pProcess: m_processVector)
     {
-        const Process *pProcess(*it);
+//        const Process *pProcess(*it);
         double weight(pProcess->GetProcessWeight());
 
         TChain *pTChain; 

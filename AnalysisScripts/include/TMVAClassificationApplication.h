@@ -23,6 +23,7 @@
 #include "TMVA/Reader.h"
 #include "TMVA/Tools.h"
 
+#include "EventNumbers.h"
 #include "Process.h"
 
 class TMVAClassificationApplication
@@ -35,8 +36,11 @@ class TMVAClassificationApplication
     public:
         /**
          *  @brief Constructor
+         *
+         *  @param processes vector of processes to run
+         *  @param perfect if only considering signal run this and bdt will not be calculated, but post bdt trees will still be made
          */
-        TMVAClassificationApplication(ProcessVector processes);
+        TMVAClassificationApplication(ProcessVector processes, bool perfect = false);
 
         /**
          *  @brief Default destructor

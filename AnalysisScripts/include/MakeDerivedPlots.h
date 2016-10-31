@@ -33,7 +33,7 @@
 
 class MakeDerivedPlots
 {
-    typedef std::vector<const Process*> ProcessVector;
+    typedef std::vector<std::shared_ptr<const Process> > ProcessVector;
 
     typedef std::vector<double> DoubleVector;
     typedef std::vector<float> FloatVector;

@@ -12,10 +12,10 @@
 
 ConcatenateWeights::ConcatenateWeights(PostMVASelection *pPostMVASelection) : 
     m_eventsNeedingWeights(pPostMVASelection->GetEventsNeedingWeightsList()),
-    m_a4IntMin(-5),
-    m_a4IntMax(4),
-    m_a5IntMin(-5),
-    m_a5IntMax(4),
+    m_a4IntMin(-7),
+    m_a4IntMax(7),
+    m_a5IntMin(-7),
+    m_a5IntMax(7),
     m_a4Step(0.01f),
     m_a5Step(0.01f)
 {
@@ -30,7 +30,7 @@ ConcatenateWeights::~ConcatenateWeights()
 
 //============================================================================ Concatenate Data
 
-void ConcatenateWeights::LoadWeightXml(const int genN, const Process *pProcess)
+void ConcatenateWeights::LoadWeightXml(const int simulationEventNumber, const std::shared_ptr<const Process> pProcess)
 {
     m_events.clear();
     m_pTiXmlResultsDocument = new TiXmlDocument();
@@ -44,22 +44,24 @@ void ConcatenateWeights::LoadWeightXml(const int genN, const Process *pProcess)
         for (int a5Int = m_a5IntMin; a5Int < m_a5IntMax+1; a5Int++)
         {
             float alpha5(a5Int*m_a5Step);
-            this->LoadIndividualWeightXml(genN,alpha4,alpha5,pProcess);
+            this->LoadIndividualWeightXml(simulationEventNumber,alpha4,alpha5,pProcess);
         }
     }
-    this->SaveConcatenatedWeightXml(genN);
+    this->SaveConcatenatedWeightXml(simulationEventNumber);
 }
 
 //============================================================================
 
-void ConcatenateWeights::LoadIndividualWeightXml(const int &genN, const float &alpha4, const float &alpha5, const Process *pProcess)
+void ConcatenateWeights::LoadIndividualWeightXml(const int &simulationEventNumber, const float &alpha4, const float &alpha5, const std::shared_ptr<const Process> pProcess)
 {
+    EventNumbers *pEventNumbers = new EventNumbers();
+
     const std::string processName(pProcess->GetEventType());
     const int energy(pProcess->GetEnergy());
-    const int whizardJobSet(floor(genN/1000));
+    const int whizardJobSet(pEventNumbers->GetGeneratorNumberFromSimulation(simulationEventNumber));
 
     std::string pathToResults("/r06/lc/sg568/PhysicsAnalysis/Generator/" + processName + "/" + this->NumberToString(energy) + "GeV/WhizardJobSet" + this->NumberToString(whizardJobSet) + "/Alpha4_" + this->AlphasToString(alpha4) + "_Alpha5_" + this->AlphasToString(alpha5) + "/");
-    std::string fileName(pathToResults + "Reweighting_GenN" + this->NumberToString(genN) + "_" + processName + "_" + this->NumberToString(energy) + "GeV_Alpha4_" + this->AlphasToString(alpha4) + "_Alpha5_" + this->AlphasToString(alpha5) + ".xml");
+    std::string fileName(pathToResults + "Reweighting_GenN" + this->NumberToString(simulationEventNumber) + "_" + processName + "_" + this->NumberToString(energy) + "GeV_Alpha4_" + this->AlphasToString(alpha4) + "_Alpha5_" + this->AlphasToString(alpha5) + ".xml");
 
     TiXmlDocument *pTiXmlDocument = new TiXmlDocument();
 
@@ -83,7 +85,7 @@ void ConcatenateWeights::LoadIndividualWeightXml(const int &genN, const float &a
 
     for (TiXmlElement* pTiXmlElement = pHeadTiXmlElement->FirstChildElement(); pTiXmlElement != NULL; pTiXmlElement = pTiXmlElement->NextSiblingElement())
     {
-        const int eventNumber((1e3*genN) + atoi(pTiXmlElement->Attribute("Event_Number")));
+        const int eventNumber(pEventNumbers->SetGlobalEventNumber(simulationEventNumber, atoi(pTiXmlElement->Attribute("Event_Number"))));
         const double weight(atof(pTiXmlElement->Attribute("Ratio_of_Integrands")));
         ConcatenateWeights::Event *pEvent = new ConcatenateWeights::Event();
         pEvent->SetEventNumber(eventNumber);
@@ -95,6 +97,7 @@ void ConcatenateWeights::LoadIndividualWeightXml(const int &genN, const float &a
     delete pTiXmlDocument;
 
     this->ConcatenateIndividualWeightXml(process, energyFromXml, alpha4FromXml, alpha5FromXml);
+    delete pEventNumbers;
 }
 
 //============================================================================

@@ -15,14 +15,15 @@ int main(int argc, char* argv[])
     std::string process("ee_nunuqqqq");
     int energy(1400);
 
-    for (int i = -5; i < 5; i++)
+    for (int i = -7; i < 8; i++)
     {
-        for (int j = -5; j < 5; j++)
+        for (int j = -7; j < 8; j++)
         {
             const float alpha4(i * 0.01);
             const float alpha5(j * 0.01);
 std::cout << alpha4 << " " << alpha5 << std::endl;
-            WeightToXmlConverter *pWeightToXmlConverter = new WeightToXmlConverter(process,energy,alpha4,alpha5,atoi(argv[1]));
+//            WeightToXmlConverter *pWeightToXmlConverter = new WeightToXmlConverter(process,energy,alpha4,alpha5,atoi(argv[1]));
+            std::unique_ptr<WeightToXmlConverter> pWeightToXmlConverter(new WeightToXmlConverter(process,energy,alpha4,alpha5,atoi(argv[1]))); 
         }
     }
     return 0;
@@ -30,10 +31,10 @@ std::cout << alpha4 << " " << alpha5 << std::endl;
 
 //============================================================================
 
-WeightToXmlConverter::WeightToXmlConverter(const std::string process, const int energy, const float alpha4, const float alpha5, const int whizardJobSet) :
+WeightToXmlConverter::WeightToXmlConverter(const std::string process, const int energy, const float alpha4, const float alpha5, const int generatorNumber) :
     m_eventType(process),
     m_energy(energy),
-    m_whizardJobSet(whizardJobSet),
+    m_generatorNumber(generatorNumber),
     m_alpha4(alpha4),
     m_alpha5(alpha5)
 {
@@ -42,15 +43,21 @@ WeightToXmlConverter::WeightToXmlConverter(const std::string process, const int 
 
 //============================================================================
 
+WeightToXmlConverter::~WeightToXmlConverter()
+{
+}
+
+//============================================================================
+
 void WeightToXmlConverter::LoadASCII()
 {
 std::cout << m_alpha4 << " " << m_alpha5 << std::endl;
-    std::string folder("/r06/lc/sg568/PhysicsAnalysis/Generator/" + m_eventType + "/" + this->NumberToString(m_energy) + "GeV/WhizardJobSet" + this->NumberToString(m_whizardJobSet) + "/Alpha4_" + this->AlphasToStringReading(m_alpha4) + "_Alpha5_" + this->AlphasToStringReading(m_alpha5));
+    std::string folder("/r06/lc/sg568/PhysicsAnalysis/Generator/" + m_eventType + "/" + this->NumberToString(m_energy) + "GeV/WhizardJobSet" + this->NumberToString(m_generatorNumber) + "/Alpha4_" + this->AlphasToStringReading(m_alpha4) + "_Alpha5_" + this->AlphasToStringReading(m_alpha5));
     std::cout << folder << std::endl;
 
     int nFilesToProcess(10);
 
-    if (m_whizardJobSet == 0)
+    if (m_generatorNumber == 0)
         nFilesToProcess = 350;
 
     for (unsigned int i = 1; i <= nFilesToProcess; i++)
@@ -59,7 +66,7 @@ std::cout << m_alpha4 << " " << m_alpha5 << std::endl;
 
         std::string fileName(folder);
 
-        if (m_whizardJobSet == 0)
+        if (m_generatorNumber == 0)
         {
             fileName += "/whizard.";
             fileName += this->FileNumberToString(i);
@@ -68,7 +75,7 @@ std::cout << m_alpha4 << " " << m_alpha5 << std::endl;
 
         else
         {
-            fileName += "/WhizardJobSet" + this->NumberToString(m_whizardJobSet) + ".";
+            fileName += "/WhizardJobSet" + this->NumberToString(m_generatorNumber) + ".";
             fileName += this->FileNumberToString(i);
             fileName += ".evt";
         }
@@ -88,15 +95,15 @@ std::cout << m_alpha4 << " " << m_alpha5 << std::endl;
 //            pEvent->SetEnergy(m_energy);
 //            pEvent->SetAlpha4(m_alpha4);
 //            pEvent->SetAlpha5(m_alpha5);
-            const int eventNumberInt(atoi(eventNumber.c_str())-1e3*(i-1));
-            pEvent->SetEventNumber(eventNumberInt);
+            const int localEventNumber(atoi(eventNumber.c_str())-1e3*(i-1));
+            pEvent->SetEventNumber(localEventNumber);
             pEvent->SetWeight(atof(weight.c_str()));
             m_events.push_back(pEvent); 
             std::cout << "For event number : " << eventNumber << ", the weight is " << weight << std::endl;
         }
 
-        int generatorNumber = (1e3*m_whizardJobSet) + i;
-        std::string weightsFileName("/r06/lc/sg568/PhysicsAnalysis/Generator/" + m_eventType + "/" + this->NumberToString(m_energy) + "GeV/WhizardJobSet" + this->NumberToString(m_whizardJobSet) + "/Alpha4_" + this->AlphasToStringReading(m_alpha4) + "_Alpha5_" + this->AlphasToStringReading(m_alpha5) + "/Reweighting_GenN" + this->NumberToString(generatorNumber) + "_" + m_eventType + "_" + this->NumberToString(m_energy) + "GeV_Alpha4_" + this->AlphasToStringWriting(m_alpha4) + "_Alpha5_" + this->AlphasToStringWriting(m_alpha5) + ".xml");
+        int simulationEventNumber = (1e3*m_generatorNumber) + i;
+        std::string weightsFileName("/r06/lc/sg568/PhysicsAnalysis/Generator/" + m_eventType + "/" + this->NumberToString(m_energy) + "GeV/WhizardJobSet" + this->NumberToString(m_generatorNumber) + "/Alpha4_" + this->AlphasToStringReading(m_alpha4) + "_Alpha5_" + this->AlphasToStringReading(m_alpha5) + "/Reweighting_GenN" + this->NumberToString(simulationEventNumber) + "_" + m_eventType + "_" + this->NumberToString(m_energy) + "GeV_Alpha4_" + this->AlphasToStringWriting(m_alpha4) + "_Alpha5_" + this->AlphasToStringWriting(m_alpha5) + ".xml");
         this->SaveXml(weightsFileName);
     }
     return;
@@ -123,11 +130,13 @@ void WeightToXmlConverter::SaveXml(std::string weightsFileName)
         pTiXmlElement->SetAttribute("Event_Number", pEvent->GetEventNumber());
         pTiXmlElement->SetDoubleAttribute("Ratio_of_Integrands", pEvent->GetWeight());
         pHeadTiXmlElement->LinkEndChild(pTiXmlElement);
+        delete pTiXmlElement;
     }
 
     bool success = tiXmlDocument.SaveFile(weightsFileName.c_str());
 
     tiXmlDocument.Clear();
+    delete pHeadTiXmlElement;
 }
 
 //============================================================================
