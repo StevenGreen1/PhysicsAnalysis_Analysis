@@ -56,7 +56,7 @@ def GetTemplate(jobInfo):
 
   <group name="MyFastJetGroup">
     <parameter name="recombinationScheme" type="string">E_scheme </parameter>
-    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> SelectedPandoraPFANewPFOs </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> """ + pandoraPFOsToUse + """ </parameter>
     <processor name = "MyFastJetProcessor_""" + jetAlgorithmConfigString + """_6jet" type="FastJetProcessor">
       <parameter name="clusteringMode" type="StringVec">""" + jetClusteringMode + """ 6</parameter>
       <parameter name="algorithm" type="StringVec">""" + jetClusteringAlgorithm + """ """ + str(jetClusteringRadiusString) + """ </parameter>
