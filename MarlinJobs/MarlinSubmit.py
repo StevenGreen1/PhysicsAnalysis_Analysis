@@ -22,20 +22,20 @@ jobDescription = 'PhysicsAnalysis'
 # Always define event type, events per file and energies in same way.  If not CLIC sample set ProdID to 0
 
 eventsToSimulate = [
-#                       { 'EventType': 'ee_nunuqqqq', 'Energy': 1400, 'DetectorModel': 'clic_ild_cdr', 'ReconstructionVariant': 'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12 }
-                       { 'EventType': 'ee_nunuqqqq', 'Energy': 3000, 'DetectorModel': 'clic_ild_cdr', 'ReconstructionVariant': 'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12 }
+                       { 'EventType': 'ee_nunuqqqq', 'Energy': 1400, 'DetectorModel': 'clic_ild_cdr', 'ReconstructionVariant': 'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 14 },
+                       { 'EventType': 'ee_nunuqqqq', 'Energy': 3000, 'DetectorModel': 'clic_ild_cdr', 'ReconstructionVariant': 'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 14 }
                    ]
 
 jetRecoConfigToSimulate = [
-                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.5 },
-                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
-                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.9 },
-                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 1.0 },
-                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 1.1 },
-                              { 'PandoraPFOsToUse': 'TightSelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
-                              { 'PandoraPFOsToUse': 'LooseSelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
-                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'cambridge_algorithm', 'JetClusteringRadius': 0.7 },
-                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'ee_kt_algorithm', 'JetClusteringRadius': 0.0 }
+#                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.5 },
+                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 }
+#                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.9 }
+#                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 1.0 },
+#                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 1.1 },
+#                              { 'PandoraPFOsToUse': 'TightSelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
+#                              { 'PandoraPFOsToUse': 'LooseSelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'kt_algorithm', 'JetClusteringRadius': 0.7 },
+#                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'cambridge_algorithm', 'JetClusteringRadius': 0.7 },
+#                              { 'PandoraPFOsToUse': 'SelectedPandoraPFANewPFOs', 'JetClusteringMode':'ExclusiveNJets', 'NJetsToCluster': 2, 'JetClusteringAlgorithm': 'ee_kt_algorithm', 'JetClusteringRadius': 0.0 }
                            ]
 
 #===== Second level user input =====
