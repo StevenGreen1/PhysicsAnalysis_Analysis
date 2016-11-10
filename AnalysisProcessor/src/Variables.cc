@@ -28,17 +28,29 @@ Variables::Variables(const double eventEnergyMC) :
     m_secondHighestEnergyIsolatedLeptonPDG(std::numeric_limits<int>::max()),
     m_eventEnergyMC(eventEnergyMC),
     m_transverseMomentum(std::numeric_limits<double>::max()),
+    m_transverseMomentumMC(std::numeric_limits<double>::max()),
+    m_transverseEnergy(std::numeric_limits<double>::max()),
+    m_transverseEnergyMC(std::numeric_limits<double>::max()),
+    m_energyBosonW1(std::numeric_limits<double>::max()),
+    m_energyBosonW2(std::numeric_limits<double>::max()),
+    m_energyBosonZ1(std::numeric_limits<double>::max()),
+    m_energyBosonZ2(std::numeric_limits<double>::max()),
+    m_momentumBosonW1(std::numeric_limits<double>::max()),
+    m_momentumBosonW2(std::numeric_limits<double>::max()),
+    m_momentumBosonZ1(std::numeric_limits<double>::max()),
+    m_momentumBosonZ2(std::numeric_limits<double>::max()),
     m_transverseMomentumBosonW1(std::numeric_limits<double>::max()),
     m_transverseMomentumBosonW2(std::numeric_limits<double>::max()),
     m_transverseMomentumBosonZ1(std::numeric_limits<double>::max()),
     m_transverseMomentumBosonZ2(std::numeric_limits<double>::max()),
-    m_transverseMomentumMC(std::numeric_limits<double>::max()),
-    m_transverseEnergy(std::numeric_limits<double>::max()),
+    m_cosThetaBosonW1(std::numeric_limits<double>::max()),
+    m_cosThetaBosonW2(std::numeric_limits<double>::max()),
+    m_cosThetaBosonZ1(std::numeric_limits<double>::max()),
+    m_cosThetaBosonZ2(std::numeric_limits<double>::max()),
     m_transverseEnergyBosonW1(std::numeric_limits<double>::max()),
     m_transverseEnergyBosonW2(std::numeric_limits<double>::max()),
     m_transverseEnergyBosonZ1(std::numeric_limits<double>::max()),
     m_transverseEnergyBosonZ2(std::numeric_limits<double>::max()),
-    m_transverseEnergyMC(std::numeric_limits<double>::max()),
     m_cosThetaMissing(std::numeric_limits<double>::max()),
     m_cosThetaMissingMC(std::numeric_limits<double>::max()),
     m_cosThetaMostEnergeticTrack(std::numeric_limits<double>::max()),
@@ -86,7 +98,31 @@ Variables::Variables(const double eventEnergyMC) :
     m_highestEnergyPfoE(std::numeric_limits<double>::max()),
     m_highestEnergyPfoP(std::numeric_limits<double>::max()),
     m_highestEnergyPfoPt(std::numeric_limits<double>::max()),
-    m_highestEnergyPfoCosTheta(std::numeric_limits<double>::max())
+    m_highestEnergyPfoCosTheta(std::numeric_limits<double>::max()),
+    m_highestEnergyIsolatedLeptonE(std::numeric_limits<double>::max()),
+    m_highestEnergyIsolatedLeptonP(std::numeric_limits<double>::max()),
+    m_highestEnergyIsolatedLeptonPt(std::numeric_limits<double>::max()),
+    m_highestEnergyIsolatedLeptonCosTheta(std::numeric_limits<double>::max()),
+    m_secondHighestEnergyIsolatedLeptonE(std::numeric_limits<double>::max()),
+    m_secondHighestEnergyIsolatedLeptonP(std::numeric_limits<double>::max()),
+    m_secondHighestEnergyIsolatedLeptonPt(std::numeric_limits<double>::max()),
+    m_secondHighestEnergyIsolatedLeptonCosTheta(std::numeric_limits<double>::max()),
+    m_maxBTagForBosonW1(std::numeric_limits<double>::max()),
+    m_minBTagForBosonW1(std::numeric_limits<double>::max()),
+    m_maxBTagForBosonW2(std::numeric_limits<double>::max()),
+    m_minBTagForBosonW2(std::numeric_limits<double>::max()),
+    m_maxCTagForBosonW1(std::numeric_limits<double>::max()),
+    m_minCTagForBosonW1(std::numeric_limits<double>::max()),
+    m_maxCTagForBosonW2(std::numeric_limits<double>::max()),
+    m_minCTagForBosonW2(std::numeric_limits<double>::max()),
+    m_maxBTagForBosonZ1(std::numeric_limits<double>::max()),
+    m_minBTagForBosonZ1(std::numeric_limits<double>::max()),
+    m_maxBTagForBosonZ2(std::numeric_limits<double>::max()),
+    m_minBTagForBosonZ2(std::numeric_limits<double>::max()),
+    m_maxCTagForBosonZ1(std::numeric_limits<double>::max()),
+    m_minCTagForBosonZ1(std::numeric_limits<double>::max()),
+    m_maxCTagForBosonZ2(std::numeric_limits<double>::max()),
+    m_minCTagForBosonZ2(std::numeric_limits<double>::max())
 {
 }
 
@@ -147,17 +183,29 @@ void Variables::SetBranches(TTree *pTTree)
 // Floats
     pTTree->Branch("MCEventEnergy", &m_eventEnergyMC, "MCEventEnergy/D");
     pTTree->Branch("TransverseMomentum", &m_transverseMomentum, "TransverseMomentum/D");
+    pTTree->Branch("MCTransverseMomentum", &m_transverseMomentumMC, "MCTransverseMomentum/D");
+    pTTree->Branch("TransverseEnergy", &m_transverseEnergy, "TransverseEnergy/D");
+    pTTree->Branch("MCTransverseEnergy", &m_transverseEnergyMC, "MCTransverseEnergy/D");
+    pTTree->Branch("EnergyBosonW1", &m_energyBosonW1, "EnergyBosonW1/D");
+    pTTree->Branch("EnergyBosonW2", &m_energyBosonW2, "EnergyBosonW2/D");
+    pTTree->Branch("EnergyBosonZ1", &m_energyBosonZ1, "EnergyBosonZ1/D");
+    pTTree->Branch("EnergyBosonZ2", &m_energyBosonZ2, "EnergyBosonZ2/D");
+    pTTree->Branch("MomentumBosonW1", &m_momentumBosonW1, "MomentumBosonW1/D");
+    pTTree->Branch("MomentumBosonW2", &m_momentumBosonW2, "MomentumBosonW2/D");
+    pTTree->Branch("MomentumBosonZ1", &m_momentumBosonZ1, "MomentumBosonZ1/D");
+    pTTree->Branch("MomentumBosonZ2", &m_momentumBosonZ2, "MomentumBosonZ2/D");
     pTTree->Branch("TransverseMomentumBosonW1", &m_transverseMomentumBosonW1, "TransverseMomentumBosonW1/D");
     pTTree->Branch("TransverseMomentumBosonW2", &m_transverseMomentumBosonW2, "TransverseMomentumBosonW2/D");
     pTTree->Branch("TransverseMomentumBosonZ1", &m_transverseMomentumBosonZ1, "TransverseMomentumBosonZ1/D");
     pTTree->Branch("TransverseMomentumBosonZ2", &m_transverseMomentumBosonZ2, "TransverseMomentumBosonZ2/D");
-    pTTree->Branch("MCTransverseMomentum", &m_transverseMomentumMC, "MCTransverseMomentum/D");
-    pTTree->Branch("TransverseEnergy", &m_transverseEnergy, "TransverseEnergy/D");
+    pTTree->Branch("CosThetaBosonW1", &m_cosThetaBosonW1, "CosThetaBosonW1/D");
+    pTTree->Branch("CosThetaBosonW2", &m_cosThetaBosonW2, "CosThetaBosonW2/D");
+    pTTree->Branch("CosThetaBosonZ1", &m_cosThetaBosonZ1, "CosThetaBosonZ1/D");
+    pTTree->Branch("CosThetaBosonZ2", &m_cosThetaBosonZ2, "CosThetaBosonZ2/D");
     pTTree->Branch("TransverseEnergyBosonW1", &m_transverseEnergyBosonW1, "TransverseEnergyBosonW1/D");
     pTTree->Branch("TransverseEnergyBosonW2", &m_transverseEnergyBosonW2, "TransverseEnergyBosonW2/D");
     pTTree->Branch("TransverseEnergyBosonZ1", &m_transverseEnergyBosonZ1, "TransverseEnergyBosonZ1/D");
     pTTree->Branch("TransverseEnergyBosonZ2", &m_transverseEnergyBosonZ2, "TransverseEnergyBosonZ2/D");
-    pTTree->Branch("MCTransverseEnergy", &m_transverseEnergyMC, "MCTransverseEnergy/D");
     pTTree->Branch("CosThetaMissing", &m_cosThetaMissing, "CosThetaMissing/D");
     pTTree->Branch("MCCosThetaMissing", &m_cosThetaMissingMC, "MCCosThetaMissing/D");
     pTTree->Branch("CosThetaMostEnergeticTrack", &m_cosThetaMostEnergeticTrack, "CosThetaMostEnergeticTrack/D");
@@ -231,6 +279,21 @@ void Variables::SetBranches(TTree *pTTree)
     pTTree->Branch("EnergyJet2", &m_energyJets.at(1), "EnergyJet2/D");
     pTTree->Branch("EnergyJet3", &m_energyJets.at(2), "EnergyJet3/D");
     pTTree->Branch("EnergyJet4", &m_energyJets.at(3), "EnergyJet4/D");
+    m_momentumJets.resize(4);
+    pTTree->Branch("MomentumJet1", &m_momentumJets.at(0), "MomentumJet1/D");
+    pTTree->Branch("MomentumJet2", &m_momentumJets.at(1), "MomentumJet2/D");
+    pTTree->Branch("MomentumJet3", &m_momentumJets.at(2), "MomentumJet3/D");
+    pTTree->Branch("MomentumJet4", &m_momentumJets.at(3), "MomentumJet4/D");
+    m_transverseMomentumJets.resize(4);
+    pTTree->Branch("TransverseMomentumJet1", &m_transverseMomentumJets.at(0), "TransverseMomentumJet1/D");
+    pTTree->Branch("TransverseMomentumJet2", &m_transverseMomentumJets.at(1), "TransverseMomentumJet2/D");
+    pTTree->Branch("TransverseMomentumJet3", &m_transverseMomentumJets.at(2), "TransverseMomentumJet3/D");
+    pTTree->Branch("TransverseMomentumJet4", &m_transverseMomentumJets.at(3), "TransverseMomentumJet4/D");
+    m_cosThetaJets.resize(4);
+    pTTree->Branch("CosThetaJet1", &m_cosThetaJets.at(0), "CosThetaJet1/D");
+    pTTree->Branch("CosThetaJet2", &m_cosThetaJets.at(1), "CosThetaJet2/D");
+    pTTree->Branch("CosThetaJet3", &m_cosThetaJets.at(2), "CosThetaJet3/D");
+    pTTree->Branch("CosThetaJet4", &m_cosThetaJets.at(3), "CosThetaJet4/D");
     m_cosThetaStarWJets.resize(2);
     pTTree->Branch("CosThetaStarWJet1", &m_cosThetaStarWJets.at(0), "CosThetaStarWJet1/D");
     pTTree->Branch("CosThetaStarWJet2", &m_cosThetaStarWJets.at(1), "CosThetaStarWJet2/D");
@@ -247,7 +310,24 @@ void Variables::SetBranches(TTree *pTTree)
     pTTree->Branch("CTagForJet2", &m_cTagForJets.at(1), "CTagForJet2/D");
     pTTree->Branch("CTagForJet3", &m_cTagForJets.at(2), "CTagForJet3/D");
     pTTree->Branch("CTagForJet4", &m_cTagForJets.at(3), "CTagForJet4/D");
+    pTTree->Branch("MaxBTagForBosonW1", &m_maxBTagForBosonW1, "MaxBTagForBosonW1/D");
+    pTTree->Branch("MinBTagForBosonW1", &m_minBTagForBosonW1, "MinBTagForBosonW1/D");
+    pTTree->Branch("MaxBTagForBosonW2", &m_maxBTagForBosonW2, "MaxBTagForBosonW2/D");
+    pTTree->Branch("MinBTagForBosonW2", &m_minBTagForBosonW2, "MinBTagForBosonW2/D");
+    pTTree->Branch("MaxCTagForBosonW1", &m_maxCTagForBosonW1, "MaxCTagForBosonW1/D");
+    pTTree->Branch("MinCTagForBosonW1", &m_minCTagForBosonW1, "MinCTagForBosonW1/D");
+    pTTree->Branch("MaxCTagForBosonW2", &m_maxCTagForBosonW2, "MaxCTagForBosonW2/D");
+    pTTree->Branch("MinCTagForBosonW2", &m_minCTagForBosonW2, "MinCTagForBosonW2/D");
+    pTTree->Branch("MaxBTagForBosonZ1", &m_maxBTagForBosonZ1, "MaxBTagForBosonZ1/D");
+    pTTree->Branch("MinBTagForBosonZ1", &m_minBTagForBosonZ1, "MinBTagForBosonZ1/D");
+    pTTree->Branch("MaxBTagForBosonZ2", &m_maxBTagForBosonZ2, "MaxBTagForBosonZ2/D");
+    pTTree->Branch("MinBTagForBosonZ2", &m_minBTagForBosonZ2, "MinBTagForBosonZ2/D");
+    pTTree->Branch("MaxCTagForBosonZ1", &m_maxCTagForBosonZ1, "MaxCTagForBosonZ1/D");
+    pTTree->Branch("MinCTagForBosonZ1", &m_minCTagForBosonZ1, "MinCTagForBosonZ1/D");
+    pTTree->Branch("MaxCTagForBosonZ2", &m_maxCTagForBosonZ2, "MaxCTagForBosonZ2/D");
+    pTTree->Branch("MinCTagForBosonZ2", &m_minCTagForBosonZ2, "MinCTagForBosonZ2/D");
 
+//    pTTree->Branch("", &, "/D");
 // DoubleVectors
 //    pTTree->Branch("InvMassWVectors", &m_invariantMassWBosons);
 //    pTTree->Branch("MCInvMassWVectors", &m_invariantMassWBosonsMC);
@@ -328,17 +408,29 @@ void Variables::Clear()
     m_nChargedParticlesJets.clear();
 
     m_transverseMomentum = std::numeric_limits<double>::max();
+    m_transverseMomentumMC = std::numeric_limits<double>::max();
+    m_transverseEnergy = std::numeric_limits<double>::max();
+    m_transverseEnergyMC = std::numeric_limits<double>::max();
+    m_energyBosonW1 = std::numeric_limits<double>::max();
+    m_energyBosonW2 = std::numeric_limits<double>::max();
+    m_energyBosonZ1 = std::numeric_limits<double>::max();
+    m_energyBosonZ2 = std::numeric_limits<double>::max();
+    m_momentumBosonW1 = std::numeric_limits<double>::max();
+    m_momentumBosonW2 = std::numeric_limits<double>::max();
+    m_momentumBosonZ1 = std::numeric_limits<double>::max();
+    m_momentumBosonZ2 = std::numeric_limits<double>::max();
     m_transverseMomentumBosonW1 = std::numeric_limits<double>::max();
     m_transverseMomentumBosonW2 = std::numeric_limits<double>::max();
     m_transverseMomentumBosonZ1 = std::numeric_limits<double>::max();
     m_transverseMomentumBosonZ2 = std::numeric_limits<double>::max();
-    m_transverseMomentumMC = std::numeric_limits<double>::max();
-    m_transverseEnergy = std::numeric_limits<double>::max();
+    m_cosThetaBosonW1 = std::numeric_limits<double>::max();
+    m_cosThetaBosonW2 = std::numeric_limits<double>::max();
+    m_cosThetaBosonZ1 = std::numeric_limits<double>::max();
+    m_cosThetaBosonZ2 = std::numeric_limits<double>::max();
     m_transverseEnergyBosonW1 = std::numeric_limits<double>::max();
     m_transverseEnergyBosonW2 = std::numeric_limits<double>::max();
     m_transverseEnergyBosonZ1 = std::numeric_limits<double>::max();
     m_transverseEnergyBosonZ2 = std::numeric_limits<double>::max();
-    m_transverseEnergyMC = std::numeric_limits<double>::max();
     m_cosThetaMissing = std::numeric_limits<double>::max();
     m_cosThetaMissingMC = std::numeric_limits<double>::max();
     m_cosThetaMostEnergeticTrack = std::numeric_limits<double>::max();
@@ -395,12 +487,31 @@ void Variables::Clear()
     m_secondHighestEnergyIsolatedLeptonP = std::numeric_limits<double>::max();
     m_secondHighestEnergyIsolatedLeptonPt = std::numeric_limits<double>::max();
     m_secondHighestEnergyIsolatedLeptonCosTheta = std::numeric_limits<double>::max();
+    m_maxBTagForBosonW1 = std::numeric_limits<double>::max();
+    m_minBTagForBosonW1 = std::numeric_limits<double>::max();
+    m_maxBTagForBosonW2 = std::numeric_limits<double>::max();
+    m_minBTagForBosonW2 = std::numeric_limits<double>::max();
+    m_maxCTagForBosonW1 = std::numeric_limits<double>::max();
+    m_minCTagForBosonW1 = std::numeric_limits<double>::max();
+    m_maxCTagForBosonW2 = std::numeric_limits<double>::max();
+    m_minCTagForBosonW2 = std::numeric_limits<double>::max();
+    m_maxBTagForBosonZ1 = std::numeric_limits<double>::max();
+    m_minBTagForBosonZ1 = std::numeric_limits<double>::max();
+    m_maxBTagForBosonZ2 = std::numeric_limits<double>::max();
+    m_minBTagForBosonZ2 = std::numeric_limits<double>::max();
+    m_maxCTagForBosonZ1 = std::numeric_limits<double>::max();
+    m_minCTagForBosonZ1 = std::numeric_limits<double>::max();
+    m_maxCTagForBosonZ2 = std::numeric_limits<double>::max();
+    m_minCTagForBosonZ2 = std::numeric_limits<double>::max();
 
     m_invariantMassWBosons.clear();
     m_invariantMassWBosonsMC.clear();
     m_invariantMassZBosons.clear();
     m_invariantMassZBosonsMC.clear();
     m_energyJets.clear();
+    m_momentumJets.clear();
+    m_transverseMomentumJets.clear();
+    m_cosThetaJets.clear();
     m_cosThetaStarWJets.clear();
     m_cosThetaStarZJets.clear();
     m_bTagForJets.clear();
@@ -730,6 +841,160 @@ double Variables::GetTransverseMomentum() const
 
 //===========================================================
 
+void Variables::SetTransverseMomentumMC(double transverseMomentumMC)
+{
+    m_transverseMomentumMC = transverseMomentumMC;
+}
+
+//===========================================================
+
+double Variables::GetTransverseMomentumMC() const
+{
+    return m_transverseMomentumMC;
+}
+
+//===========================================================
+
+void Variables::SetTransverseEnergy(double transverseEnergy)
+{
+    m_transverseEnergy = transverseEnergy;
+}
+
+//===========================================================
+
+double Variables::GetTransverseEnergy() const
+{
+    return m_transverseEnergy;
+}
+
+//===========================================================
+
+void Variables::SetTransverseEnergyMC(double transverseEnergyMC)
+{
+    m_transverseEnergyMC = transverseEnergyMC;
+}
+
+//===========================================================
+
+double Variables::GetTransverseEnergyMC() const
+{
+    return m_transverseEnergyMC;
+}
+
+//===========================================================
+
+void Variables::SetEnergyBosonW1(double energyBosonW1)
+{
+    m_energyBosonW1 = energyBosonW1;
+}
+
+//===========================================================
+
+double Variables::GetEnergyBosonW1() const
+{
+    return m_energyBosonW1;
+}
+
+//===========================================================
+
+void Variables::SetEnergyBosonW2(double energyBosonW2)
+{
+    m_energyBosonW2 = energyBosonW2;
+}
+
+//===========================================================
+
+double Variables::GetEnergyBosonW2() const
+{
+    return m_energyBosonW2;
+}
+
+//===========================================================
+
+void Variables::SetEnergyBosonZ1(double energyBosonZ1)
+{
+    m_energyBosonZ1 = energyBosonZ1;
+}
+
+//===========================================================
+
+double Variables::GetEnergyBosonZ1() const
+{
+    return m_energyBosonZ1;
+}
+
+//===========================================================
+
+void Variables::SetEnergyBosonZ2(double energyBosonZ2)
+{
+    m_energyBosonZ2 = energyBosonZ2;
+}
+
+//===========================================================
+
+double Variables::GetEnergyBosonZ2() const
+{
+    return m_energyBosonZ2;
+}
+
+//===========================================================
+
+void Variables::SetMomentumBosonW1(double momentumBosonW1)
+{   
+    m_momentumBosonW1 = momentumBosonW1;
+}
+
+//===========================================================
+
+double Variables::GetMomentumBosonW1() const
+{
+    return m_momentumBosonW1;
+}
+
+//===========================================================
+
+void Variables::SetMomentumBosonW2(double momentumBosonW2)
+{
+    m_momentumBosonW2 = momentumBosonW2;
+}
+
+//===========================================================
+
+double Variables::GetMomentumBosonW2() const
+{
+    return m_momentumBosonW2;
+}
+
+//===========================================================
+
+void Variables::SetMomentumBosonZ1(double momentumBosonZ1)
+{
+    m_momentumBosonZ1 = momentumBosonZ1;
+}
+
+//===========================================================
+
+double Variables::GetMomentumBosonZ1() const
+{
+    return m_momentumBosonZ1;
+}
+
+//===========================================================
+
+void Variables::SetMomentumBosonZ2(double momentumBosonZ2)
+{
+    m_momentumBosonZ2 = momentumBosonZ2;
+}
+
+//===========================================================
+
+double Variables::GetMomentumBosonZ2() const
+{
+    return m_momentumBosonZ2;
+}
+
+//===========================================================
+
 void Variables::SetTransverseMomentumBosonW1(double transverseMomentumBosonW1)
 {
     m_transverseMomentumBosonW1 = transverseMomentumBosonW1;
@@ -786,30 +1051,58 @@ double Variables::GetTransverseMomentumBosonZ2() const
 
 //===========================================================
 
-void Variables::SetTransverseMomentumMC(double transverseMomentumMC)
-{
-    m_transverseMomentumMC = transverseMomentumMC;
+void Variables::SetCosThetaBosonW1(double cosThetaBosonW1)
+{   
+    m_cosThetaBosonW1 = cosThetaBosonW1;
 }
 
 //===========================================================
 
-double Variables::GetTransverseMomentumMC() const
+double Variables::GetCosThetaBosonW1() const
 {
-    return m_transverseMomentumMC;
+    return m_cosThetaBosonW1;
 }
 
 //===========================================================
 
-void Variables::SetTransverseEnergy(double transverseEnergy)
+void Variables::SetCosThetaBosonW2(double cosThetaBosonW2)
 {
-    m_transverseEnergy = transverseEnergy;
+    m_cosThetaBosonW2 = cosThetaBosonW2;
 }
 
 //===========================================================
 
-double Variables::GetTransverseEnergy() const 
+double Variables::GetCosThetaBosonW2() const
 {
-    return m_transverseEnergy;
+    return m_cosThetaBosonW2;
+}
+
+//===========================================================
+
+void Variables::SetCosThetaBosonZ1(double cosThetaBosonZ1)
+{
+    m_cosThetaBosonZ1 = cosThetaBosonZ1;
+}
+
+//===========================================================
+
+double Variables::GetCosThetaBosonZ1() const
+{
+    return m_cosThetaBosonZ1;
+}
+
+//===========================================================
+
+void Variables::SetCosThetaBosonZ2(double cosThetaBosonZ2)
+{
+    m_cosThetaBosonZ2 = cosThetaBosonZ2;
+}
+
+//===========================================================
+
+double Variables::GetCosThetaBosonZ2() const
+{
+    return m_cosThetaBosonZ2;
 }
 
 //===========================================================
@@ -866,20 +1159,6 @@ void Variables::SetTransverseEnergyBosonZ2(double transverseEnergyBosonZ2)
 double Variables::GetTransverseEnergyBosonZ2() const
 {
     return m_transverseEnergyBosonZ2;
-}
-
-//===========================================================
-
-void Variables::SetTransverseEnergyMC(double transverseEnergyMC)
-{
-    m_transverseEnergyMC = transverseEnergyMC;
-}
-
-//===========================================================
-
-double Variables::GetTransverseEnergyMC() const
-{
-    return m_transverseEnergyMC;
 }
 
 //===========================================================
@@ -1554,6 +1833,230 @@ double Variables::GetSecondHighestEnergyIsolatedLeptonCosTheta() const
     return m_secondHighestEnergyIsolatedLeptonCosTheta;
 }
 
+//===========================================================
+
+void Variables::SetMaxBTagForBosonW1(double maxBTagForBosonW1)
+{
+    m_maxBTagForBosonW1 = maxBTagForBosonW1;
+}
+
+//===========================================================
+
+double Variables::GetMaxBTagForBosonW1() const
+{
+    return m_maxBTagForBosonW1;
+}
+
+//===========================================================
+
+void Variables::SetMinBTagForBosonW1(double minBTagForBosonW1)
+{
+    m_minBTagForBosonW1 = minBTagForBosonW1;
+}
+
+//===========================================================
+
+double Variables::GetMinBTagForBosonW1() const
+{
+    return m_minBTagForBosonW1;
+}
+
+//===========================================================
+
+void Variables::SetMaxBTagForBosonW2(double maxBTagForBosonW2)
+{
+    m_maxBTagForBosonW2 = maxBTagForBosonW2;
+}
+
+//===========================================================
+
+double Variables::GetMaxBTagForBosonW2() const
+{
+    return m_maxBTagForBosonW2;
+}
+
+//===========================================================
+
+void Variables::SetMinBTagForBosonW2(double minBTagForBosonW2)
+{
+    m_minBTagForBosonW2 = minBTagForBosonW2;
+}
+
+//===========================================================
+
+double Variables::GetMinBTagForBosonW2() const
+{
+    return m_minBTagForBosonW2;
+}
+
+//===========================================================
+
+void Variables::SetMaxCTagForBosonW1(double maxCTagForBosonW1)
+{
+    m_maxCTagForBosonW1 = maxCTagForBosonW1;
+}
+
+//===========================================================
+
+double Variables::GetMaxCTagForBosonW1() const
+{
+    return m_maxCTagForBosonW1;
+}
+
+//===========================================================
+
+void Variables::SetMinCTagForBosonW1(double minCTagForBosonW1)
+{
+    m_minCTagForBosonW1 = minCTagForBosonW1;
+}
+
+//===========================================================
+
+double Variables::GetMinCTagForBosonW1() const
+{
+    return m_minCTagForBosonW1;
+}
+
+//===========================================================
+
+void Variables::SetMaxCTagForBosonW2(double maxCTagForBosonW2)
+{
+    m_maxCTagForBosonW2 = maxCTagForBosonW2;
+}
+
+//===========================================================
+
+double Variables::GetMaxCTagForBosonW2() const
+{
+    return m_maxCTagForBosonW2;
+}
+
+//===========================================================
+
+void Variables::SetMinCTagForBosonW2(double minCTagForBosonW2)
+{
+    m_minCTagForBosonW2 = minCTagForBosonW2;
+}
+
+//===========================================================
+
+double Variables::GetMinCTagForBosonW2() const
+{
+    return m_minCTagForBosonW2;
+}
+
+//===========================================================
+
+void Variables::SetMaxBTagForBosonZ1(double maxBTagForBosonZ1)
+{
+    m_maxBTagForBosonZ1 = maxBTagForBosonZ1;
+}
+
+//===========================================================
+
+double Variables::GetMaxBTagForBosonZ1() const
+{
+    return m_maxBTagForBosonZ1;
+}
+
+//===========================================================
+
+void Variables::SetMinBTagForBosonZ1(double minBTagForBosonZ1)
+{
+    m_minBTagForBosonZ1 = minBTagForBosonZ1;
+}
+
+//===========================================================
+
+double Variables::GetMinBTagForBosonZ1() const
+{
+    return m_minBTagForBosonZ1;
+}
+
+//===========================================================
+
+void Variables::SetMaxBTagForBosonZ2(double maxBTagForBosonZ2)
+{
+    m_maxBTagForBosonZ2 = maxBTagForBosonZ2;
+}
+
+//===========================================================
+
+double Variables::GetMaxBTagForBosonZ2() const
+{
+    return m_maxBTagForBosonZ2;
+}
+
+//===========================================================
+
+void Variables::SetMinBTagForBosonZ2(double minBTagForBosonZ2)
+{
+    m_minBTagForBosonZ2 = minBTagForBosonZ2;
+}
+
+//===========================================================
+
+double Variables::GetMinBTagForBosonZ2() const
+{
+    return m_minBTagForBosonZ2;
+}
+
+//===========================================================
+
+void Variables::SetMaxCTagForBosonZ1(double maxCTagForBosonZ1)
+{
+    m_maxCTagForBosonZ1 = maxCTagForBosonZ1;
+}
+
+//===========================================================
+
+double Variables::GetMaxCTagForBosonZ1() const
+{
+    return m_maxCTagForBosonZ1;
+}
+
+//===========================================================
+
+void Variables::SetMinCTagForBosonZ1(double minCTagForBosonZ1)
+{
+    m_minCTagForBosonZ1 = minCTagForBosonZ1;
+}
+
+//===========================================================
+
+double Variables::GetMinCTagForBosonZ1() const
+{
+    return m_minCTagForBosonZ1;
+}
+
+//===========================================================
+
+void Variables::SetMaxCTagForBosonZ2(double maxCTagForBosonZ2)
+{
+    m_maxCTagForBosonZ2 = maxCTagForBosonZ2;
+}
+
+//===========================================================
+
+double Variables::GetMaxCTagForBosonZ2() const
+{
+    return m_maxCTagForBosonZ2;
+}
+
+//===========================================================
+
+void Variables::SetMinCTagForBosonZ2(double minCTagForBosonZ2)
+{
+    m_minCTagForBosonZ2 = minCTagForBosonZ2;
+}
+
+//===========================================================
+
+double Variables::GetMinCTagForBosonZ2() const
+{
+    return m_minCTagForBosonZ2;
+}
+
 //=========================================================== DoubleVector
 
 void Variables::SetInvMassWVectors(DoubleVector invMassWVectors)
@@ -1622,6 +2125,48 @@ void Variables::SetEnergyJets(DoubleVector energyJets)
 DoubleVector Variables::GetEnergyJets() const 
 {
     return m_energyJets;
+}
+
+//===========================================================
+
+void Variables::SetMomentumJets(DoubleVector momentumJets)
+{
+    m_momentumJets = momentumJets;
+}
+
+//===========================================================
+
+DoubleVector Variables::GetMomentumJets() const
+{
+    return m_momentumJets;
+}
+
+//===========================================================
+
+void Variables::SetTransverseMomentumJets(DoubleVector transverseMomentumJets)
+{
+    m_transverseMomentumJets = transverseMomentumJets;
+}
+
+//===========================================================
+
+DoubleVector Variables::GetTransverseMomentumJets() const
+{
+    return m_transverseMomentumJets;
+}
+
+//===========================================================
+
+void Variables::SetCosThetaJets(DoubleVector cosThetaJets)
+{
+    m_cosThetaJets = cosThetaJets;
+}
+
+//===========================================================
+
+DoubleVector Variables::GetCosThetaJets() const
+{
+    return m_cosThetaJets;
 }
 
 //===========================================================

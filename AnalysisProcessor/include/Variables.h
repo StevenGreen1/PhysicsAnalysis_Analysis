@@ -304,6 +304,138 @@ class Variables
         double GetTransverseMomentum() const;
 
         /**
+         *  @brief Set m_transverseMomentumMC
+         *
+         *  @param transverseMomentumMC Transverse momentum of quark system
+         */
+        void SetTransverseMomentumMC(double transverseMomentumMC);
+
+        /**
+         *  @brief Get m_transverseMomentumMC
+         */
+        double GetTransverseMomentumMC() const;
+
+        /**
+         *  @brief Set m_transverseEnergy
+         *
+         *  @param transverseEnergy Transverse energy of reconstructed system
+         */
+        void SetTransverseEnergy(double transverseEnergy);
+
+        /**
+         *  @brief Get m_transverseEnergy
+         */
+        double GetTransverseEnergy() const;
+
+        /**
+         *  @brief Set m_transverseEnergyMC
+         *
+         *  @param transverseEnergyMC Transverse energy of quark system
+         */
+        void SetTransverseEnergyMC(double transverseEnergyMC);
+
+        /**
+         *  @brief Get m_transverseEnergyMC
+         */
+        double GetTransverseEnergyMC() const;
+
+        /**
+         *  @brief Set m_energyBosonW1
+         *
+         *  @param energyBosonW1 Energy of W Boson 1
+         */
+        void SetEnergyBosonW1(double energyBosonW1);
+
+        /**
+         *  @brief Get m_energyBosonW1
+         */
+        double GetEnergyBosonW1() const;
+
+        /**
+         *  @brief Set m_energyBosonW2
+         *
+         *  @param energyBosonW2 Energy of W Boson 2
+         */
+        void SetEnergyBosonW2(double energyBosonW2);
+
+        /**
+         *  @brief Get m_energyBosonW2
+         */
+        double GetEnergyBosonW2() const;
+
+        /**
+         *  @brief Set m_energyBosonZ1
+         *
+         *  @param energyBosonZ1 Energy of Z Boson 1
+         */
+        void SetEnergyBosonZ1(double energyBosonZ1);
+
+        /**
+         *  @brief Get m_energyBosonZ1
+         */
+        double GetEnergyBosonZ1() const;
+
+        /**
+         *  @brief Set m_energyBosonZ2
+         *
+         *  @param energyBosonZ2 Energy of Z Boson 2
+         */
+        void SetEnergyBosonZ2(double energyBosonZ2);
+
+        /**
+         *  @brief Get m_energyBosonZ2
+         */
+        double GetEnergyBosonZ2() const;
+
+        /**                                                                                                                                                                 
+         *  @brief Set m_momentumBosonW1
+         *
+         *  @param momentumBosonW1 Momentum of W Boson 1
+         */
+        void SetMomentumBosonW1(double momentumBosonW1);
+
+        /**
+         *  @brief Get m_momentumBosonW1
+         */
+        double GetMomentumBosonW1() const;
+
+        /**
+         *  @brief Set m_momentumBosonW2
+         *
+         *  @param momentumBosonW2 Momentum of W Boson 2
+         */
+        void SetMomentumBosonW2(double momentumBosonW2);
+
+        /**
+         *  @brief Get m_momentumBosonW2
+         */
+        double GetMomentumBosonW2() const;
+
+        /**
+         *  @brief Set m_momentumBosonZ1
+         *
+         *  @param momentumBosonZ1 Momentum of Z Boson 1
+         */
+        void SetMomentumBosonZ1(double momentumBosonZ1);
+
+        /**
+         *  @brief Get m_momentumBosonZ1
+         */
+        double GetMomentumBosonZ1() const;
+
+        /**
+         *  @brief Set m_momentumBosonZ2
+         *
+         *  @param momentumBosonZ2 Momentum of Z Boson 2
+         */
+        void SetMomentumBosonZ2(double momentumBosonZ2);
+
+        /**
+         *  @brief Get m_momentumBosonZ2
+         */
+        double GetMomentumBosonZ2() const;
+
+        /**
          *  @brief Set m_transverseMomentumBosonW1
          *
          *  @param transverseMomentum Transverse momentum of W boson 1 in W pairing 
@@ -351,24 +483,53 @@ class Variables
          */
         double GetTransverseMomentumBosonZ2() const;
 
-        /**
-         *  @brief Set m_transverseMomentumMC
+        /**                                                                                                                                                                 
+         *  @brief Set m_cosThetaBosonW1
          *
-         *  @param transverseMomentumMC Transverse momentum of quark system
+         *  @param cosThetaBosonW1 CosTheta of W Boson 1
          */
-        void SetTransverseMomentumMC(double transverseMomentumMC);
+        void SetCosThetaBosonW1(double cosThetaBosonW1);
 
         /**
-         *  @brief Get m_transverseMomentumMC
+         *  @brief Get m_cosThetaBosonW1
          */
-        double GetTransverseMomentumMC() const;
+        double GetCosThetaBosonW1() const;
 
         /**
-         *  @brief Set m_transverseEnergy
+         *  @brief Set m_cosThetaBosonW2
          *
-         *  @param transverseEnergy Transverse energy of reconstructed system
+         *  @param cosThetaBosonW2 CosTheta of W Boson 2
          */
-        void SetTransverseEnergy(double transverseEnergy);
+        void SetCosThetaBosonW2(double cosThetaBosonW2);
+
+        /**
+         *  @brief Get m_cosThetaBosonW2
+         */
+        double GetCosThetaBosonW2() const;
+
+        /**
+         *  @brief Set m_cosThetaBosonZ1
+         *
+         *  @param cosThetaBosonZ1 CosTheta of Z Boson 1
+         */
+        void SetCosThetaBosonZ1(double cosThetaBosonZ1);
+
+        /**
+         *  @brief Get m_cosThetaBosonZ1
+         */
+        double GetCosThetaBosonZ1() const;
+
+        /**
+         *  @brief Set m_cosThetaBosonZ2
+         *
+         *  @param cosThetaBosonZ2 CosTheta of Z Boson 2
+         */
+        void SetCosThetaBosonZ2(double cosThetaBosonZ2);
+
+        /**
+         *  @brief Get m_cosThetaBosonZ2
+         */
+        double GetCosThetaBosonZ2() const;
 
         /**
          *  @brief Set m_transverseEnergyBosonW1
@@ -417,23 +578,6 @@ class Variables
          *  @brief Get m_transverseEnergyBosonZ2
          */
         double GetTransverseEnergyBosonZ2() const;
-
-        /**
-         *  @brief Get m_transverseEnergy
-         */
-        double GetTransverseEnergy() const;
-
-        /**
-         *  @brief Set m_transverseEnergyMC
-         *
-         *  @param transverseEnergyMC Transverse energy of quark system
-         */
-        void SetTransverseEnergyMC(double transverseEnergyMC);
-
-        /**
-         *  @brief Get m_transverseEnergyMC
-         */
-        double GetTransverseEnergyMC() const;
 
         /**
          *  @brief Set m_cosThetaMissing
@@ -1011,6 +1155,198 @@ class Variables
          */
         double GetSecondHighestEnergyIsolatedLeptonCosTheta() const;
 
+        /**
+         *  @brief Set m_maxBTagForBosonW1
+         *
+         *  @param maxBTagForBosonW1 Max b tag for jets in W Boson 1
+         */
+        void SetMaxBTagForBosonW1(double maxBTagForBosonW1);
+
+        /**
+         *  @brief Get m_maxBTagForBosonW1
+         */
+        double GetMaxBTagForBosonW1() const;
+
+        /**
+         *  @brief Set m_minBTagForBosonW1
+         *
+         *  @param minBTagForBosonW1 Min b tag for jets in W Boson 1
+         */
+        void SetMinBTagForBosonW1(double minBTagForBosonW1);
+
+        /**
+         *  @brief Get m_minBTagForBosonW1
+         */
+        double GetMinBTagForBosonW1() const;
+
+        /**
+         *  @brief Set m_maxBTagForBosonW2
+         *
+         *  @param maxBTagForBosonW2 Max b tag for jets in W Boson 2
+         */
+        void SetMaxBTagForBosonW2(double maxBTagForBosonW2);
+
+        /**
+         *  @brief Get m_maxBTagForBosonW2
+         */
+        double GetMaxBTagForBosonW2() const;
+
+        /**
+         *  @brief Set m_minBTagForBosonW2
+         *
+         *  @param minBTagForBosonW2 Min b tag for jets in W Boson 2
+         */
+        void SetMinBTagForBosonW2(double minBTagForBosonW2);
+
+        /**
+         *  @brief Get m_minBTagForBosonW2
+         */
+        double GetMinBTagForBosonW2() const;
+
+        /**
+         *  @brief Set m_maxCTagForBosonW1
+         *
+         *  @param maxCTagForBosonW1 Max c tag for jets in W Boson 1
+         */
+        void SetMaxCTagForBosonW1(double maxCTagForBosonW1);
+
+        /**
+         *  @brief Get m_maxCTagForBosonW1
+         */
+        double GetMaxCTagForBosonW1() const;
+
+        /**
+         *  @brief Set m_minCTagForBosonW1
+         *
+         *  @param minCTagForBosonW1 Min c tag for jets in W Boson 1
+         */
+        void SetMinCTagForBosonW1(double minCTagForBosonW1);
+
+        /**
+         *  @brief Get m_minCTagForBosonW1
+         */
+        double GetMinCTagForBosonW1() const;
+
+        /**
+         *  @brief Set m_maxCTagForBosonW2
+         *
+         *  @param maxCTagForBosonW2 Max c tag for jets in W Boson 2
+         */
+        void SetMaxCTagForBosonW2(double maxCTagForBosonW2);
+
+        /**
+         *  @brief Get m_maxCTagForBosonW2
+         */
+        double GetMaxCTagForBosonW2() const;
+
+        /**
+         *  @brief Set m_minCTagForBosonW2
+         *
+         *  @param minCTagForBosonW2 Min c tag for jets in W Boson 2
+         */
+        void SetMinCTagForBosonW2(double minCTagForBosonW2);
+
+        /**
+         *  @brief Get m_minCTagForBosonW2
+         */
+        double GetMinCTagForBosonW2() const;
+
+        /**
+         *  @brief Set m_maxBTagForBosonZ1
+         *
+         *  @param maxBTagForBosonZ1 Max b tag for jets in Z Boson 1
+         */
+        void SetMaxBTagForBosonZ1(double maxBTagForBosonZ1);
+
+        /**
+         *  @brief Get m_maxBTagForBosonZ1
+         */
+        double GetMaxBTagForBosonZ1() const;
+
+        /**
+         *  @brief Set m_minBTagForBosonZ1
+         *
+         *  @param minBTagForBosonZ1 Min b tag for jets in Z Boson 1
+         */
+        void SetMinBTagForBosonZ1(double minBTagForBosonZ1);
+
+        /**
+         *  @brief Get m_minBTagForBosonZ1
+         */
+        double GetMinBTagForBosonZ1() const;
+
+        /**
+         *  @brief Set m_maxBTagForBosonZ2
+         *
+         *  @param maxBTagForBosonZ2 Max b tag for jets in Z Boson 2
+         */
+        void SetMaxBTagForBosonZ2(double maxBTagForBosonZ2);
+
+        /**
+         *  @brief Get m_maxBTagForBosonZ2
+         */
+        double GetMaxBTagForBosonZ2() const;
+
+        /**
+         *  @brief Set m_minBTagForBosonZ2
+         *
+         *  @param minBTagForBosonZ2 Min b tag for jets in Z Boson 2
+         */
+        void SetMinBTagForBosonZ2(double minBTagForBosonZ2);
+
+        /**
+         *  @brief Get m_minBTagForBosonZ2
+         */
+        double GetMinBTagForBosonZ2() const;
+
+        /**
+         *  @brief Set m_maxCTagForBosonZ1
+         *
+         *  @param maxCTagForBosonZ1 Max c tag for jets in Z Boson 1
+         */
+        void SetMaxCTagForBosonZ1(double maxCTagForBosonZ1);
+
+        /**
+         *  @brief Get m_maxCTagForBosonZ1
+         */
+        double GetMaxCTagForBosonZ1() const;
+
+        /**
+         *  @brief Set m_minCTagForBosonZ1
+         *
+         *  @param minCTagForBosonZ1 Min c tag for jets in Z Boson 1
+         */
+        void SetMinCTagForBosonZ1(double minCTagForBosonZ1);
+
+        /**
+         *  @brief Get m_minCTagForBosonZ1
+         */
+        double GetMinCTagForBosonZ1() const;
+
+        /**
+         *  @brief Set m_maxCTagForBosonZ2
+         *
+         *  @param maxCTagForBosonZ2 Max c tag for jets in Z Boson 2
+         */
+        void SetMaxCTagForBosonZ2(double maxCTagForBosonZ2);
+
+        /**
+         *  @brief Get m_maxCTagForBosonZ2
+         */
+        double GetMaxCTagForBosonZ2() const;
+
+        /**
+         *  @brief Set m_minCTagForBosonZ2
+         *
+         *  @param minCTagForBosonZ2 Min c tag for jets in Z Boson 2
+         */
+        void SetMinCTagForBosonZ2(double minCTagForBosonZ2);
+
+        /**
+         *  @brief Get m_minCTagForBosonZ2
+         */
+        double GetMinCTagForBosonZ2() const;
+
 // DoubleVectors
 
         /**
@@ -1072,6 +1408,42 @@ class Variables
          *  @brief Get m_energyJets
          */
         DoubleVector GetEnergyJets() const;
+
+        /**
+         *  @brief Set m_momentumJets
+         *
+         *  @param momentumJets Momentum of reconstructed jets
+         */
+        void SetMomentumJets(DoubleVector momentumJets);
+
+        /**
+         *  @brief Get m_momentumJets
+         */
+        DoubleVector GetMomentumJets() const;
+
+        /**
+         *  @brief Set m_transverseMomentumJets
+         *
+         *  @param transverseMomentumJets Transverse momentum of reconstructed jets
+         */
+        void SetTransverseMomentumJets(DoubleVector transverseMomentumJets);
+
+        /**
+         *  @brief Get m_transverseMomentumJets
+         */
+        DoubleVector GetTransverseMomentumJets() const;
+
+        /**
+         *  @brief Set m_cosThetaJets
+         *
+         *  @param cosThetaJets CosTheta of reconstructed jets
+         */
+        void SetCosThetaJets(DoubleVector cosThetaJets);
+
+        /**
+         *  @brief Get m_cosThetaJets
+         */
+        DoubleVector GetCosThetaJets() const;
 
         /**
          *  @brief Get lowest number in m_energyJets
@@ -1158,17 +1530,29 @@ class Variables
         IntVector        m_nChargedParticlesJets;                        ///< Number of charged particles in reconstructed jet - JetAnalysis
         double           m_eventEnergyMC;                                ///< MC event energy
         double           m_transverseMomentum;                           ///< Transverse momentum of reconstructed system - JetAnalysis
+        double           m_transverseMomentumMC;                         ///< Transverse momentum of quark system - MCAnalysis
+        double           m_transverseEnergy;                             ///< Transverse energy of reconstructed system - JetAnalysis
+        double           m_transverseEnergyMC;                           ///< Transverse energy of quark system - MCAnalysis
+        double           m_energyBosonW1;                                ///< Energy of W boson 1 - JetAnalysis
+        double           m_energyBosonW2;                                ///< Energy of W boson 2 - JetAnalysis
+        double           m_energyBosonZ1;                                ///< Energy of Z boson 1 - JetAnalysis
+        double           m_energyBosonZ2;                                ///< Energy of Z boson 2 - JetAnalysis
+        double           m_momentumBosonW1;                              ///< Momentum of W boson 1 - JetAnalysis
+        double           m_momentumBosonW2;                              ///< Momentum of W boson 2 - JetAnalysis
+        double           m_momentumBosonZ1;                              ///< Momentum of Z boson 1 - JetAnalysis
+        double           m_momentumBosonZ2;                              ///< Momentum of Z boson 2 - JetAnalysis
         double           m_transverseMomentumBosonW1;                    ///< Transverse momentum of W boson 1 in W pairing - JetAnalysis
         double           m_transverseMomentumBosonW2;                    ///< Transverse momentum of W boson 2 in W pairing - JetAnalysis
         double           m_transverseMomentumBosonZ1;                    ///< Transverse momentum of W boson 1 in Z pairing - JetAnalysis
         double           m_transverseMomentumBosonZ2;                    ///< Transverse momentum of W boson 2 in Z pairing - JetAnalysis
-        double           m_transverseMomentumMC;                         ///< Transverse momentum of quark system - MCAnalysis
-        double           m_transverseEnergy;                             ///< Transverse energy of reconstructed system - JetAnalysis
+        double           m_cosThetaBosonW1;                              ///< CosTheta of W boson 1 - JetAnalysis
+        double           m_cosThetaBosonW2;                              ///< CosTheta of W boson 2 - JetAnalysis
+        double           m_cosThetaBosonZ1;                              ///< CosTheta of Z boson 1 - JetAnalysis
+        double           m_cosThetaBosonZ2;                              ///< CosTheta of Z boson 2 - JetAnalysis
         double           m_transverseEnergyBosonW1;                      ///< Transverse energy of W boson 1 in W pairing - JetAnalysis
         double           m_transverseEnergyBosonW2;                      ///< Transverse energy of W boson 2 in W pairing - JetAnalysis
         double           m_transverseEnergyBosonZ1;                      ///< Transverse energy of Z boson 1 in Z pairing - JetAnalysis
         double           m_transverseEnergyBosonZ2;                      ///< Transverse energy of Z boson 2 in Z pairing - JetAnalysis
-        double           m_transverseEnergyMC;                           ///< Transverse energy of quark system - MCAnalysis
         double           m_cosThetaMissing;                              ///< Cosine theta of missing energy - JetAnalysis
         double           m_cosThetaMissingMC;                            ///< Cosine theta of neutrino energy - MCAnalysis
         double           m_cosThetaMostEnergeticTrack;                   ///< Cosine theta of highest energy track in system - JetAnalysis
@@ -1225,15 +1609,34 @@ class Variables
         double           m_secondHighestEnergyIsolatedLeptonP;           ///< Magnitude of momentum of second highest energy lepton from isolated lepton finding - IsolatedLeptonPfoAnalysis
         double           m_secondHighestEnergyIsolatedLeptonPt;          ///< Transverse momentum of second highest energy lepton from isolated lepton finding - IsolatedLeptonPfoAnalysis
         double           m_secondHighestEnergyIsolatedLeptonCosTheta;    ///< Consine theta of second highest energy lepton from isolated lepton finding - IsolatedLeptonPfoAnalysis
+        double           m_maxBTagForBosonW1;                            ///< Max b tag for jets in W Boson 1 - JetAnalysis
+        double           m_minBTagForBosonW1;                            ///< Min b tag for jets in W Boson 1 - JetAnalysis
+        double           m_maxBTagForBosonW2;                            ///< Max b tag for jets in W Boson 2 - JetAnalysis
+        double           m_minBTagForBosonW2;                            ///< Min b tag for jets in W Boson 2 - JetAnalysis
+        double           m_maxCTagForBosonW1;                            ///< Max c tag for jets in W Boson 1 - JetAnalysis
+        double           m_minCTagForBosonW1;                            ///< Min c tag for jets in W Boson 1 - JetAnalysis
+        double           m_maxCTagForBosonW2;                            ///< Max c tag for jets in W Boson 2 - JetAnalysis
+        double           m_minCTagForBosonW2;                            ///< Min c tag for jets in W Boson 2 - JetAnalysis
+        double           m_maxBTagForBosonZ1;                            ///< Max b tag for jets in Z Boson 1 - JetAnalysis
+        double           m_minBTagForBosonZ1;                            ///< Min b tag for jets in Z Boson 1 - JetAnalysis
+        double           m_maxBTagForBosonZ2;                            ///< Max b tag for jets in Z Boson 2 - JetAnalysis
+        double           m_minBTagForBosonZ2;                            ///< Min b tag for jets in Z Boson 2 - JetAnalysis
+        double           m_maxCTagForBosonZ1;                            ///< Max c tag for jets in Z Boson 1 - JetAnalysis
+        double           m_minCTagForBosonZ1;                            ///< Min c tag for jets in Z Boson 1 - JetAnalysis
+        double           m_maxCTagForBosonZ2;                            ///< Max c tag for jets in Z Boson 2 - JetAnalysis
+        double           m_minCTagForBosonZ2;                            ///< Min c tag for jets in Z Boson 2 - JetAnalysis
         DoubleVector     m_invariantMassWBosons;                         ///< Invariant mass of first and second pair of W paired jets - JetAnalysis
         DoubleVector     m_invariantMassWBosonsMC;                       ///< Invariant mass of first and second pair of W paired quarks - MCAnalysis
         DoubleVector     m_invariantMassZBosons;                         ///< Invariant mass of first and second pair of Z paired jets - JetAnalysis
         DoubleVector     m_invariantMassZBosonsMC;                       ///< Invariant mass of first and second pair of Z paired quarks - MCAnalysis
         DoubleVector     m_energyJets;                                   ///< Energy of reconstructed jets  - JetAnalysis
+        DoubleVector     m_momentumJets;                                 ///< Momentum of reconstructed jets  - JetAnalysis
+        DoubleVector     m_transverseMomentumJets;                       ///< Transverse momentum of reconstructed jets  - JetAnalysis
+        DoubleVector     m_cosThetaJets;                                 ///< CosTheta of reconstructed jets  - JetAnalysis
         DoubleVector     m_cosThetaStarWJets;                            ///< Cosine of the polar angle of the q jets in the reference frome of the W bosons - JetAnalysis
         DoubleVector     m_cosThetaStarZJets;                            ///< Cosine of the polar angle of the q jets in the reference frome of the Z bosons - JetAnalysis
-        DoubleVector     m_bTagForJets;                                  ///< B tag value for the jets in the event
-        DoubleVector     m_cTagForJets;                                  ///< C tag value for the jets in the event
+        DoubleVector     m_bTagForJets;                                  ///< B tag value for the jets in the event - JetAnalysis
+        DoubleVector     m_cTagForJets;                                  ///< C tag value for the jets in the event - JetAnalysis
 };
 
 #endif // #ifndef VARIABLES_H

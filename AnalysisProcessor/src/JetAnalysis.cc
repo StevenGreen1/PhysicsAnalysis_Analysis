@@ -35,6 +35,13 @@ JetAnalysis::JetAnalysis(const EVENT::LCCollection *pLCCollection, Variables *&v
 
 JetAnalysis::~JetAnalysis()
 {
+    m_jetVector.clear();
+    m_wVector1.clear();
+    m_wVector2.clear();
+    m_zVector1.clear();
+    m_zVector2.clear();
+    m_particleToBTag.clear();
+    m_particleToCTag.clear();
 }
 
 //===========================================================
@@ -52,12 +59,17 @@ void JetAnalysis::ProcessJets(const EVENT::LCCollection *pLCCollection)
 void JetAnalysis::ProcessBosons()
 {
     this->CalculateAcolinearities();
+    this->CalculateBosonEnergies();
+    this->CalculateBosonMomenta();
     this->CalculateTransverseMomentum();
+    this->CalculateBosonCosTheta();
     this->CalculateTransverseEnergy();
     this->CalculateCosThetaMissingMomentum();
     this->CalculateCosThetaMostEnergeticTrack();
     this->CalculateRecoilMass();
     this->CalculateEnergyInConeAroundMostEnergeticPfo();
+    this->CalculateBosonNPFOs();
+    this->CalculateFlavourTaggingInformation();
 
     this->IsEventAppropriate();
     if (m_pVariables->GetAppropriateEvent())
@@ -109,6 +121,8 @@ void JetAnalysis::CalculateFlavourTagging(const EVENT::LCCollection *pLCCollecti
 
         bTagInfoJets.push_back(particleID.getParameters().at(bTagIndex));
         cTagInfoJets.push_back(particleID.getParameters().at(cTagIndex));
+        m_particleToBTag.insert(std::make_pair(pReconstructedParticle, particleID.getParameters().at(bTagIndex)));
+        m_particleToCTag.insert(std::make_pair(pReconstructedParticle, particleID.getParameters().at(cTagIndex)));
     }
 
     m_pVariables->SetBTagForJets(bTagInfoJets);
@@ -119,20 +133,28 @@ void JetAnalysis::CalculateFlavourTagging(const EVENT::LCCollection *pLCCollecti
 
 void JetAnalysis::JetVariables()
 {
-    DoubleVector energyJets;
-    IntVector nParticlesJets;
-    IntVector nChargedParticlesJets;
+    DoubleVector energyJets, momentumJets, transverseMomentumJets, cosThetaJets;
+    IntVector nParticlesJets, nChargedParticlesJets;
 
     for (ParticleVector::iterator iter = m_jetVector.begin(); iter != m_jetVector.end(); iter++)
     {
         const EVENT::ReconstructedParticle *pReconstructedParticle(*iter);
-        energyJets.push_back(pReconstructedParticle->getEnergy());
+        const double px(pReconstructedParticle->getMomentum()[0]);
+        const double py(pReconstructedParticle->getMomentum()[1]);
+        const double pz(pReconstructedParticle->getMomentum()[2]);
+        const double energy(pReconstructedParticle->getEnergy());
+        const double p(sqrt(px * px + py * py + pz * pz));
+        const double pT(energy * sqrt(px*px + py*py) / p);
+        const double cosTheta(pz/p);
+
+        energyJets.push_back(energy);
+        momentumJets.push_back(p);
+        transverseMomentumJets.push_back(pT);
+        cosThetaJets.push_back(cosTheta);
+
         nParticlesJets.push_back(pReconstructedParticle->getParticles().size());
-
         int numberOfChargedParticles(0);
-
         ParticleVector *pReconstructedParticleVec = new ParticleVector();
-
         pReconstructedParticleVec->insert(pReconstructedParticleVec->end(), pReconstructedParticle->getParticles().begin(), pReconstructedParticle->getParticles().end());
 
         for (ParticleVector::iterator iterPart = pReconstructedParticleVec->begin(); iterPart != pReconstructedParticleVec->end(); iterPart++)
@@ -143,6 +165,9 @@ void JetAnalysis::JetVariables()
     }
 
     m_pVariables->SetEnergyJets(energyJets);
+    m_pVariables->SetMomentumJets(momentumJets);
+    m_pVariables->SetTransverseMomentumJets(transverseMomentumJets);
+    m_pVariables->SetCosThetaJets(cosThetaJets);
     m_pVariables->SetNParticlesJets(nParticlesJets);
     m_pVariables->SetNChargedParticlesJets(nChargedParticlesJets);
 }
@@ -229,8 +254,24 @@ void JetAnalysis::JetPairing()
             bestZMetric = zMetric;
         }
     }
+    m_pVariables->SetInvMassWVectors(bestWMasses);
+    m_pVariables->SetInvMassZVectors(bestZMasses);
+}
 
-    //count pfos in bosons
+//===========================================================
+
+void JetAnalysis::CalculateBosonEnergies() 
+{
+    m_pVariables->SetEnergyBosonW1(m_wVector1.at(0)->getEnergy() + m_wVector1.at(1)->getEnergy());
+    m_pVariables->SetEnergyBosonW2(m_wVector2.at(0)->getEnergy() + m_wVector2.at(1)->getEnergy());
+    m_pVariables->SetEnergyBosonZ1(m_zVector1.at(0)->getEnergy() + m_zVector1.at(1)->getEnergy());
+    m_pVariables->SetEnergyBosonZ2(m_zVector2.at(0)->getEnergy() + m_zVector2.at(1)->getEnergy());
+}
+
+//===========================================================
+
+void JetAnalysis::CalculateBosonNPFOs() 
+{
     int nPfosBosonW1(0), nPfosBosonW2(0), nPfosBosonZ1(0), nPfosBosonZ2(0);
 
     this->CalculateNumberOfPfos(m_wVector1, nPfosBosonW1);
@@ -244,9 +285,6 @@ void JetAnalysis::JetPairing()
 
     this->CalculateNumberOfPfos(m_zVector2, nPfosBosonZ2);
     m_pVariables->SetNPfosBosonZ2(nPfosBosonZ2);
-
-    m_pVariables->SetInvMassWVectors(bestWMasses);
-    m_pVariables->SetInvMassZVectors(bestZMasses);
 }
 
 //===========================================================
@@ -259,6 +297,117 @@ void JetAnalysis::CalculateNumberOfPfos(ParticleVector particleVector, int &nPfo
     {
         const EVENT::ReconstructedParticle *pReconstructedParticle(*iter);
         nPfos +=  pReconstructedParticle->getParticles().size();
+    }
+}
+
+//===========================================================
+
+void JetAnalysis::CalculateFlavourTaggingInformation() 
+{
+    const double bTagW1a(m_particleToBTag.at(m_wVector1.at(0)));
+    const double bTagW1b(m_particleToBTag.at(m_wVector1.at(1)));
+    const double bTagW2a(m_particleToBTag.at(m_wVector2.at(0)));
+    const double bTagW2b(m_particleToBTag.at(m_wVector2.at(1)));
+    const double cTagW1a(m_particleToCTag.at(m_wVector1.at(0)));
+    const double cTagW1b(m_particleToCTag.at(m_wVector1.at(1)));
+    const double cTagW2a(m_particleToCTag.at(m_wVector2.at(0)));
+    const double cTagW2b(m_particleToCTag.at(m_wVector2.at(1)));
+
+    const double bTagZ1a(m_particleToBTag.at(m_zVector1.at(0)));
+    const double bTagZ1b(m_particleToBTag.at(m_zVector1.at(1)));
+    const double bTagZ2a(m_particleToBTag.at(m_zVector2.at(0)));
+    const double bTagZ2b(m_particleToBTag.at(m_zVector2.at(1)));
+    const double cTagZ1a(m_particleToCTag.at(m_zVector1.at(0)));
+    const double cTagZ1b(m_particleToCTag.at(m_zVector1.at(1)));
+    const double cTagZ2a(m_particleToCTag.at(m_zVector2.at(0)));
+    const double cTagZ2b(m_particleToCTag.at(m_zVector2.at(1)));
+
+    if (bTagW1a > bTagW1b)
+    {
+        m_pVariables->SetMaxBTagForBosonW1(bTagW1a);
+        m_pVariables->SetMinBTagForBosonW1(bTagW1b);
+    }
+    else
+    {
+        m_pVariables->SetMaxBTagForBosonW1(bTagW1b);
+        m_pVariables->SetMinBTagForBosonW1(bTagW1a);
+    }
+
+    if (bTagW2a > bTagW2b)
+    {
+        m_pVariables->SetMaxBTagForBosonW2(bTagW2a);
+        m_pVariables->SetMinBTagForBosonW2(bTagW2b);
+    }
+    else
+    {
+        m_pVariables->SetMaxBTagForBosonW2(bTagW2b);
+        m_pVariables->SetMinBTagForBosonW2(bTagW2a);
+    }
+
+    if (cTagW1a > cTagW1b)
+    {
+        m_pVariables->SetMaxCTagForBosonW1(cTagW1a);
+        m_pVariables->SetMinCTagForBosonW1(cTagW1b);
+    }
+    else
+    {
+        m_pVariables->SetMaxCTagForBosonW1(cTagW1b);
+        m_pVariables->SetMinCTagForBosonW1(cTagW1a);
+    }
+
+    if (cTagW2a > cTagW2b)
+    {
+        m_pVariables->SetMaxCTagForBosonW2(cTagW2a);
+        m_pVariables->SetMinCTagForBosonW2(cTagW2b);
+    }
+    else
+    {
+        m_pVariables->SetMaxCTagForBosonW2(cTagW2b);
+        m_pVariables->SetMinCTagForBosonW2(cTagW2a);
+    }
+
+    if (bTagZ1a > bTagZ1b)
+    {
+        m_pVariables->SetMaxBTagForBosonZ1(bTagZ1a);
+        m_pVariables->SetMinBTagForBosonZ1(bTagZ1b);
+    }
+    else
+    {
+        m_pVariables->SetMaxBTagForBosonZ1(bTagZ1b);
+        m_pVariables->SetMinBTagForBosonZ1(bTagZ1a);
+    }
+
+    if (bTagZ2a > bTagZ2b)
+    {
+        m_pVariables->SetMaxBTagForBosonZ2(bTagZ2a);
+        m_pVariables->SetMinBTagForBosonZ2(bTagZ2b);
+    }
+    else
+    {
+        m_pVariables->SetMaxBTagForBosonZ2(bTagZ2b);
+        m_pVariables->SetMinBTagForBosonZ2(bTagZ2a);
+    }
+
+    if (cTagZ1a > cTagZ1b)
+    {
+        m_pVariables->SetMaxCTagForBosonZ1(cTagZ1a);
+        m_pVariables->SetMinCTagForBosonZ1(cTagZ1b);
+    }
+    else
+    {
+        m_pVariables->SetMaxCTagForBosonZ1(cTagZ1b);
+        m_pVariables->SetMinCTagForBosonZ1(cTagZ1a);
+    }
+
+    if (cTagZ2a > cTagZ2b)
+    {
+        m_pVariables->SetMaxCTagForBosonZ2(cTagZ2a);
+        m_pVariables->SetMinCTagForBosonZ2(cTagZ2b);
+    }
+    else
+    {
+        m_pVariables->SetMaxCTagForBosonZ2(cTagZ2b);
+        m_pVariables->SetMinCTagForBosonZ2(cTagZ2a);
     }
 }
 
@@ -462,6 +611,80 @@ void JetAnalysis::CalculateTransverseMomentumObject(ParticleVector particleVecto
     }
 
     transverseMomentum = sqrt(px*px + py*py);
+}
+
+//===========================================================
+
+void JetAnalysis::CalculateBosonMomenta()
+{
+    double momentumBosonW1(0.0), momentumBosonW2(0.0), momentumBosonZ1(0.0), momentumBosonZ2(0.0);
+
+    this->CalculateMomentumObject(m_wVector1, momentumBosonW1);
+    m_pVariables->SetMomentumBosonW1(momentumBosonW1);
+
+    this->CalculateMomentumObject(m_wVector2, momentumBosonW2);
+    m_pVariables->SetMomentumBosonW2(momentumBosonW2);
+
+    this->CalculateMomentumObject(m_zVector1, momentumBosonZ1);
+    m_pVariables->SetMomentumBosonZ1(momentumBosonZ1);
+
+    this->CalculateMomentumObject(m_zVector2, momentumBosonZ2);
+    m_pVariables->SetMomentumBosonZ2(momentumBosonZ2);
+}
+
+//===========================================================
+
+void JetAnalysis::CalculateMomentumObject(ParticleVector particleVector, double &momentum)
+{   
+    momentum = 0.0;
+    double px(0.0), py(0.0), pz(0.0);
+    
+    for (ParticleVector::iterator iter = particleVector.begin(); iter != particleVector.end(); iter++)
+    {   
+        const EVENT::ReconstructedParticle* pReconstructedParticle(*iter);
+        px += pReconstructedParticle->getMomentum()[0];
+        py += pReconstructedParticle->getMomentum()[1];
+        pz += pReconstructedParticle->getMomentum()[2];
+    }
+    
+    momentum = sqrt(px*px + py*py + pz*pz);
+}
+
+//===========================================================
+
+void JetAnalysis::CalculateBosonCosTheta()
+{
+    double cosThetaBosonW1(0.0), cosThetaBosonW2(0.0), cosThetaBosonZ1(0.0), cosThetaBosonZ2(0.0);
+    
+    this->CalculateCosThetaObject(m_wVector1, cosThetaBosonW1);
+    m_pVariables->SetCosThetaBosonW1(cosThetaBosonW1);
+    
+    this->CalculateCosThetaObject(m_wVector2, cosThetaBosonW2);
+    m_pVariables->SetCosThetaBosonW2(cosThetaBosonW2);
+    
+    this->CalculateCosThetaObject(m_zVector1, cosThetaBosonZ1);
+    m_pVariables->SetCosThetaBosonZ1(cosThetaBosonZ1);
+    
+    this->CalculateCosThetaObject(m_zVector2, cosThetaBosonZ2);
+    m_pVariables->SetCosThetaBosonZ2(cosThetaBosonZ2);
+}
+
+//===========================================================
+
+void JetAnalysis::CalculateCosThetaObject(ParticleVector particleVector, double &cosTheta)
+{
+    cosTheta = 0.0;
+    double px(0.0), py(0.0), pz(0.0);
+
+    for (ParticleVector::iterator iter = particleVector.begin(); iter != particleVector.end(); iter++)
+    {
+        const EVENT::ReconstructedParticle* pReconstructedParticle(*iter);
+        px += pReconstructedParticle->getMomentum()[0];
+        py += pReconstructedParticle->getMomentum()[1];
+        pz += pReconstructedParticle->getMomentum()[2];
+    }
+
+    cosTheta = pz / sqrt(px*px + py*py + pz*pz);
 }
 
 //===========================================================

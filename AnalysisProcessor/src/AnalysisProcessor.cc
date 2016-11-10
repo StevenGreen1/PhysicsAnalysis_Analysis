@@ -22,7 +22,7 @@ AnalysisProcessor::AnalysisProcessor() : Processor("AnalysisProcessor")
     registerProcessorParameter("EventEnergyMC",
                             "Event Energy MC",
                             m_eventEnergyMC,
-                            double(0.f));
+                            double(0.0));
 
     registerProcessorParameter("RootFile",
                             "Name of the output root file",

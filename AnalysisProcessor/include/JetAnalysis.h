@@ -26,7 +26,8 @@
 class JetAnalysis 
 {
     typedef std::vector<const EVENT::ReconstructedParticle*> ParticleVector;
-//    typedef std::vector<double> DoubleVector;
+    typedef std::map<const EVENT::ReconstructedParticle*, double> ParticleToFloatMap;
+    typedef std::vector<double> DoubleVector;
 //    typedef std::vector<int> IntVector;
 
     public:
@@ -79,11 +80,26 @@ class JetAnalysis
         void JetPairing();
 
         /**
+         *  @brief Calculate the energy of the W/Z bosons
+         */
+        void CalculateBosonEnergies();
+
+        /**
+         *  @brief Calculate the number of PFOs in W/Z bosons
+         */
+        void CalculateBosonNPFOs();
+
+        /**
          *  @brief Calculate number of Pfos in a particleVector of jets e.g. boson with two jets
          *
          *  @param nPfos number of Pfos to set
          */
         void CalculateNumberOfPfos(ParticleVector particleVector, int &nPfos);
+
+        /**
+         *  @brief Calculate flavour tagging variables for bosons
+         */
+        void CalculateFlavourTaggingInformation();
 
         /**
          *  @brief Calculate the acolinearity of the jets from the W/Z bosons and the acolinearity of the W/Z boson itself
@@ -138,9 +154,35 @@ class JetAnalysis
          *  @brief Calculate the transverse momentum for the object defined by particleVector
          *
          *  @param particleVector vector of Pfos defining object
-         *  @param transverseEnergy transverse momentum of objects in particleVector to set
+         *  @param transverseMomentum transverse momentum of objects in particleVector to set
          */
         void CalculateTransverseMomentumObject(ParticleVector particleVector, double &transverseMomentum);
+
+        /**
+         *  @brief Calculate the momenta of the reconstructed bosons
+         */
+        void CalculateBosonMomenta();
+
+        /**
+         *  @brief Calculate the momentum for the object defined by particleVector
+         *
+         *  @param particleVector vector of Pfos defining object
+         *  @param momentum momentum of objects in particleVector to set
+         */
+        void CalculateMomentumObject(ParticleVector particleVector, double &momentum);
+
+        /**
+         *  @brief Calculate the costheta of the reconstructed bosons
+         */
+        void CalculateBosonCosTheta();
+
+        /**
+         *  @brief Calculate the cos theta for the object defined by particleVector
+         *
+         *  @param particleVector vector of Pfos defining object
+         *  @param cosTheta cos theta of objects in particleVector to set
+         */
+        void CalculateCosThetaObject(ParticleVector particleVector, double &cosTheta);
 
         /**
          *  @brief Calculate the cosine theta of the missing momentum vector using m_jetVector
@@ -247,6 +289,8 @@ class JetAnalysis
         ParticleVector        m_wVector2;          ///< Second W candidate
         ParticleVector        m_zVector1;          ///< First Z candidate
         ParticleVector        m_zVector2;          ///< Second Z candidate
+        ParticleToFloatMap    m_particleToBTag;    ///< Jet to B tag value
+        ParticleToFloatMap    m_particleToCTag;    ///< Jet to C tag value
         const double          m_wBosonMass;        ///< W boson mass used for jet pairing
         const double          m_zBosonMass;        ///< Z boson mass used for jet pairing
         const double          m_crossingAngle;     ///< Crossing angle for CLIC ILD, radians 
