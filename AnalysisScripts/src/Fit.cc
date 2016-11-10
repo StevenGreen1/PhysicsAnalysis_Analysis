@@ -20,15 +20,19 @@ Fit::Fit(const ProcessVector &processVector, CouplingAnalysis *pCouplingAnalysis
     m_pPostMVASelection(pCouplingAnalysis->GetPostMVASelection()),
     m_pCouplingAnalysis(pCouplingAnalysis),
     m_descriptor(descriptor),
-    m_alpha4IntMinGlobal(-40),
-    m_alpha4IntMaxGlobal(40),
-    m_alpha4StepGlobal(0.001f),
-    m_alpha5IntMinGlobal(-40),
-    m_alpha5IntMaxGlobal(40),
-    m_alpha5StepGlobal(0.001f),
     m_wBosonMass(80.385f),
     m_zBosonMass(91.1876f),
-    m_binsInFit(25),
+    m_alpha4(0.0),
+    m_alpha5(0.0),
+    m_chi2_CTSWJets_vs_CTSWBosons(0.0),
+    m_chi2_CTSZJets_vs_CTSZBosons(0.0),
+    m_chi2_CTSWJets(0.0),
+    m_chi2_CTSZJets(0.0),
+    m_chi2_CTSWBosons(0.0),
+    m_chi2_CTSZBosons(0.0),
+    m_nBins(10),
+    m_nEvents(10000),
+    m_option(0),
     m_rootFileName(descriptor + "FitData.root")
 {
     TH1::AddDirectory(kFALSE);
@@ -43,174 +47,420 @@ Fit::Fit(const ProcessVector &processVector, CouplingAnalysis *pCouplingAnalysis
     // Output data file
     m_pTFile = new TFile(m_rootFileName.c_str(), "recreate");
 
+    m_pTTree = new TTree("AnalysisProcessorTree", "AnalysisProcessorTree");
+    m_pTTree->SetDirectory(m_pTFile);
+    m_pTTree->Branch("chi2_CTSWJets_vs_CTSWBosons", &m_chi2_CTSWJets_vs_CTSWBosons, "chi2_CTSWJets_vs_CTSWBosons/D");
+    m_pTTree->Branch("chi2_CTSZJets_vs_CTSZBosons", &m_chi2_CTSZJets_vs_CTSZBosons, "chi2_CTSZJets_vs_CTSZBosons/D");
+    m_pTTree->Branch("chi2_CTSWJets", &m_chi2_CTSWJets, "chi2_CTSWJets/D");
+    m_pTTree->Branch("chi2_CTSZJets", &m_chi2_CTSZJets, "chi2_CTSZJets/D");
+    m_pTTree->Branch("chi2_CTSWBosons", &m_chi2_CTSWBosons, "chi2_CTSWBosons/D");
+    m_pTTree->Branch("chi2_CTSZBosons", &m_chi2_CTSZBosons, "chi2_CTSZBosons/D");
+    m_pTTree->Branch("alpha4", &m_alpha4, "alpha4/D");
+    m_pTTree->Branch("alpha5", &m_alpha5, "alpha5/D");
 
-    const float alpha4(blah...);
-    const float alpha5(blah...);
-
-    this->GetNNL(alpha4, alpha5);
-
-
-
-
-
-
-    for (int alpha4Int = m_alpha4IntMinGlobal; alpha4Int < m_alpha4IntMaxGlobal+1; alpha4Int = alpha4Int + 4)
-    {
-        m_alpha4IntMin = alpha4Int;
-        m_alpha4IntMax = alpha4Int + 3;
-
-        if (m_alpha4IntMax > m_alpha4IntMaxGlobal)
-            m_alpha4IntMax = m_alpha4IntMaxGlobal;
-
-std::cout << "m_alpha4IntMin " << m_alpha4IntMin << std::endl;
-std::cout << "m_alpha4IntMax " << m_alpha4IntMax << std::endl;
-
-        m_alpha4Step = m_alpha4StepGlobal;
-        m_alpha5IntMin = m_alpha5IntMinGlobal;
-        m_alpha5IntMax = m_alpha5IntMaxGlobal;
-        m_alpha5Step = m_alpha5StepGlobal;
-
-std::cout << "m_alpha5IntMin " << m_alpha5IntMin << std::endl;
-std::cout << "m_alpha5IntMax " << m_alpha5IntMax << std::endl;
-
-        this->Initialise();
-        this->FillDistribution();
-        this->AnalyseDistribution();
-        this->Clear();
-    }
-
-    this->SaveDistribution();
+//    m_option = 1; // CTSWJets vs CTSWBosons
+//    this->MinuitFit();
+//    this->MyFit();
 }
 
 //=====================================================================
 
 Fit::~Fit()
 {
+    m_pTFile->cd();
+    m_pTTree->Write();
+    m_pTFile->Close();
+    delete m_pTFile;
+}
+
+//=====================================================================
+
+void Fit::SetNBins(const int &nBins)
+{
+    m_nBins = nBins;
+}
+
+//=====================================================================
+
+void Fit::SetNEvents(const int &nEvents)
+{
+    m_nEvents = nEvents;
+}
+
+//=====================================================================
+
+void Fit::SetOption(const int &option)
+{
+    m_option = option;
+}
+
+//=====================================================================
+
+void Fit::MinuitFit()
+{
+    ROOT::Math::Minimizer *pMinimiser = ROOT::Math::Factory::CreateMinimizer("Minuit2", "Migrad");
+
+    pMinimiser->SetMaxFunctionCalls(10000000);
+    pMinimiser->SetTolerance(1E-4);
+    pMinimiser->SetPrintLevel(1);
+
+    ROOT::Math::Functor likelihoodFunctor(this, &Fit::Chi2, 2);
+    pMinimiser->SetFunction(likelihoodFunctor);
+
+    double step[2] = {0.0001, 0.0001};
+    double variable[2] = {0.0, 0.0};
+    pMinimiser->SetLimitedVariable(0, "alpha4", variable[0], step[0], -0.03, 0.03);
+    pMinimiser->SetLimitedVariable(1, "alpha5", variable[1], step[1], -0.03, 0.03);
+    pMinimiser->Minimize();
+
+    // ------------------------------------
+    // | Confidence Limits % | Delta Chi2 |
+    // ------------------------------------
+    // |         68        % |    2.28    |
+    // |         90        % |    4.61    |
+    // |         95        % |    5.99    |
+    // |         99        % |    9.21    |
+
+    unsigned int numPoints(100);
+
+    double alpha4_c1[numPoints];
+    double alpha5_c1[numPoints];
+    pMinimiser->SetErrorDef(2.28);
+    pMinimiser->Contour(0, 1, numPoints, &alpha4_c1[0], &alpha5_c1[0]);
+
+    double alpha4_c2[numPoints];
+    double alpha5_c2[numPoints];
+    pMinimiser->SetErrorDef(4.61); 
+    pMinimiser->Contour(0, 1, numPoints, &alpha4_c2[0], &alpha5_c2[0]);
+
+    TCanvas *pTCanvas = new TCanvas("Dummy", "Dummy");
+    TLegend *pTLegend = new TLegend(0.15, 0.15, 0.55, 0.35);
+    TGraph *pTGraph_c1 = new TGraph(numPoints, alpha4_c1, alpha5_c1);
+    pTGraph_c1->SetName("68PercentCL");
+    TGraph *pTGraph_c2 = new TGraph(numPoints, alpha4_c2, alpha5_c2);
+    pTGraph_c2->SetName("90PercentCL");
+
+    pTGraph_c2->Draw("acf");
+    pTGraph_c2->SetLineColor(kBlue);
+    pTGraph_c2->SetFillColor(kBlue);
+    pTGraph_c2->SetFillStyle(3001);
+    TH1F *pTH1F_c2 = new TH1F();
+    pTH1F_c2->SetLineColor(kBlue);
+    pTH1F_c2->SetFillStyle(3001);
+    pTLegend->AddEntry(pTH1F_c2, "90\% Confidence Contour","f");
+
+    pTGraph_c1->Draw("cf");
+    pTGraph_c1->SetLineColor(kRed);
+    pTGraph_c1->SetFillColor(kRed);
+    pTGraph_c1->SetFillStyle(3001);
+    pTGraph_c1->GetXaxis()->SetTitle("#alpha_{4}");
+    pTGraph_c1->GetYaxis()->SetTitle("#alpha_{5}");
+    TH1F *pTH1F_c1 = new TH1F();
+    pTH1F_c1->SetLineColor(kRed);
+    pTH1F_c1->SetFillStyle(3001);
+    pTLegend->AddEntry(pTH1F_c1, "68\% Confidence Contour","f");
+    pTLegend->Draw("same");
+    pTCanvas->Update();
+
+    std::string plotNameDotC(m_descriptor + "_Contour.C");
+    std::string plotNamePng(m_descriptor + "_Contour.png");
+
+    pTCanvas->SaveAs(plotNameDotC.c_str());
+    pTCanvas->SaveAs(plotNamePng.c_str());
+
+    m_pTFile->cd();
+    pTGraph_c1->Write();
+    pTGraph_c2->Write();
+    pTCanvas->Write();
+
+    delete pTCanvas, pTLegend, pTGraph_c1, pTGraph_c2, pTH1F_c1, pTH1F_c2;
+}
+
+//=====================================================================
+
+void Fit::MyFit()
+{
+    double alpha4Min(-0.02);
+    double alpha4Max(0.021);
+//    double alpha4Step(0.000625);
+    double alpha4Step(0.002);
+    double alpha5Min(-0.02);
+    double alpha5Max(0.021);
+//    double alpha5Step(0.000625);
+    double alpha5Step(0.002);
+
+    for (double alpha4 = alpha4Min; alpha4 < alpha4Max; alpha4 = alpha4 + alpha4Step)
+    {
+        for (double alpha5 = alpha5Min; alpha5 < alpha5Max; alpha5 = alpha5 + alpha5Step)
+        {
+            this->Initialise();
+            this->FillDistribution(alpha4, alpha5);
+
+            m_chi2_CTSWJets_vs_CTSWBosons = this->CalculateChi2In2D(m_pTH2F_CTSWJets_vs_CTSWBosons, m_pTH2F_CTSWJets_vs_CTSWBosonsRef);
+            m_chi2_CTSZJets_vs_CTSZBosons = this->CalculateChi2In2D(m_pTH2F_CTSZJets_vs_CTSZBosons, m_pTH2F_CTSZJets_vs_CTSZBosonsRef);
+            m_chi2_CTSWJets = this->CalculateChi2In1D(m_pTH1F_CTSWJets, m_pTH1F_CTSWJetsRef);
+            m_chi2_CTSZJets = this->CalculateChi2In1D(m_pTH1F_CTSZJets, m_pTH1F_CTSZJetsRef);
+            m_chi2_CTSWBosons = this->CalculateChi2In1D(m_pTH1F_CTSWBosons, m_pTH1F_CTSWBosonsRef);
+            m_chi2_CTSZBosons = this->CalculateChi2In1D(m_pTH1F_CTSZBosons, m_pTH1F_CTSZBosonsRef);
+            m_alpha4 = alpha4;
+            m_alpha5 = alpha5;
+            m_pTTree->Fill();
+
+            std::string title_CTSWJets_vs_CTSWBosons = "Chi2_CTSWJets_vs_CTSWBosons_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
+            m_pTH2F_CTSWJets_vs_CTSWBosons->SetTitle(title_CTSWJets_vs_CTSWBosons.c_str());
+            m_pTH2F_CTSWJets_vs_CTSWBosons->SetName(title_CTSWJets_vs_CTSWBosons.c_str());
+            m_pTH2F_CTSWJets_vs_CTSWBosons->Write();
+
+            std::string title_CTSZJets_vs_CTSZBosons = "Chi2_CTSZJets_vs_CTSZBosons_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
+            m_pTH2F_CTSZJets_vs_CTSZBosons->SetTitle(title_CTSZJets_vs_CTSZBosons.c_str());
+            m_pTH2F_CTSZJets_vs_CTSZBosons->SetName(title_CTSZJets_vs_CTSZBosons.c_str());
+            m_pTH2F_CTSZJets_vs_CTSZBosons->Write();
+
+            std::string title_CTSWJets = "Chi2_CTSWJets_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
+            m_pTH1F_CTSWJets->SetTitle(title_CTSWJets.c_str());
+            m_pTH1F_CTSWJets->SetName(title_CTSWJets.c_str());
+            m_pTH1F_CTSWJets->Write();
+
+            std::string title_CTSZJets = "Chi2_CTSZJets_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
+            m_pTH1F_CTSZJets->SetTitle(title_CTSZJets.c_str());
+            m_pTH1F_CTSZJets->SetName(title_CTSZJets.c_str());
+            m_pTH1F_CTSZJets->Write();
+
+            std::string title_CTSWBosons = "Chi2_CTSWBosons_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
+            m_pTH1F_CTSWBosons->SetTitle(title_CTSWBosons.c_str());
+            m_pTH1F_CTSWBosons->SetName(title_CTSWBosons.c_str());
+            m_pTH1F_CTSWBosons->Write();
+
+            std::string title_CTSZBosons = "Chi2_CTSZBosons_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
+            m_pTH1F_CTSZBosons->SetTitle(title_CTSZBosons.c_str());
+            m_pTH1F_CTSZBosons->SetName(title_CTSZBosons.c_str());
+            m_pTH1F_CTSZBosons->Write();
+        }
+    }
+}
+
+//=====================================================================
+
+double Fit::Chi2(const double *par)
+{
+    if (m_option == 1)
+        return this->Chi2_CTSWJets_vs_CTSWBosons(par);
+    else if (m_option == 2)
+        return this->Chi2_CTSZJets_vs_CTSZBosons(par);
+    else if (m_option == 3)
+        return this->Chi2_CTSWJets(par);
+    else if (m_option == 4)
+        return this->Chi2_CTSZJets(par);
+    else if (m_option == 5)
+        return this->Chi2_CTSWBosons(par);
+    else if (m_option == 6)
+        return this->Chi2_CTSZBosons(par);
+    else
+        return 0.0;
+}
+
+//=====================================================================
+
+double Fit::Chi2_CTSWJets_vs_CTSWBosons(const double *par)
+{
+    this->Initialise();
+    this->FillDistribution(par[0], par[1]);
+    double chi2(this->CalculateChi2In2D(m_pTH2F_CTSWJets_vs_CTSWBosons, m_pTH2F_CTSWJets_vs_CTSWBosonsRef));
+    m_alpha4 = par[0];
+    m_alpha5 = par[1];
+    m_chi2_CTSWJets_vs_CTSWBosons = chi2;
+    m_pTTree->Fill();
+    return chi2;
+}
+
+//=====================================================================
+
+double Fit::Chi2_CTSZJets_vs_CTSZBosons(const double *par)
+{
+    this->Initialise();
+    this->FillDistribution(par[0], par[1]);
+    double chi2(this->CalculateChi2In2D(m_pTH2F_CTSZJets_vs_CTSZBosons, m_pTH2F_CTSZJets_vs_CTSZBosonsRef));
+    m_alpha4 = par[0];
+    m_alpha5 = par[1];
+    m_chi2_CTSZJets_vs_CTSZBosons = chi2;
+    m_pTTree->Fill();
+    return chi2;
+}
+
+//=====================================================================
+
+double Fit::Chi2_CTSWJets(const double *par)
+{
+    this->Initialise();
+    this->FillDistribution(par[0], par[1]);
+    double chi2(this->CalculateChi2In1D(m_pTH1F_CTSWJets, m_pTH1F_CTSWJetsRef));
+    m_alpha4 = par[0];
+    m_alpha5 = par[1];
+    m_chi2_CTSWJets = chi2;
+    m_pTTree->Fill();
+    return chi2;
+}
+
+//=====================================================================
+
+double Fit::Chi2_CTSZJets(const double *par)
+{
+    this->Initialise();
+    this->FillDistribution(par[0], par[1]);
+    double chi2(this->CalculateChi2In1D(m_pTH1F_CTSZJets, m_pTH1F_CTSZJetsRef));
+    m_alpha4 = par[0];
+    m_alpha5 = par[1];
+    m_chi2_CTSZJets = chi2;
+    m_pTTree->Fill();
+    return chi2;
+}
+
+//=====================================================================
+
+double Fit::Chi2_CTSWBosons(const double *par)
+{
+    this->Initialise();
+    this->FillDistribution(par[0], par[1]);
+    double chi2(this->CalculateChi2In1D(m_pTH1F_CTSWBosons, m_pTH1F_CTSWBosonsRef));
+    m_alpha4 = par[0];
+    m_alpha5 = par[1];
+    m_chi2_CTSWBosons = chi2;
+    m_pTTree->Fill();
+    return chi2;
+}
+
+//=====================================================================
+
+double Fit::Chi2_CTSZBosons(const double *par)
+{
+    this->Initialise();
+    this->FillDistribution(par[0], par[1]);
+    double chi2(this->CalculateChi2In1D(m_pTH1F_CTSZBosons, m_pTH1F_CTSZBosonsRef));
+    m_alpha4 = par[0];
+    m_alpha5 = par[1];
+    m_chi2_CTSZBosons = chi2;
+    m_pTTree->Fill();
+    return chi2;
 }
 
 //=====================================================================
 
 void Fit::Initialise()
 {
-    // Reference distributions for log likelihood fit
-    std::shared_ptr<TH1F> pTH1F_CTSWJetsRef(new TH1F("CTSWJetsRef","Reference Cos#theta_{WJets}^{*}",m_binsInFit,0,1));
-    m_pTH1F_CTSWJetsRef = std::move(pTH1F_CTSWJetsRef);
-    std::shared_ptr<TH1F> pTH1F_CTSWBosonsRef(new TH1F("CTSWBosonsRef","Reference Cos#theta_{WBosons}^{*}",m_binsInFit,0,1));
-    m_pTH1F_CTSWBosonsRef = std::move(pTH1F_CTSWBosonsRef);
-    std::shared_ptr<TH2F> pTH2F_CTSWJets_vs_CTSWBosonsRef(new TH2F("CTSWJets_vs_CTSWBosonsRef","Reference Cos#theta_{WJets}^{*} vs Cos#theta_{WBosons}^{*}",m_binsInFit,0,1,m_binsInFit,0,1));
-    m_pTH2F_CTSWJets_vs_CTSWBosonsRef = std::move(pTH2F_CTSWJets_vs_CTSWBosonsRef);
-
-    std::shared_ptr<TH1F> pTH1F_CTSZJetsRef(new TH1F("CTSZJetsRef","Reference Cos#theta_{ZJets}^{*}",m_binsInFit,0,1));
-    m_pTH1F_CTSZJetsRef = std::move(pTH1F_CTSZJetsRef);
-    std::shared_ptr<TH1F> pTH1F_CTSZBosonsRef(new TH1F("CTSZBosonsRef","Reference Cos#theta_{ZBosons}^{*}",m_binsInFit,0,1));
-    m_pTH1F_CTSZBosonsRef = std::move(pTH1F_CTSZBosonsRef);
-    std::shared_ptr<TH2F> pTH2F_CTSZJets_vs_CTSZBosonsRef(new TH2F("CTSZJets_vs_CTSZBosonsRef","Reference Cos#theta_{ZJets}^{*} vs Cos#theta_{ZBosons}^{*}",m_binsInFit,0,1,m_binsInFit,0,1));
-    m_pTH2F_CTSZJets_vs_CTSZBosonsRef = std::move(pTH2F_CTSZJets_vs_CTSZBosonsRef);
-
-    // Make containters for stack plot
-/*
-    for (const auto &process: m_processVector)
+    if (m_option == 1)
     {
-        std::string nameCTSWJetsStack =  "StackCTSWJets";
-        std::string titleCTSWJetsStack = "For Stack Cos#theta_{WJets}^{*}";
-        m_eventTypeToCTSJets[process.GetEventType()] =  new TH1F(nameCTSWJetsStack.c_str(), titleCTSWJetsStack.c_str(),m_binsInFit,0,1);
+        m_pTH2F_CTSWJets_vs_CTSWBosonsRef = new TH2F(this->SafeName("CTSWJets_vs_CTSWBosonsRef"),"Reference Cos#theta_{WJets}^{*} vs Cos#theta_{WBosons}^{*}",m_nBins,0,1,m_nBins,0,1);
+        m_pTH2F_CTSWJets_vs_CTSWBosonsRef->GetXaxis()->SetTitle("Cos#theta_{WJets}^{*}");
+        m_pTH2F_CTSWJets_vs_CTSWBosonsRef->GetYaxis()->SetTitle("Cos#theta_{WBosons}^{*}");
+        m_pTH2F_CTSWJets_vs_CTSWBosons = new TH2F(this->SafeName("CTSWJets_vs_CTSWBosons"),"Cos#theta_{WJets}^{*} vs Cos#theta_{WBosons}^{*}",m_nBins,0,1,m_nBins,0,1);
+        m_pTH2F_CTSWJets_vs_CTSWBosons->GetXaxis()->SetTitle("Cos#theta_{WJets}^{*}");
+        m_pTH2F_CTSWJets_vs_CTSWBosons->GetYaxis()->SetTitle("Cos#theta_{WBosons}^{*}");
     }
-*/
-
-    // Make containters for non zero alpha4 and alpha5 distributions
-    for (int alpha4Int = m_alpha4IntMin; alpha4Int < m_alpha4IntMax+1; alpha4Int++)
+    else if (m_option == 2)
     {
-        for (int alpha5Int = m_alpha5IntMin; alpha5Int < m_alpha5IntMax+1; alpha5Int++)
-        {
-            std::string nameCTSWJets =  "CTSWJets_" + this->NumberToString(alpha4Int*m_alpha4Step) + "_" + this->NumberToString(alpha5Int*m_alpha5Step);
-            std::string titleCTSWJets = "Cos#theta_{WJets}^{*}";
-//            TH1F *pTH1F_CTSWJets = new TH1F(nameCTSWJets.c_str(), titleCTSWJets.c_str(), m_binsInFit, 0 ,1);
-            std::shared_ptr<TH1F> pTH1F_CTSWJets(new TH1F(nameCTSWJets.c_str(), titleCTSWJets.c_str(), m_binsInFit, 0 ,1)); 
-            m_mapAlphaIntToCTSWJets[alpha4Int][alpha5Int] = std::move(pTH1F_CTSWJets);
-//(TH1F*)(pTH1F_CTSWJets->Clone());
-
-            std::string nameCTSWBoson = "CTSWBosons_" + this->NumberToString(alpha4Int*m_alpha4Step) + "_" + this->NumberToString(alpha5Int*m_alpha5Step);
-            std::string titleCTSWBoson = "Cos#theta_{WBoson}^{*}";
-//            TH1F *pTH1F_CTSWBoson = new TH1F(nameCTSWBoson.c_str(), titleCTSWBoson.c_str(), m_binsInFit, 0 ,1);
-            std::shared_ptr<TH1F> pTH1F_CTSWBoson(new TH1F(nameCTSWBoson.c_str(), titleCTSWBoson.c_str(), m_binsInFit, 0 ,1));
-            m_mapAlphaIntToCTSWBosons[alpha4Int][alpha5Int] = std::move(pTH1F_CTSWBoson);
-// (TH1F*)(pTH1F_CTSWBoson->Clone());
-
-            std::string nameCTSWJets_vs_CTSWBosons =  "CTSWJets_vs_CTSWBosons_" + this->NumberToString(alpha4Int*m_alpha4Step) + "_" + this->NumberToString(alpha5Int*m_alpha5Step);
-            std::string titleCTSWJets_vs_CTSWBosons = "Cos#theta_{WJets}^{*} vs Cos#theta_{WBosons}^{*}";
-//            TH2F *pTH2F_CTSWJets_vs_CTSWBosons = new TH2F(nameCTSWJets_vs_CTSWBosons.c_str(), titleCTSWJets_vs_CTSWBosons.c_str(), m_binsInFit, 0, 1, m_binsInFit, 0, 1);
-            std::shared_ptr<TH2F> pTH2F_CTSWJets_vs_CTSWBosons(new TH2F(nameCTSWJets_vs_CTSWBosons.c_str(), titleCTSWJets_vs_CTSWBosons.c_str(), m_binsInFit, 0, 1, m_binsInFit, 0, 1));
-            m_mapAlphaIntToCTSWJets_vs_CTSWBosons[alpha4Int][alpha5Int] = std::move(pTH2F_CTSWJets_vs_CTSWBosons);
-//(TH2F*)(pTH2F_CTSWJets_vs_CTSWBosons->Clone());
-
-            std::string nameCTSZJets =  "CTSZJets_" + this->NumberToString(alpha4Int*m_alpha4Step) + "_" + this->NumberToString(alpha5Int*m_alpha5Step);
-            std::string titleCTSZJets = "Cos#theta_{ZJets}^{*}";
-//            TH1F *pTH1F_CTSZJets = new TH1F(nameCTSZJets.c_str(), titleCTSZJets.c_str(), m_binsInFit, 0 ,1);
-            std::shared_ptr<TH1F> pTH1F_CTSZJets(new TH1F(nameCTSZJets.c_str(), titleCTSZJets.c_str(), m_binsInFit, 0 ,1));
-            m_mapAlphaIntToCTSZJets[alpha4Int][alpha5Int] = std::move(pTH1F_CTSZJets);
-//(TH1F*)(pTH1F_CTSZJets->Clone());
-
-            std::string nameCTSZBoson = "CTSZBosons_" + this->NumberToString(alpha4Int*m_alpha4Step) + "_" + this->NumberToString(alpha5Int*m_alpha5Step);
-            std::string titleCTSZBoson = "Cos#theta_{ZBoson}^{*}";
-//            TH1F *pTH1F_CTSZBoson = new TH1F(nameCTSZBoson.c_str(), titleCTSZBoson.c_str(), m_binsInFit, 0 ,1);
-            std::shared_ptr<TH1F> pTH1F_CTSZBoson(new TH1F(nameCTSZBoson.c_str(), titleCTSZBoson.c_str(), m_binsInFit, 0 ,1));
-            m_mapAlphaIntToCTSZBosons[alpha4Int][alpha5Int] = std::move(pTH1F_CTSZBoson);
-//(TH1F*)(pTH1F_CTSZBoson->Clone());
-
-            std::string nameCTSZJets_vs_CTSZBosons =  "CTSZJets_vs_CTSZBosons_" + this->NumberToString(alpha4Int*m_alpha4Step) + "_" + this->NumberToString(alpha5Int*m_alpha5Step);
-            std::string titleCTSZJets_vs_CTSZBosons = "Cos#theta_{ZJets}^{*} vs Cos#theta_{ZBosons}^{*}";
-//            TH2F *pTH2F_CTSZJets_vs_CTSZBosons = new TH2F(nameCTSZJets_vs_CTSZBosons.c_str(), titleCTSZJets_vs_CTSZBosons.c_str(), m_binsInFit, 0, 1, m_binsInFit, 0, 1);
-            std::shared_ptr<TH2F> pTH2F_CTSZJets_vs_CTSZBosons(new TH2F(nameCTSZJets_vs_CTSZBosons.c_str(), titleCTSZJets_vs_CTSZBosons.c_str(), m_binsInFit, 0, 1, m_binsInFit, 0, 1));
-            m_mapAlphaIntToCTSZJets_vs_CTSZBosons[alpha4Int][alpha5Int] = std::move(pTH2F_CTSZJets_vs_CTSZBosons);
-//(TH2F*)(pTH2F_CTSZJets_vs_CTSZBosons->Clone());
-
-//            delete pTH1F_CTSWJets, pTH1F_CTSWBoson, pTH2F_CTSWJets_vs_CTSWBosons, pTH1F_CTSZJets, pTH1F_CTSZBoson, pTH2F_CTSZJets_vs_CTSZBosons;
-        }
+        m_pTH2F_CTSZJets_vs_CTSZBosonsRef = new TH2F(this->SafeName("CTSZJets_vs_CTSZBosonsRef"),"Reference Cos#theta_{ZJets}^{*} vs Cos#theta_{ZBosons}^{*}",m_nBins,0,1,m_nBins,0,1);
+        m_pTH2F_CTSZJets_vs_CTSZBosonsRef->GetXaxis()->SetTitle("Cos#theta_{ZJets}^{*}");
+        m_pTH2F_CTSZJets_vs_CTSZBosonsRef->GetYaxis()->SetTitle("Cos#theta_{ZBosons}^{*}");
+        m_pTH2F_CTSZJets_vs_CTSZBosons = new TH2F(this->SafeName("CTSZJets_vs_CTSZBosons"),"Cos#theta_{ZJets}^{*} vs Cos#theta_{ZBosons}^{*}",m_nBins,0,1,m_nBins,0,1);
+        m_pTH2F_CTSZJets_vs_CTSZBosons->GetXaxis()->SetTitle("Cos#theta_{ZJets}^{*}");
+        m_pTH2F_CTSZJets_vs_CTSZBosons->GetYaxis()->SetTitle("Cos#theta_{ZBosons}^{*}");
     }
+    else if (m_option == 3)
+    {
+        m_pTH1F_CTSWJetsRef = new TH1F(this->SafeName("CTSWJetsRef"),"Reference Cos#theta_{WJets}^{*}",m_nBins,0,1);
+        m_pTH1F_CTSWJetsRef->GetXaxis()->SetTitle("Cos#theta_{WJets}^{*}");
+        m_pTH1F_CTSWJetsRef->GetYaxis()->SetTitle("Entries");
+        m_pTH1F_CTSWJets = new TH1F(this->SafeName("CTSWJets"),"Cos#theta_{WJets}^{*}",m_nBins,0,1);
+        m_pTH1F_CTSWJets->GetXaxis()->SetTitle("Cos#theta_{WJets}^{*}");
+        m_pTH1F_CTSWJets->GetYaxis()->SetTitle("Entries");
+    }
+    else if (m_option == 4)
+    {
+        m_pTH1F_CTSZJetsRef = new TH1F(this->SafeName("CTSZJetsRef"),"Reference Cos#theta_{ZJets}^{*}",m_nBins,0,1);
+        m_pTH1F_CTSZJetsRef->GetXaxis()->SetTitle("Cos#theta_{ZJets}^{*}");
+        m_pTH1F_CTSZJetsRef->GetYaxis()->SetTitle("Entries");
+        m_pTH1F_CTSZJets = new TH1F(this->SafeName("CTSZJets"),"Cos#theta_{ZJets}^{*}",m_nBins,0,1);
+        m_pTH1F_CTSZJets->GetXaxis()->SetTitle("Cos#theta_{ZJets}^{*}");
+        m_pTH1F_CTSZJets->GetYaxis()->SetTitle("Entries");
+    }
+    else if (m_option == 5)
+    {
+        m_pTH1F_CTSWBosonsRef = new TH1F(this->SafeName("CTSWBosonsRef"),"Reference Cos#theta_{WBosons}^{*}",m_nBins,0,1);
+        m_pTH1F_CTSWBosonsRef->GetXaxis()->SetTitle("Cos#theta_{WBosons}^{*}");
+        m_pTH1F_CTSWBosonsRef->GetYaxis()->SetTitle("Entries");
+        m_pTH1F_CTSWBosons = new TH1F(this->SafeName("CTSWBosons"),"Cos#theta_{WBosons}^{*}",m_nBins,0,1);
+        m_pTH1F_CTSWBosons->GetXaxis()->SetTitle("Cos#theta_{WBosons}^{*}");
+        m_pTH1F_CTSWBosons->GetYaxis()->SetTitle("Entries");
+    }
+    else if (m_option == 6)
+    {
+        m_pTH1F_CTSZBosonsRef = new TH1F(this->SafeName("CTSZBosonsRef"),"Reference Cos#theta_{ZBosons}^{*}",m_nBins,0,1);
+        m_pTH1F_CTSZBosonsRef->GetXaxis()->SetTitle("Cos#theta_{ZBosons}^{*}");
+        m_pTH1F_CTSZBosonsRef->GetYaxis()->SetTitle("Entries");
+        m_pTH1F_CTSZBosons = new TH1F(this->SafeName("CTSZBosons"),"Cos#theta_{ZBosons}^{*}",m_nBins,0,1);
+        m_pTH1F_CTSZBosons->GetXaxis()->SetTitle("Cos#theta_{ZBosons}^{*}");
+        m_pTH1F_CTSZBosons->GetYaxis()->SetTitle("Entries");
+    }
+    else
+    {
+        m_pTH2F_CTSWJets_vs_CTSWBosonsRef = new TH2F(this->SafeName("CTSWJets_vs_CTSWBosonsRef"),"Reference Cos#theta_{WJets}^{*} vs Cos#theta_{WBosons}^{*}",m_nBins,0,1,m_nBins,0,1);
+        m_pTH2F_CTSWJets_vs_CTSWBosonsRef->GetXaxis()->SetTitle("Cos#theta_{WJets}^{*}");
+        m_pTH2F_CTSWJets_vs_CTSWBosonsRef->GetYaxis()->SetTitle("Cos#theta_{WBosons}^{*}");
+        m_pTH2F_CTSWJets_vs_CTSWBosons = new TH2F(this->SafeName("CTSWJets_vs_CTSWBosons"),"Cos#theta_{WJets}^{*} vs Cos#theta_{WBosons}^{*}",m_nBins,0,1,m_nBins,0,1);
+        m_pTH2F_CTSWJets_vs_CTSWBosons->GetXaxis()->SetTitle("Cos#theta_{WJets}^{*}");
+        m_pTH2F_CTSWJets_vs_CTSWBosons->GetYaxis()->SetTitle("Cos#theta_{WBosons}^{*}");
+        m_pTH2F_CTSZJets_vs_CTSZBosonsRef = new TH2F(this->SafeName("CTSZJets_vs_CTSZBosonsRef"),"Reference Cos#theta_{ZJets}^{*} vs Cos#theta_{ZBosons}^{*}",m_nBins,0,1,m_nBins,0,1);
+        m_pTH2F_CTSZJets_vs_CTSZBosonsRef->GetXaxis()->SetTitle("Cos#theta_{ZJets}^{*}");
+        m_pTH2F_CTSZJets_vs_CTSZBosonsRef->GetYaxis()->SetTitle("Cos#theta_{ZBosons}^{*}");
+        m_pTH2F_CTSZJets_vs_CTSZBosons = new TH2F(this->SafeName("CTSZJets_vs_CTSZBosons"),"Cos#theta_{ZJets}^{*} vs Cos#theta_{ZBosons}^{*}",m_nBins,0,1,m_nBins,0,1);
+        m_pTH2F_CTSZJets_vs_CTSZBosons->GetXaxis()->SetTitle("Cos#theta_{ZJets}^{*}");
+        m_pTH2F_CTSZJets_vs_CTSZBosons->GetYaxis()->SetTitle("Cos#theta_{ZBosons}^{*}");
+        m_pTH1F_CTSWJetsRef = new TH1F(this->SafeName("CTSWJetsRef"),"Reference Cos#theta_{WJets}^{*}",m_nBins,0,1);
+        m_pTH1F_CTSWJetsRef->GetXaxis()->SetTitle("Cos#theta_{WJets}^{*}");
+        m_pTH1F_CTSWJetsRef->GetYaxis()->SetTitle("Entries");
+        m_pTH1F_CTSWJets = new TH1F(this->SafeName("CTSWJets"),"Cos#theta_{WJets}^{*}",m_nBins,0,1);
+        m_pTH1F_CTSWJets->GetXaxis()->SetTitle("Cos#theta_{WJets}^{*}");
+        m_pTH1F_CTSWJets->GetYaxis()->SetTitle("Entries");
+        m_pTH1F_CTSZJetsRef = new TH1F(this->SafeName("CTSZJetsRef"),"Reference Cos#theta_{ZJets}^{*}",m_nBins,0,1);
+        m_pTH1F_CTSZJetsRef->GetXaxis()->SetTitle("Cos#theta_{ZJets}^{*}");
+        m_pTH1F_CTSZJetsRef->GetYaxis()->SetTitle("Entries");
+        m_pTH1F_CTSZJets = new TH1F(this->SafeName("CTSZJets"),"Cos#theta_{ZJets}^{*}",m_nBins,0,1);
+        m_pTH1F_CTSZJets->GetXaxis()->SetTitle("Cos#theta_{ZJets}^{*}");
+        m_pTH1F_CTSZJets->GetYaxis()->SetTitle("Entries");
+        m_pTH1F_CTSWBosonsRef = new TH1F(this->SafeName("CTSWBosonsRef"),"Reference Cos#theta_{WBosons}^{*}",m_nBins,0,1);
+        m_pTH1F_CTSWBosonsRef->GetXaxis()->SetTitle("Cos#theta_{WBosons}^{*}");
+        m_pTH1F_CTSWBosonsRef->GetYaxis()->SetTitle("Entries");
+        m_pTH1F_CTSWBosons = new TH1F(this->SafeName("CTSWBosons"),"Cos#theta_{WBosons}^{*}",m_nBins,0,1);
+        m_pTH1F_CTSWBosons->GetXaxis()->SetTitle("Cos#theta_{WBosons}^{*}");
+        m_pTH1F_CTSWBosons->GetYaxis()->SetTitle("Entries");
+        m_pTH1F_CTSZBosonsRef = new TH1F(this->SafeName("CTSZBosonsRef"),"Reference Cos#theta_{ZBosons}^{*}",m_nBins,0,1);
+        m_pTH1F_CTSZBosonsRef->GetXaxis()->SetTitle("Cos#theta_{ZBosons}^{*}");
+        m_pTH1F_CTSZBosonsRef->GetYaxis()->SetTitle("Entries");
+        m_pTH1F_CTSZBosons = new TH1F(this->SafeName("CTSZBosons"),"Cos#theta_{ZBosons}^{*}",m_nBins,0,1);
+        m_pTH1F_CTSZBosons->GetXaxis()->SetTitle("Cos#theta_{ZBosons}^{*}");
+        m_pTH1F_CTSZBosons->GetYaxis()->SetTitle("Entries");
+    }
+}
+
+//=====================================================================
+
+TString Fit::SafeName(const TString &name)
+{
+    TObject *pTObject = gROOT->FindObject(name);
+    if (pTObject) delete pTObject;
+    return name;
 }
 
 //=====================================================================
 
 void Fit::Clear()
 {
-//    delete m_pTH1F_CTSWJetsRef, m_pTH1F_CTSWBosonsRef, m_pTH2F_CTSWJets_vs_CTSWBosonsRef, m_pTH1F_CTSZJetsRef, m_pTH1F_CTSZBosonsRef, m_pTH2F_CTSZJets_vs_CTSZBosonsRef;
-
-//    this->DeletePointersInMap(m_mapAlphaIntToCTSWJets);
-    m_mapAlphaIntToCTSWJets.clear();
-
-//    this->DeletePointersInMap(m_mapAlphaIntToCTSWBosons);
-    m_mapAlphaIntToCTSWBosons.clear();
-
-//    this->DeletePointersInMap(m_mapAlphaIntToCTSWJets_vs_CTSWBosons);
-    m_mapAlphaIntToCTSWJets_vs_CTSWBosons.clear();
-
-//    this->DeletePointersInMap(m_mapAlphaIntToCTSZJets);
-    m_mapAlphaIntToCTSZJets.clear();
-
-//    this->DeletePointersInMap(m_mapAlphaIntToCTSZBosons);
-    m_mapAlphaIntToCTSZBosons.clear();
-
-//    this->DeletePointersInMap(m_mapAlphaIntToCTSZJets_vs_CTSZBosons);
-    m_mapAlphaIntToCTSZJets_vs_CTSZBosons.clear();
+    delete m_pTH1F_CTSWJetsRef, m_pTH1F_CTSWBosonsRef, m_pTH2F_CTSWJets_vs_CTSWBosonsRef, m_pTH1F_CTSZJetsRef, m_pTH1F_CTSZBosonsRef, m_pTH2F_CTSZJets_vs_CTSZBosonsRef;
 }
 
 //=====================================================================
 
-template <class Map>
-void Fit::DeletePointersInMap(Map map)
-{
-    for (auto it: map)
-    {
-        for (auto iter: it.second)
-        {
-            delete iter.second;
-        }
-    }
-}
-
-//=====================================================================
-
-void Fit::FillDistribution()
+void Fit::FillDistribution(const double alpha4, const double alpha5)
 {
     for (const auto &pProcess: m_processVector)
     {
@@ -231,27 +481,55 @@ void Fit::FillDistribution()
         Double_t ctsZJet2(std::numeric_limits<double>::max());
         Double_t invMassZBoson1(std::numeric_limits<double>::max());
         Double_t invMassZBoson2(std::numeric_limits<double>::max());
-
         Double_t bdt(std::numeric_limits<double>::max());
 
+        // Selection Variables
         pTChain->SetBranchAddress("GlobalEventNumber", &globalEventNumber);
         pTChain->SetBranchAddress("NumberOfIsolatedLeptons", &nIsolatedLeptons);
         pTChain->SetBranchAddress("TransverseMomentum", &transverseMomentum);
         pTChain->SetBranchAddress("InvariantMassSystem", &invariantMassSystem);
-        pTChain->SetBranchAddress("CosThetaStarWBosons", &ctsWBoson);
-        pTChain->SetBranchAddress("CosThetaStarWJet1", &ctsWJet1);
-        pTChain->SetBranchAddress("CosThetaStarWJet2", &ctsWJet2);
+        pTChain->SetBranchAddress("BDT", &bdt);
+        // W or Z Boson Selection
         pTChain->SetBranchAddress("InvMassWVector1", &invMassWBoson1);
         pTChain->SetBranchAddress("InvMassWVector2", &invMassWBoson2);
-        pTChain->SetBranchAddress("CosThetaStarZBosons", &ctsZBoson);
-        pTChain->SetBranchAddress("CosThetaStarZJet1", &ctsZJet1);
-        pTChain->SetBranchAddress("CosThetaStarZJet2", &ctsZJet2);
         pTChain->SetBranchAddress("InvMassZVector1", &invMassZBoson1);
         pTChain->SetBranchAddress("InvMassZVector2", &invMassZBoson2);
 
-        pTChain->SetBranchAddress("BDT", &bdt);
+        if (m_option == 1 or m_option == 3)
+        {
+            pTChain->SetBranchAddress("CosThetaStarWJet1", &ctsWJet1);
+            pTChain->SetBranchAddress("CosThetaStarWJet2", &ctsWJet2);
+        }
 
-        int nEventsToProcess(pTChain->GetEntries() > 2000 ? 2000 : pTChain->GetEntries());
+        if (m_option == 2 or m_option == 4)
+        {
+            pTChain->SetBranchAddress("CosThetaStarZJet1", &ctsZJet1);
+            pTChain->SetBranchAddress("CosThetaStarZJet2", &ctsZJet2);
+        }
+
+        if (m_option == 5 or m_option == 1)
+        {
+            pTChain->SetBranchAddress("CosThetaStarWBosons", &ctsWBoson);
+        }
+
+        if (m_option == 6 or m_option == 2)
+        {
+            pTChain->SetBranchAddress("CosThetaStarZBosons", &ctsZBoson);
+        }
+
+        if (m_option < 1 or m_option > 6)
+        {
+            pTChain->SetBranchAddress("CosThetaStarWJet1", &ctsWJet1);
+            pTChain->SetBranchAddress("CosThetaStarWJet2", &ctsWJet2);
+            pTChain->SetBranchAddress("CosThetaStarZJet1", &ctsZJet1);
+            pTChain->SetBranchAddress("CosThetaStarZJet2", &ctsZJet2);
+            pTChain->SetBranchAddress("CosThetaStarWBosons", &ctsWBoson);
+            pTChain->SetBranchAddress("CosThetaStarZBosons", &ctsZBoson);
+        }
+
+        int nEventsToProcess(pTChain->GetEntries() > m_nEvents ? m_nEvents : pTChain->GetEntries());
+
+        weight = weight * (float)(pTChain->GetEntries()) / (float)(nEventsToProcess);
 
         for (unsigned int event = 0; event < nEventsToProcess; event++)
         {
@@ -267,6 +545,7 @@ void Fit::FillDistribution()
             if (invariantMassSystem < m_pPostMVASelection->GetPreSelection()->GetInvariantMassSystemLowCut() or m_pPostMVASelection->GetPreSelection()->GetInvariantMassSystemHighCut() < invariantMassSystem)
                 continue;
 
+            // W or Z Selection
             double rW = std::sqrt( (m_wBosonMass - invMassWBoson1) * (m_wBosonMass - invMassWBoson1) + (m_wBosonMass - invMassWBoson2) * (m_wBosonMass - invMassWBoson2) );
             double rZ = std::sqrt( (m_zBosonMass - invMassZBoson1) * (m_zBosonMass - invMassZBoson1) + (m_zBosonMass - invMassZBoson2) * (m_zBosonMass - invMassZBoson2) );
 
@@ -279,377 +558,128 @@ void Fit::FillDistribution()
 
             if (isW)
             {
-                // Fill Reference Distributions
-                m_pTH1F_CTSWJetsRef->Fill(ctsWJet1, weight);
-                m_pTH1F_CTSWJetsRef->Fill(ctsWJet2, weight);
-                m_pTH1F_CTSWBosonsRef->Fill(ctsWBoson,weight);
-                m_pTH2F_CTSWJets_vs_CTSWBosonsRef->Fill(ctsWJet1, ctsWBoson, weight);
-                m_pTH2F_CTSWJets_vs_CTSWBosonsRef->Fill(ctsWJet2, ctsWBoson, weight);
+                float matrixElementWeight(1.f); 
+                if (pProcess->GetEventType() == "ee_nunuqqqq")
+                {   
+                    m_pCouplingAnalysis->GetWeight(globalEventNumber, alpha4, alpha5, matrixElementWeight);
+                }
 
-                // Fill Weighted Distribution
-                for (int alpha4Int = m_alpha4IntMin; alpha4Int < m_alpha4IntMax+1; alpha4Int++)
+                if (m_option == 1)
                 {
-                    for (int alpha5Int = m_alpha5IntMin; alpha5Int < m_alpha5IntMax+1; alpha5Int++)
-                    {
-                        float matrixElementWeight(1.f);
-
-                        if (pProcess->GetEventType() == "ee_nunuqqqq")
-                        {
-                            const float alpha4(m_alpha4Step * (float)(alpha4Int));
-                            const float alpha5(m_alpha5Step * (float)(alpha5Int));
-                            m_pCouplingAnalysis->GetWeight(globalEventNumber, alpha4, alpha5, matrixElementWeight);
-                        }
-
-                        m_mapAlphaIntToCTSWBosons[alpha4Int][alpha5Int]->Fill(ctsWBoson, weight*matrixElementWeight);
-                        m_mapAlphaIntToCTSWJets[alpha4Int][alpha5Int]->Fill(ctsWJet1, weight*matrixElementWeight);
-                        m_mapAlphaIntToCTSWJets[alpha4Int][alpha5Int]->Fill(ctsWJet2, weight*matrixElementWeight);
-                        m_mapAlphaIntToCTSWJets_vs_CTSWBosons[alpha4Int][alpha5Int]->Fill(ctsWJet1, ctsWBoson, weight*matrixElementWeight);
-                        m_mapAlphaIntToCTSWJets_vs_CTSWBosons[alpha4Int][alpha5Int]->Fill(ctsWJet2, ctsWBoson, weight*matrixElementWeight);
-                    }
+                    m_pTH2F_CTSWJets_vs_CTSWBosonsRef->Fill(ctsWJet1, ctsWBoson, weight);
+                    m_pTH2F_CTSWJets_vs_CTSWBosonsRef->Fill(ctsWJet2, ctsWBoson, weight);
+                    m_pTH2F_CTSWJets_vs_CTSWBosons->Fill(ctsWJet1, ctsWBoson, weight*matrixElementWeight);
+                    m_pTH2F_CTSWJets_vs_CTSWBosons->Fill(ctsWJet2, ctsWBoson, weight*matrixElementWeight);
+                }
+                else if (m_option == 3)
+                {
+                    m_pTH1F_CTSWJetsRef->Fill(ctsWJet1, weight);
+                    m_pTH1F_CTSWJetsRef->Fill(ctsWJet2, weight);
+                    m_pTH1F_CTSWJets->Fill(ctsWJet1, weight*matrixElementWeight);
+                    m_pTH1F_CTSWJets->Fill(ctsWJet2, weight*matrixElementWeight);
+                }
+                else if (m_option == 5)
+                {
+                    m_pTH1F_CTSWBosonsRef->Fill(ctsWBoson, weight);
+                    m_pTH1F_CTSWBosons->Fill(ctsWBoson, weight*matrixElementWeight);
+                }
+                else if (m_option < 1 or m_option > 6)
+                {
+                    m_pTH2F_CTSWJets_vs_CTSWBosonsRef->Fill(ctsWJet1, ctsWBoson, weight);
+                    m_pTH2F_CTSWJets_vs_CTSWBosonsRef->Fill(ctsWJet2, ctsWBoson, weight);
+                    m_pTH2F_CTSWJets_vs_CTSWBosons->Fill(ctsWJet1, ctsWBoson, weight*matrixElementWeight);
+                    m_pTH2F_CTSWJets_vs_CTSWBosons->Fill(ctsWJet2, ctsWBoson, weight*matrixElementWeight);
+                    m_pTH1F_CTSWJetsRef->Fill(ctsWJet1, weight);
+                    m_pTH1F_CTSWJetsRef->Fill(ctsWJet2, weight);
+                    m_pTH1F_CTSWJets->Fill(ctsWJet1, weight*matrixElementWeight);
+                    m_pTH1F_CTSWJets->Fill(ctsWJet2, weight*matrixElementWeight);
+                    m_pTH1F_CTSWBosonsRef->Fill(ctsWBoson, weight);
+                    m_pTH1F_CTSWBosons->Fill(ctsWBoson, weight*matrixElementWeight);
                 }
             }
 
             else
             {
-                // Fill Reference Distributions
-                m_pTH1F_CTSZJetsRef->Fill(ctsZJet1, weight);
-                m_pTH1F_CTSZJetsRef->Fill(ctsZJet2, weight);
-                m_pTH1F_CTSZBosonsRef->Fill(ctsZBoson,weight);
-                m_pTH2F_CTSZJets_vs_CTSZBosonsRef->Fill(ctsZJet1, ctsZBoson, weight);
-                m_pTH2F_CTSZJets_vs_CTSZBosonsRef->Fill(ctsZJet2, ctsZBoson, weight);
-
-                // Fill Weighted Distribution
-                for (int alpha4Int = m_alpha4IntMin; alpha4Int < m_alpha4IntMax+1; alpha4Int++)
+                float matrixElementWeight(1.f);
+                if (pProcess->GetEventType() == "ee_nunuqqqq")
                 {
-                    for (int alpha5Int = m_alpha5IntMin; alpha5Int < m_alpha5IntMax+1; alpha5Int++)
-                    {
-                        float matrixElementWeight(1.f);
+                    m_pCouplingAnalysis->GetWeight(globalEventNumber, alpha4, alpha5, matrixElementWeight);
+                }
 
-                        if (pProcess->GetEventType() == "ee_nunuqqqq")
-                        {
-                            const float alpha4(m_alpha4Step * (float)(alpha4Int));
-                            const float alpha5(m_alpha5Step * (float)(alpha5Int));
-                            m_pCouplingAnalysis->GetWeight(globalEventNumber, alpha4, alpha5, matrixElementWeight);
-                        }
-
-                        m_mapAlphaIntToCTSZBosons[alpha4Int][alpha5Int]->Fill(ctsZBoson, weight*matrixElementWeight);
-                        m_mapAlphaIntToCTSZJets[alpha4Int][alpha5Int]->Fill(ctsZJet1, weight*matrixElementWeight);
-                        m_mapAlphaIntToCTSZJets[alpha4Int][alpha5Int]->Fill(ctsZJet2, weight*matrixElementWeight);
-                        m_mapAlphaIntToCTSZJets_vs_CTSZBosons[alpha4Int][alpha5Int]->Fill(ctsZJet1, ctsZBoson, weight*matrixElementWeight);
-                        m_mapAlphaIntToCTSZJets_vs_CTSZBosons[alpha4Int][alpha5Int]->Fill(ctsZJet2, ctsZBoson, weight*matrixElementWeight);
-                    }
+                if (m_option == 2)
+                {  
+                    m_pTH2F_CTSZJets_vs_CTSZBosonsRef->Fill(ctsZJet1, ctsZBoson, weight);
+                    m_pTH2F_CTSZJets_vs_CTSZBosonsRef->Fill(ctsZJet2, ctsZBoson, weight);
+                    m_pTH2F_CTSZJets_vs_CTSZBosons->Fill(ctsZJet1, ctsZBoson, weight*matrixElementWeight);
+                    m_pTH2F_CTSZJets_vs_CTSZBosons->Fill(ctsZJet2, ctsZBoson, weight*matrixElementWeight);
+                }
+                else if (m_option == 4)
+                {
+                    m_pTH1F_CTSZJetsRef->Fill(ctsZJet1, weight);
+                    m_pTH1F_CTSZJetsRef->Fill(ctsZJet2, weight);
+                    m_pTH1F_CTSZJets->Fill(ctsZJet1, weight*matrixElementWeight);
+                    m_pTH1F_CTSZJets->Fill(ctsZJet2, weight*matrixElementWeight);
+                }
+                else if (m_option == 6)
+                {
+                    m_pTH1F_CTSZBosonsRef->Fill(ctsZBoson, weight);
+                    m_pTH1F_CTSZBosons->Fill(ctsZBoson, weight*matrixElementWeight);
+                }
+                else if (m_option < 1 or m_option > 6)
+                {
+                    m_pTH2F_CTSZJets_vs_CTSZBosonsRef->Fill(ctsZJet1, ctsZBoson, weight);
+                    m_pTH2F_CTSZJets_vs_CTSZBosonsRef->Fill(ctsZJet2, ctsZBoson, weight);
+                    m_pTH2F_CTSZJets_vs_CTSZBosons->Fill(ctsZJet1, ctsZBoson, weight*matrixElementWeight);
+                    m_pTH2F_CTSZJets_vs_CTSZBosons->Fill(ctsZJet2, ctsZBoson, weight*matrixElementWeight);
+                    m_pTH1F_CTSZJetsRef->Fill(ctsZJet1, weight);
+                    m_pTH1F_CTSZJetsRef->Fill(ctsZJet2, weight);
+                    m_pTH1F_CTSZJets->Fill(ctsZJet1, weight*matrixElementWeight);
+                    m_pTH1F_CTSZJets->Fill(ctsZJet2, weight*matrixElementWeight);
+                    m_pTH1F_CTSZBosonsRef->Fill(ctsZBoson, weight);
+                    m_pTH1F_CTSZBosons->Fill(ctsZBoson, weight*matrixElementWeight);
                 }
             }
-/*
-            m_eventTypeToCTSJets[process.GetEventType()]->Fill(ctsWJet1, weight);
-            m_eventTypeToCTSJets[process.GetEventType()]->Fill(ctsWJet2, weight);
-*/
         }
+        delete pTChain;
     } 
 }
 
 //=====================================================================
 
-void Fit::AnalyseDistribution()
+double Fit::CalculateChi2In1D(TH1F *pTH1F, TH1F *pTH1FRef)
 {
-    this->AnalyseCTSJets(m_pTH1F_CTSWJetsRef, m_mapAlphaIntToCTSWJets, m_nllCTSWJets);
-    this->AnalyseCTSJets(m_pTH1F_CTSZJetsRef, m_mapAlphaIntToCTSZJets, m_nllCTSZJets);
-    //this->MakeStackCTSWJets()
-//    this->AnalyseCTSWBosons();
-    this->AnalyseCTSJets_vs_CTSBosons(m_pTH2F_CTSWJets_vs_CTSWBosonsRef, m_mapAlphaIntToCTSWJets_vs_CTSWBosons, m_nllCTSWJets_vs_CTSWBosons);
-    this->AnalyseCTSJets_vs_CTSBosons(m_pTH2F_CTSZJets_vs_CTSZBosonsRef, m_mapAlphaIntToCTSZJets_vs_CTSZBosons, m_nllCTSZJets_vs_CTSZBosons);
+    double chi2(0.0);
+    const int nBinsX(pTH1F->GetXaxis()->GetNbins());
 
-    std::cout << "m_nllCTSWJets.size() " <<  m_nllCTSWJets.size() << std::endl;
-    std::cout << "m_nllCTSZJets.size() " <<  m_nllCTSZJets.size() << std::endl;
-    std::cout << "m_nllCTSWJets_vs_CTSWBosons.size() " <<  m_nllCTSWJets_vs_CTSWBosons.size() << std::endl;
-    std::cout << "m_nllCTSZJets_vs_CTSZBosons.size() " <<  m_nllCTSZJets_vs_CTSZBosons.size() << std::endl;
-}
-
-//=====================================================================
-
-void Fit::AnalyseCTSJets(std::shared_ptr<TH1F> pTH1FRef, IntIntHistMap &mapAlphaIntToHist, FloatFloatFloatMap &mapAlphaToNLL)
-{
-    for (auto it: mapAlphaIntToHist)
-    {
-        const int alpha4Int(it.first);
-        for (auto iter: it.second)
-        {
-            const int alpha5Int(iter.first);
-            std::shared_ptr<TH1F> pTH1F_CTSJets = iter.second;
-
-            TCanvas *pTCanvas = new TCanvas();
-            pTCanvas->Draw();
-            pTH1FRef->Draw();
-
-            pTH1FRef->SetLineColor(kRed);
-            pTH1FRef->SetFillColor(kRed);
-            pTH1FRef->SetFillStyle(3004);
-
-            pTH1F_CTSJets->SetLineColor(kGreen-2);
-            pTH1F_CTSJets->SetFillColor(kGreen-2);
-            pTH1F_CTSJets->SetFillStyle(3005);
-
-            int binMaxRef = pTH1FRef->GetBinContent(pTH1FRef->GetMaximumBin());
-            int binMax = pTH1F_CTSJets->GetBinContent(pTH1F_CTSJets->GetMaximumBin());
-
-            if (binMaxRef > binMax)
-            {
-                pTH1FRef->GetYaxis()->SetRangeUser(0,binMaxRef*1.05);
-                pTH1F_CTSJets->GetYaxis()->SetRangeUser(0,binMaxRef*1.05);
-                pTH1FRef->Draw();
-                pTH1F_CTSJets->Draw("same");
-            }
-            else 
-            {
-                pTH1FRef->GetYaxis()->SetRangeUser(0,binMax*1.05);
-                pTH1F_CTSJets->GetYaxis()->SetRangeUser(0,binMax*1.05);
-                pTH1F_CTSJets->Draw();
-                pTH1FRef->Draw("same");
-            }
-
-            TLegend *pTLegend = new TLegend(0.5,0.7,0.9,0.9);
-            std::string legendDescriptionRef = "#alpha_{4} = 0, #alpha_{5} = 0";
-            std::string legendDescription = "#alpha_{4} = " + this->NumberToString(alpha4Int*m_alpha4Step) + ", #alpha_{5} = " + this->NumberToString(alpha5Int*m_alpha5Step);
-            pTLegend->AddEntry(pTH1F_CTSJets.get(),legendDescription.c_str(),"f");
-            pTLegend->AddEntry(pTH1FRef.get(),legendDescriptionRef.c_str(),"f");
-            pTLegend->Draw("same");
-
-//            m_pTFile->cd();
-//            pTH1F_CTSJets->Write();
-//            pTCanvas->Write();
-
-            double nLL(this->CalculateLogLikelihood1D(pTH1F_CTSJets, pTH1FRef));
-            mapAlphaToNLL[alpha4Int*m_alpha4Step][alpha5Int*m_alpha5Step] = nLL;
-            delete pTLegend, pTCanvas;
-        }
-    }
-}
-
-//=====================================================================
-
-void Fit::MakeStackCTSWJets()
-{
-    std::string nameCTSWJetsStack =  "StackCTSWJets";
-    std::string titleCTSWJetsStack = "Cos#theta_{WJets}^{*}";
-    TLegend *pTLegend = new TLegend(0.7,0.7,1.0,1.0);
-    THStack *pTHStack = new THStack(nameCTSWJetsStack.c_str(), titleCTSWJetsStack.c_str());
-    int counter(0);
-
-    for (const auto &pProcess: m_processVector)
-    {
-        Color_t color = TColor::GetColor(m_red.at(counter), m_green.at(counter), m_blue.at(counter));
-        m_eventTypeToCTSJets[pProcess->GetEventType()]->SetLineColor(color);
-        m_eventTypeToCTSJets[pProcess->GetEventType()]->SetFillColor(color);
-        m_eventTypeToCTSJets[pProcess->GetEventType()]->SetFillStyle(m_fillStyle.at(counter));
-        counter++;
-        pTHStack->Add(m_eventTypeToCTSJets[pProcess->GetEventType()].get());
-        pTLegend->AddEntry(m_eventTypeToCTSJets[pProcess->GetEventType()].get(), pProcess->GetEventType().c_str(), "f");
-    }
-
-//    pTHStack->Write();
-    TCanvas *pTCanvas = new TCanvas();
-    pTCanvas->Draw();
-    pTHStack->Draw();
-    pTLegend->Draw("same");
-//    pTCanvas->Write();
-
-    std::string plotTitlePng("StackCTSWJets_" + m_descriptor + ".png");
-    std::string plotTitleDotC("StackCTSWJets_" + m_descriptor + ".C");
-    pTCanvas->SaveAs(plotTitlePng.c_str());
-    pTCanvas->SaveAs(plotTitleDotC.c_str());
-    delete pTHStack, pTLegend, pTCanvas;
-}
-
-//=====================================================================
-
-void Fit::AnalyseCTSWBosons()
-{
-}
-
-//=====================================================================
-
-void Fit::AnalyseCTSJets_vs_CTSBosons(std::shared_ptr<TH2F> pTH2FRef, IntInt2DHistMap &mapAlphaIntToHist, FloatFloatFloatMap &mapAlphaToNLL)
-{
-    for (auto element: mapAlphaIntToHist)
-    {
-        const int alpha4Int(element.first);
-        for (auto subElement: element.second)
-        {
-            const int alpha5Int(subElement.first);
-            std::shared_ptr<TH2F> pTH2F_CTSJets_vs_CTSBosons = subElement.second;
-
-            TString nameStack = "Stack_";
-            nameStack += pTH2F_CTSJets_vs_CTSBosons->GetName();
-            TString titleStack = "Stack ";
-            titleStack += pTH2F_CTSJets_vs_CTSBosons->GetTitle();
-//            THStack *pTHStack_CTSJets_vs_CTSBosons = new THStack(nameStack, titleStack);
-            std::shared_ptr<THStack> pTHStack_CTSJets_vs_CTSBosons(new THStack(nameStack, titleStack)); 
-
-//            TCanvas *pTCanvas = new TCanvas();
-            std::shared_ptr<TCanvas> pTCanvas(new TCanvas());
-            pTCanvas->Draw();
-            pTH2FRef->Draw();
-
-            pTH2FRef->SetLineColor(kRed);
-            pTH2FRef->SetFillColor(kRed);
-            pTH2FRef->SetFillStyle(3004);
-
-            pTH2F_CTSJets_vs_CTSBosons->SetLineColor(kGreen-2);
-            pTH2F_CTSJets_vs_CTSBosons->SetFillColor(kGreen-2);
-            pTH2F_CTSJets_vs_CTSBosons->SetFillStyle(3005);
-
-            pTHStack_CTSJets_vs_CTSBosons->Add(pTH2FRef.get());
-            pTHStack_CTSJets_vs_CTSBosons->Add(pTH2F_CTSJets_vs_CTSBosons.get());
-            pTHStack_CTSJets_vs_CTSBosons->Draw();
-
-//            TLegend *pTLegend = new TLegend(0.5,0.7,0.9,0.9);
-            std::shared_ptr<TLegend> pTLegend(new TLegend(0.5,0.7,0.9,0.9));
-            std::string legendDescriptionRef = "#alpha_{4} = 0, #alpha_{5} = 0";
-            std::string legendDescription = "#alpha_{4} = " + this->NumberToString(alpha4Int*m_alpha4Step) + ", #alpha_{5} = " + this->NumberToString(alpha5Int*m_alpha5Step);
-            pTLegend->AddEntry(pTH2F_CTSJets_vs_CTSBosons.get(), legendDescription.c_str(),"f");
-            pTLegend->AddEntry(pTH2FRef.get(), legendDescriptionRef.c_str(),"f");
-            pTLegend->Draw("same");
-
-//            m_pTFile->cd();
-//            pTCanvas->Write();
-//            pTH2F_CTSJets_vs_CTSBosons->Write();
-//            pTHStack_CTSJets_vs_CTSBosons->Write();
-
-            double nLL(this->CalculateLogLikelihood2D(pTH2F_CTSJets_vs_CTSBosons, pTH2FRef));
-            mapAlphaToNLL[alpha4Int*m_alpha4Step][alpha5Int*m_alpha5Step] = nLL;
-//            delete pTHStack_CTSJets_vs_CTSBosons, pTLegend, pTCanvas;
-        }
-    }
-}
-
-//=====================================================================
-
-double Fit::CalculateLogLikelihood1D(std::shared_ptr<TH1F> pTH1F, std::shared_ptr<TH1F> pTH1FRef)
-{
-    if (!gApplication) new TApplication("Application", ((int *)0), ((char **)0));
-
-    double nLL(0.0);
-    const int nBinsX = pTH1F->GetXaxis()->GetNbins();
     for (unsigned int xBin = 1; xBin < nBinsX; xBin++)
     {
         const double binContent = pTH1F->GetBinContent(xBin);
         const double binContentRef = pTH1FRef->GetBinContent(xBin);
-        nLL += (-1.0 * binContentRef * log(binContent)) + binContent;
+        chi2 += (binContent - binContentRef) * (binContent - binContentRef) / binContentRef;
     }
-    return nLL;
+
+    return chi2;
 }
 
 //=====================================================================
 
-double Fit::CalculateLogLikelihood2D(std::shared_ptr<TH2F> pTH2F, std::shared_ptr<TH2F> pTH2FRef)
+double Fit::CalculateChi2In2D(TH2F *pTH2F, TH2F *pTH2FRef)
 {
-    if (!gApplication) new TApplication("Application", ((int *)0), ((char **)0));
+    double chi2(0.0);
+    const int nBinsX(pTH2F->GetXaxis()->GetNbins());
+    const int nBinsY(pTH2F->GetYaxis()->GetNbins());
 
-    double nLL(0.0);
-
-    const int nBinsX = pTH2F->GetXaxis()->GetNbins();
-    const int nBinsY = pTH2F->GetYaxis()->GetNbins();
     for (unsigned int xBin = 1; xBin < nBinsX; xBin++)
     {
         for (unsigned int yBin = 1; yBin < nBinsY; yBin++)
         {
             const double binContent = pTH2F->GetBinContent(xBin, yBin);
             const double binContentRef = pTH2FRef->GetBinContent(xBin, yBin);
-            nLL += (-1.0 * binContentRef * log(binContent)) + binContent;
-        }
-    }
-    return nLL;
-}
-
-//=====================================================================
-
-void Fit::SaveDistribution()
-{
-//    TGraph2D *pTGraph2D_NLLCTSWJets = new TGraph2D();
-    std::unique_ptr<TGraph2D> pTGraph2D_NLLCTSWJets(new TGraph2D()); 
-    pTGraph2D_NLLCTSWJets->SetName("TGraph2D_NLLCTSWJets");
-    pTGraph2D_NLLCTSWJets->SetTitle("Negative Log Likelihood Cos#theta_{WJets}^{*}");
-
-//    TGraph2D *pTGraph2D_NLLCTSZJets = new TGraph2D();
-    std::unique_ptr<TGraph2D> pTGraph2D_NLLCTSZJets(new TGraph2D());
-    pTGraph2D_NLLCTSZJets->SetName("TGraph2D_NLLCTSZJets");
-    pTGraph2D_NLLCTSZJets->SetTitle("Negative Log Likelihood Cos#theta_{ZJets}^{*}");
-
-//    TGraph2D *pTGraph2D_NLLCTSWJets_vs_CTSWBosons = new TGraph2D();
-    std::unique_ptr<TGraph2D> pTGraph2D_NLLCTSWJets_vs_CTSWBosons(new TGraph2D());
-    pTGraph2D_NLLCTSWJets_vs_CTSWBosons->SetName("TGraph2D_NLLCTSWJets_vs_CTSWBosons");
-    pTGraph2D_NLLCTSWJets_vs_CTSWBosons->SetTitle("Negative Log Likelihood Cos#theta_{WJets}^{*} vs Cos#theta_{WBosons}^{*}");
-
-//    TGraph2D *pTGraph2D_NLLCTSZJets_vs_CTSZBosons = new TGraph2D();
-    std::unique_ptr<TGraph2D> pTGraph2D_NLLCTSZJets_vs_CTSZBosons(new TGraph2D()); 
-    pTGraph2D_NLLCTSZJets_vs_CTSZBosons->SetName("TGraph2D_NLLCTSZJets_vs_CTSZBosons");
-    pTGraph2D_NLLCTSZJets_vs_CTSZBosons->SetTitle("Negative Log Likelihood Cos#theta_{ZJets}^{*} vs Cos#theta_{ZBosons}^{*}");
-
-    this->PopulateLogLikelihoodGraph(*pTGraph2D_NLLCTSWJets, m_nllCTSWJets);
-    this->PopulateLogLikelihoodGraph(*pTGraph2D_NLLCTSZJets, m_nllCTSZJets);
-    this->PopulateLogLikelihoodGraph(*pTGraph2D_NLLCTSWJets_vs_CTSWBosons, m_nllCTSWJets_vs_CTSWBosons);
-    this->PopulateLogLikelihoodGraph(*pTGraph2D_NLLCTSZJets_vs_CTSZBosons, m_nllCTSZJets_vs_CTSZBosons);
-
-//    TCanvas *pTCanvas = new TCanvas();
-    std::unique_ptr<TCanvas> pTCanvas(new TCanvas());
-    pTGraph2D_NLLCTSWJets->Draw("SURF3");
-    std::string name("NLLCTSWJets_" + m_descriptor + ".C");
-    pTCanvas->SaveAs(name.c_str());
-
-//    TCanvas *pTCanvas2 = new TCanvas();
-    std::unique_ptr<TCanvas> pTCanvas2(new TCanvas());
-    pTGraph2D_NLLCTSZJets->Draw("SURF3");
-    std::string name2("NLLCTSZJets_" + m_descriptor + ".C");
-    pTCanvas2->SaveAs(name2.c_str());
-
-//    TCanvas *pTCanvas3 = new TCanvas();
-    std::unique_ptr<TCanvas> pTCanvas3(new TCanvas());
-    pTGraph2D_NLLCTSWJets_vs_CTSWBosons->Draw("SURF3");
-    std::string name3("NLLCTSWJets_vs_CTSWBosons_" + m_descriptor + ".C");
-    pTCanvas3->SaveAs(name3.c_str());
-
-//    TCanvas *pTCanvas4 = new TCanvas();
-    std::unique_ptr<TCanvas> pTCanvas4(new TCanvas());
-    pTGraph2D_NLLCTSZJets_vs_CTSZBosons->Draw("SURF3");
-    std::string name4("NLLCTSZJets_vs_CTSZBosons_" + m_descriptor + ".C");
-    pTCanvas4->SaveAs(name4.c_str());
-
-    m_pTFile->cd();
-    pTGraph2D_NLLCTSWJets->Write();
-    pTGraph2D_NLLCTSZJets->Write();
-    pTGraph2D_NLLCTSWJets_vs_CTSWBosons->Write();
-    pTGraph2D_NLLCTSZJets_vs_CTSZBosons->Write();
-//    delete pTGraph2D_NLLCTSWJets, pTGraph2D_NLLCTSZJets, pTGraph2D_NLLCTSWJets_vs_CTSWBosons, pTGraph2D_NLLCTSZJets_vs_CTSZBosons, pTCanvas;
-}
-
-//=====================================================================
-
-void Fit::PopulateLogLikelihoodGraph(TGraph2D &tGraph2D, FloatFloatFloatMap &floatFloatFloatMap)
-{
-    float minNLL(std::numeric_limits<float>::max());
-
-    for (auto element: floatFloatFloatMap)
-    {
-        const float alpha4(element.first);
-        for (auto subElement: element.second)
-        {
-            const float alpha5(subElement.first);
-            const float nLL(subElement.second);
-            if (minNLL > nLL)
-                minNLL = nLL;
+            chi2 += (binContent - binContentRef) * (binContent - binContentRef) / binContentRef;
         }
     }
 
-    for (auto element: floatFloatFloatMap)
-    {
-        const float alpha4(element.first);
-        for (auto subElement: element.second)
-        {
-            const float alpha5(subElement.first);
-            const float nLL(subElement.second);
-            tGraph2D.SetPoint(tGraph2D.GetN(), alpha4, alpha5, nLL - minNLL);
-        }
-    }
+    return chi2;
 }
 
 //=====================================================================

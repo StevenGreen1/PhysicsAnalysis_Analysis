@@ -29,7 +29,7 @@ using namespace analysis_namespace;
 
 class PostMVASelection
 {
-    typedef std::vector<std::shared_ptr<const Process> > ProcessVector;
+    typedef std::vector<const Process*> ProcessVector;
 
     public:
         /**

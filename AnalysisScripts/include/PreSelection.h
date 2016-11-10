@@ -25,7 +25,7 @@ using namespace analysis_namespace;
 
 class PreSelection
 {
-    typedef std::vector<std::shared_ptr<const Process> > ProcessVector;
+    typedef std::vector<const Process*> ProcessVector;
 
     public:
         /**

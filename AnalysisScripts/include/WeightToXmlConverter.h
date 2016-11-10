@@ -107,13 +107,12 @@ class WeightToXmlConverter
 
         typedef std::vector<WeightToXmlConverter::Event*> EventVector;
 
-        EventVector m_events;              ///< Vector of events 
-
-        const int m_generatorNumber;         ///< Whizard job set number
-        const float m_alpha4;              ///< Alpha 4
-        const float m_alpha5;              ///< Alpha 5
-        const std::string m_eventType;     ///< Event type
-        const int m_energy;                ///< Energy 
+        EventVector          m_events;              ///< Vector of events 
+        const int            m_generatorNumber;     ///< Whizard job set number
+        const float          m_alpha4;              ///< Alpha 4
+        const float          m_alpha5;              ///< Alpha 5
+        const std::string    m_eventType;           ///< Event type
+        const int            m_energy;              ///< Energy 
 };
 
 #endif

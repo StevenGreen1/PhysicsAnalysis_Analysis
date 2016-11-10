@@ -30,7 +30,7 @@ ConcatenateWeights::~ConcatenateWeights()
 
 //============================================================================ Concatenate Data
 
-void ConcatenateWeights::LoadWeightXml(const int simulationEventNumber, const std::shared_ptr<const Process> pProcess)
+void ConcatenateWeights::LoadWeightXml(const int simulationEventNumber, const Process *pProcess)
 {
     m_events.clear();
     m_pTiXmlResultsDocument = new TiXmlDocument();
@@ -52,7 +52,7 @@ void ConcatenateWeights::LoadWeightXml(const int simulationEventNumber, const st
 
 //============================================================================
 
-void ConcatenateWeights::LoadIndividualWeightXml(const int &simulationEventNumber, const float &alpha4, const float &alpha5, const std::shared_ptr<const Process> pProcess)
+void ConcatenateWeights::LoadIndividualWeightXml(const int &simulationEventNumber, const float &alpha4, const float &alpha5, const Process *pProcess)
 {
     EventNumbers *pEventNumbers = new EventNumbers();
 

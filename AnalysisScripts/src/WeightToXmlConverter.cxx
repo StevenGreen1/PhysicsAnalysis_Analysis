@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
             const float alpha5(j * 0.01);
 std::cout << alpha4 << " " << alpha5 << std::endl;
 //            WeightToXmlConverter *pWeightToXmlConverter = new WeightToXmlConverter(process,energy,alpha4,alpha5,atoi(argv[1]));
-            std::unique_ptr<WeightToXmlConverter> pWeightToXmlConverter(new WeightToXmlConverter(process,energy,alpha4,alpha5,atoi(argv[1]))); 
+            WeightToXmlConverter *pWeightToXmlConverter(new WeightToXmlConverter(process,energy,alpha4,alpha5,atoi(argv[1]))); 
         }
     }
     return 0;
@@ -104,6 +104,7 @@ std::cout << m_alpha4 << " " << m_alpha5 << std::endl;
 
         int simulationEventNumber = (1e3*m_generatorNumber) + i;
         std::string weightsFileName("/r06/lc/sg568/PhysicsAnalysis/Generator/" + m_eventType + "/" + this->NumberToString(m_energy) + "GeV/WhizardJobSet" + this->NumberToString(m_generatorNumber) + "/Alpha4_" + this->AlphasToStringReading(m_alpha4) + "_Alpha5_" + this->AlphasToStringReading(m_alpha5) + "/Reweighting_GenN" + this->NumberToString(simulationEventNumber) + "_" + m_eventType + "_" + this->NumberToString(m_energy) + "GeV_Alpha4_" + this->AlphasToStringWriting(m_alpha4) + "_Alpha5_" + this->AlphasToStringWriting(m_alpha5) + ".xml");
+std::cout << "saving : " << weightsFileName << std::endl;
         this->SaveXml(weightsFileName);
     }
     return;
@@ -123,20 +124,17 @@ void WeightToXmlConverter::SaveXml(std::string weightsFileName)
     pHeadTiXmlElement->SetDoubleAttribute("Alpha_Four", m_alpha4);
     pHeadTiXmlElement->SetDoubleAttribute("Alpha_Five", m_alpha5);
 
-    for (EventVector::iterator iter = m_events.begin(); iter != m_events.end(); iter++)
+    for (const auto &pEvent: m_events)
     {
-        WeightToXmlConverter::Event *pEvent(*iter);
-        TiXmlElement* pTiXmlElement = new TiXmlElement("Event");
+        TiXmlElement *pTiXmlElement = new TiXmlElement("Event");
         pTiXmlElement->SetAttribute("Event_Number", pEvent->GetEventNumber());
         pTiXmlElement->SetDoubleAttribute("Ratio_of_Integrands", pEvent->GetWeight());
         pHeadTiXmlElement->LinkEndChild(pTiXmlElement);
-        delete pTiXmlElement;
     }
 
     bool success = tiXmlDocument.SaveFile(weightsFileName.c_str());
 
     tiXmlDocument.Clear();
-    delete pHeadTiXmlElement;
 }
 
 //============================================================================

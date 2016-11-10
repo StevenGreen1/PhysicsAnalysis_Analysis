@@ -30,9 +30,7 @@ int main(int argc, char **argv)
     gStyle->SetOptStat(0);
 
     // Signal, luminosity copied from nunuqqqq final state
-/*
-    const Process *pProcess_ee_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",22.16,1500,1400,9);
-//    std::unique_ptr<const Process> pProcess_ee_nunuqqqq(new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",22.16,1500,1400,9)); 
+    const Process *pProcess_ee_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",22.16,1500,1400,11);
 
     // CLIC Backgrounds
     const Process *pProcess_ee_lnuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_lnuqqqq",115.3,1500,1400,9);
@@ -105,7 +103,6 @@ int main(int argc, char **argv)
     Fit *fit = new Fit(processes, pCouplingAnalysis);
 //    MakeDerivedPlots *makePlots = new MakeDerivedPlots(processes);
 //    MakeSimplePlots *makePlots = new MakeSimplePlots(processes);
-*/
 }
 
 //=====================================================================

@@ -180,7 +180,7 @@ bool Process::DoesEventPassCuts(int eventNumber) const
 void Process::SetMVARootFiles()
 {
     m_pPostMVATChain = new TChain("MVATree");
-    TString fileToAdd = "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/RootFilesPostMVA/RootFiles_Multivariant_" + m_eventType + "_" + this->NumberToString(m_energy) + "GeV_" + m_rootSuffix + ".root";
+    TString fileToAdd = "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/RootFilesPostMVA/RootFiles_Multivariant_" + m_eventType + "_" + this->NumberToString(m_energy) + "GeV_" + m_rootSuffix + "_AnalysisTag" + this->NumberToString(m_analysisTag) + ".root";
     m_pPostMVATChain->Add(fileToAdd);
     m_postMVAProcessWeight = m_luminosity * m_crossSection / (float)(m_pPostMVATChain->GetEntries());
 }
@@ -209,7 +209,7 @@ void Process::MakeTChain()
             fileCandidate = file->GetName();
             std::string analysisTagString("Tag" + this->NumberToString(m_analysisTag));
 
-            if (!file->IsDirectory() and fileCandidate.EndsWith("root") and fileCandidate.Contains(analysisTagString.c_str()) and fileCandidate.Contains(m_rootSuffix.c_str()) and m_pTChain->GetEntries() < 50000) 
+            if (!file->IsDirectory() and fileCandidate.EndsWith("root") and fileCandidate.Contains(analysisTagString.c_str()) and fileCandidate.Contains(m_rootSuffix.c_str())) // and m_pTrainTChain->GetEntries() < 50000) // and m_pTChain->GetEntries() < 50000) 
             {
                 if (m_eventType == "ee_nunuqqqq")
                 {
@@ -221,6 +221,7 @@ void Process::MakeTChain()
                     std::string strNew = fileCandidate2.substr (firstLim+5,lastLim-firstLim);
                     int simulationNumber = atoi(strNew.c_str());
                     //std::cout << "fileCandidate " << fileCandidate << std::endl;
+                    //std::cout << "m_rootSuffix " << m_rootSuffix << std::endl;
                     //std::cout << "simulationNumber " << simulationNumber << std::endl;
                     if (simulationNumber < 1000)
                         continue;
@@ -236,8 +237,8 @@ void Process::MakeTChain()
                 }
                 else
                 {
-                   m_pTrainTChain->Add(rootFileToAdd.Data()); 
-                   trainingSample = true;
+                    m_pTrainTChain->Add(rootFileToAdd.Data()); 
+                    trainingSample = true;
                 }
             }
         }

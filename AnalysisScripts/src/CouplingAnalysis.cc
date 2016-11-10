@@ -14,11 +14,11 @@ CouplingAnalysis::CouplingAnalysis(PostMVASelection *pPostMVASelection) :
     m_pPostMVASelection(pPostMVASelection),
     m_numberUniqueAlpha4(0),
     m_numberUniqueAlpha5(0),
-    m_a4IntMin(-7),
-    m_a4IntMax(7),
+    m_a4IntMin(-6),
+    m_a4IntMax(6),
     m_a4Step(0.01f),
-    m_a5IntMin(-7),
-    m_a5IntMax(7),
+    m_a5IntMin(-6),
+    m_a5IntMax(6),
     m_a5Step(0.01f),
 //    m_weightsLoaded(false)
     m_activeSimulationEventNumber(std::numeric_limits<int>::max())
@@ -52,27 +52,24 @@ void CouplingAnalysis::GetWeight(const int globalEventNumber, const float alpha4
 //std::cout << "void CouplingAnalysis::GetWeight(const int globalEventNumber, const float alpha4, const float alpha5, float &eventWeight)" << std::endl;
 //std::cout << "void CouplingAnalysis::GetWeight(const int " << globalEventNumber << ", const float " << alpha4 << ", const float " << alpha5 << ", float &" << eventWeight << ")" << std::endl;
 
-//    EventNumbers *pEventNumbers = new EventNumbers();
-    std::unique_ptr<EventNumbers> pEventNumbers(new EventNumbers()); 
+    EventNumbers *pEventNumbers = new EventNumbers();
     const int simulationEventNumber(pEventNumbers->GetSimulationNumberFromGlobal(globalEventNumber));
 
-//std::cout << "m_activeSimulationEventNumber : " << m_activeSimulationEventNumber << std::endl;
-//std::cout << "simulationEventNumber : " << simulationEventNumber << std::endl;
-
+/*
     if (simulationEventNumber != m_activeSimulationEventNumber)
     {
         m_eventToAlpha4ToAlpha5ToWeightMap.clear(); // Wipe the otherwise huge map every time a new simulation number needs to be read, hopefully makes memory useage easier.
         this->LoadConcatenatedWeightXml(simulationEventNumber);
         m_activeSimulationEventNumber = simulationEventNumber;
     }
+*/
 
-/*
     if (std::find(m_readInSimulationEventNumbers.begin(), m_readInSimulationEventNumbers.end(), simulationEventNumber) == m_readInSimulationEventNumbers.end())
     {
         m_readInSimulationEventNumbers.push_back(simulationEventNumber);
         this->LoadConcatenatedWeightXml(simulationEventNumber);
     }
-*/
+
     IntToIntToIntToFloatMap::const_iterator it = m_eventToAlpha4ToAlpha5ToWeightMap.find(globalEventNumber);
 
     if (it == m_eventToAlpha4ToAlpha5ToWeightMap.end())
@@ -153,6 +150,7 @@ void CouplingAnalysis::GetWeight(const int globalEventNumber, const float alpha4
     //std::cout << "Bicubic interpretation : " << this->BicubicInterpolation(p,x,y) << std::endl;
 */
     eventWeight = this->BicubicInterpolation(p,x,y);
+    delete pEventNumbers;
 }
 
 //============================================================================
@@ -166,22 +164,19 @@ PostMVASelection *CouplingAnalysis::GetPostMVASelection() const
 
 void CouplingAnalysis::LoadConcatenatedWeightXml(int simulationEventNumber)
 {
-//    TSystemDirectory *pTSystemDirectoryWeightFiles =  new TSystemDirectory(m_weightsDirectory.c_str(), m_weightsDirectory.c_str());
-    std::unique_ptr<TSystemDirectory> pTSystemDirectoryWeightFiles(new TSystemDirectory(m_weightsDirectory.c_str(), m_weightsDirectory.c_str())); 
-//    TList *pTListWeightFiles = pTSystemDirectoryWeightFiles->GetListOfFiles();
-    std::unique_ptr<TList> pTListWeightFiles(pTSystemDirectoryWeightFiles->GetListOfFiles());
+    TSystemDirectory *pTSystemDirectoryWeightFiles =  new TSystemDirectory(m_weightsDirectory.c_str(), m_weightsDirectory.c_str());
+    TList *pTListWeightFiles = pTSystemDirectoryWeightFiles->GetListOfFiles();
     pTListWeightFiles->Sort(); // Alphabetises the list
 
     if (pTListWeightFiles)
     {
         TSystemFile *pTSystemFileWeightFile;
-        TIter next(pTListWeightFiles.get());
+        TIter next(pTListWeightFiles);
 
         while ((pTSystemFileWeightFile=(TSystemFile*)next()))
         {
             TString weightFileCandidate = pTSystemFileWeightFile->GetName();
             std::string fileNameString("ConcatenatedWeights" + this->NumberToString(simulationEventNumber));
-
             if (!pTSystemFileWeightFile->IsDirectory() and weightFileCandidate.EndsWith("xml") and weightFileCandidate.Contains(fileNameString.c_str()))
             {
                 std::string weightFileToLoad = m_weightsDirectory + weightFileCandidate.Data();
@@ -189,24 +184,23 @@ void CouplingAnalysis::LoadConcatenatedWeightXml(int simulationEventNumber)
                 this->LoadIndividualConcatenatedWeightXml(weightFileToLoad);
             }
         }
+        delete pTSystemFileWeightFile;
     }
-//    delete pTListWeightFiles, pTSystemDirectoryWeightFiles;
+    delete pTListWeightFiles, pTSystemDirectoryWeightFiles;
 }
 
 //============================================================================
 
 void CouplingAnalysis::LoadIndividualConcatenatedWeightXml(std::string weightFileToLoad)
 {
-//    TiXmlDocument *pTiXmlDocument = new TiXmlDocument();
-    std::unique_ptr<TiXmlDocument> pTiXmlDocument(new TiXmlDocument()); 
+    TiXmlDocument *pTiXmlDocument = new TiXmlDocument();
 
     if (!pTiXmlDocument->LoadFile(weightFileToLoad.c_str()))
     {
         std::cerr << pTiXmlDocument->ErrorDesc() << std::endl;
     }
 
-//    TiXmlElement *pDocumentTiXmlElement = pTiXmlDocument->FirstChildElement();
-    std::unique_ptr<TiXmlElement> pDocumentTiXmlElement(pTiXmlDocument->FirstChildElement());
+    TiXmlElement *pDocumentTiXmlElement = pTiXmlDocument->FirstChildElement();
 
     for (TiXmlElement *pHeadTiXmlElement = pDocumentTiXmlElement->FirstChildElement(); pHeadTiXmlElement != NULL; pHeadTiXmlElement = pHeadTiXmlElement->NextSiblingElement())
     {
@@ -248,7 +242,7 @@ void CouplingAnalysis::LoadIndividualConcatenatedWeightXml(std::string weightFil
     }
 
     pTiXmlDocument->Clear();
-//    delete pTiXmlDocument, pDocumentTiXmlElement;
+    delete pTiXmlDocument, pDocumentTiXmlElement;
 }
 
 //============================================================================
