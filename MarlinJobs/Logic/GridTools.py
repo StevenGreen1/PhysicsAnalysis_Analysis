@@ -1,7 +1,9 @@
 # Dirac tools for getting lists of files from the grid.
 import os
-import sys
+import random
 import re
+import string
+import sys
 
 ### ----------------------------------------------------------------------------------------------------
 ### Start of getRecSlcioFiles function
