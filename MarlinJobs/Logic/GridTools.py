@@ -10,14 +10,15 @@ import re
 
 def getRecSlcioFiles(jobDescription, detModel, recoStage, energy, eventType):
     slcioFiles = []
-    os.system('dirac-ilc-find-in-FC /ilc/user/s/sgreen JobDescription=' + jobDescription + ' Type=Rec DetectorModel=' + str(detModel) + ' ReconstructionStage=' + str(recoStage) + ' Energy=' + str(energy) + ' EvtType=' + eventType + ' > tmp.txt')
-    with open('tmp.txt') as f:
+    temporaryFileName = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5)) + '.txt'
+    os.system('dirac-ilc-find-in-FC /ilc/user/s/sgreen JobDescription=' + jobDescription + ' Type=Rec DetectorModel=' + str(detModel) + ' ReconstructionStage=' + str(recoStage) + ' Energy=' + str(energy) + ' EvtType=' + eventType + ' > ' + temporaryFileName)
+    with open(temporaryFileName) as f:
         lines = f.readlines()
         for idx, line in enumerate(lines):
             line = line.strip()
             if '_REC.slcio' in line:
                 slcioFiles.append(line)
-    os.system('rm tmp.txt')
+    os.system('rm ' + temporaryFileName)
     return slcioFiles
 
 ### ----------------------------------------------------------------------------------------------------
@@ -28,14 +29,15 @@ def getRecSlcioFiles(jobDescription, detModel, recoStage, energy, eventType):
 
 def getDstSlcioFiles(jobDescription, detModel, recoStage, energy, eventType):
     slcioFiles = []
-    os.system('dirac-ilc-find-in-FC /ilc/user/s/sgreen JobDescription=' + jobDescription + ' Type=Rec DetectorModel=' + str(detModel) + ' ReconstructionStage=' + str(recoStage) + ' Energy=' + str(energy) + ' EvtType=' + eventType + ' > tmp.txt')
-    with open('tmp.txt') as f:
+    temporaryFileName = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5)) + '.txt'
+    os.system('dirac-ilc-find-in-FC /ilc/user/s/sgreen JobDescription=' + jobDescription + ' Type=Rec DetectorModel=' + str(detModel) + ' ReconstructionStage=' + str(recoStage) + ' Energy=' + str(energy) + ' EvtType=' + eventType + ' > ' + temporaryFileName)
+    with open(temporaryFileName) as f:
         lines = f.readlines()
         for idx, line in enumerate(lines):
             line = line.strip()
             if '_DST.slcio' in line:
                 slcioFiles.append(line)
-    os.system('rm tmp.txt')
+    os.system('rm ' + temporaryFileName)
     return slcioFiles
 
 ### ----------------------------------------------------------------------------------------------------
@@ -64,14 +66,15 @@ def doesFileExist(lfn):
 
 def getCLICFiles(prodID):
     clicFiles = []
-    os.system('dirac-ilc-find-in-FC /ilc/prod ProdID=' + str(prodID) + ' > tmp.txt')
-    with open('tmp.txt') as f:
+    temporaryFileName = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5)) + '.txt'
+    os.system('dirac-ilc-find-in-FC /ilc/prod ProdID=' + str(prodID) + ' > ' + temporaryFileName)
+    with open(temporaryFileName) as f:
         lines = f.readlines()
         for idx, line in enumerate(lines):
             line = line.strip()
             if '/DST/' in line:
                 clicFiles.append(line)
-    os.system('rm tmp.txt')
+    os.system('rm ' + temporaryFileName)
     return clicFiles
 
 ### ----------------------------------------------------------------------------------------------------
