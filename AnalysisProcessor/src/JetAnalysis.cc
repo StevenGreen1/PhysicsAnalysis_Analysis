@@ -205,8 +205,8 @@ void JetAnalysis::JetPairing()
         this->FindInvariantMass(trialPair1, invariantMass1);
         this->FindInvariantMass(trialPair2, invariantMass2);
 
-        const double wMetric((fabs(invariantMass1-m_wBosonMass))*fabs(invariantMass2-m_wBosonMass));
-        const double zMetric((fabs(invariantMass1-m_zBosonMass))*fabs(invariantMass2-m_zBosonMass));
+        const double wMetric(std::sqrt((invariantMass1-m_wBosonMass)*(invariantMass1-m_wBosonMass) + (invariantMass2-m_wBosonMass)*(invariantMass2-m_wBosonMass)));
+        const double zMetric(std::sqrt((invariantMass1-m_zBosonMass)*(invariantMass1-m_zBosonMass) + (invariantMass2-m_zBosonMass)*(invariantMass2-m_zBosonMass)));
 
         if (wMetric < bestWMetric)
         {
