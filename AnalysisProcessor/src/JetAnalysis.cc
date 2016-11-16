@@ -428,7 +428,7 @@ void JetAnalysis::CalculateAcolinearities()
     m_pVariables->SetAcolinearityJetsZ1(acolinearityJetsZ1);
 
     double acolinearityJetsZ2(std::numeric_limits<double>::max());
-    this->CalculateAcolinearity(m_zVector1.at(0), m_zVector1.at(1), acolinearityJetsZ2);
+    this->CalculateAcolinearity(m_zVector2.at(0), m_zVector2.at(1), acolinearityJetsZ2);
     m_pVariables->SetAcolinearityJetsZ2(acolinearityJetsZ2);
 
     double acolinearityBosonW(std::numeric_limits<double>::max());
