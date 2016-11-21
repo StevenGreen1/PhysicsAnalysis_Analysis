@@ -64,6 +64,12 @@ AnalysisProcessor::AnalysisProcessor() : Processor("AnalysisProcessor")
                             "Name of input 2 jet collection",
                             m_particleCollection2Jet,
                             std::string());
+
+    registerInputCollection(LCIO::LCRELATION,
+                            "RecoMCTruthLinkCollectionName",
+                            "Name of reco particle to mc particle truth link relation",
+                             m_recoMCTruthLinkCollection,
+                             std::string("RecoMCTruthLink"));
 }
 
 //===========================================================
@@ -102,6 +108,31 @@ void AnalysisProcessor::processEvent(LCEvent *pLCEvent)
     }
 
     m_pVariables->Clear();
+
+    // MC Collection
+    const EVENT::LCCollection *pLCMCCollection = NULL;
+    try
+    {
+        pLCMCCollection = pLCEvent->getCollection(m_particleCollectionMC);
+    }
+    catch (...)
+    {
+        streamlog_out(ERROR) << "Could not extract input particle collection: " << m_particleCollectionMC << std::endl;
+    }
+
+    // Perform MC Analysis
+    if (pLCMCCollection != NULL)
+    {
+        try
+        {
+            MCAnalysis *pMCAnalysis = new MCAnalysis(pLCMCCollection,m_pVariables);
+            delete pMCAnalysis;
+        }
+        catch (...)
+        {
+            streamlog_out(ERROR) << "Problem in MC analysis involving collection: " << m_particleCollectionMC << std::endl;
+        }
+    }
 
     // PFO Collection
     const EVENT::LCCollection *pLCCollectionPFOs = NULL;
@@ -161,12 +192,14 @@ void AnalysisProcessor::processEvent(LCEvent *pLCEvent)
     const EVENT::LCCollection *pLCCollection6Jet = NULL;
     const EVENT::LCCollection *pLCCollection4Jet = NULL;
     const EVENT::LCCollection *pLCCollection2Jet = NULL;
+    const EVENT::LCCollection *pRecoMCTruthLinkCollection = NULL;
 
     try
     {
         pLCCollection6Jet = pLCEvent->getCollection(m_particleCollection6Jet);
         pLCCollection4Jet = pLCEvent->getCollection(m_particleCollection4Jet);
         pLCCollection2Jet = pLCEvent->getCollection(m_particleCollection2Jet);
+        pRecoMCTruthLinkCollection = pLCEvent->getCollection(m_recoMCTruthLinkCollection);
     }
     catch (...)
     {
@@ -174,7 +207,7 @@ void AnalysisProcessor::processEvent(LCEvent *pLCEvent)
     }
 
     // Perform Checks and Jet Analysis
-    if (pLCCollection6Jet != NULL or pLCCollection4Jet != NULL or pLCCollection2Jet != NULL)
+    if (pLCCollection6Jet != NULL or pLCCollection4Jet != NULL or pLCCollection2Jet != NULL or pRecoMCTruthLinkCollection != NULL)
     {
         try
         {
@@ -185,39 +218,14 @@ void AnalysisProcessor::processEvent(LCEvent *pLCEvent)
             if (pLCCollection2Jet->getNumberOfElements() != 2)
                 throw pLCCollection2Jet->getNumberOfElements();
 
-            JetAnalysis *pJetAnalysis = new JetAnalysis(pLCCollection4Jet, m_pVariables);
+            JetAnalysis *pJetAnalysis = new JetAnalysis(pLCCollection4Jet, m_pVariables, pRecoMCTruthLinkCollection);
             PartialJetAnalysis *pPartialJetAnalysis6Jet =  new PartialJetAnalysis(pLCCollection6Jet, m_pVariables, 6);
             PartialJetAnalysis *pPartialJetAnalysis2Jet =  new PartialJetAnalysis(pLCCollection2Jet, m_pVariables, 2);
             delete pJetAnalysis, pPartialJetAnalysis6Jet, pPartialJetAnalysis2Jet;
         }
         catch (int error)
         {
-            streamlog_out(ERROR) << "Error in jet clustering or jet analyses.  " << error << " jets found.  Expecting 6, 4 or 2 jets." << std::endl;
-        }
-    }
-
-    // MC Collection 
-    const EVENT::LCCollection *pLCMCCollection = NULL;
-    try
-    {
-        pLCMCCollection = pLCEvent->getCollection(m_particleCollectionMC);
-    }
-    catch (...)
-    {
-        streamlog_out(ERROR) << "Could not extract input particle collection: " << m_particleCollectionMC << std::endl;
-    }
-
-    // Perform MC Analysis
-    if (pLCMCCollection != NULL)
-    {
-        try
-        {
-            MCAnalysis *pMCAnalysis = new MCAnalysis(pLCMCCollection,m_pVariables);
-            delete pMCAnalysis;
-        }
-        catch (...)
-        {
-            streamlog_out(ERROR) << "Problem in MC analysis involving collection: " << m_particleCollectionMC << std::endl;
+            streamlog_out(ERROR) << "Error in jet clustering or jet analyses.  " << error << " jets found.  Expecting 6, 4 or 2 jets.  If sensible error possibly in RecoMCTruthLinkCollection" << std::endl;
         }
     }
 

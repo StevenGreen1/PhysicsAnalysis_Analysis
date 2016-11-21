@@ -47,7 +47,9 @@ MCAnalysis::~MCAnalysis()
 
 void MCAnalysis::Process()
 {
+    this->SetMCQuarkMap();
     this->QuarkPairing();
+    this->QuarkVariables();
 
     this->CalculateMCTransverseMomentum();
     this->CalculateMCTransverseEnergy();
@@ -56,6 +58,46 @@ void MCAnalysis::Process()
     this->IsMCEventWW();
     this->IsMCEventZZ();
     this->DefineMCVariablesOfInterest();
+}
+
+//===========================================================
+
+void MCAnalysis::SetMCQuarkMap()
+{
+    for (MCParticleVector::const_iterator iter = m_quarkMCParticleVector.begin(); iter != m_quarkMCParticleVector.end(); iter++)
+    {
+        const EVENT::MCParticle* pMCParticle(*iter);
+        this->MapMCParticleVector(pMCParticle, pMCParticle);
+    }
+
+    m_pVariables->SetMCParticleToQuarkMap(m_mcParticleToQuarkMap);
+}
+
+//===========================================================
+
+void MCAnalysis::MapMCParticleVector(const EVENT::MCParticle *pMCParticle, const EVENT::MCParticle *pMCQuark)
+{
+    LcioMCParticleVector mcParticleDaughters(pMCParticle->getDaughters());
+
+    for (LcioMCParticleVector::iterator mcParticleDaughter = mcParticleDaughters.begin(); mcParticleDaughter != mcParticleDaughters.end(); mcParticleDaughter++)
+    {
+        EVENT::MCParticle *pMCParticleDaughter(*mcParticleDaughter);
+
+        if (m_mcParticleToQuarkMap.find(pMCParticleDaughter) == m_mcParticleToQuarkMap.end()) 
+        {
+            MCParticleVector *pMCParticleVector = new MCParticleVector();
+            pMCParticleVector->push_back(pMCQuark);
+            m_mcParticleToQuarkMap.insert(std::make_pair(pMCParticleDaughter, pMCParticleVector));
+        }
+        else 
+        {
+            if (std::find(m_mcParticleToQuarkMap.at(pMCParticleDaughter)->begin(), m_mcParticleToQuarkMap.at(pMCParticleDaughter)->end(), pMCQuark) == m_mcParticleToQuarkMap.at(pMCParticleDaughter)->end())
+                m_mcParticleToQuarkMap.at(pMCParticleDaughter)->push_back(pMCQuark);
+        }
+
+        if (pMCParticleDaughter->getDaughters().size() > 0)
+            this->MapMCParticleVector(pMCParticleDaughter, pMCQuark);
+    }
 }
 
 //===========================================================
@@ -91,8 +133,9 @@ void MCAnalysis::QuarkPairing()
         this->FindMCInvariantMass(trialPair1, invariantMass1);
         this->FindMCInvariantMass(trialPair2, invariantMass2);
 
-        const double wMetric((fabs(invariantMass1-m_wBosonMass))*fabs(invariantMass2-m_wBosonMass));
-        const double zMetric((fabs(invariantMass1-m_zBosonMass))*fabs(invariantMass2-m_zBosonMass));
+        const double wMetric(std::sqrt((invariantMass1-m_wBosonMass)*(invariantMass1-m_wBosonMass) + (invariantMass2-m_wBosonMass)*(invariantMass2-m_wBosonMass)));
+        const double zMetric(std::sqrt((invariantMass1-m_zBosonMass)*(invariantMass1-m_zBosonMass) + (invariantMass2-m_zBosonMass)*(invariantMass2-m_zBosonMass)));
+
 
         if (wMetric < bestWMetric)
         {
@@ -117,6 +160,54 @@ void MCAnalysis::QuarkPairing()
 
     m_pVariables->SetInvariantMassWBosonsMC(bestWMasses);
     m_pVariables->SetInvariantMassZBosonsMC(bestZMasses);
+}
+
+//===========================================================
+
+void MCAnalysis::QuarkVariables()
+{
+    DoubleVector energyQuarks, pxMomentumQuarks, pyMomentumQuarks, pzMomentumQuarks;
+
+    for (MCParticleVector::iterator iter = m_quarkMCParticleVector.begin(); iter != m_quarkMCParticleVector.end(); iter++)
+    {
+        const EVENT::MCParticle* pMCParticle(*iter);
+        const double px(pMCParticle->getMomentum()[0]);
+        const double py(pMCParticle->getMomentum()[1]);
+        const double pz(pMCParticle->getMomentum()[2]);
+        const double energy(pMCParticle->getEnergy());
+
+        energyQuarks.push_back(energy);
+        pxMomentumQuarks.push_back(px);
+        pyMomentumQuarks.push_back(py);
+        pzMomentumQuarks.push_back(pz);
+    }
+
+    m_pVariables->SetEnergyQuarks(energyQuarks);
+    m_pVariables->SetMomentumQuarks(pxMomentumQuarks, pyMomentumQuarks, pzMomentumQuarks);
+}
+
+//===========================================================
+
+void MCAnalysis::NeutrinoVariables()
+{
+    DoubleVector energyNeutrinos, pxMomentumNeutrinos, pyMomentumNeutrinos, pzMomentumNeutrinos;
+
+    for (MCParticleVector::iterator iter = m_quarkMCParticleVector.begin(); iter != m_quarkMCParticleVector.end(); iter++)
+    {
+        const EVENT::MCParticle* pMCParticle(*iter);
+        const double px(pMCParticle->getMomentum()[0]);
+        const double py(pMCParticle->getMomentum()[1]);
+        const double pz(pMCParticle->getMomentum()[2]);
+        const double energy(pMCParticle->getEnergy());
+
+        energyNeutrinos.push_back(energy);
+        pxMomentumNeutrinos.push_back(px);
+        pyMomentumNeutrinos.push_back(py);
+        pzMomentumNeutrinos.push_back(pz);
+    }
+
+    m_pVariables->SetEnergyNeutrinos(energyNeutrinos);
+    m_pVariables->SetMomentumNeutrinos(pxMomentumNeutrinos, pyMomentumNeutrinos, pzMomentumNeutrinos);
 }
 
 //===========================================================

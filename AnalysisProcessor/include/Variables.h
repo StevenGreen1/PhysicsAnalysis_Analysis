@@ -11,9 +11,11 @@
 
 #include <iostream>
 #include <limits>
+#include <map>
 #include <vector>
 
 #include "EVENT/LCParameters.h"
+#include "EVENT/MCParticle.h"
 
 #include "TInterpreter.h"
 #include "TTree.h"
@@ -23,6 +25,8 @@ namespace variables_namespace
     typedef std::vector<int> IntVector;
     typedef std::vector<float> FloatVector;
     typedef std::vector<double> DoubleVector;
+    typedef std::vector<const EVENT::MCParticle*> MCParticleVector;
+    typedef std::map<const EVENT::MCParticle*, MCParticleVector*> MCParticleToMCParticleMap;
 }
 
 using namespace variables_namespace;
@@ -1499,16 +1503,70 @@ class Variables
         DoubleVector GetCTagForJets() const;
 
         /**
-         *  @brief Set
+         *  @brief Set m_energyNeutrinos
          *
-         *  @param
+         *  @param energyNeutrinos Energy of neutrinos
          */
-//        void Set(DoubleVector );
+        void SetEnergyNeutrinos(DoubleVector energyNeutrinos);
 
         /**
-         *  @brief Get
+         *  @brief Get m_energyNeutrinos
          */
-//        DoubleVector Get();
+        DoubleVector GetEnergyNeutrinos() const;
+
+        /**
+         *  @brief Set m_pxMomentumNeutrinos, m_pyMomentumNeutrinos, m_pzMomentumNeutrinos
+         *
+         *  @param pxMomentumNeutrinos Px of neutrinos
+         *  @param pyMomentumNeutrinos Py of neutrinos
+         *  @param pzMomentumNeutrinos Pz of neutrinos
+         */
+        void SetMomentumNeutrinos(DoubleVector pxMomentumNeutrinos, DoubleVector pyMomentumNeutrinos, DoubleVector pzMomentumNeutrinos);
+
+        /**
+         *  @brief Set m_energyQuarks
+         *
+         *  @param energyQuarks Energy of neutrinos
+         */
+        void SetEnergyQuarks(DoubleVector energyQuarks);
+
+        /**
+         *  @brief Get m_energyQuarks
+         */
+        DoubleVector GetEnergyQuarks() const;
+
+        /**
+         *  @brief Set m_pxMomentumQuarks, m_pyMomentumQuarks, m_pzMomentumQuarks
+         *
+         *  @param pxMomentumQuarks Px of neutrinos
+         *  @param pyMomentumQuarks Py of neutrinos
+         *  @param pzMomentumQuarks Pz of neutrinos
+         */
+        void SetMomentumQuarks(DoubleVector pxMomentumQuarks, DoubleVector pyMomentumQuarks, DoubleVector pzMomentumQuarks);
+
+        /**
+         *  @brief Set m_mcParticleToQuarkMap
+         *
+         *  @param mcParticleToQuarkMap
+         */
+        void SetMCParticleToQuarkMap(MCParticleToMCParticleMap mcParticleToQuarkMap);
+
+        /**
+         *  @brief Get m_mcParticleToQuarkMap
+         */
+        MCParticleToMCParticleMap GetMCParticleToQuarkMap() const;
+
+        /**
+         *  @brief Set m_cheatedInvMasses
+         *
+         *  @param cheatedInvMasses chated invaraint masses
+         */
+        void SetCheatedInvMasses(DoubleVector cheatedInvMasses);
+
+        /**
+         *  @brief Get m_cheatedInvMasses
+         */
+        DoubleVector GetCheatedInvMasses() const;
 
     private:
         bool             m_appropriateEvent;                             ///< Does event pass a series of cuts suggesting it has a vvqqqq final state? - JetAnalysis
@@ -1637,6 +1695,16 @@ class Variables
         DoubleVector     m_cosThetaStarZJets;                            ///< Cosine of the polar angle of the q jets in the reference frome of the Z bosons - JetAnalysis
         DoubleVector     m_bTagForJets;                                  ///< B tag value for the jets in the event - JetAnalysis
         DoubleVector     m_cTagForJets;                                  ///< C tag value for the jets in the event - JetAnalysis
+        DoubleVector     m_energyNeutrinos;                              ///< Energy of neutrinos
+        DoubleVector     m_pxMomentumNeutrinos;                          ///< Px of neutrinos
+        DoubleVector     m_pyMomentumNeutrinos;                          ///< Py of neutrinos
+        DoubleVector     m_pzMomentumNeutrinos;                          ///< Pz of neutrinos
+        DoubleVector     m_energyQuarks;                                 ///< Energy of quarks
+        DoubleVector     m_pxMomentumQuarks;                             ///< Px of quarks
+        DoubleVector     m_pyMomentumQuarks;                             ///< Py of quarks
+        DoubleVector     m_pzMomentumQuarks;                             ///< Pz of quarks
+        DoubleVector     m_cheatedInvMasses;                             ///< Cheated inv masses
+        MCParticleToMCParticleMap m_mcParticleToQuarkMap;                ///< Map of MC particles to quarks
 };
 
 #endif // #ifndef VARIABLES_H

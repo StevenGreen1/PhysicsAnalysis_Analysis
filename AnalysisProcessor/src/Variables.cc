@@ -326,6 +326,41 @@ void Variables::SetBranches(TTree *pTTree)
     pTTree->Branch("MinCTagForBosonZ1", &m_minCTagForBosonZ1, "MinCTagForBosonZ1/D");
     pTTree->Branch("MaxCTagForBosonZ2", &m_maxCTagForBosonZ2, "MaxCTagForBosonZ2/D");
     pTTree->Branch("MinCTagForBosonZ2", &m_minCTagForBosonZ2, "MinCTagForBosonZ2/D");
+    m_energyNeutrinos.resize(2);
+    m_pxMomentumNeutrinos.resize(2);
+    m_pyMomentumNeutrinos.resize(2);
+    m_pzMomentumNeutrinos.resize(2);
+    pTTree->Branch("NeutrinoEnergy1", &m_energyNeutrinos.at(0), "NeutrinoEnergy1/D");
+    pTTree->Branch("NeutrinoPx1", &m_pxMomentumNeutrinos.at(0), "NeutrinoPx1/D");
+    pTTree->Branch("NeutrinoPy1", &m_pyMomentumNeutrinos.at(0), "NeutrinoPy1/D");
+    pTTree->Branch("NeutrinoPz1", &m_pzMomentumNeutrinos.at(0), "NeutrinoPz1/D");
+    pTTree->Branch("NeutrinoEnergy2", &m_energyNeutrinos.at(1), "NeutrinoEnergy2/D");
+    pTTree->Branch("NeutrinoPx2", &m_pxMomentumNeutrinos.at(1), "NeutrinoPx2/D");
+    pTTree->Branch("NeutrinoPy2", &m_pyMomentumNeutrinos.at(1), "NeutrinoPy2/D");
+    pTTree->Branch("NeutrinoPz2", &m_pzMomentumNeutrinos.at(1), "NeutrinoPz2/D");
+    m_energyQuarks.resize(4);
+    m_pxMomentumQuarks.resize(4);
+    m_pyMomentumQuarks.resize(4);
+    m_pzMomentumQuarks.resize(4);
+    pTTree->Branch("QuarkEnergy1", &m_energyQuarks.at(0), "QuarkEnergy1/D");
+    pTTree->Branch("QuarkPx1", &m_pxMomentumQuarks.at(0), "QuarkPx1/D");
+    pTTree->Branch("QuarkPy1", &m_pyMomentumQuarks.at(0), "QuarkPy1/D");
+    pTTree->Branch("QuarkPz1", &m_pzMomentumQuarks.at(0), "QuarkPz1/D");
+    pTTree->Branch("QuarkEnergy2", &m_energyQuarks.at(1), "QuarkEnergy2/D");
+    pTTree->Branch("QuarkPx2", &m_pxMomentumQuarks.at(1), "QuarkPx2/D");
+    pTTree->Branch("QuarkPy2", &m_pyMomentumQuarks.at(1), "QuarkPy2/D");
+    pTTree->Branch("QuarkPz2", &m_pzMomentumQuarks.at(1), "QuarkPz2/D");
+    pTTree->Branch("QuarkEnergy3", &m_energyQuarks.at(2), "QuarkEnergy3/D");
+    pTTree->Branch("QuarkPx3", &m_pxMomentumQuarks.at(2), "QuarkPx3/D");
+    pTTree->Branch("QuarkPy3", &m_pyMomentumQuarks.at(2), "QuarkPy3/D");
+    pTTree->Branch("QuarkPz3", &m_pzMomentumQuarks.at(2), "QuarkPz3/D");
+    pTTree->Branch("QuarkEnergy4", &m_energyQuarks.at(3), "QuarkEnergy4/D");
+    pTTree->Branch("QuarkPx4", &m_pxMomentumQuarks.at(3), "QuarkPx4/D");
+    pTTree->Branch("QuarkPy4", &m_pyMomentumQuarks.at(3), "QuarkPy4/D");
+    pTTree->Branch("QuarkPz4", &m_pzMomentumQuarks.at(3), "QuarkPz4/D");
+    m_cheatedInvMasses.resize(2);
+    pTTree->Branch("ChatedInvMass1", &m_cheatedInvMasses.at(0), "ChatedInvMass1/D");
+    pTTree->Branch("ChatedInvMass2", &m_cheatedInvMasses.at(1), "ChatedInvMass2/D");
 
 //    pTTree->Branch("", &, "/D");
 // DoubleVectors
@@ -516,6 +551,17 @@ void Variables::Clear()
     m_cosThetaStarZJets.clear();
     m_bTagForJets.clear();
     m_cTagForJets.clear();
+    m_energyNeutrinos.clear();
+    m_pxMomentumNeutrinos.clear();
+    m_pyMomentumNeutrinos.clear();
+    m_pzMomentumNeutrinos.clear();
+    m_energyQuarks.clear();
+    m_pxMomentumQuarks.clear();
+    m_pyMomentumQuarks.clear();
+    m_pzMomentumQuarks.clear();
+    m_cheatedInvMasses.clear();
+
+    m_mcParticleToQuarkMap.clear();
 }
 
 //===========================================================
@@ -2244,4 +2290,79 @@ DoubleVector Variables::GetCTagForJets() const
 }
 
 //===========================================================
+
+void Variables::SetEnergyNeutrinos(DoubleVector energyNeutrinos)
+{
+    m_energyNeutrinos = energyNeutrinos;
+}
+
+//===========================================================
+
+DoubleVector Variables::GetEnergyNeutrinos() const
+{
+    return m_energyNeutrinos;
+}
+
+//===========================================================
+
+void Variables::SetMomentumNeutrinos(DoubleVector pxMomentumNeutrinos, DoubleVector pyMomentumNeutrinos, DoubleVector pzMomentumNeutrinos)
+{
+    m_pxMomentumNeutrinos = pxMomentumNeutrinos;
+    m_pyMomentumNeutrinos = pyMomentumNeutrinos;
+    m_pzMomentumNeutrinos = pzMomentumNeutrinos;
+}
+
+//===========================================================
+
+void Variables::SetEnergyQuarks(DoubleVector energyQuarks)
+{
+    m_energyQuarks = energyQuarks;
+}
+
+//===========================================================
+
+DoubleVector Variables::GetEnergyQuarks() const
+{
+    return m_energyQuarks;
+}
+
+//===========================================================
+
+void Variables::SetMomentumQuarks(DoubleVector pxMomentumQuarks, DoubleVector pyMomentumQuarks, DoubleVector pzMomentumQuarks)
+{
+    m_pxMomentumQuarks = pxMomentumQuarks;
+    m_pyMomentumQuarks = pyMomentumQuarks;
+    m_pzMomentumQuarks = pzMomentumQuarks;
+}
+
+//===========================================================
+
+void Variables::SetCheatedInvMasses(DoubleVector cheatedInvMasses)
+{
+    m_cheatedInvMasses = cheatedInvMasses;
+}
+
+//===========================================================
+
+DoubleVector Variables::GetCheatedInvMasses() const
+{
+    return m_cheatedInvMasses;
+}
+
+//===========================================================
+
+void Variables::SetMCParticleToQuarkMap(MCParticleToMCParticleMap mcParticleToQuarkMap)
+{
+    m_mcParticleToQuarkMap = mcParticleToQuarkMap;
+}
+
+//===========================================================
+
+MCParticleToMCParticleMap Variables::GetMCParticleToQuarkMap() const
+{
+    return m_mcParticleToQuarkMap;
+}
+
+//===========================================================
+
 

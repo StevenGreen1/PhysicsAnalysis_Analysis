@@ -9,11 +9,16 @@
 #ifndef JET_ANALYSIS_H
 #define JET_ANALYSIS_H 1
 
+#include <cmath>
+#include <map>
 #include <string>
 #include <vector>
 
 #include "EVENT/LCCollection.h"
 #include "EVENT/ReconstructedParticle.h"
+#include "EVENT/MCParticle.h"
+
+#include "UTIL/LCRelationNavigator.h"
 #include "UTIL/PIDHandler.h"
 
 #include "TLorentzVector.h"
@@ -26,15 +31,24 @@
 class JetAnalysis 
 {
     typedef std::vector<const EVENT::ReconstructedParticle*> ParticleVector;
+    typedef std::vector<const EVENT::MCParticle*> MCParticleVector;
     typedef std::map<const EVENT::ReconstructedParticle*, double> ParticleToFloatMap;
     typedef std::vector<double> DoubleVector;
+    typedef std::map<const EVENT::MCParticle*, MCParticleVector*> MCParticleToMCParticleMap;
+    typedef std::map<const EVENT::MCParticle*, float> MCParticleToFloatMap;
+    typedef std::map<const EVENT::ReconstructedParticle*, std::map<const EVENT::MCParticle*, float> > ParticleToMCParticleToFloatMap;
+    typedef std::map<const EVENT::ReconstructedParticle*, const EVENT::MCParticle*> ParticleToMCParticleMap;
 //    typedef std::vector<int> IntVector;
 
     public:
         /**
          *  @brief Constructor
+         *
+         *  @param pLCCollection Jet collection
+         *  @param variable class containing useful parameters
+         *  @param pRecoMCTruthLinkCollection pointer to mc reco truth linker
          */
-        JetAnalysis(const EVENT::LCCollection *pLCCollection, Variables *&variables);
+        JetAnalysis(const EVENT::LCCollection *pLCCollection, Variables *&variables, const EVENT::LCCollection *pRecoMCTruthLinkCollection);
 
         /**
          *  @brief Destructor
@@ -78,6 +92,30 @@ class JetAnalysis
          *  @brief Find best pairing of lcio particles to form either two W bosons or two Z bosons
          */
         void JetPairing();
+
+        /**
+         *  @brief Cheat the jet pairing 
+         */
+        void CheatedJetPairing();
+
+        /**
+         *  @brief Pair up jets to MC quarks and populate particle to MC particle to weight map
+         */
+        void SetJetToMCRelations();
+
+        /**
+         *  @brief Logic to decide best jet pairing based on MC weight information
+         */
+        void SetBestCheatedPairing();
+
+        /**
+         *  @brief Pair up the jet to the two quarks contributing the largest weight
+         *
+         *  @param jets vector of jets to pair
+         *  @param bestQuarks1 vector of highest contributing weight quark to jet
+         *  @param bestQuarks2 vector of second highest contributing weight quark to jet
+         */
+        void SetJetBestQuarks(ParticleVector &jets, MCParticleVector &bestQuarks1, MCParticleVector &bestQuarks2) const;
 
         /**
          *  @brief Calculate the energy of the W/Z bosons
@@ -283,20 +321,22 @@ class JetAnalysis
          */
         void DefineEnergy4Vec(ParticleVector &jetVector, TLorentzVector &tLorentzVector) const;
 
-        ParticleVector        m_jetVector;         ///< Vector of 4 jets from fastjet
-        Variables            *m_pVariables;        ///< Variables of interest to set for analysis
-        ParticleVector        m_wVector1;          ///< First W candidate
-        ParticleVector        m_wVector2;          ///< Second W candidate
-        ParticleVector        m_zVector1;          ///< First Z candidate
-        ParticleVector        m_zVector2;          ///< Second Z candidate
-        ParticleToFloatMap    m_particleToBTag;    ///< Jet to B tag value
-        ParticleToFloatMap    m_particleToCTag;    ///< Jet to C tag value
-        const double          m_wBosonMass;        ///< W boson mass used for jet pairing
-        const double          m_zBosonMass;        ///< Z boson mass used for jet pairing
-        const double          m_crossingAngle;     ///< Crossing angle for CLIC ILD, radians 
-        const double          m_eventEnergyMC;     ///< MC event energy excluding beam effects
-        const double          m_coneAngle;         ///< Cone angle needed for cone energy measurement, degrees
-        double                m_y34;               ///< Jet clustering variable
+        ParticleVector                         m_jetVector;              ///< Vector of 4 jets from fastjet
+        Variables                             *m_pVariables;             ///< Variables of interest to set for analysis
+        UTIL::LCRelationNavigator             *m_pRecoMCNavigator;       ///< The reco to mc linker
+        ParticleVector                         m_wVector1;               ///< First W candidate
+        ParticleVector                         m_wVector2;               ///< Second W candidate
+        ParticleVector                         m_zVector1;               ///< First Z candidate
+        ParticleVector                         m_zVector2;               ///< Second Z candidate
+        ParticleToFloatMap                     m_particleToBTag;         ///< Jet to B tag value
+        ParticleToFloatMap                     m_particleToCTag;         ///< Jet to C tag value
+        ParticleToMCParticleToFloatMap         m_jetToQuarkToWeightMap;  ///< Map of jet to quark parent to weight 
+        const double                           m_wBosonMass;             ///< W boson mass used for jet pairing
+        const double                           m_zBosonMass;             ///< Z boson mass used for jet pairing
+        const double                           m_crossingAngle;          ///< Crossing angle for CLIC ILD, radians 
+        const double                           m_eventEnergyMC;          ///< MC event energy excluding beam effects
+        const double                           m_coneAngle;              ///< Cone angle needed for cone energy measurement, degrees
+        double                                 m_y34;                    ///< Jet clustering variable
 };
 
 #endif // #ifndef JET_ANALYSIS_H

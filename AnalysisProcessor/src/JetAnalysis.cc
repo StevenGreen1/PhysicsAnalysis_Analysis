@@ -10,7 +10,7 @@
 
 //===========================================================
 
-JetAnalysis::JetAnalysis(const EVENT::LCCollection *pLCCollection, Variables *&variables):
+JetAnalysis::JetAnalysis(const EVENT::LCCollection *pLCCollection, Variables *&variables, const EVENT::LCCollection *pRecoMCTruthLinkCollection):
     m_pVariables(variables),
     m_wBosonMass(80.385f),
     m_zBosonMass(91.1876f),
@@ -19,6 +19,9 @@ JetAnalysis::JetAnalysis(const EVENT::LCCollection *pLCCollection, Variables *&v
     m_coneAngle(10.0),
     m_y34(std::numeric_limits<double>::max())
 {
+    if (pRecoMCTruthLinkCollection != NULL)
+        m_pRecoMCNavigator = new UTIL::LCRelationNavigator(pRecoMCTruthLinkCollection);
+
     if (pLCCollection->getNumberOfElements() == 4)
     {
         m_jetVector.push_back(dynamic_cast<EVENT::ReconstructedParticle*>(pLCCollection->getElementAt(0)));
@@ -42,6 +45,7 @@ JetAnalysis::~JetAnalysis()
     m_zVector2.clear();
     m_particleToBTag.clear();
     m_particleToCTag.clear();
+    m_jetToQuarkToWeightMap.clear();
 }
 
 //===========================================================
@@ -52,6 +56,7 @@ void JetAnalysis::ProcessJets(const EVENT::LCCollection *pLCCollection)
     this->CalculateFlavourTagging(pLCCollection);
     this->JetVariables();
     this->JetPairing();
+    this->CheatedJetPairing();
 }
 
 //===========================================================
@@ -258,6 +263,358 @@ void JetAnalysis::JetPairing()
     m_pVariables->SetInvMassZVectors(bestZMasses);
 }
 
+//===========================================================
+
+void JetAnalysis::CheatedJetPairing()
+{
+    m_jetToQuarkToWeightMap.clear();
+    this->SetJetToMCRelations();
+    this->SetBestCheatedPairing();
+}
+
+//===========================================================
+
+void JetAnalysis::SetJetToMCRelations()
+{
+    const MCParticleToMCParticleMap &mcParticleToQuarkMap(m_pVariables->GetMCParticleToQuarkMap());
+
+    for (ParticleVector::iterator iterJet = m_jetVector.begin(); iterJet != m_jetVector.end(); iterJet++)
+    {
+        const EVENT::ReconstructedParticle *pJet(*iterJet);
+
+        for (EVENT::ReconstructedParticleVec::const_iterator iterPart = pJet->getParticles().begin(); iterPart != pJet->getParticles().end(); ++iterPart)
+        {
+            EVENT::ReconstructedParticle *pReconstructedParticle(*iterPart);
+            const EVENT::LCObjectVec &mcParticleVec(m_pRecoMCNavigator->getRelatedToObjects(pReconstructedParticle));
+            const EVENT::FloatVec &mvParticleWeightsVec(m_pRecoMCNavigator->getRelatedToWeights(pReconstructedParticle));
+
+            if (mcParticleVec.empty()) 
+                continue;
+
+            double weightSum(0.f);
+
+            for (EVENT::LCObjectVec::const_iterator iterMCPart = mcParticleVec.begin(); iterMCPart != mcParticleVec.end(); iterMCPart++)
+            {
+                weightSum += mvParticleWeightsVec.at(iterMCPart-mcParticleVec.begin());
+            }
+
+            for (EVENT::LCObjectVec::const_iterator iterMCPart = mcParticleVec.begin(); iterMCPart != mcParticleVec.end(); iterMCPart++)
+            {
+                int position(iterMCPart-mcParticleVec.begin());
+                const double weight(mvParticleWeightsVec.at(position) / weightSum);
+                const EVENT::MCParticle *pMCParticle(dynamic_cast<EVENT::MCParticle*>(*iterMCPart));
+
+                if (pMCParticle == NULL)
+                    continue;
+
+                if (mcParticleToQuarkMap.find(pMCParticle) == mcParticleToQuarkMap.end())
+                    continue;
+
+                MCParticleVector *pQuarkParentMCParticles(mcParticleToQuarkMap.at(pMCParticle));
+
+                for (MCParticleVector::const_iterator iterQuarkParents = pQuarkParentMCParticles->begin(); iterQuarkParents != pQuarkParentMCParticles->end(); iterQuarkParents++)
+                {
+                    const EVENT::MCParticle *pQuarkParentMCParticle(*iterQuarkParents); 
+
+                    if (m_jetToQuarkToWeightMap.find(pJet) == m_jetToQuarkToWeightMap.end())
+                    {
+                        MCParticleToFloatMap mcToFloatMap;
+                        mcToFloatMap.insert(std::make_pair(pQuarkParentMCParticle, pReconstructedParticle->getEnergy()*weight));
+                        m_jetToQuarkToWeightMap.insert(std::make_pair(pJet, mcToFloatMap));
+                    }
+                    else
+                    {
+                        if (m_jetToQuarkToWeightMap.at(pJet).find(pQuarkParentMCParticle) == m_jetToQuarkToWeightMap.at(pJet).end())
+                        {
+                            m_jetToQuarkToWeightMap.at(pJet).insert(std::make_pair(pQuarkParentMCParticle, pReconstructedParticle->getEnergy()*weight));
+                        }
+                        else
+                        {
+                            m_jetToQuarkToWeightMap.at(pJet).at(pQuarkParentMCParticle) += pReconstructedParticle->getEnergy()*weight;
+                        }
+	            }
+                }
+            }
+        }
+    }
+}
+
+//===========================================================
+
+void JetAnalysis::SetBestCheatedPairing()
+{
+    ParticleVector jets;
+    MCParticleVector bestQuarks1, bestQuarks2;
+    this->SetJetBestQuarks(jets, bestQuarks1, bestQuarks2);
+
+    // Match jets sharing the best two pairs of quarks 
+    ParticleVector cheatedPair1, cheatedPair2;
+    bool successfulPairing(true);
+
+    for (unsigned int i = 0; i < jets.size(); i++)
+    {
+        for (unsigned int j = i+1; j < jets.size(); j++)
+        {
+            const EVENT::ReconstructedParticle *pJetA(jets.at(i)), *pJetB(jets.at(j));
+            const EVENT::MCParticle *pBestQuark1JetA(bestQuarks1.at(i)), *pBestQuark2JetA(bestQuarks2.at(i)), *pBestQuark1JetB(bestQuarks1.at(j)), *pBestQuark2JetB(bestQuarks2.at(j));
+//            const EVENT::MCParticle *pBestQuark2JetA(bestQuarks2.at(i));
+//            const EVENT::ReconstructedParticle *pJetB(jets.at(j));
+//            const EVENT::MCParticle *pBestQuark1JetB(bestQuarks1.at(j));
+//            const EVENT::MCParticle *pBestQuark2JetB(bestQuarks2.at(j));
+
+            if (std::find(cheatedPair1.begin(), cheatedPair1.end(), pJetA) != cheatedPair1.end() || std::find(cheatedPair1.begin(), cheatedPair1.end(), pJetB) != cheatedPair1.end() || std::find(cheatedPair2.begin(), cheatedPair2.end(), pJetA) != cheatedPair2.end() || std::find(cheatedPair2.begin(), cheatedPair2.end(), pJetB) != cheatedPair2.end())
+                continue;
+
+//std::cout << "i " << i << " j " << j << std::endl;
+//std::cout << "pJetA->getEnergy() " << pJetA->getEnergy() << " pJetB->getEnergy() " << pJetB->getEnergy() << std::endl;
+//std::cout << "pBestQuark1JetA->getEnergy()  " << pBestQuark1JetA->getEnergy() << " pBestQuark2JetA->getEnergy()  " << pBestQuark2JetA->getEnergy() << std::endl;
+//std::cout << "pBestQuark1JetB->getEnergy()  " << pBestQuark1JetB->getEnergy() << " pBestQuark2JetB->getEnergy()  " << pBestQuark2JetB->getEnergy() << std::endl;
+
+            if (pBestQuark1JetA == pBestQuark1JetB || pBestQuark1JetA == pBestQuark2JetB || pBestQuark2JetA == pBestQuark1JetB || pBestQuark2JetA == pBestQuark2JetB)
+            {
+                if (cheatedPair1.empty())
+                {
+                    cheatedPair1.push_back(pJetA);
+                    cheatedPair1.push_back(pJetB);
+                }
+                else if (cheatedPair2.empty())
+                {
+                    cheatedPair2.push_back(pJetA);
+                    cheatedPair2.push_back(pJetB);
+                }
+                else
+                {
+                    std::cout << "Jets too heavily mixed at MC level to give proper cheated pairing." << std::endl;
+                    successfulPairing = false;
+                }
+            }
+        }
+    }
+
+    // Calculate invariant masses of pairing
+    double cheatedInvariantMass1(0.0), cheatedInvariantMass2(0.0);
+    DoubleVector cheatedInvariantMasses;
+
+    if (cheatedPair1.size() == 2 && cheatedPair2.size() == 2 && successfulPairing)
+    {
+//std::cout << "cheatedPair1.at(0)->getEnergy() " << cheatedPair1.at(0)->getEnergy() << " cheatedPair1.at(1)->getEnergy() " << cheatedPair1.at(1)->getEnergy() << std::endl;
+//std::cout << "cheatedPair2.at(0)->getEnergy() " << cheatedPair2.at(0)->getEnergy() << " cheatedPair2.at(1)->getEnergy() " << cheatedPair2.at(1)->getEnergy() << std::endl;
+        this->FindInvariantMass(cheatedPair1, cheatedInvariantMass1);
+        this->FindInvariantMass(cheatedPair2, cheatedInvariantMass2);
+    }
+
+//    std::cout << "Cheated invariant masses " << cheatedInvariantMass1 << " and " << cheatedInvariantMass2 << std::endl;
+    cheatedInvariantMasses.push_back(cheatedInvariantMass1);
+    cheatedInvariantMasses.push_back(cheatedInvariantMass2);
+    m_pVariables->SetCheatedInvMasses(cheatedInvariantMasses);
+}
+
+//===========================================================
+
+void JetAnalysis::SetJetBestQuarks(ParticleVector &jets, MCParticleVector &bestQuarks1, MCParticleVector &bestQuarks2) const
+{
+    // Work out quarks with best two weights as they come paired up in the generator
+    jets.clear();
+    bestQuarks1.clear();
+    bestQuarks2.clear();
+
+    for (ParticleToMCParticleToFloatMap::const_iterator iter = m_jetToQuarkToWeightMap.begin(); iter != m_jetToQuarkToWeightMap.end(); iter++)
+    {
+        const EVENT::ReconstructedParticle *pJet(iter->first);
+        double bestWeight1(0.f), bestWeight2(0.f);
+
+        MCParticleToFloatMap mcToWeightMap(iter->second);
+        const EVENT::MCParticle *pBestQuark1(NULL);
+        const EVENT::MCParticle *pBestQuark2(NULL);
+
+        for (MCParticleToFloatMap::const_iterator iterWeight = mcToWeightMap.begin(); iterWeight != mcToWeightMap.end(); iterWeight++)
+        {
+            const EVENT::MCParticle *pQuark(iterWeight->first);
+            const double weight(iterWeight->second);
+
+            if (bestWeight1 < weight)
+            {
+                bestWeight1 = weight;
+                pBestQuark1 = pQuark;
+            }
+            else if (bestWeight2 < weight)
+            {
+                bestWeight2 = weight;
+                pBestQuark2 = pQuark;
+            }
+        }
+
+        jets.push_back(pJet);
+        bestQuarks1.push_back(pBestQuark1);
+        bestQuarks2.push_back(pBestQuark2);
+    }
+}
+
+//===========================================================
+
+/*
+
+    typedef std::map<const EVENT::ReconstructedParticle*, const EVENT::MCParticle*> ParticleToMCMap;
+    typedef std::map<const EVENT::MCParticle*, const EVENT::ReconstructedParticle*> ParticleToMCMapRev;
+
+    ParticleToMCMap truePairing;
+    ParticleToMCMapRev truePairingRev;
+    MCParticleVector usedQuarks; 
+
+    typedef std::map<const EVENT::MCParticle*, const EVENT::MCParticle*> MCToMCMap;
+    MCToMCMap pairing;
+
+    for (ParticleToMCParticleToFloatMap::iterator iter = m_jetToQuarkToWeightMap.begin(); iter != m_jetToQuarkToWeightMap.end(); iter++)
+    {
+        const EVENT::ReconstructedParticle *pReconstructedParticle(iter->first);
+        double bestWeight(0.f);
+        MCParticleToFloatMap mcToWeightMap(iter->second);
+        const EVENT::MCParticle *pBestQuark = NULL;
+
+        for (MCParticleToFloatMap::const_iterator iterWeight = mcToWeightMap.begin(); iterWeight != mcToWeightMap.end(); iterWeight++)
+        {
+            const EVENT::MCParticle *pQuark(iterWeight->first);
+            const double weight(iterWeight->second);
+            std::cout << "pReconstructedParticle->getEnergy() " << pReconstructedParticle->getEnergy() << " pQuark->getPDG() " << pQuark->getPDG() << " weight " << weight << std::endl;
+
+            if (bestWeight < weight && std::find(usedQuarks.begin(), usedQuarks.end(), pQuark) == usedQuarks.end())
+            {
+                if (truePairing.find(pReconstructedParticle) == truePairing.end())
+                {
+                    truePairing.insert(std::make_pair(pReconstructedParticle, pQuark));
+                }
+                else
+                {
+                    truePairing.at(pReconstructedParticle) = pQuark;
+                }
+
+                if (truePairingRev.find(pQuark) == truePairingRev.end())
+                {
+                    truePairingRev.insert(std::make_pair(pQuark, pReconstructedParticle));
+                }
+                else
+                {
+                    truePairingRev.at(pQuark) = pReconstructedParticle;
+                }
+
+                usedQuarks.push_back(pQuark);
+                bestWeight = weight;
+                pBestQuark = pQuark;
+            }
+        }
+
+        for (MCParticleToFloatMap::const_iterator iterWeight = mcToWeightMap.begin(); iterWeight != mcToWeightMap.end(); iterWeight++)
+        {
+            const EVENT::MCParticle *pQuark(iterWeight->first);
+            const double weight(iterWeight->second);
+            if (weight - bestWeight < 0.01)
+            {
+                if (pairing.find(pQuark) == pairing.end() && pairing.find(pBestQuark) == pairing.end() && pQuark != pBestQuark)
+                {
+                    std::cout << "pairing " << pairing.size() << std::endl;
+                    std::cout << pBestQuark->getPDG() << " " << pQuark->getPDG() << std::endl;
+                    pairing.insert(std::make_pair(pBestQuark,pQuark));
+                }
+            }
+        }
+    }
+
+    ParticleVector trueJets;
+    MCParticleVector trueQuarks;
+
+    for (ParticleToMCMap::iterator iter = truePairing.begin(); iter != truePairing.end(); iter++)
+    {
+        std::cout << "Jet energy " << iter->first->getEnergy() << " is most likely " << iter->second->getPDG() << std::endl;
+        trueJets.push_back(iter->first);
+        trueQuarks.push_back(iter->second);
+    }
+
+    if (truePairing.size() == 4 and pairing.size() == 2)
+    {
+        double cheatedInvMass1(0.f);
+        double cheatedInvMass2(0.f);
+
+        const EVENT::MCParticle *pQuark1(NULL);
+        const EVENT::MCParticle *pQuark2(NULL);
+        const EVENT::MCParticle *pQuark3(NULL);
+        const EVENT::MCParticle *pQuark4(NULL);
+std::cout << "Here" << std::endl;
+        if (pairing.find(trueQuarks.at(0)) != pairing.end() and pQuark1 == NULL)
+        {
+            pQuark1 = trueQuarks.at(0);
+            pQuark2 = pairing.at(pQuark1);
+        }
+
+        else if (pairing.find(trueQuarks.at(0)) != pairing.end() and pQuark3 == NULL)
+        {
+            pQuark3 = trueQuarks.at(0);
+            pQuark4 = pairing.at(pQuark3);
+        }
+
+        if (pairing.find(trueQuarks.at(1)) != pairing.end() and pQuark1 == NULL)
+        {
+            pQuark1 = trueQuarks.at(1);
+            pQuark2 = pairing.at(pQuark1);
+        }
+
+        else if (pairing.find(trueQuarks.at(1)) != pairing.end() and pQuark3 == NULL)
+        {
+            pQuark3 = trueQuarks.at(1);
+            pQuark4 = pairing.at(pQuark3);
+        }
+
+        if (pairing.find(trueQuarks.at(2)) != pairing.end() and pQuark1 == NULL)
+        {
+            pQuark1 = trueQuarks.at(2);
+            pQuark2 = pairing.at(pQuark1);
+        }
+
+        else if (pairing.find(trueQuarks.at(2)) != pairing.end() and pQuark3 == NULL)
+        {
+            pQuark3 = trueQuarks.at(2);
+            pQuark4 = pairing.at(pQuark3);
+        }
+
+        if (pairing.find(trueQuarks.at(3)) != pairing.end() and pQuark1 == NULL)
+        {
+            pQuark1 = trueQuarks.at(3);
+            pQuark2 = pairing.at(pQuark1);
+        }
+
+        else if (pairing.find(trueQuarks.at(3)) != pairing.end() and pQuark3 == NULL)
+        {
+            pQuark3 = trueQuarks.at(3);
+            pQuark4 = pairing.at(pQuark3);
+        }
+
+std::cout << "Here2" << std::endl;
+        const EVENT::ReconstructedParticle *pReconstructedParticle1(truePairingRev.at(pQuark1));
+        const EVENT::ReconstructedParticle *pReconstructedParticle2(truePairingRev.at(pQuark2));
+        const EVENT::ReconstructedParticle *pReconstructedParticle3(truePairingRev.at(pQuark3));
+        const EVENT::ReconstructedParticle *pReconstructedParticle4(truePairingRev.at(pQuark4));
+
+        ParticleVector trialPair1, trialPair2;
+
+        trialPair1.push_back(pReconstructedParticle1);
+        trialPair1.push_back(pReconstructedParticle2);
+        trialPair2.push_back(pReconstructedParticle3);
+        trialPair2.push_back(pReconstructedParticle4);
+
+        double invariantMass1(0.0), invariantMass2(0.0);
+
+        DoubleVector vector;
+std::cout << "Here3" << std::endl;
+
+        this->FindInvariantMass(trialPair1, invariantMass1);
+        this->FindInvariantMass(trialPair2, invariantMass2);
+
+        vector.push_back(invariantMass1);
+        vector.push_back(invariantMass2);
+
+        m_pVariables->SetCheatedInvMasses(vector);
+    }
+}
+*/
 //===========================================================
 
 void JetAnalysis::CalculateBosonEnergies() 

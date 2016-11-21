@@ -82,6 +82,7 @@ class AnalysisProcessor : public Processor
         std::string         m_particleCollection6Jet;                  ///< Jet collection name when clustering into 6 jets 
         std::string         m_particleCollection4Jet;                  ///< Jet collection name when clustering into 4 jets
         std::string         m_particleCollection2Jet;                  ///< Jet collection name when clustering into 2 jets
+        std::string         m_recoMCTruthLinkCollection;               ///< Reco to MC truth link collection name
 
         // Outputs
         Variables          *m_pVariables;                              ///< Variables class containing all variables of interest
