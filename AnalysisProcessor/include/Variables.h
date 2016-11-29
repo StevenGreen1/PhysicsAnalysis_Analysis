@@ -256,6 +256,18 @@ class Variables
         IntVector GetJetCombinationZ() const;
 
         /**
+         *  @brief Set m_combinationSynergyJets
+         *
+         *  @param combinationSynergyJets The combination of jets that have the closest invariant masses to each other
+         */
+        void SetJetCombinationSynergy(IntVector combinationSynergyJets);
+
+        /**
+         *  @brief Get m_combinationSynergyJets
+         */
+        IntVector GetJetCombinationSynergy() const;
+
+        /**
          *  @brief Set m_nParticlesJets
          *
          *  @param nParticlesJets The number of particles in jets
@@ -1356,26 +1368,26 @@ class Variables
         /**
          *  @brief Set m_invariantMassWBosons
          *
-         *  @param invMassWVectors Invariant mass of first and second pair of W paired jets
+         *  @param invMassWBosons Invariant mass of first and second pair of W paired jets
          */
-        void SetInvMassWVectors(DoubleVector invMassWVectors);
+        void SetInvariantMassWBosons(DoubleVector invMassWBosons);
 
         /**
          *  @brief Get m_invariantMassWBosons
          */
-        DoubleVector GetInvMassWVectors() const;
+        DoubleVector GetInvariantMassWBosons() const;
 
         /**
          *  @brief Set m_invariantMassZBosons 
          *
-         *  @param invMassZVectors Invariant mass of first and second pair of Z paired jets
+         *  @param invMassZBosons Invariant mass of first and second pair of Z paired jets
          */
-        void SetInvMassZVectors(DoubleVector invMassZVectors);
+        void SetInvariantMassZBosons(DoubleVector invMassZBosons);
 
         /**
          *  @brief Get m_invariantMassZBosons
          */
-        DoubleVector GetInvMassZVectors() const;
+        DoubleVector GetInvariantMassZBosons() const;
 
         /**
          *  @brief Set m_invariantMassWBosonsMC
@@ -1400,6 +1412,30 @@ class Variables
          *  @brief Get m_invariantMassZBosonsMC
          */
         DoubleVector GetInvariantMassZBosonsMC() const;
+
+        /**
+         *  @brief Set m_invariantMassSynergyBosons
+         *
+         *  @param invariantMassSynergyBosons Invariant masses of synergy paired bosons
+         */
+        void SetInvariantMassSynergyBosons(DoubleVector invariantMassSynergyBosons);
+
+        /**
+         *  @brief Get m_invariantMassSynergyBosons
+         */
+        DoubleVector GetInvariantMassSynergyBosons() const;
+
+        /**
+         *  @brief Set m_invariantMassesAllPairings
+         *
+         *  @param invariantMassesAllPairings Invariant masses of all paied bosons
+         */
+        void SetAllInvariantMasses(DoubleVector invariantMassesAllPairings);
+
+        /**
+         *  @brief Get m_invariantMassesAllPairings
+         */
+        DoubleVector GetAllInvariantMasses() const;
 
         /**
          *  @brief Set m_energyJets
@@ -1552,21 +1588,33 @@ class Variables
         void SetMCParticleToQuarkMap(MCParticleToMCParticleMap mcParticleToQuarkMap);
 
         /**
+         *  @brief Set m_cheatedInvariantMasses
+         *
+         *  @param cheatedInvariantMasses chated invaraint masses
+         */
+        void SetCheatedInvariantMasses(DoubleVector cheatedInvariantMasses);
+
+        /**
+         *  @brief Get m_cheatedInvariantMasses
+         */
+        DoubleVector GetCheatedInvariantMasses() const;
+
+        /**
+         *  @brief Set m_cheatedMCInvariantMasses
+         *
+         *  @param cheatedMCInvariantMasses cheated invariant masses
+         */
+        void SetCheatedMCInvariantMasses(DoubleVector cheatedMCInvariantMasses);
+
+        /**
+         *  @brief Get m_cheatedMCInvariantMasses
+         */
+        DoubleVector GetCheatedMCInvariantMasses() const;
+
+        /**
          *  @brief Get m_mcParticleToQuarkMap
          */
         MCParticleToMCParticleMap GetMCParticleToQuarkMap() const;
-
-        /**
-         *  @brief Set m_cheatedInvMasses
-         *
-         *  @param cheatedInvMasses chated invaraint masses
-         */
-        void SetCheatedInvMasses(DoubleVector cheatedInvMasses);
-
-        /**
-         *  @brief Get m_cheatedInvMasses
-         */
-        DoubleVector GetCheatedInvMasses() const;
 
     private:
         bool             m_appropriateEvent;                             ///< Does event pass a series of cuts suggesting it has a vvqqqq final state? - JetAnalysis
@@ -1584,6 +1632,7 @@ class Variables
         int              m_secondHighestEnergyIsolatedLeptonPDG;         ///< PDG of second highest energy PFO from isolated lepton finder - IsolatedLeptonPfoAnalysis
         IntVector        m_combinationWJets;                             ///< Combination of jets to form W bosons - JetAnalysis
         IntVector        m_combinationZJets;                             ///< Combination of jets to form Z bosons - JetAnalysis
+        IntVector        m_combinationSynergyJets;                       ///< Combination of jets that have closest invariant masses to each other - JetAnalysis
         IntVector        m_nParticlesJets;                               ///< Number of particles in reconstructed jet - JetAnalysis
         IntVector        m_nChargedParticlesJets;                        ///< Number of charged particles in reconstructed jet - JetAnalysis
         double           m_eventEnergyMC;                                ///< MC event energy
@@ -1687,6 +1736,8 @@ class Variables
         DoubleVector     m_invariantMassWBosonsMC;                       ///< Invariant mass of first and second pair of W paired quarks - MCAnalysis
         DoubleVector     m_invariantMassZBosons;                         ///< Invariant mass of first and second pair of Z paired jets - JetAnalysis
         DoubleVector     m_invariantMassZBosonsMC;                       ///< Invariant mass of first and second pair of Z paired quarks - MCAnalysis
+        DoubleVector     m_invariantMassSynergyBosons;                   ///< Invariant mass of first and second pair of synergy paired jets - JetAnalysis
+        DoubleVector     m_invariantMassesAllPairings;                   ///< Invariant mass of all pairs of jets - JetAnalysis
         DoubleVector     m_energyJets;                                   ///< Energy of reconstructed jets  - JetAnalysis
         DoubleVector     m_momentumJets;                                 ///< Momentum of reconstructed jets  - JetAnalysis
         DoubleVector     m_transverseMomentumJets;                       ///< Transverse momentum of reconstructed jets  - JetAnalysis
@@ -1703,7 +1754,8 @@ class Variables
         DoubleVector     m_pxMomentumQuarks;                             ///< Px of quarks
         DoubleVector     m_pyMomentumQuarks;                             ///< Py of quarks
         DoubleVector     m_pzMomentumQuarks;                             ///< Pz of quarks
-        DoubleVector     m_cheatedInvMasses;                             ///< Cheated inv masses
+        DoubleVector     m_cheatedInvariantMasses;                       ///< Cheated pairing inv masses
+        DoubleVector     m_cheatedMCInvariantMasses;                     ///< Cheated pairing and energy inv masses
         MCParticleToMCParticleMap m_mcParticleToQuarkMap;                ///< Map of MC particles to quarks
 };
 

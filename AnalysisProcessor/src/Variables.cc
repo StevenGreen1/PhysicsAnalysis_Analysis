@@ -161,6 +161,11 @@ void Variables::SetBranches(TTree *pTTree)
     pTTree->Branch("ZBosonJet2Is", &m_combinationZJets.at(1), "ZBosonJet2Is/I");
     pTTree->Branch("ZBosonJet3Is", &m_combinationZJets.at(2), "ZBosonJet3Is/I");
     pTTree->Branch("ZBosonJet4Is", &m_combinationZJets.at(3), "ZBosonJet4Is/I");
+    m_combinationSynergyJets.resize(4);
+    pTTree->Branch("SynergyBosonJet1Is", &m_combinationSynergyJets.at(0), "SynergyBosonJet1Is/I");
+    pTTree->Branch("SynergyBosonJet2Is", &m_combinationSynergyJets.at(1), "SynergyBosonJet2Is/I");
+    pTTree->Branch("SynergyBosonJet3Is", &m_combinationSynergyJets.at(2), "SynergyBosonJet3Is/I");
+    pTTree->Branch("SynergyBosonJet4Is", &m_combinationSynergyJets.at(3), "SynergyBosonJet4Is/I");
     m_nParticlesJets.resize(4);
     pTTree->Branch("NParticlesJet1", &m_nParticlesJets.at(0), "NParticlesJet1/I");
     pTTree->Branch("NParticlesJet2", &m_nParticlesJets.at(1), "NParticlesJet2/I");
@@ -263,17 +268,27 @@ void Variables::SetBranches(TTree *pTTree)
     pTTree->Branch("SecondHighestEnergyIsolatedLeptonTransverseMomentum", &m_secondHighestEnergyIsolatedLeptonPt, "SecondHighestEnergyIsolatedLeptonTransverseMomentum/D");
     pTTree->Branch("SecondHighestEnergyIsolatedLeptonCosTheta", &m_secondHighestEnergyIsolatedLeptonCosTheta, "SecondHighestEnergyIsolatedLeptonCosTheta/D");
     m_invariantMassWBosons.resize(2);
-    pTTree->Branch("InvMassWVector1", &m_invariantMassWBosons.at(0), "InvMassWVector1/D");
-    pTTree->Branch("InvMassWVector2", &m_invariantMassWBosons.at(1), "InvMassWVector2/D");
+    pTTree->Branch("InvariantMassWBoson1", &m_invariantMassWBosons.at(0), "InvariantMassWBoson1/D");
+    pTTree->Branch("InvariantMassWBoson2", &m_invariantMassWBosons.at(1), "InvariantMassWBoson2/D");
     m_invariantMassWBosonsMC.resize(2);
-    pTTree->Branch("MCInvMassWVector1", &m_invariantMassWBosonsMC.at(0), "MCInvMassWVector1/D");
-    pTTree->Branch("MCInvMassWVector2", &m_invariantMassWBosonsMC.at(1), "MCInvMassWVector2/D");
+    pTTree->Branch("MCInvariantMassWBoson1", &m_invariantMassWBosonsMC.at(0), "MCInvariantMassWBoson1/D");
+    pTTree->Branch("MCInvariantMassWBoson2", &m_invariantMassWBosonsMC.at(1), "MCInvariantMassWBoson2/D");
     m_invariantMassZBosons.resize(2);
-    pTTree->Branch("InvMassZVector1", &m_invariantMassZBosons.at(0), "InvMassZVector1/D");
-    pTTree->Branch("InvMassZVector2", &m_invariantMassZBosons.at(1), "InvMassZVector2/D");
+    pTTree->Branch("InvariantMassZBoson1", &m_invariantMassZBosons.at(0), "InvariantMassZBoson1/D");
+    pTTree->Branch("InvariantMassZBoson2", &m_invariantMassZBosons.at(1), "InvariantMassZBoson2/D");
     m_invariantMassZBosonsMC.resize(2);
-    pTTree->Branch("MCInvMassZVector1", &m_invariantMassZBosonsMC.at(0), "MCInvMassZVector1/D");
-    pTTree->Branch("MCInvMassZVector2", &m_invariantMassZBosonsMC.at(1), "MCInvMassZVector2/D");
+    pTTree->Branch("MCInvariantMassZBoson1", &m_invariantMassZBosonsMC.at(0), "MCInvariantMassZBoson1/D");
+    pTTree->Branch("MCInvariantMassZBoson2", &m_invariantMassZBosonsMC.at(1), "MCInvariantMassZBoson2/D");
+    m_invariantMassSynergyBosons.resize(2);
+    pTTree->Branch("InvariantMassSynergyBoson1", &m_invariantMassSynergyBosons.at(0), "InvariantMassSynergyBoson1/D");
+    pTTree->Branch("InvariantMassSynergyBoson2", &m_invariantMassSynergyBosons.at(1), "InvariantMassSynergyBoson2/D");
+    m_invariantMassesAllPairings.resize(6);
+    pTTree->Branch("InvariantMassBoson1Pairing0123", &m_invariantMassesAllPairings.at(0), "InvariantMassBoson1Pairing0123/D");
+    pTTree->Branch("InvariantMassBoson2Pairing0123", &m_invariantMassesAllPairings.at(1), "InvariantMassBoson2Pairing0123/D");
+    pTTree->Branch("InvariantMassBoson1Pairing0213", &m_invariantMassesAllPairings.at(2), "InvariantMassBoson1Pairing0213/D");
+    pTTree->Branch("InvariantMassBoson2Pairing0213", &m_invariantMassesAllPairings.at(3), "InvariantMassBoson2Pairing0213/D");
+    pTTree->Branch("InvariantMassBoson1Pairing0312", &m_invariantMassesAllPairings.at(4), "InvariantMassBoson1Pairing0312/D");
+    pTTree->Branch("InvariantMassBoson2Pairing0312", &m_invariantMassesAllPairings.at(5), "InvariantMassBoson2Pairing0312/D");
     m_energyJets.resize(4);
     pTTree->Branch("EnergyJet1", &m_energyJets.at(0), "EnergyJet1/D");
     pTTree->Branch("EnergyJet2", &m_energyJets.at(1), "EnergyJet2/D");
@@ -358,16 +373,19 @@ void Variables::SetBranches(TTree *pTTree)
     pTTree->Branch("QuarkPx4", &m_pxMomentumQuarks.at(3), "QuarkPx4/D");
     pTTree->Branch("QuarkPy4", &m_pyMomentumQuarks.at(3), "QuarkPy4/D");
     pTTree->Branch("QuarkPz4", &m_pzMomentumQuarks.at(3), "QuarkPz4/D");
-    m_cheatedInvMasses.resize(2);
-    pTTree->Branch("ChatedInvMass1", &m_cheatedInvMasses.at(0), "ChatedInvMass1/D");
-    pTTree->Branch("ChatedInvMass2", &m_cheatedInvMasses.at(1), "ChatedInvMass2/D");
+    m_cheatedInvariantMasses.resize(2);
+    pTTree->Branch("CheatedInvariantMass1", &m_cheatedInvariantMasses.at(0), "CheatedInvariantMass1/D");
+    pTTree->Branch("CheatedInvariantMass2", &m_cheatedInvariantMasses.at(1), "CheatedInvariantMass2/D");
+    m_cheatedMCInvariantMasses.resize(2);
+    pTTree->Branch("CheatedMCInvariantMass1", &m_cheatedMCInvariantMasses.at(0), "CheatedMCInvariantMass1/D");
+    pTTree->Branch("CheatedMCInvariantMass2", &m_cheatedMCInvariantMasses.at(1), "CheatedMCInvariantMass2/D");
 
 //    pTTree->Branch("", &, "/D");
 // DoubleVectors
-//    pTTree->Branch("InvMassWVectors", &m_invariantMassWBosons);
-//    pTTree->Branch("MCInvMassWVectors", &m_invariantMassWBosonsMC);
-//    pTTree->Branch("InvMassZVectors", &m_invariantMassZBosons);
-//    pTTree->Branch("MCInvMassZVectors", &m_invariantMassZBosonsMC);
+//    pTTree->Branch("InvariantMassWBosons", &m_invariantMassWBosons);
+//    pTTree->Branch("MCInvariantMassWBosons", &m_invariantMassWBosonsMC);
+//    pTTree->Branch("InvariantMassZBosons", &m_invariantMassZBosons);
+//    pTTree->Branch("MCInvariantMassZBosons", &m_invariantMassZBosonsMC);
 //    pTTree->Branch("EnergyJets", &m_energyJets);
 //    pTTree->Branch("CosThetaStarWJets", &m_cosThetaStarWJets);
 //    pTTree->Branch("CosThetaStarZJets", &m_cosThetaStarZJets);
@@ -439,6 +457,7 @@ void Variables::Clear()
 
     m_combinationWJets.clear();
     m_combinationZJets.clear();
+    m_combinationSynergyJets.clear();
     m_nParticlesJets.clear();
     m_nChargedParticlesJets.clear();
 
@@ -543,6 +562,8 @@ void Variables::Clear()
     m_invariantMassWBosonsMC.clear();
     m_invariantMassZBosons.clear();
     m_invariantMassZBosonsMC.clear();
+    m_invariantMassSynergyBosons.clear();
+    m_invariantMassesAllPairings.clear();
     m_energyJets.clear();
     m_momentumJets.clear();
     m_transverseMomentumJets.clear();
@@ -559,7 +580,8 @@ void Variables::Clear()
     m_pxMomentumQuarks.clear();
     m_pyMomentumQuarks.clear();
     m_pzMomentumQuarks.clear();
-    m_cheatedInvMasses.clear();
+    m_cheatedInvariantMasses.clear();
+    m_cheatedMCInvariantMasses.clear();
 
     m_mcParticleToQuarkMap.clear();
 }
@@ -798,6 +820,20 @@ void Variables::SetJetCombinationZ(IntVector combinationZJets)
 IntVector Variables::GetJetCombinationZ() const
 {
     return m_combinationZJets;
+}
+
+//===========================================================
+
+void Variables::SetJetCombinationSynergy(IntVector combinationSynergyJets)
+{
+    m_combinationSynergyJets = combinationSynergyJets;
+}
+
+//===========================================================
+
+IntVector Variables::GetJetCombinationSynergy() const
+{
+    return m_combinationSynergyJets;
 }
 
 //===========================================================
@@ -2105,28 +2141,28 @@ double Variables::GetMinCTagForBosonZ2() const
 
 //=========================================================== DoubleVector
 
-void Variables::SetInvMassWVectors(DoubleVector invMassWVectors)
+void Variables::SetInvariantMassWBosons(DoubleVector invMassWBosons)
 {
-    m_invariantMassWBosons = invMassWVectors;
+    m_invariantMassWBosons = invMassWBosons;
 }
 
 //===========================================================
 
-DoubleVector Variables::GetInvMassWVectors() const 
+DoubleVector Variables::GetInvariantMassWBosons() const 
 {
     return m_invariantMassWBosons;
 }
 
 //===========================================================
 
-void Variables::SetInvMassZVectors(DoubleVector invMassZVectors)
+void Variables::SetInvariantMassZBosons(DoubleVector invMassZBosons)
 {
-    m_invariantMassZBosons = invMassZVectors;
+    m_invariantMassZBosons = invMassZBosons;
 }
 
 //===========================================================
 
-DoubleVector Variables::GetInvMassZVectors() const 
+DoubleVector Variables::GetInvariantMassZBosons() const 
 {
     return m_invariantMassZBosons;
 }
@@ -2157,6 +2193,34 @@ void Variables::SetInvariantMassZBosonsMC(DoubleVector invariantMassZBosonsMC)
 DoubleVector Variables::GetInvariantMassZBosonsMC() const
 {
     return m_invariantMassZBosonsMC;
+}
+
+//===========================================================
+
+void Variables::SetInvariantMassSynergyBosons(DoubleVector invariantMassSynergyBosons)
+{
+    m_invariantMassSynergyBosons = invariantMassSynergyBosons;
+}
+
+//===========================================================
+
+DoubleVector Variables::GetInvariantMassSynergyBosons() const
+{
+    return m_invariantMassSynergyBosons;
+}
+
+//===========================================================
+
+void Variables::SetAllInvariantMasses(DoubleVector invariantMassesAllPairings)
+{
+    m_invariantMassesAllPairings = invariantMassesAllPairings;
+}
+
+//===========================================================
+
+DoubleVector Variables::GetAllInvariantMasses() const
+{
+    return m_invariantMassesAllPairings;
 }
 
 //===========================================================
@@ -2337,16 +2401,16 @@ void Variables::SetMomentumQuarks(DoubleVector pxMomentumQuarks, DoubleVector py
 
 //===========================================================
 
-void Variables::SetCheatedInvMasses(DoubleVector cheatedInvMasses)
+void Variables::SetCheatedInvariantMasses(DoubleVector cheatedInvariantMasses)
 {
-    m_cheatedInvMasses = cheatedInvMasses;
+    m_cheatedInvariantMasses = cheatedInvariantMasses;
 }
 
 //===========================================================
 
-DoubleVector Variables::GetCheatedInvMasses() const
+DoubleVector Variables::GetCheatedInvariantMasses() const
 {
-    return m_cheatedInvMasses;
+    return m_cheatedInvariantMasses;
 }
 
 //===========================================================
@@ -2358,11 +2422,23 @@ void Variables::SetMCParticleToQuarkMap(MCParticleToMCParticleMap mcParticleToQu
 
 //===========================================================
 
+void Variables::SetCheatedMCInvariantMasses(DoubleVector cheatedMCInvariantMasses)
+{
+    m_cheatedMCInvariantMasses = cheatedMCInvariantMasses;
+}
+
+//===========================================================
+
+DoubleVector Variables::GetCheatedMCInvariantMasses() const
+{
+    return m_cheatedMCInvariantMasses;
+}
+
+//===========================================================
+
 MCParticleToMCParticleMap Variables::GetMCParticleToQuarkMap() const
 {
     return m_mcParticleToQuarkMap;
 }
 
 //===========================================================
-
-

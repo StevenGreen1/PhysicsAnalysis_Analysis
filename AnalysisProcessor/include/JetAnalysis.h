@@ -171,7 +171,15 @@ class JetAnalysis
         void FindInvariantMass(ParticleVector &particleVector, double &invariantMass) const;
 
         /**
-         *  @brief Calculate the transverse energy of all particles in m_jetVector
+         *  @brief Calculate the invariant mass of all mc particles in mcParticleVector
+         *
+         *  @param mcParticleVector vector of pointers to lcio mc particles
+         *  @param invariantMass invariant mass of the system of lcio mc particles in mcParticleVector
+         */
+        void FindMCInvariantMass(MCParticleVector &mcParticleVector, double &invariantMass) const;
+
+        /**
+         *  @brief Calculate the transverse energy of all particles in m_jets
          */
         void CalculateTransverseEnergy();
 
@@ -184,7 +192,7 @@ class JetAnalysis
         void CalculateTransverseEnergyObject(ParticleVector particleVector, double &transverseEnergy);
 
         /**
-         *  @brief Calculate the transverse momentum of all particles in m_jetVector
+         *  @brief Calculate the transverse momentum of all particles in m_jets
          */
         void CalculateTransverseMomentum();
 
@@ -223,7 +231,7 @@ class JetAnalysis
         void CalculateCosThetaObject(ParticleVector particleVector, double &cosTheta);
 
         /**
-         *  @brief Calculate the cosine theta of the missing momentum vector using m_jetVector
+         *  @brief Calculate the cosine theta of the missing momentum vector using m_jets
          */
         void CalculateCosThetaMissingMomentum();
 
@@ -244,7 +252,7 @@ class JetAnalysis
         /**
          *  @brief Find the tracks assocaited to the particle with the largest energy in the jet vector
          *
-         *  @paran mostEnergeticTracksFromPfo vector of tracks associated to highest energy charged particle in the m_jetVector
+         *  @paran mostEnergeticTracksFromPfo vector of tracks associated to highest energy charged particle in the m_jets
          */
         void FindMostEnergeticTrack(EVENT::TrackVec &tracksMostEnergeticChargedPfo) const;
 
@@ -254,12 +262,12 @@ class JetAnalysis
         void CalculateRecoilMass();
 
         /**
-         *  @brief Find the energy in a cone around the most energetic charged Pfo in m_jetVector
+         *  @brief Find the energy in a cone around the most energetic charged Pfo in m_jets
          */
         void CalculateEnergyInConeAroundMostEnergeticPfo();
 
         /**
-         *  @brief Find the most energetic Pfo in m_jetVector
+         *  @brief Find the most energetic Pfo in m_jets
          *
          *  @param pMostEnergeticChargedPfo Most energetic charged Pfo
          */
@@ -317,17 +325,19 @@ class JetAnalysis
          * @brief Calculate the energy 4 vector for a given vector of lcio particles
          *
          * @param jetVector vector of lcio particles
-         * @param tLorentzVector energy 4 vector of all partilces in jetVector to set
+         * @param tLorentzBoson energy 4 vector of all partilces in jetVector to set
          */
-        void DefineEnergy4Vec(ParticleVector &jetVector, TLorentzVector &tLorentzVector) const;
+        void DefineEnergy4Vec(ParticleVector &jetVector, TLorentzVector &tLorentzBoson) const;
 
-        ParticleVector                         m_jetVector;              ///< Vector of 4 jets from fastjet
+        ParticleVector                         m_jets;                   ///< Vector of 4 jets from fastjet
         Variables                             *m_pVariables;             ///< Variables of interest to set for analysis
         UTIL::LCRelationNavigator             *m_pRecoMCNavigator;       ///< The reco to mc linker
-        ParticleVector                         m_wVector1;               ///< First W candidate
-        ParticleVector                         m_wVector2;               ///< Second W candidate
-        ParticleVector                         m_zVector1;               ///< First Z candidate
-        ParticleVector                         m_zVector2;               ///< Second Z candidate
+        ParticleVector                         m_wBoson1;                ///< First W candidate
+        ParticleVector                         m_wBoson2;                ///< Second W candidate
+        ParticleVector                         m_zBoson1;                ///< First Z candidate
+        ParticleVector                         m_zBoson2;                ///< Second Z candidate
+        ParticleVector                         m_synergyBoson1;          ///< Closest mass pairing boson candidate 1
+        ParticleVector                         m_synergyBoson2;          ///< Closest mass pairing boson candidate 2
         ParticleToFloatMap                     m_particleToBTag;         ///< Jet to B tag value
         ParticleToFloatMap                     m_particleToCTag;         ///< Jet to C tag value
         ParticleToMCParticleToFloatMap         m_jetToQuarkToWeightMap;  ///< Map of jet to quark parent to weight 

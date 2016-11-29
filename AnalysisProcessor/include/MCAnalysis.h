@@ -79,12 +79,12 @@ class MCAnalysis
         void FindMCInvariantMass(MCParticleVector &mcParticleVector, double &invariantMass) const;
 
         /**
-         *  @brief Calculate the transverse momentum of all particles in m_quarkMCParticleVector
+         *  @brief Calculate the transverse momentum of all particles in m_quarks
          */
         void CalculateMCTransverseMomentum();
 
         /**
-         *  @brief Calculate the transverse energy of all particles in m_quarkMCParticleVector
+         *  @brief Calculate the transverse energy of all particles in m_quarks
          */
         void CalculateMCTransverseEnergy();
 
@@ -131,12 +131,12 @@ class MCAnalysis
         void DefineMCEnergy4Vec(MCParticleVector &mcParticleVector, TLorentzVector &tLorentzVector) const;
 
         Variables                    *m_pVariables;                     ///< Variables of interest to set for analysis
-        MCParticleVector              m_neutrinoMCParticleVector;       ///< Vector of neutrino MC particles 
-        MCParticleVector              m_quarkMCParticleVector;          ///< Vector of quark MC particles 
-        MCParticleVector              m_mcWVector1;                     ///< First W candidate
-        MCParticleVector              m_mcWVector2;                     ///< Second W candidate
-        MCParticleVector              m_mcZVector1;                     ///< First Z candidate
-        MCParticleVector              m_mcZVector2;                     ///< Second Z candidate
+        MCParticleVector              m_neutrinos;                      ///< Vector of neutrino MC particles 
+        MCParticleVector              m_quarks;                         ///< Vector of quark MC particles 
+        MCParticleVector              m_mcWBoson1;                      ///< First W candidate
+        MCParticleVector              m_mcWBoson2;                      ///< Second W candidate
+        MCParticleVector              m_mcZBoson1;                      ///< First Z candidate
+        MCParticleVector              m_mcZBoson2;                      ///< Second Z candidate
         MCParticleToMCParticleMap     m_mcParticleToQuarkMap;           ///< Map of MC particle to quark 
         const double                  m_wBosonMass;                     ///< W boson mass used for quark pairing
         const double                  m_zBosonMass;                     ///< Z boson mass used for quark pairing
