@@ -116,8 +116,8 @@ void MCAnalysis::QuarkPairing()
     IntVector combination3 (array3, array3 + sizeof(array3) / sizeof(array3[0]));
     combinations.push_back(combination3);
 
-    double bestWMetric(std::numeric_limits<double>::max()), bestZMetric(std::numeric_limits<double>::max());
-    DoubleVector bestWMasses, bestZMasses;
+    double bestWMetric(std::numeric_limits<double>::max()), bestZMetric(std::numeric_limits<double>::max()), bestSynMetric(std::numeric_limits<double>::max());
+    DoubleVector bestWMasses, bestZMasses, bestSynMasses, allMasses;
 
     for (std::vector<IntVector>::iterator iter = combinations.begin(); iter != combinations.end(); iter++)
     {
@@ -134,33 +134,84 @@ void MCAnalysis::QuarkPairing()
         this->FindMCInvariantMass(trialPair1, invariantMass1);
         this->FindMCInvariantMass(trialPair2, invariantMass2);
 
+        allMasses.push_back(invariantMass1);
+        allMasses.push_back(invariantMass2);
+
         const double wMetric(std::sqrt((invariantMass1-m_wBosonMass)*(invariantMass1-m_wBosonMass) + (invariantMass2-m_wBosonMass)*(invariantMass2-m_wBosonMass)));
         const double zMetric(std::sqrt((invariantMass1-m_zBosonMass)*(invariantMass1-m_zBosonMass) + (invariantMass2-m_zBosonMass)*(invariantMass2-m_zBosonMass)));
-
+        const double synMetric(std::sqrt((invariantMass1-invariantMass2)*(invariantMass1-invariantMass2)));
 
         if (wMetric < bestWMetric)
         {
-            m_mcWBoson1 = trialPair1;
-            m_mcWBoson2 = trialPair2;
             bestWMasses.clear();
-            bestWMasses.push_back(invariantMass1);
-            bestWMasses.push_back(invariantMass2);
             bestWMetric = wMetric;
+            m_pVariables->SetQuarkCombinationW(combination);
+
+            if (invariantMass1 > invariantMass2)
+            {
+                m_mcWBoson1 = trialPair1;
+                m_mcWBoson2 = trialPair2;
+                bestWMasses.push_back(invariantMass1);
+                bestWMasses.push_back(invariantMass2);
+            }
+            else
+            {
+                m_mcWBoson1 = trialPair2;
+                m_mcWBoson2 = trialPair1;
+                bestWMasses.push_back(invariantMass2);
+                bestWMasses.push_back(invariantMass1);
+            }
         }
 
         if (zMetric < bestZMetric)
         {
-            m_mcZBoson1 = trialPair1;
-            m_mcZBoson2 = trialPair2;
             bestZMasses.clear();
-            bestZMasses.push_back(invariantMass1);
-            bestZMasses.push_back(invariantMass2);
             bestZMetric = zMetric;
+            m_pVariables->SetQuarkCombinationZ(combination);
+
+            if (invariantMass1 > invariantMass2)
+            {
+                m_mcZBoson1 = trialPair1;
+                m_mcZBoson2 = trialPair2;
+                bestZMasses.push_back(invariantMass1);
+                bestZMasses.push_back(invariantMass2);
+            }
+            else
+            {
+                m_mcZBoson1 = trialPair2;
+                m_mcZBoson2 = trialPair1;
+                bestZMasses.push_back(invariantMass2);
+                bestZMasses.push_back(invariantMass1);
+            }
+        }
+
+        if (synMetric < bestSynMetric)
+        {
+            bestSynMasses.clear();
+            bestSynMetric = synMetric;
+            m_pVariables->SetQuarkCombinationSyn(combination);
+
+            if (invariantMass1 > invariantMass2)
+            {
+                m_mcSynBoson1 = trialPair1;
+                m_mcSynBoson2 = trialPair2;
+                bestSynMasses.push_back(invariantMass1);
+                bestSynMasses.push_back(invariantMass2);
+            }
+            else
+            {
+                m_mcSynBoson1 = trialPair2;
+                m_mcSynBoson2 = trialPair1;
+                bestSynMasses.push_back(invariantMass2);
+                bestSynMasses.push_back(invariantMass1);
+            }
         }
     }
 
+    m_pVariables->SetAllInvariantMassesMC(allMasses);
     m_pVariables->SetInvariantMassWBosonsMC(bestWMasses);
     m_pVariables->SetInvariantMassZBosonsMC(bestZMasses);
+    m_pVariables->SetInvariantMassSynBosonsMC(bestSynMasses);
 }
 
 //===========================================================
@@ -360,6 +411,10 @@ void MCAnalysis::DefineMCVariablesOfInterest()
     double mcCosThetaStarZBoson(std::numeric_limits<double>::max());
     this->CalculateMCCosThetaStar(m_mcZBoson1,m_mcZBoson2,mcCosThetaStarZBoson);
     m_pVariables->SetCosThetaStarZBosonsMC(mcCosThetaStarZBoson);
+
+    double mcCosThetaStarSynBoson(std::numeric_limits<double>::max());
+    this->CalculateMCCosThetaStar(m_mcSynBoson1,m_mcSynBoson2,mcCosThetaStarSynBoson);
+    m_pVariables->SetCosThetaStarSynBosonsMC(mcCosThetaStarSynBoson);
 }
 
 //===========================================================

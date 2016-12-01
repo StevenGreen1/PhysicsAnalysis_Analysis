@@ -133,10 +133,12 @@ class MCAnalysis
         Variables                    *m_pVariables;                     ///< Variables of interest to set for analysis
         MCParticleVector              m_neutrinos;                      ///< Vector of neutrino MC particles 
         MCParticleVector              m_quarks;                         ///< Vector of quark MC particles 
-        MCParticleVector              m_mcWBoson1;                      ///< First W candidate
-        MCParticleVector              m_mcWBoson2;                      ///< Second W candidate
-        MCParticleVector              m_mcZBoson1;                      ///< First Z candidate
-        MCParticleVector              m_mcZBoson2;                      ///< Second Z candidate
+        MCParticleVector              m_mcWBoson1;                      ///< First W MC candidate
+        MCParticleVector              m_mcWBoson2;                      ///< Second W MC candidate
+        MCParticleVector              m_mcZBoson1;                      ///< First Z MC candidate
+        MCParticleVector              m_mcZBoson2;                      ///< Second Z MC candidate
+        MCParticleVector              m_mcSynBoson1;                    ///< First synergy MC candidate
+        MCParticleVector              m_mcSynBoson2;                    ///< Second synergy MC candidate
         MCParticleToMCParticleMap     m_mcParticleToQuarkMap;           ///< Map of MC particle to quark 
         const double                  m_wBosonMass;                     ///< W boson mass used for quark pairing
         const double                  m_zBosonMass;                     ///< Z boson mass used for quark pairing

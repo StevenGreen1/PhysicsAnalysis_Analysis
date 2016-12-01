@@ -336,8 +336,8 @@ class JetAnalysis
         ParticleVector                         m_wBoson2;                ///< Second W candidate
         ParticleVector                         m_zBoson1;                ///< First Z candidate
         ParticleVector                         m_zBoson2;                ///< Second Z candidate
-        ParticleVector                         m_synergyBoson1;          ///< Closest mass pairing boson candidate 1
-        ParticleVector                         m_synergyBoson2;          ///< Closest mass pairing boson candidate 2
+        ParticleVector                         m_synBoson1;              ///< Closest mass pairing boson candidate 1
+        ParticleVector                         m_synBoson2;              ///< Closest mass pairing boson candidate 2
         ParticleToFloatMap                     m_particleToBTag;         ///< Jet to B tag value
         ParticleToFloatMap                     m_particleToCTag;         ///< Jet to C tag value
         ParticleToMCParticleToFloatMap         m_jetToQuarkToWeightMap;  ///< Map of jet to quark parent to weight 

@@ -43,6 +43,8 @@ JetAnalysis::~JetAnalysis()
     m_wBoson2.clear();
     m_zBoson1.clear();
     m_zBoson2.clear();
+    m_synBoson1.clear();
+    m_synBoson2.clear();
     m_particleToBTag.clear();
     m_particleToCTag.clear();
     m_jetToQuarkToWeightMap.clear();
@@ -192,8 +194,8 @@ void JetAnalysis::JetPairing()
     IntVector combination3 (array3, array3 + sizeof(array3) / sizeof(array3[0]));
     combinations.push_back(combination3);
 
-    double bestWMetric(std::numeric_limits<double>::max()), bestZMetric(std::numeric_limits<double>::max()), bestSynergyMetric(std::numeric_limits<double>::max());
-    DoubleVector bestWMasses, bestZMasses, bestSynergyMasses, allMasses;
+    double bestWMetric(std::numeric_limits<double>::max()), bestZMetric(std::numeric_limits<double>::max()), bestSynMetric(std::numeric_limits<double>::max());
+    DoubleVector bestWMasses, bestZMasses, bestSynMasses, allMasses;
 
     for (std::vector<IntVector>::iterator iter = combinations.begin(); iter != combinations.end(); iter++)
     {
@@ -215,11 +217,12 @@ void JetAnalysis::JetPairing()
 
         const double wMetric(std::sqrt((invariantMass1-m_wBosonMass)*(invariantMass1-m_wBosonMass) + (invariantMass2-m_wBosonMass)*(invariantMass2-m_wBosonMass)));
         const double zMetric(std::sqrt((invariantMass1-m_zBosonMass)*(invariantMass1-m_zBosonMass) + (invariantMass2-m_zBosonMass)*(invariantMass2-m_zBosonMass)));
-        const double synergyMetric(std::sqrt((invariantMass1-invariantMass2)*(invariantMass1-invariantMass2)));
+        const double synMetric(std::sqrt((invariantMass1-invariantMass2)*(invariantMass1-invariantMass2)));
 
         if (wMetric < bestWMetric)
         {
             bestWMasses.clear();
+            bestWMetric = wMetric;
             m_pVariables->SetJetCombinationW(combination);
 
             if (invariantMass1 > invariantMass2)
@@ -236,12 +239,12 @@ void JetAnalysis::JetPairing()
                 bestWMasses.push_back(invariantMass2);
                 bestWMasses.push_back(invariantMass1);
             }
-            bestWMetric = wMetric;
         }
 
         if (zMetric < bestZMetric)
         {
             bestZMasses.clear();
+            bestZMetric = zMetric;
             m_pVariables->SetJetCombinationZ(combination);
 
             if (invariantMass1 > invariantMass2)
@@ -258,33 +261,32 @@ void JetAnalysis::JetPairing()
                 bestZMasses.push_back(invariantMass2);
                 bestZMasses.push_back(invariantMass1);
             }
-            bestZMetric = zMetric;
         }
 
-        if (synergyMetric < bestSynergyMetric)
+        if (synMetric < bestSynMetric)
         {
-            bestSynergyMasses.clear();
-            m_pVariables->SetJetCombinationSynergy(combination);
+            bestSynMasses.clear();
+            bestSynMetric = synMetric;
+            m_pVariables->SetJetCombinationSyn(combination);
 
             if (invariantMass1 > invariantMass2)
             {
-                m_synergyBoson1 = trialPair1;
-                m_synergyBoson2 = trialPair2;
-                bestSynergyMasses.push_back(invariantMass1);
-                bestSynergyMasses.push_back(invariantMass2);
+                m_synBoson1 = trialPair1;
+                m_synBoson2 = trialPair2;
+                bestSynMasses.push_back(invariantMass1);
+                bestSynMasses.push_back(invariantMass2);
             }
             else
             {
-                m_synergyBoson1 = trialPair2;
-                m_synergyBoson2 = trialPair1;
-                bestSynergyMasses.push_back(invariantMass2);
-                bestSynergyMasses.push_back(invariantMass1);
+                m_synBoson1 = trialPair2;
+                m_synBoson2 = trialPair1;
+                bestSynMasses.push_back(invariantMass2);
+                bestSynMasses.push_back(invariantMass1);
             }
-            bestSynergyMetric = synergyMetric;
         }
     }
     m_pVariables->SetAllInvariantMasses(allMasses);
-    m_pVariables->SetInvariantMassSynergyBosons(bestSynergyMasses);
+    m_pVariables->SetInvariantMassSynBosons(bestSynMasses);
     m_pVariables->SetInvariantMassWBosons(bestWMasses);
     m_pVariables->SetInvariantMassZBosons(bestZMasses);
 }
@@ -483,13 +485,15 @@ void JetAnalysis::CalculateBosonEnergies()
     m_pVariables->SetEnergyBosonW2(m_wBoson2.at(0)->getEnergy() + m_wBoson2.at(1)->getEnergy());
     m_pVariables->SetEnergyBosonZ1(m_zBoson1.at(0)->getEnergy() + m_zBoson1.at(1)->getEnergy());
     m_pVariables->SetEnergyBosonZ2(m_zBoson2.at(0)->getEnergy() + m_zBoson2.at(1)->getEnergy());
+    m_pVariables->SetEnergyBosonSyn1(m_synBoson1.at(0)->getEnergy() + m_synBoson1.at(1)->getEnergy());
+    m_pVariables->SetEnergyBosonSyn2(m_synBoson2.at(0)->getEnergy() + m_synBoson2.at(1)->getEnergy());
 }
 
 //===========================================================
 
 void JetAnalysis::CalculateBosonNPFOs() 
 {
-    int nPfosBosonW1(0), nPfosBosonW2(0), nPfosBosonZ1(0), nPfosBosonZ2(0);
+    int nPfosBosonW1(0), nPfosBosonW2(0), nPfosBosonZ1(0), nPfosBosonZ2(0), nPfosBosonSyn1(0), nPfosBosonSyn2(0);
 
     this->CalculateNumberOfPfos(m_wBoson1, nPfosBosonW1);
     m_pVariables->SetNPfosBosonW1(nPfosBosonW1);
@@ -502,6 +506,12 @@ void JetAnalysis::CalculateBosonNPFOs()
 
     this->CalculateNumberOfPfos(m_zBoson2, nPfosBosonZ2);
     m_pVariables->SetNPfosBosonZ2(nPfosBosonZ2);
+
+    this->CalculateNumberOfPfos(m_synBoson1, nPfosBosonSyn1);
+    m_pVariables->SetNPfosBosonSyn1(nPfosBosonSyn1);
+
+    this->CalculateNumberOfPfos(m_synBoson2, nPfosBosonSyn2);
+    m_pVariables->SetNPfosBosonSyn2(nPfosBosonSyn2);
 }
 
 //===========================================================
@@ -539,93 +549,41 @@ void JetAnalysis::CalculateFlavourTaggingInformation()
     const double cTagZ2a(m_particleToCTag.at(m_zBoson2.at(0)));
     const double cTagZ2b(m_particleToCTag.at(m_zBoson2.at(1)));
 
-    if (bTagW1a > bTagW1b)
-    {
-        m_pVariables->SetMaxBTagForBosonW1(bTagW1a);
-        m_pVariables->SetMinBTagForBosonW1(bTagW1b);
-    }
-    else
-    {
-        m_pVariables->SetMaxBTagForBosonW1(bTagW1b);
-        m_pVariables->SetMinBTagForBosonW1(bTagW1a);
-    }
+    const double bTagSyn1a(m_particleToBTag.at(m_synBoson1.at(0)));
+    const double bTagSyn1b(m_particleToBTag.at(m_synBoson1.at(1)));
+    const double bTagSyn2a(m_particleToBTag.at(m_synBoson2.at(0)));
+    const double bTagSyn2b(m_particleToBTag.at(m_synBoson2.at(1)));
+    const double cTagSyn1a(m_particleToCTag.at(m_synBoson1.at(0)));
+    const double cTagSyn1b(m_particleToCTag.at(m_synBoson1.at(1)));
+    const double cTagSyn2a(m_particleToCTag.at(m_synBoson2.at(0)));
+    const double cTagSyn2b(m_particleToCTag.at(m_synBoson2.at(1)));
 
-    if (bTagW2a > bTagW2b)
-    {
-        m_pVariables->SetMaxBTagForBosonW2(bTagW2a);
-        m_pVariables->SetMinBTagForBosonW2(bTagW2b);
-    }
-    else
-    {
-        m_pVariables->SetMaxBTagForBosonW2(bTagW2b);
-        m_pVariables->SetMinBTagForBosonW2(bTagW2a);
-    }
+    m_pVariables->SetMaxBTagForBosonW1(std::max(bTagW1a,bTagW1b));
+    m_pVariables->SetMinBTagForBosonW1(std::min(bTagW1a,bTagW1b));
+    m_pVariables->SetMaxBTagForBosonW2(std::max(bTagW2a,bTagW2b));
+    m_pVariables->SetMinBTagForBosonW2(std::min(bTagW2a,bTagW2b));
+    m_pVariables->SetMaxCTagForBosonW1(std::max(cTagW1a,cTagW1b));
+    m_pVariables->SetMinCTagForBosonW1(std::min(cTagW1a,cTagW1b));
+    m_pVariables->SetMaxCTagForBosonW2(std::max(cTagW2a,cTagW2b));
+    m_pVariables->SetMinCTagForBosonW2(std::min(cTagW2a,cTagW2b));
 
-    if (cTagW1a > cTagW1b)
-    {
-        m_pVariables->SetMaxCTagForBosonW1(cTagW1a);
-        m_pVariables->SetMinCTagForBosonW1(cTagW1b);
-    }
-    else
-    {
-        m_pVariables->SetMaxCTagForBosonW1(cTagW1b);
-        m_pVariables->SetMinCTagForBosonW1(cTagW1a);
-    }
+    m_pVariables->SetMaxBTagForBosonZ1(std::max(bTagZ1a,bTagZ1b));
+    m_pVariables->SetMinBTagForBosonZ1(std::min(bTagZ1a,bTagZ1b));
+    m_pVariables->SetMaxBTagForBosonZ2(std::max(bTagZ2a,bTagZ2b));
+    m_pVariables->SetMinBTagForBosonZ2(std::min(bTagZ2a,bTagZ2b));
+    m_pVariables->SetMaxCTagForBosonZ1(std::max(cTagZ1a,cTagZ1b));
+    m_pVariables->SetMinCTagForBosonZ1(std::min(cTagZ1a,cTagZ1b));
+    m_pVariables->SetMaxCTagForBosonZ2(std::max(cTagZ2a,cTagZ2b));
+    m_pVariables->SetMinCTagForBosonZ2(std::min(cTagZ2a,cTagZ2b));
 
-    if (cTagW2a > cTagW2b)
-    {
-        m_pVariables->SetMaxCTagForBosonW2(cTagW2a);
-        m_pVariables->SetMinCTagForBosonW2(cTagW2b);
-    }
-    else
-    {
-        m_pVariables->SetMaxCTagForBosonW2(cTagW2b);
-        m_pVariables->SetMinCTagForBosonW2(cTagW2a);
-    }
-
-    if (bTagZ1a > bTagZ1b)
-    {
-        m_pVariables->SetMaxBTagForBosonZ1(bTagZ1a);
-        m_pVariables->SetMinBTagForBosonZ1(bTagZ1b);
-    }
-    else
-    {
-        m_pVariables->SetMaxBTagForBosonZ1(bTagZ1b);
-        m_pVariables->SetMinBTagForBosonZ1(bTagZ1a);
-    }
-
-    if (bTagZ2a > bTagZ2b)
-    {
-        m_pVariables->SetMaxBTagForBosonZ2(bTagZ2a);
-        m_pVariables->SetMinBTagForBosonZ2(bTagZ2b);
-    }
-    else
-    {
-        m_pVariables->SetMaxBTagForBosonZ2(bTagZ2b);
-        m_pVariables->SetMinBTagForBosonZ2(bTagZ2a);
-    }
-
-    if (cTagZ1a > cTagZ1b)
-    {
-        m_pVariables->SetMaxCTagForBosonZ1(cTagZ1a);
-        m_pVariables->SetMinCTagForBosonZ1(cTagZ1b);
-    }
-    else
-    {
-        m_pVariables->SetMaxCTagForBosonZ1(cTagZ1b);
-        m_pVariables->SetMinCTagForBosonZ1(cTagZ1a);
-    }
-
-    if (cTagZ2a > cTagZ2b)
-    {
-        m_pVariables->SetMaxCTagForBosonZ2(cTagZ2a);
-        m_pVariables->SetMinCTagForBosonZ2(cTagZ2b);
-    }
-    else
-    {
-        m_pVariables->SetMaxCTagForBosonZ2(cTagZ2b);
-        m_pVariables->SetMinCTagForBosonZ2(cTagZ2a);
-    }
+    m_pVariables->SetMaxBTagForBosonSyn1(std::max(bTagSyn1a,bTagSyn1b));
+    m_pVariables->SetMinBTagForBosonSyn1(std::min(bTagSyn1a,bTagSyn1b));
+    m_pVariables->SetMaxBTagForBosonSyn2(std::max(bTagSyn2a,bTagSyn2b));
+    m_pVariables->SetMinBTagForBosonSyn2(std::min(bTagSyn2a,bTagSyn2b));
+    m_pVariables->SetMaxCTagForBosonSyn1(std::max(cTagSyn1a,cTagSyn1b));
+    m_pVariables->SetMinCTagForBosonSyn1(std::min(cTagSyn1a,cTagSyn1b));
+    m_pVariables->SetMaxCTagForBosonSyn2(std::max(cTagSyn2a,cTagSyn2b));
+    m_pVariables->SetMinCTagForBosonSyn2(std::min(cTagSyn2a,cTagSyn2b));
 }
 
 //===========================================================
@@ -648,6 +606,14 @@ void JetAnalysis::CalculateAcolinearities()
     this->CalculateAcolinearity(m_zBoson2.at(0), m_zBoson2.at(1), acolinearityJetsZ2);
     m_pVariables->SetAcolinearityJetsZ2(acolinearityJetsZ2);
 
+    double acolinearityJetsSyn1(std::numeric_limits<double>::max());
+    this->CalculateAcolinearity(m_synBoson1.at(0), m_synBoson1.at(1), acolinearityJetsSyn1);
+    m_pVariables->SetAcolinearityJetsSyn1(acolinearityJetsSyn1);
+
+    double acolinearityJetsSyn2(std::numeric_limits<double>::max());
+    this->CalculateAcolinearity(m_synBoson2.at(0), m_synBoson2.at(1), acolinearityJetsSyn2);
+    m_pVariables->SetAcolinearityJetsSyn2(acolinearityJetsSyn2);
+
     double acolinearityBosonW(std::numeric_limits<double>::max());
     this->CalculateBosonAcolinearity(m_wBoson1, m_wBoson2, acolinearityBosonW);
     m_pVariables->SetAcolinearityBosonsW(acolinearityBosonW);
@@ -655,6 +621,10 @@ void JetAnalysis::CalculateAcolinearities()
     double acolinearityBosonZ(std::numeric_limits<double>::max());
     this->CalculateBosonAcolinearity(m_zBoson1, m_zBoson2, acolinearityBosonZ);
     m_pVariables->SetAcolinearityBosonsZ(acolinearityBosonZ);
+
+    double acolinearityBosonSyn(std::numeric_limits<double>::max());
+    this->CalculateBosonAcolinearity(m_synBoson1, m_synBoson2, acolinearityBosonSyn);
+    m_pVariables->SetAcolinearityBosonsSyn(acolinearityBosonSyn);
 }
 
 //===========================================================
@@ -770,7 +740,7 @@ void JetAnalysis::CalculateTransverseEnergy()
     const double transverseEnergy(energy * sqrt(px*px + py*py) / p);
     m_pVariables->SetTransverseEnergy(transverseEnergy);
 
-    double transverseEnergyBosonW1(0.0), transverseEnergyBosonW2(0.0), transverseEnergyBosonZ1(0.0), transverseEnergyBosonZ2(0.0);
+    double transverseEnergyBosonW1(0.0), transverseEnergyBosonW2(0.0), transverseEnergyBosonZ1(0.0), transverseEnergyBosonZ2(0.0), transverseEnergyBosonSyn1(0.0), transverseEnergyBosonSyn2(0.0);
 
     this->CalculateTransverseEnergyObject(m_wBoson1, transverseEnergyBosonW1);
     m_pVariables->SetTransverseEnergyBosonW1(transverseEnergyBosonW1);
@@ -783,6 +753,12 @@ void JetAnalysis::CalculateTransverseEnergy()
 
     this->CalculateTransverseEnergyObject(m_zBoson2, transverseEnergyBosonZ2);
     m_pVariables->SetTransverseEnergyBosonZ2(transverseEnergyBosonZ2);
+
+    this->CalculateTransverseEnergyObject(m_synBoson1, transverseEnergyBosonSyn1);
+    m_pVariables->SetTransverseEnergyBosonSyn1(transverseEnergyBosonSyn1);
+
+    this->CalculateTransverseEnergyObject(m_synBoson2, transverseEnergyBosonSyn2);
+    m_pVariables->SetTransverseEnergyBosonSyn2(transverseEnergyBosonSyn2);
 }
 
 //===========================================================
@@ -821,7 +797,7 @@ void JetAnalysis::CalculateTransverseMomentum()
     const double transverseMomentum(sqrt(px*px + py*py));
     m_pVariables->SetTransverseMomentum(transverseMomentum);
 
-    double transverseMomentumBosonW1(0.0), transverseMomentumBosonW2(0.0), transverseMomentumBosonZ1(0.0), transverseMomentumBosonZ2(0.0);
+    double transverseMomentumBosonW1(0.0), transverseMomentumBosonW2(0.0), transverseMomentumBosonZ1(0.0), transverseMomentumBosonZ2(0.0), transverseMomentumBosonSyn1(0.0), transverseMomentumBosonSyn2(0.0);
 
     this->CalculateTransverseMomentumObject(m_wBoson1, transverseMomentumBosonW1);
     m_pVariables->SetTransverseMomentumBosonW1(transverseMomentumBosonW1);
@@ -834,6 +810,12 @@ void JetAnalysis::CalculateTransverseMomentum()
 
     this->CalculateTransverseMomentumObject(m_zBoson2, transverseMomentumBosonZ2);
     m_pVariables->SetTransverseMomentumBosonZ2(transverseMomentumBosonZ2);
+
+    this->CalculateTransverseMomentumObject(m_synBoson1, transverseMomentumBosonSyn1);
+    m_pVariables->SetTransverseMomentumBosonSyn1(transverseMomentumBosonSyn1);
+
+    this->CalculateTransverseMomentumObject(m_synBoson2, transverseMomentumBosonSyn2);
+    m_pVariables->SetTransverseMomentumBosonSyn2(transverseMomentumBosonSyn2);
 }
 
 //===========================================================
@@ -857,7 +839,7 @@ void JetAnalysis::CalculateTransverseMomentumObject(ParticleVector particleVecto
 
 void JetAnalysis::CalculateBosonMomenta()
 {
-    double momentumBosonW1(0.0), momentumBosonW2(0.0), momentumBosonZ1(0.0), momentumBosonZ2(0.0);
+    double momentumBosonW1(0.0), momentumBosonW2(0.0), momentumBosonZ1(0.0), momentumBosonZ2(0.0), momentumBosonSyn1(0.0), momentumBosonSyn2(0.0);
 
     this->CalculateMomentumObject(m_wBoson1, momentumBosonW1);
     m_pVariables->SetMomentumBosonW1(momentumBosonW1);
@@ -870,6 +852,12 @@ void JetAnalysis::CalculateBosonMomenta()
 
     this->CalculateMomentumObject(m_zBoson2, momentumBosonZ2);
     m_pVariables->SetMomentumBosonZ2(momentumBosonZ2);
+
+    this->CalculateMomentumObject(m_synBoson1, momentumBosonSyn1);
+    m_pVariables->SetMomentumBosonSyn1(momentumBosonSyn1);
+
+    this->CalculateMomentumObject(m_synBoson2, momentumBosonSyn2);
+    m_pVariables->SetMomentumBosonSyn2(momentumBosonSyn2);
 }
 
 //===========================================================
@@ -894,7 +882,7 @@ void JetAnalysis::CalculateMomentumObject(ParticleVector particleVector, double 
 
 void JetAnalysis::CalculateBosonCosTheta()
 {
-    double cosThetaBosonW1(0.0), cosThetaBosonW2(0.0), cosThetaBosonZ1(0.0), cosThetaBosonZ2(0.0);
+    double cosThetaBosonW1(0.0), cosThetaBosonW2(0.0), cosThetaBosonZ1(0.0), cosThetaBosonZ2(0.0), cosThetaBosonSyn1(0.0), cosThetaBosonSyn2(0.0);
     
     this->CalculateCosThetaObject(m_wBoson1, cosThetaBosonW1);
     m_pVariables->SetCosThetaBosonW1(cosThetaBosonW1);
@@ -907,6 +895,12 @@ void JetAnalysis::CalculateBosonCosTheta()
     
     this->CalculateCosThetaObject(m_zBoson2, cosThetaBosonZ2);
     m_pVariables->SetCosThetaBosonZ2(cosThetaBosonZ2);
+
+    this->CalculateCosThetaObject(m_synBoson1, cosThetaBosonSyn1);
+    m_pVariables->SetCosThetaBosonSyn1(cosThetaBosonSyn1);
+
+    this->CalculateCosThetaObject(m_synBoson2, cosThetaBosonSyn2);
+    m_pVariables->SetCosThetaBosonSyn2(cosThetaBosonSyn2);
 }
 
 //===========================================================
@@ -1234,15 +1228,20 @@ void JetAnalysis::DefineVariablesOfInterest()
     this->CalculateCosThetaStar(m_zBoson1,m_zBoson2,cosThetaStarZBoson);
     m_pVariables->SetCosThetaStarZBosons(cosThetaStarZBoson);
 
-    if (m_wBoson1.size() != 2 or m_wBoson2.size() != 2 or m_zBoson1.size() != 2 or m_zBoson2.size() != 2)
+    double cosThetaStarSynBoson(0.0);
+    this->CalculateCosThetaStar(m_synBoson1,m_synBoson2,cosThetaStarSynBoson);
+    m_pVariables->SetCosThetaStarSynBosons(cosThetaStarSynBoson);
+
+
+    if (m_wBoson1.size() != 2 or m_wBoson2.size() != 2 or m_zBoson1.size() != 2 or m_zBoson2.size() != 2 or m_synBoson1.size() != 2 or m_synBoson2.size() != 2)
     {
         std::cout << "Problem with jet pairing.  Either more or less jets associated to bosons than 2.  Unable to work out cos theta star jets.  Returning now." << std::endl;
         return;
     }
 
     ParticleVector jetVectorQ1, jetVectorQ2;
-    double cosThetaStarWJet(0.0), cosThetaStarZJet(0.0);
-    DoubleVector cosThetaStarWJets, cosThetaStarZJets;
+    double cosThetaStarWJet(0.0), cosThetaStarZJet(0.0), cosThetaStarSynJet(0.0);
+    DoubleVector cosThetaStarWJets, cosThetaStarZJets, cosThetaStarSynJets;
 
     jetVectorQ1.push_back(m_wBoson1.at(0));
     jetVectorQ2.push_back(m_wBoson1.at(1));
@@ -1272,8 +1271,23 @@ void JetAnalysis::DefineVariablesOfInterest()
     jetVectorQ1.clear();
     jetVectorQ2.clear();
 
+    jetVectorQ1.push_back(m_synBoson1.at(0));
+    jetVectorQ2.push_back(m_synBoson1.at(1));
+    this->CalculateCosThetaStar(jetVectorQ1,jetVectorQ2,cosThetaStarSynJet);
+    cosThetaStarSynJets.push_back(cosThetaStarSynJet);
+    jetVectorQ1.clear();
+    jetVectorQ2.clear();
+
+    jetVectorQ1.push_back(m_synBoson2.at(0));
+    jetVectorQ2.push_back(m_synBoson2.at(1));
+    this->CalculateCosThetaStar(jetVectorQ1,jetVectorQ2,cosThetaStarSynJet);
+    cosThetaStarSynJets.push_back(cosThetaStarSynJet);
+    jetVectorQ1.clear();
+    jetVectorQ2.clear();
+
     m_pVariables->SetCosThetaStarWJets(cosThetaStarWJets);
     m_pVariables->SetCosThetaStarZJets(cosThetaStarZJets);
+    m_pVariables->SetCosThetaStarSynJets(cosThetaStarSynJets);
 }
 
 //===========================================================
