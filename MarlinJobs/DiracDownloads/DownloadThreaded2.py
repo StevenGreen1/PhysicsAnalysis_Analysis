@@ -98,7 +98,7 @@ for eventSelection in eventsToDownload:
                     time.sleep(5)
 
                 print 'Downloading : ' + lfn
-                downloadThread = threading.Thread(target=worker, name=str(localFilePath), args=(threadingSemaphore, pool, dm, lfn, localPath))
+                downloadThread = threading.Thread(target=worker, name=str(localFilePath), args=(threadingSemaphore, pool, dm, lfn, fineLocalPath))
                 downloadThread.start()
 
 currentThread = threading.currentThread()
