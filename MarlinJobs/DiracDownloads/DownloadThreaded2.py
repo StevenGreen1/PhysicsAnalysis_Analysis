@@ -85,15 +85,15 @@ for eventSelection in eventsToDownload:
         fileFormat = 'DetModel_' + detectorModel + '_RecoVar_' + reconstructionVariant + '_' + eventType + '_' + str(energy) + 'GeV_GenN_(\d+)_(\d+)_(\d+)_Tag' + str(analysisTag) + '(.*?).root'
 
         for lfn in lfns:
-            localFile = os.path.basename(lfn)
             matchObj = re.match(fileFormat, localFile, re.M|re.I)
             if not matchObj:
                 continue
 
             fineLocalPath = os.path.join(localPath, matchObj.group(4))
+            localFile = os.path.basename(lfn)
             localFilePath = os.path.join(fineLocalPath, localFile)
 
-            if not os.path.isfile(localFilePath):
+            if not os.path.isfile(localPath):
                 while threading.activeCount() > (maxThread * 2):
                     time.sleep(5)
 
