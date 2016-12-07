@@ -10,7 +10,7 @@
 
 //============================================================================
 
-CouplingAnalysis::CouplingAnalysis(PostMVASelection *pPostMVASelection) : 
+CouplingAnalysis::CouplingAnalysis(PostMVASelection *pPostMVASelection, const int energy) : 
     m_pPostMVASelection(pPostMVASelection),
     m_numberUniqueAlpha4(0),
     m_numberUniqueAlpha5(0),
@@ -23,7 +23,7 @@ CouplingAnalysis::CouplingAnalysis(PostMVASelection *pPostMVASelection) :
 //    m_weightsLoaded(false)
     m_activeSimulationEventNumber(std::numeric_limits<int>::max())
 {
-    m_weightsDirectory = "/r06/lc/sg568/PhysicsAnalysis/Generator/ee_nunuqqqq/1400GeV/ConcatenatedWeightsXml/";
+    m_weightsDirectory = "/r06/lc/sg568/PhysicsAnalysis/Generator/ee_nunuqqqq/" + this->NumberToString(energy) + "GeV/ConcatenatedWeightsXml/";
 
     for (int a4Int = m_a4IntMin; a4Int < m_a4IntMax+1; a4Int++)
     {

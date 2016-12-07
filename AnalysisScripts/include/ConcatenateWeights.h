@@ -44,8 +44,11 @@ class ConcatenateWeights
     public:
         /**
          *  @brief Constructor
+         *
+         *  @param processName Process name indicating which data to load
+         *  @param energy Process energy indicating which data to load
          */
-        ConcatenateWeights(PostMVASelection *pPostMVASelection);
+        ConcatenateWeights(PostMVASelection *pPostMVASelection, const std::string processName, const int energy);
 
         /**
          *  @brief Destructor
@@ -55,31 +58,28 @@ class ConcatenateWeights
          /**
           *  @brief Load files for all alpha 4 and alpha 5 values sharing same generator number for a given process
           *
-          *  @param genN Generator number to link to xml file to load
-          *  @param pProcess Process indicating which data to load 
+          *  @param generatorNumber Generator number to link to xml file to load
           */
-        void LoadWeightXml(const int genN, const Process* pProcess);
+        void LoadWeightXml(const int generatorNumber);
 
     private:
          /**
           *  @brief Load files for a single alpha 4 and alpha 5 values sharing same generator number for a given process
           *
-          *  @param genN Generator number to link to xml file to load
+          *  @param generatorNumber Generator number to link to xml file to load
           *  @param alpha4 value to link to xml file to load
           *  @param alpha5 value to link to xml file to load
-          *  @param pProcess Process indicating which data to load
           */
-        void LoadIndividualWeightXml(const int &genN, const float &alpha4, const float &alpha5, const Process *pProcess);
+        void LoadIndividualWeightXml(const int &generatorNumber, const float &alpha4, const float &alpha5);
 
         /**
          *  @brief Add the xml data being read to the xml document being saved
          *
          *  @param eventType of events being recorded to concatenated xml
-         *  @param energy of events being recorded to concatenated xml
          *  @param alpha4 of events being recorded to concatenated xml
          *  @param alpha5 of events being recorded to concatenated xml
          */
-        void ConcatenateIndividualWeightXml(std::string eventType, const int energy, const float alpha4, const float alpha5);
+        void ConcatenateIndividualWeightXml(std::string eventType, const float alpha4, const float alpha5);
 
          /**
           *  @brief Save concatenated xml data for event weights
@@ -127,6 +127,8 @@ class ConcatenateWeights
         typedef std::vector<ConcatenateWeights::Event*> EventVector;
 
         IntVector               m_eventsNeedingWeights;             ///< Vector of event numbers requiring weights
+        const std::string       m_processName;                      ///< Process name to concatenate events
+        const int               m_energy;                           ///< Process energy
         int                     m_a4IntMin;                         ///< Min int to use for stepping alpha4 values
         int                     m_a4IntMax;                         ///< Max int to use for stepping alpha4 values
         int                     m_a5IntMin;                         ///< Min int to use for stepping alpha5 values

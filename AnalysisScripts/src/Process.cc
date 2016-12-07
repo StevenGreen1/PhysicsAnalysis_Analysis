@@ -10,7 +10,7 @@
 
 //=====================================================================
 
-Process::Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string pandoraPFOs, std::string jetClusteringMode, const int nJetsToCluster, std::string jetClusteringAlgorithm, std::string jetClusteringRadius, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag, bool quickLoad) :
+Process::Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string pandoraPFOs, std::string jetClusteringMode, const int nJetsToCluster, std::string jetClusteringAlgorithm, std::string jetClusteringRadius, const float wzSeparationCut, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag, bool quickLoad) :
     m_jobDescription(jobDescription),
     m_detectorModel(detectorModel),
     m_reconstructionVariant(reconstructionVariant),
@@ -19,6 +19,7 @@ Process::Process(std::string jobDescription, std::string detectorModel, std::str
     m_nJetsToCluster(nJetsToCluster),
     m_jetClusteringAlgorithm(jetClusteringAlgorithm),
     m_jetClusteringRadius(jetClusteringRadius),
+    m_wzSeparationCut(wzSeparationCut),
     m_eventType(eventType),
     m_crossSection(crossSection),
     m_luminosity(luminosity),
@@ -31,8 +32,6 @@ Process::Process(std::string jobDescription, std::string detectorModel, std::str
     m_postMVAProcessWeight(std::numeric_limits<float>::max()),
     m_processWeight(std::numeric_limits<float>::max())
 {
-    m_pathToFiles = "/r06/lc/sg568/" + jobDescription + "/MarlinJobs/Detector_Model_" + detectorModel + "/Reconstruction_Variant_" + reconstructionVariant + "/" + eventType + "/" + this->NumberToString(energy) + "GeV/AnalysisTag" + this->NumberToString(analysisTag) + "/";
-
     if (pandoraPFOs == "SelectedPandoraPFANewPFOs")
         m_rootSuffix += "S";
     else if (pandoraPFOs == "TightSelectedPandoraPFANewPFOs")
@@ -64,6 +63,8 @@ Process::Process(std::string jobDescription, std::string detectorModel, std::str
         m_rootSuffix += "1p00";
     else if (jetClusteringRadius == "1.1")
         m_rootSuffix += "1p10";
+
+    m_pathToFiles = "/r06/lc/sg568/" + jobDescription + "/MarlinJobs/Detector_Model_" + detectorModel + "/Reconstruction_Variant_" + reconstructionVariant + "/" + eventType + "/" + this->NumberToString(energy) + "GeV/AnalysisTag" + this->NumberToString(analysisTag) + "/" + m_rootSuffix + "/";
 
     if (!quickLoad)
         this->MakeTChain();
@@ -110,6 +111,13 @@ float Process::GetProcessWeight() const
 float Process::GetPostMVAProcessWeight() const
 {
     return m_postMVAProcessWeight;
+}
+
+//=====================================================================
+
+float Process::GetWZSeparationCut() const
+{
+    return m_wzSeparationCut;
 }
 
 //=====================================================================
@@ -180,7 +188,7 @@ bool Process::DoesEventPassCuts(int eventNumber) const
 void Process::SetMVARootFiles()
 {
     m_pPostMVATChain = new TChain("MVATree");
-    TString fileToAdd = "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/RootFilesPostMVA/RootFiles_Multivariant_" + m_eventType + "_" + this->NumberToString(m_energy) + "GeV_" + m_rootSuffix + "_AnalysisTag" + this->NumberToString(m_analysisTag) + ".root";
+    TString fileToAdd = "/r06/lc/sg568/PhysicsAnalysis/Analysis/RootFilesPostMVA/RootFiles_Multivariant_" + m_eventType + "_" + this->NumberToString(m_energy) + "GeV_" + m_rootSuffix + "_AnalysisTag" + this->NumberToString(m_analysisTag) + ".root";
     m_pPostMVATChain->Add(fileToAdd);
     m_postMVAProcessWeight = m_luminosity * m_crossSection / (float)(m_pPostMVATChain->GetEntries());
 }
@@ -203,7 +211,6 @@ void Process::MakeTChain()
         TSystemFile *file;
         TString fileCandidate;
         TIter next(listOfFiles);
-
         while ((file=(TSystemFile*)next())) 
         {
             fileCandidate = file->GetName();
@@ -211,7 +218,7 @@ void Process::MakeTChain()
 
             if (!file->IsDirectory() and fileCandidate.EndsWith("root") and fileCandidate.Contains(analysisTagString.c_str()) and fileCandidate.Contains(m_rootSuffix.c_str())) // and m_pTrainTChain->GetEntries() < 50000) // and m_pTChain->GetEntries() < 50000) 
             {
-                if (m_eventType == "ee_nunuqqqq")
+                if (m_eventType == "ee_nunuqqqq" and m_energy == 1400)
                 {
                     std::string fileCandidate2 = fileCandidate.Data();
                     std::string startDel = "GenN_";
@@ -220,12 +227,20 @@ void Process::MakeTChain()
                     unsigned lastLim = fileCandidate2.find(stopDel);
                     std::string strNew = fileCandidate2.substr (firstLim+5,lastLim-firstLim);
                     int simulationNumber = atoi(strNew.c_str());
-                    //std::cout << "fileCandidate " << fileCandidate << std::endl;
-                    //std::cout << "m_rootSuffix " << m_rootSuffix << std::endl;
-                    //std::cout << "simulationNumber " << simulationNumber << std::endl;
                     if (simulationNumber < 1000)
                         continue;
-                    //std::cout << "simulationNumber passed" << std::endl;
+                }
+                else if (m_eventType == "ee_nunuqqqq" and m_energy == 3000)
+                {
+                    std::string fileCandidate2 = fileCandidate.Data();
+                    std::string startDel = "GenN_";
+                    std::string stopDel = "_100_0_";
+                    unsigned firstLim = fileCandidate2.find(startDel);
+                    unsigned lastLim = fileCandidate2.find(stopDel);
+                    std::string strNew = fileCandidate2.substr (firstLim+5,lastLim-firstLim);
+                    int simulationNumber = atoi(strNew.c_str());
+                    if (simulationNumber < 1000)
+                        continue;
                 }
 
                 TString rootFileToAdd = m_pathToFiles + fileCandidate.Data();

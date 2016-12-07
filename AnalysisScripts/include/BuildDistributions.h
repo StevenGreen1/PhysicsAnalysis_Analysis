@@ -1,18 +1,16 @@
 /**
- *  @file   AnalysisScripts/include/Fit.h 
+ *  @file   AnalysisScripts/include/BuildDistributions.h 
  * 
- *  @brief  Header file for the fit class.
+ *  @brief  Header file for the build distributions class.
  * 
  *  $Log: $
  */
 
-#ifndef FIT_H
-#define FIT_H
+#ifndef BUILD_DISTRIBUTIONS_H
+#define BUILD_DISTRIBUTIONS_H
 
 #include <algorithm>
-#include <iostream>
 #include <memory>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -23,46 +21,63 @@
 #include "TGraph2D.h"
 #include "TFile.h"
 #include "TH2F.h"
+#include "TH3F.h"
 #include "THStack.h"
 #include "TLegend.h"
 #include "TROOT.h"
-#include "TSystemDirectory.h"
-#include "TTree.h"
+#include "Math/Minimizer.h"
+#include "Math/Factory.h"
+#include "Math/Functor.h"
 
-class Fit
+#include "EventNumbers.h"
+#include "PostMVASelection.h"
+#include "Process.h"
+#include "CouplingAnalysis.h"
+
+class BuildDistributions
 {
+    typedef std::vector<const Process*> ProcessVector;
     typedef std::vector<int> IntVector;
     typedef std::vector<float> FloatVector;
     typedef std::vector<double> DoubleVector;
-    typedef std::vector<std::string> StringVector;
 
     public:
         /**
          *  @brief Constructor
          *
-         *  @param descriptor string to read in filenames
-         *  @param nBins used in fit
-         *  @param inputPath
+         *  @param processVector vector of processes to include in analysis
+         *  @param pCouplingAnalysis pointer to coupling analysis class for weight information
+         *  @param descriptor Optional string to attach to filenames
+         *  @param nEvtsStart
          *
          */
-        Fit(std::string descriptor, const int nBins, std::string inputPath);
+        BuildDistributions(const ProcessVector &processVector, CouplingAnalysis *pCouplingAnalysis, int nEvtsStart, int nEvtsEnd, std::string descriptor = "", std::string outputPath = "");
 
         /**
          *  @brief Default destructor
          */
-        ~Fit();
+        ~BuildDistributions();
 
         /**
-         *  @brief Merge distributions to form chi2 together and calculate chi2
+         *  @brief Set numbers of bins to use in fit
+         *
+         *  @param nBins number of bins to use in fit
          */
-        void Merge();
+        void SetNBins(const int &nBins);
+
+        /**
+         *  @brief Perform simple scan of alpha4/alpha5 to make distributions for chi2 calculation
+         */
+        void BuildDistribution();
+
+        /**
+         *  @brief Make plot of event weight for a single event vs alpha4 and alpha5
+         *
+         *  @param maxEventNumber
+         */
+        void EventWeightsForSingleEvent(int maxEventNumber);
 
     private:
-        /**
-         *  @brief Find all files with relevant description and add to read in list
-         */
-        void FindFiles();
-
         /**
          *  @brief Initialise reference histograms for reweighting
          */
@@ -72,15 +87,6 @@ class Fit
          *  @brief Initialise histograms for reweighting
          */
         void Initialise();
-
-        /**
-         *  @brief Merge all files together for given alpha4 and alpha5.  If reference = true, fill reference distribution
-         *
-         *  @param alpha4 to use to fill 
-         *  @param alpha5 to use to fill
-         *  @param reference should fill reference distribution 
-         */
-        void MergeFiles(float alpha4, float alpha5, bool reference = false);
 
         /**
          *  @brief See if name is available name for root object and if not delete pre exisiting object so that it is a valid name choice
@@ -95,20 +101,17 @@ class Fit
         void Clear();
 
         /**
-         *  @brief Calculate negative log likelihood for a given distribution for non-zero alpha4 and alpha5 based on distribution with zero alpha4 and alpah5
-         *
-         *  @param pTH1F distribution with non zero alpha4 and alpha5
-         *  @param pTH1FRef reference distribution to base log likelihood from
+         *  @brief Fill distribution of intertest for alpha4 = alpha5 = 0
          */
-        double CalculateChi2In1D(TH1F *pTH1F, TH1F *pTH1FRef);
+        void FillReferenceDistribution();
 
         /**
-         *  @brief Calculate negative log likelihood for a given 2D distribution for non-zero alpha4 and alpha5 based on distribution with zero alpha4 and alpah5
+         *  @brief Fill distribution of intertest
          *
-         *  @param pTH2F distribution with non zero alpha4 and alpha5
-         *  @param pTH2FRef reference distribution to base log likelihood from
+         *  @param alpha4
+         *  @param alpha5
          */
-        double CalculateChi2In2D(TH2F *pTH2F, TH2F *pTH2FRef);
+        void FillDistribution(const double alpha4, const double alpha5);
 
         /**
          *  @brief Make random string for histogram name to prevent root troubles...
@@ -123,21 +126,19 @@ class Fit
         template <class T>
         std::string NumberToString(T Number);
 
+        ProcessVector         m_processVector;                              ///< Vector of all processes
+        PostMVASelection     *m_pPostMVASelection;                          ///< Container for all selection cuts
+        CouplingAnalysis     *m_pCouplingAnalysis;                          ///< Coupling analysis to use in fit
+        int                   m_nEvtsStart;                                 ///< Event number to start
+        int                   m_nEvtsEnd;                                   ///< Event number to end
+        const std::string     m_outputPath;                                 ///< Path to send results to
         const std::string     m_descriptor;                                 ///< Optional string to attack to plots/filename etc
-        const std::string     m_inputPath;                                  ///< Path to send results to
-        int                   m_nBins;                                      ///< Number of bins to use in costheta*jet fit
         const std::string     m_rootFileName;                               ///< Name of output results root file
-        StringVector          m_filesToReadIn;                              ///< Vector of files to read in
         TFile                *m_pTFile;                                     ///< Root file for results
         TTree                *m_pTTree;                                     ///< Root tree for results
-        double                m_alpha4;                                     ///< Alpha 4 value to save to tree 
-        double                m_alpha5;                                     ///< Alpha 5 value to save to tree
-        double                m_chi2CosThetaStarWSynJets;                   ///< Chi2 from cos theta start synergy jets assumed to be W
-        double                m_chi2CosThetaStarZSynJets;                   ///< Chi2 from cos theta start synergy jets assumed to be Z
-        double                m_chi2CosThetaStarWSynBosons;                 ///< Chi2 from cos theta start synergy boson assumed to be W
-        double                m_chi2CosThetaStarZSynBosons;                 ///< Chi2 from cos theta start synergy boson assumed to be Z
-        double                m_chi2CosThetaStarWSynJets_vs_Bosons;         ///< Chi2 from cos theta start synergy jets vs cos theta start synergy boson assumed to be W
-        double                m_chi2CosThetaStarZSynJets_vs_Bosons;         ///< Chi2 from cos theta start synergy jets vs cos theta start synergy boson assumed to be Z
+        int                   m_nBins;                                      ///< Number of bins to use in costheta*jet fit
+        float                 m_wBosonMass;                                 ///< W Boson Mass
+        float                 m_zBosonMass;                                 ///< Z Boson Mass
         TH1F                 *m_cosThetaStarWSynJets;                       ///< Distribution of cos theta star from jets from synergy boson assumed to be W
         TH1F                 *m_cosThetaStarWSynJetsRef;                    ///< Distribution of cos theta star from jets from synergy boson assumed to be W ref
         TH1F                 *m_cosThetaStarZSynJets;                       ///< Distribution of cos theta star from jets from synergy boson assumed to be Z
@@ -150,10 +151,6 @@ class Fit
         TH2F                 *m_cosThetaStarWSynJets_vs_BosonsRef;          ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson assumed to be W ref
         TH2F                 *m_cosThetaStarZSynJets_vs_Bosons;             ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson assumed to be Z
         TH2F                 *m_cosThetaStarZSynJets_vs_BosonsRef;          ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson assumed to be Z ref
-        FloatVector           m_red;                                        ///< Red RGB for plotting
-        FloatVector           m_green;                                      ///< Green RGB for plotting
-        FloatVector           m_blue;                                       ///< Blue RGB for plotting
-        IntVector             m_fillStyle;                                  ///< Fill style for plotting
 };
 
 #endif

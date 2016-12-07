@@ -50,7 +50,7 @@ class CouplingAnalysis
         /**
          *  @brief Constructor
          */
-        CouplingAnalysis(PostMVASelection *pPostMVASelection);
+        CouplingAnalysis(PostMVASelection *pPostMVASelection, const int energy);
 //        CouplingAnalysis(const ProcessVector &processVector, PostMVASelection *pPostMVASelection);
 
         /**

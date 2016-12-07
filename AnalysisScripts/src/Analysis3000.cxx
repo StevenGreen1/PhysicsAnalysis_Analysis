@@ -11,7 +11,8 @@
 #include <time.h>
 
 #include "CouplingAnalysis.h"
-#include "Fit.h"
+#include "BuildDistributions.h"
+//#include "Fit.h"
 #include "MakeDerivedPlots.h"
 #include "MakeSimplePlots.h"
 #include "PostMVASelection.h"
@@ -30,30 +31,9 @@ int main(int argc, char **argv)
     gStyle->SetOptStat(0);
 
     // Signal, luminosity copied from nunuqqqq final state
-    const Process *pProcess_ee_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",22.16,1500,3000,11);
+    const Process *pProcess_ee_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7",88.f,"ee_nunuqqqq",22.16,1500,3000,11);
 
-
-#                       { 'EventType': 'ee_lnuqqqq', 'Energy': 3000, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12, 'ProdID': 6540, 'NumberOfEvents': 990000 }
-#                       { 'EventType': 'ee_llqqqq', 'Energy': 3000, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12, 'ProdID': 6754, 'NumberOfEvents': 728900 },
-#                       { 'EventType': 'ee_qqqq', 'Energy': 3000, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12, 'ProdID': 6776, 'NumberOfEvents': 3084200 },
-#                       { 'EventType': 'ee_nunuqq', 'Energy': 3000, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12, 'ProdID': 6583, 'NumberOfEvents': 575200 },
-#                       { 'EventType': 'ee_lnuqq', 'Energy': 3000, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12, 'ProdID': 6747, 'NumberOfEvents': 2115000 },
-#                       { 'EventType': 'ee_qqll', 'Energy': 3000, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12, 'ProdID': 3048, 'NumberOfEvents': 482500 },
-#                       { 'EventType': 'ee_qq', 'Energy': 3000, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12, 'ProdID': 4586, 'NumberOfEvents': 196400 },
-#                       { 'EventType': 'egamma_qqqqe_EPA', 'Energy': 3000, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12, 'ProdID': 6733, 'NumberOfEvents': 70300 },
-#                       { 'EventType': 'egamma_qqqqe_BS', 'Energy': 3000, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12, 'ProdID': 6736, 'NumberOfEvents': 111800 },
-#                       { 'EventType': 'gammae_qqqqe_EPA', 'Energy': 3000, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12, 'ProdID': 6739, 'NumberOfEvents': 70800 },
-#                       { 'EventType': 'gammae_qqqqe_BS', 'Energy': 3000, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12, 'ProdID': 6742, 'NumberOfEvents': 114100 },
-#                       { 'EventType': 'egamma_qqqqnu_EPA', 'Energy': 3000, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12, 'ProdID': 6571, 'NumberOfEvents': 138900 },
-#                       { 'EventType': 'egamma_qqqqnu_BS', 'Energy': 3000, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12, 'ProdID': 6574, 'NumberOfEvents': 567000 },
-#                       { 'EventType': 'gammae_qqqqnu_EPA', 'Energy': 3000, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12, 'ProdID': 6577, 'NumberOfEvents': 138000 },
-#                       { 'EventType': 'gammae_qqqqnu_BS', 'Energy': 3000, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12, 'ProdID': 6580, 'NumberOfEvents': 571600 },
-#                       { 'EventType': 'gammagamma_qqqq_EPA_EPA', 'Energy': 3000, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12, 'ProdID': 6721, 'NumberOfEvents': 134700 },
-#                       { 'EventType': 'gammagamma_qqqq_EPA_BS', 'Energy': 3000, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12, 'ProdID': 6724, 'NumberOfEvents': 268100 },
-#                       { 'EventType': 'gammagamma_qqqq_BS_EPA', 'Energy': 3000, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12, 'ProdID': 6727, 'NumberOfEvents': 273300 },
-#                       { 'EventType': 'gammagamma_qqqq_BS_BS', 'Energy': 3000, 'DetectorModel':'clic_ild_cdr', 'ReconstructionVariant':'clic_ild_cdr_ggHadBkg', 'AnalysisTag': 12, 'ProdID': 6730, 'NumberOfEvents': 509800 }
-
-
+/*
     // CLIC Backgrounds
     const Process *pProcess_ee_lnuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_lnuqqqq",115.3,1500,3000,9);
     const Process *pProcess_ee_llqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_llqqqq",169.3,1500,3000,9);
@@ -78,12 +58,12 @@ int main(int argc, char **argv)
     const Process *pProcess_gammagamma_qqqq_EPA_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","gammagamma_qqqq_EPA_BS",,1500,3000,9);
     const Process *pProcess_gammagamma_qqqq_BS_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","gammagamma_qqqq_BS_EPA",,1500,3000,9);
     const Process *pProcess_gammagamma_qqqq_BS_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","gammagamma_qqqq_BS_BS",,1500,3000,9);
-
+*/
 
     std::vector<const Process*> processes;
 
     processes.push_back(pProcess_ee_nunuqqqq);
-
+/*
     processes.push_back(pProcess_ee_lnuqqqq);
     processes.push_back(pProcess_ee_llqqqq);
     processes.push_back(pProcess_ee_qqqq);
@@ -107,7 +87,7 @@ int main(int argc, char **argv)
     processes.push_back(pProcess_gammagamma_qqqq_EPA_BS);
     processes.push_back(pProcess_gammagamma_qqqq_BS_EPA);
     processes.push_back(pProcess_gammagamma_qqqq_BS_BS);
-
+*/
     PreSelection *pPreSelectionSemiFinal = new PreSelection(processes);
     pPreSelectionSemiFinal->ApplyTransverseMomentumCut(100.0, 10000.0);
     pPreSelectionSemiFinal->ApplyInvariantMassCut(200.0, 10000.0);
@@ -120,9 +100,9 @@ int main(int argc, char **argv)
 
 //    MakeDerivedPlots *makePlots = new MakeDerivedPlots(processes, pPreSelectionSemiFinal, pPostMVASelectionSelected);
 
-    CouplingAnalysis *pCouplingAnalysis = new CouplingAnalysis(pPostMVASelectionSelected);
+    CouplingAnalysis *pCouplingAnalysis = new CouplingAnalysis(pPostMVASelectionSelected, 3000);
 
-    Fit *fit = new Fit(processes, pCouplingAnalysis);
+//    Fit *fit = new Fit(processes, pCouplingAnalysis);
 //    MakeDerivedPlots *makePlots = new MakeDerivedPlots(processes);
 //    MakeSimplePlots *makePlots = new MakeSimplePlots(processes);
 }

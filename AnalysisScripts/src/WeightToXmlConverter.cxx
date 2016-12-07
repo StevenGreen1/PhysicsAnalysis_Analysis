@@ -12,8 +12,8 @@
 
 int main(int argc, char* argv[])
 {
-    std::string process("ee_nunuqqqq");
-    int energy(1400);
+    std::string process(argv[1]);
+    const int energy(atoi(argv[2]));
 
     for (int i = -7; i < 8; i++)
     {
@@ -21,9 +21,8 @@ int main(int argc, char* argv[])
         {
             const float alpha4(i * 0.01);
             const float alpha5(j * 0.01);
-std::cout << alpha4 << " " << alpha5 << std::endl;
-//            WeightToXmlConverter *pWeightToXmlConverter = new WeightToXmlConverter(process,energy,alpha4,alpha5,atoi(argv[1]));
-            WeightToXmlConverter *pWeightToXmlConverter(new WeightToXmlConverter(process,energy,alpha4,alpha5,atoi(argv[1]))); 
+            std::cout << "Loading (alpha4, alpha5) = (" << alpha4 << ", " << alpha5 << "), Energy = " << energy << std::endl;
+            WeightToXmlConverter *pWeightToXmlConverter(new WeightToXmlConverter(process,energy,alpha4,alpha5,atoi(argv[3]))); 
         }
     }
     return 0;
@@ -55,7 +54,19 @@ std::cout << m_alpha4 << " " << m_alpha5 << std::endl;
     std::string folder("/r06/lc/sg568/PhysicsAnalysis/Generator/" + m_eventType + "/" + this->NumberToString(m_energy) + "GeV/WhizardJobSet" + this->NumberToString(m_generatorNumber) + "/Alpha4_" + this->AlphasToStringReading(m_alpha4) + "_Alpha5_" + this->AlphasToStringReading(m_alpha5));
     std::cout << folder << std::endl;
 
-    int nFilesToProcess(10);
+    int nFilesToProcess(0);
+    int nEventsInFile(0);
+
+    if (m_energy == 1400)
+    {
+        nEventsInFile = 1000;
+        nFilesToProcess = 10;
+    }
+    else if (m_energy == 3000)
+    {
+        nEventsInFile = 100;
+        nFilesToProcess = 100;
+    }
 
     if (m_generatorNumber == 0)
         nFilesToProcess = 350;
@@ -95,7 +106,7 @@ std::cout << m_alpha4 << " " << m_alpha5 << std::endl;
 //            pEvent->SetEnergy(m_energy);
 //            pEvent->SetAlpha4(m_alpha4);
 //            pEvent->SetAlpha5(m_alpha5);
-            const int localEventNumber(atoi(eventNumber.c_str())-1e3*(i-1));
+            const int localEventNumber(atoi(eventNumber.c_str())-nFilesToProcess*(i-1));
             pEvent->SetEventNumber(localEventNumber);
             pEvent->SetWeight(atof(weight.c_str()));
             m_events.push_back(pEvent); 
