@@ -98,7 +98,7 @@ int main(int argc, char **argv)
     pBuildDistributions_1->BuildDistribution();
     delete pBuildDistributions_1;
 
-    BuildDistributions *pBuildDistributions_2 = new BuildDistributions(processes_2, pCouplingAnalysis, nEvtsStart, nEvtsEnd, "SPFOs_kt_0p70_10Bins_Start_" + NumberToString(nEvtsStart) + "_End_" + NumberToString(nEvtsEnd) + "_1400GeV", outputPath);
+    BuildDistributions *pBuildDistributions_2 = new BuildDistributions(processes_2, pCouplingAnalysis, nEvtsStart, nEvtsEnd, "SPFOs_kt_0p50_10Bins_Start_" + NumberToString(nEvtsStart) + "_End_" + NumberToString(nEvtsEnd) + "_1400GeV", outputPath);
     pBuildDistributions_2->SetNBins(10);
     pBuildDistributions_2->BuildDistribution();
     delete pBuildDistributions_2;

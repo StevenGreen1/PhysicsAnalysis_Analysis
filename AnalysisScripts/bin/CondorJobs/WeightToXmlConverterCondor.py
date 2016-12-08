@@ -2,7 +2,7 @@
 
 import os, sys, getopt, re, subprocess, math, dircache, logging, time, random, string
 
-class CondorConcatenateWeightFiles:
+class CondorWeightToXmlConverter:
     'Common base class for running whizard on condor'
 
 ### ----------------------------------------------------------------------------------------------------
@@ -11,18 +11,14 @@ class CondorConcatenateWeightFiles:
 
     def __init__(self):
 
-        self._ConcatenateWeightFilesArgList = [] 
-        self._ExecutableName = 'ConcatenateWeightFiles'
+        self._WeightToXmlConverterArgList = [] 
+        self._ExecutableName = 'WeightToXmlConverter'
         self._Executable = os.path.join('/var/clus/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin', self._ExecutableName)
-        self._CondorMaxRuns = 100
-#        savePath = '/r06/lc/sg568/PhysicsAnalysis/Generator/ee_nunuqqqq/1400GeV/ConcatenatedWeightsXml'
-        savePath = '/r06/lc/sg568/PhysicsAnalysis/Generator/ee_nunuqqqq/3000GeV/ConcatenatedWeightsXml'
+        self._CondorMaxRuns = 1000
 
-        with open('GeneratorNumbersToConcatenate_3TeV.txt','r') as f:
-            for line in f:
-                weightFile = os.path.join(savePath, 'ConcatenatedWeights' + str(line.strip()) + '.xml')
-                if not os.path.isfile(weightFile):
-                    self._ConcatenateWeightFilesArgList.append(str(line.strip()))
+        for i in range(1,351):
+            argument = 'ee_nunuqqqq 3000 ' + str(i)
+            self._WeightToXmlConverterArgList.append(argument)
 
         self.runCondorJobs()
         self.checkCondorJobs()
@@ -33,11 +29,11 @@ class CondorConcatenateWeightFiles:
 
     def runCondorJobs(self):
         nQueued = self.nQueuedCondorJobs()
-        condorJobFile = 'ConcatenateWeightFiles.job'
+        condorJobFile = 'WeightToXmlConverter.job'
 
         while True:
-            for idx, arguement in enumerate(self._ConcatenateWeightFilesArgList):
-                nRemaining = len(self._ConcatenateWeightFilesArgList) - idx - 1
+            for idx, arguement in enumerate(self._WeightToXmlConverterArgList):
+                nRemaining = len(self._WeightToXmlConverterArgList) - idx - 1
                 nQueued = 0 
 
                 while True:
@@ -74,9 +70,9 @@ class CondorConcatenateWeightFiles:
         jobString += 'notification            = never                                                                \n'
         jobString += 'Requirements            = (OSTYPE == \"SLC6\")                                                 \n'
         jobString += 'Rank                    = memory                                                               \n'
-        jobString += 'output                  = ' + os.environ['HOME'] + '/CondorLogs/ConcatenateWeightFiles' + str(idx) + '.out  \n'
-        jobString += 'error                   = ' + os.environ['HOME'] + '/CondorLogs/ConcatenateWeightFiles' + str(idx) + '.err \n'
-        jobString += 'log                     = ' + os.environ['HOME'] + '/CondorLogs/ConcatenateWeightFiles' + str(idx) + '.log \n'
+        jobString += 'output                  = ' + os.environ['HOME'] + '/CondorLogs/WeightToXmlConverter' + str(idx) + '.out  \n'
+        jobString += 'error                   = ' + os.environ['HOME'] + '/CondorLogs/WeightToXmlConverter' + str(idx) + '.err \n'
+        jobString += 'log                     = ' + os.environ['HOME'] + '/CondorLogs/WeightToXmlConverter' + str(idx) + '.log \n'
         jobString += 'environment             = CONDOR_JOB=true                                                      \n'
         jobString += 'Universe                = vanilla                                                              \n'
         jobString += 'getenv                  = false                                                                \n'
@@ -121,4 +117,4 @@ class CondorConcatenateWeightFiles:
 ### ----------------------------------------------------------------------------------------------------
 ### Call class in main
 ### ----------------------------------------------------------------------------------------------------
-CondorConcatenateWeightFiles()
+CondorWeightToXmlConverter()
