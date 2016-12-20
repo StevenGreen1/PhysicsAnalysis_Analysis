@@ -12,20 +12,25 @@ class CondorConcatenateWeightFiles:
     def __init__(self):
 
         self._ConcatenateWeightFilesArgList = [] 
-        self._ExecutableName = 'ConcatenateWeightFiles'
+        self._ExecutableName = 'ConcatenateWeightFiles.sh'
+        self._Energy = 1400
         self._Executable = os.path.join('/var/clus/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin', self._ExecutableName)
         self._CondorMaxRuns = 100
-#        savePath = '/r06/lc/sg568/PhysicsAnalysis/Generator/ee_nunuqqqq/1400GeV/ConcatenatedWeightsXml'
-        savePath = '/r06/lc/sg568/PhysicsAnalysis/Generator/ee_nunuqqqq/3000GeV/ConcatenatedWeightsXml'
+        savePath = '/r06/lc/sg568/PhysicsAnalysis/Generator/ee_nunuqqqq/' + str(self._Energy) + 'GeV/ConcatenatedWeightsXml'
 
-        with open('GeneratorNumbersToConcatenate_3TeV.txt','r') as f:
+#        with open('GeneratorNumbersToConcatenate_3TeV.txt','r') as f:
+        with open('GeneratorNumbersToConcatenate.txt','r') as f:
             for line in f:
                 weightFile = os.path.join(savePath, 'ConcatenatedWeights' + str(line.strip()) + '.xml')
                 if not os.path.isfile(weightFile):
-                    self._ConcatenateWeightFilesArgList.append(str(line.strip()))
+                    line = str(line.strip()) + ' ' + str(self._Energy)
+                    self._ConcatenateWeightFilesArgList.append(line)
 
-        self.runCondorJobs()
-        self.checkCondorJobs()
+        if self._ConcatenateWeightFilesArgList:
+            self.runCondorJobs()
+            self.checkCondorJobs()
+        else:
+            print 'No weights need concatenating.'
 
 ### ----------------------------------------------------------------------------------------------------
 ### Start of runCondorJobs function
