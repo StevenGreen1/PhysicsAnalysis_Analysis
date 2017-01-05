@@ -14,15 +14,32 @@ CouplingAnalysis::CouplingAnalysis(PostMVASelection *pPostMVASelection, const in
     m_pPostMVASelection(pPostMVASelection),
     m_numberUniqueAlpha4(0),
     m_numberUniqueAlpha5(0),
-    m_a4IntMin(-6),
-    m_a4IntMax(6),
-    m_a4Step(0.01f),
-    m_a5IntMin(-6),
-    m_a5IntMax(6),
-    m_a5Step(0.01f),
 //    m_weightsLoaded(false)
     m_activeSimulationEventNumber(std::numeric_limits<int>::max())
 {
+    if (energy == 1400)
+    {
+        m_a4IntMin = -6;
+        m_a4IntMax = 6;
+        m_a4Step = 0.01f;
+        m_a5IntMin = -6;
+        m_a5IntMax = 6;
+        m_a5Step = 0.01f;
+    }
+    else if (energy == 3000)
+    {
+        m_a4IntMin = -6;
+        m_a4IntMax = 6;
+        m_a4Step = 0.001f;
+        m_a5IntMin = -6;
+        m_a5IntMax = 6;
+        m_a5Step = 0.001f;
+    }
+    else 
+    {
+         std::cout << "Unknown energy requested for event weights." << std::endl;
+    }
+
     m_weightsDirectory = "/r06/lc/sg568/PhysicsAnalysis/Generator/ee_nunuqqqq/" + this->NumberToString(energy) + "GeV/ConcatenatedWeightsXml/";
 
     for (int a4Int = m_a4IntMin; a4Int < m_a4IntMax+1; a4Int++)

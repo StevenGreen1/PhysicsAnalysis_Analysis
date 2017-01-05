@@ -134,19 +134,27 @@ class BuildDistributions
         const std::string     m_outputPath;                                 ///< Path to send results to
         const std::string     m_descriptor;                                 ///< Optional string to attack to plots/filename etc
         const std::string     m_rootFileName;                               ///< Name of output results root file
+        const bool            m_splitDistributions;                         ///< Make a separate W and Z distribution
+        int                   m_energy;                                     ///< Energy of distributions being fitted
         TFile                *m_pTFile;                                     ///< Root file for results
         TTree                *m_pTTree;                                     ///< Root tree for results
         int                   m_nBins;                                      ///< Number of bins to use in costheta*jet fit
         float                 m_wBosonMass;                                 ///< W Boson Mass
         float                 m_zBosonMass;                                 ///< Z Boson Mass
+        TH1F                 *m_cosThetaStarSynJets;                        ///< Distribution of cos theta star from jets from synergy boson all 
+        TH1F                 *m_cosThetaStarSynJetsRef;                     ///< Distribution of cos theta star from jets from synergy boson all ref 
         TH1F                 *m_cosThetaStarWSynJets;                       ///< Distribution of cos theta star from jets from synergy boson assumed to be W
         TH1F                 *m_cosThetaStarWSynJetsRef;                    ///< Distribution of cos theta star from jets from synergy boson assumed to be W ref
         TH1F                 *m_cosThetaStarZSynJets;                       ///< Distribution of cos theta star from jets from synergy boson assumed to be Z
         TH1F                 *m_cosThetaStarZSynJetsRef;                    ///< Distribution of cos theta star from jets from synergy boson assumed to be Z ref
+        TH1F                 *m_cosThetaStarSynBosons;                      ///< Distribution of cos theta star from bosons from synergy boson all
+        TH1F                 *m_cosThetaStarSynBosonsRef;                   ///< Distribution of cos theta star from bosons from synergy boson all ref
         TH1F                 *m_cosThetaStarWSynBosons;                     ///< Distribution of cos theta star from bosons from synergy boson assumed to be W
         TH1F                 *m_cosThetaStarWSynBosonsRef;                  ///< Distribution of cos theta star from bosons from synergy boson assumed to be W ref
         TH1F                 *m_cosThetaStarZSynBosons;                     ///< Distribution of cos theta star from bosons from synergy boson assumed to be Z
         TH1F                 *m_cosThetaStarZSynBosonsRef;                  ///< Distribution of cos theta star from bosons from synergy boson assumed to be Z ref
+        TH2F                 *m_cosThetaStarSynJets_vs_Bosons;              ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson all
+        TH2F                 *m_cosThetaStarSynJets_vs_BosonsRef;           ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson all ref
         TH2F                 *m_cosThetaStarWSynJets_vs_Bosons;             ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson assumed to be W
         TH2F                 *m_cosThetaStarWSynJets_vs_BosonsRef;          ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson assumed to be W ref
         TH2F                 *m_cosThetaStarZSynJets_vs_Bosons;             ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson assumed to be Z

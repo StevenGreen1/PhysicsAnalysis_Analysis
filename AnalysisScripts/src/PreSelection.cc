@@ -40,9 +40,7 @@ void PreSelection::ApplyPreSelection()
     std::cout << "Process & NEvts & PreSelection NEvts & PreSelection Normalised NEvts \\\\" << std::endl;
 
     for (const auto &pProcess: m_processVector)
-//ProcessVector::const_iterator it = m_processVector.begin(); it != m_processVector.end(); it++)
     {
-//        const Process *pProcess(*it);
         TChain *pTChain(pProcess->GetTrainingTChain());
 
         int nIsolatedLeptons(std::numeric_limits<int>::max());
@@ -64,10 +62,10 @@ void PreSelection::ApplyPreSelection()
         pTChain->SetBranchAddress("BTagForJet2", &bTag2);
         pTChain->SetBranchAddress("BTagForJet3", &bTag3);
         pTChain->SetBranchAddress("BTagForJet4", &bTag4);
-        pTChain->SetBranchAddress("InvMassWVector1", &invMassW1);
-        pTChain->SetBranchAddress("InvMassWVector2", &invMassW2);
-        pTChain->SetBranchAddress("InvMassZVector1", &invMassZ1);
-        pTChain->SetBranchAddress("InvMassZVector2", &invMassZ2);
+        pTChain->SetBranchAddress("InvariantMassWBoson1", &invMassW1);
+        pTChain->SetBranchAddress("InvariantMassWBoson2", &invMassW2);
+        pTChain->SetBranchAddress("InvariantMassZBoson1", &invMassZ1);
+        pTChain->SetBranchAddress("InvariantMassZBoson2", &invMassZ2);
 
         int counter(0);
 

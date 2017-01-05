@@ -33,8 +33,7 @@
 
 class MakeDerivedPlots
 {
-    typedef std::vector<std::shared_ptr<const Process> > ProcessVector;
-
+    typedef std::vector<const Process*> ProcessVector;
     typedef std::vector<double> DoubleVector;
     typedef std::vector<float> FloatVector;
     typedef std::vector<int> IntVector;
@@ -45,10 +44,11 @@ class MakeDerivedPlots
          *  @brief Constructor 
          *
          *  @param processVector vector of processes to include in analysis
+         *  @param descriptor for plot naming
          *  @param pPreSelection pointer to class containing preselection information
          *  @param pPostMVASelection optional pointer to class containing post MVA selection information.  Applies the Will overwrite preselection pointer specifed in second argument
          */
-        MakeDerivedPlots(const ProcessVector &processVector, PreSelection *pPreSelection, PostMVASelection *pPostMVASelection = NULL);
+        MakeDerivedPlots(const ProcessVector &processVector, std::string descriptor, PreSelection *pPreSelection, PostMVASelection *pPostMVASelection = NULL);
 
         /**
          *  @brief Destructor 
@@ -70,12 +70,13 @@ class MakeDerivedPlots
                 /**
                  *  @brief Constructor
                  *
+                 *  @param descriptor for plot naming
                  *  @param varibaleName variable name for plotting
                  *  @param nBins number of bins
                  *  @param xLow low bin edge
                  *  @param xHigh high bin edge
                  */
-                PlotContainer(std::string varibaleName, int nBins, double xLow, double xHigh);
+                PlotContainer(std::string descriptor, std::string varibaleName, int nBins, double xLow, double xHigh);
 
                 /**
                  *  @brief Return random string for root ermmm features...
@@ -101,6 +102,7 @@ class MakeDerivedPlots
 
             private:
                 std::string   m_variableName; ///< Variable name
+                std::string   m_descriptor;   ///< Plot naming
                 THStack      *m_pTHStack;     ///< Stack plot to make
                 TCanvas      *m_pTCanvas;     ///< Canvas to draw on
                 TLegend      *m_pTLegend;     ///< Legend for plots
@@ -116,8 +118,9 @@ class MakeDerivedPlots
                 IntVector     m_fillStyle;    ///< Fill styles for plots
         };
 
-        ProcessVector  m_processVector;       ///< Vector of all processes
-        PreSelection  *m_pPreSelection;       ///< PreSelection class containing cuts
+        ProcessVector       m_processVector;  ///< Vector of all processes
+        PreSelection       *m_pPreSelection;  ///< PreSelection class containing cuts
+        std::string         m_descriptor;     ///< String for plot naming
 };
 
 #endif

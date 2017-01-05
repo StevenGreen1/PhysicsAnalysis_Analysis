@@ -13,15 +13,28 @@
 ConcatenateWeights::ConcatenateWeights(PostMVASelection *pPostMVASelection, const std::string processName, const int energy) : 
     m_eventsNeedingWeights(pPostMVASelection->GetEventsNeedingWeightsList()),
     m_processName(processName),
-    m_energy(energy),
-    m_a4IntMin(-7),
-    m_a4IntMax(7),
-    m_a5IntMin(-7),
-    m_a5IntMax(7),
-    m_a4Step(0.01f),
-    m_a5Step(0.01f)
+    m_energy(energy)
 {
     m_weightsDirectory = "/r06/lc/sg568/PhysicsAnalysis/Generator/" + m_processName + "/" + this->NumberToString(energy) + "GeV/ConcatenatedWeightsXml/";
+
+    if (energy == 1400)
+    {
+        m_a4IntMin = -7;
+        m_a4IntMax = 7;
+        m_a5IntMin = -7;
+        m_a5IntMax = 7;
+        m_a4Step = 0.01f;
+        m_a5Step = 0.01f;
+    }
+    else if (energy == 3000)
+    {
+        m_a4IntMin = -7;
+        m_a4IntMax = 7;
+        m_a5IntMin = -7;
+        m_a5IntMax = 7;
+        m_a4Step = 0.001f;
+        m_a5Step = 0.001f;
+    }
 }
 
 //============================================================================

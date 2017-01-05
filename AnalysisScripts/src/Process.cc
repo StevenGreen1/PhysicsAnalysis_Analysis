@@ -10,7 +10,7 @@
 
 //=====================================================================
 
-Process::Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string pandoraPFOs, std::string jetClusteringMode, const int nJetsToCluster, std::string jetClusteringAlgorithm, std::string jetClusteringRadius, const float wzSeparationCut, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag, bool quickLoad) :
+Process::Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string pandoraPFOs, std::string jetClusteringMode, const int nJetsToCluster, std::string jetClusteringAlgorithm, std::string jetClusteringRadius, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag, bool quickLoad) :
     m_jobDescription(jobDescription),
     m_detectorModel(detectorModel),
     m_reconstructionVariant(reconstructionVariant),
@@ -19,7 +19,6 @@ Process::Process(std::string jobDescription, std::string detectorModel, std::str
     m_nJetsToCluster(nJetsToCluster),
     m_jetClusteringAlgorithm(jetClusteringAlgorithm),
     m_jetClusteringRadius(jetClusteringRadius),
-    m_wzSeparationCut(wzSeparationCut),
     m_eventType(eventType),
     m_crossSection(crossSection),
     m_luminosity(luminosity),
@@ -111,13 +110,6 @@ float Process::GetProcessWeight() const
 float Process::GetPostMVAProcessWeight() const
 {
     return m_postMVAProcessWeight;
-}
-
-//=====================================================================
-
-float Process::GetWZSeparationCut() const
-{
-    return m_wzSeparationCut;
 }
 
 //=====================================================================

@@ -41,13 +41,12 @@ class Process
          *  @param nJetsToCluster
          *  @param jetClusteringAlgorithm
          *  @param jetClusteringRadius
-         *  @param wzSeparationCut
          *  @param eventType
          *  @param crossSection
          *  @param energy
          *  @param analysisTag
          */
-        Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string pandoraPFOs, std::string jetClusteringMode, const int nJetsToCluster, std::string jetClusteringAlgorithm, std::string jetClusteringRadius, const float wzSeparationCut, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag, bool quickLoad = false);
+        Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string pandoraPFOs, std::string jetClusteringMode, const int nJetsToCluster, std::string jetClusteringAlgorithm, std::string jetClusteringRadius, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag, bool quickLoad = false);
 
         /**
          *  @brief Default destructor
@@ -78,11 +77,6 @@ class Process
          *  @brief Return the weight for the given process post MVA training
          */
         float GetPostMVAProcessWeight() const;
-
-        /**
-         *  @brief Return value of cut separating W and Z boson events in invariant mass plane
-         */
-        float GetWZSeparationCut() const;
 
         /**
          *  @brief Return the event type for the given process
@@ -153,7 +147,6 @@ class Process
         const int             m_nJetsToCluster;          ///< Number of jets to cluster
         const std::string     m_jetClusteringAlgorithm;  ///< Jet clustering algorithm to use 
         const std::string     m_jetClusteringRadius;     ///< Jet clustering radius 
-        const float           m_wzSeparationCut;         ///< Cut separation of W boson from Z boson event
         const std::string     m_eventType;               ///< Process 
         const float           m_crossSection;            ///< Cross section of proces
         const float           m_luminosity;              ///< Luminosity

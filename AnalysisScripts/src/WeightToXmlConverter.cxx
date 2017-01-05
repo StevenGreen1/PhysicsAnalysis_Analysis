@@ -19,8 +19,8 @@ int main(int argc, char* argv[])
     {
         for (int j = -7; j < 8; j++)
         {
-            const float alpha4(i * 0.01);
-            const float alpha5(j * 0.01);
+            const float alpha4(i * 0.001);
+            const float alpha5(j * 0.001);
             std::cout << "Loading (alpha4, alpha5) = (" << alpha4 << ", " << alpha5 << "), Energy = " << energy << std::endl;
             WeightToXmlConverter *pWeightToXmlConverter(new WeightToXmlConverter(process,energy,alpha4,alpha5,atoi(argv[3]))); 
         }
