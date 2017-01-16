@@ -15,12 +15,13 @@ int main(int argc, char* argv[])
     std::string process(argv[1]);
     const int energy(atoi(argv[2]));
 
-    for (int i = -7; i < 8; i++)
+    for (int i = -10; i < 11; i++)
     {
-        for (int j = -7; j < 8; j++)
+        for (int j = -10; j < 11; j++)
         {
-            const float alpha4(i * 0.001);
-            const float alpha5(j * 0.001);
+            const float alpha4(i * 0.00025);
+            const float alpha5(j * 0.00025);
+
             std::cout << "Loading (alpha4, alpha5) = (" << alpha4 << ", " << alpha5 << "), Energy = " << energy << std::endl;
             WeightToXmlConverter *pWeightToXmlConverter(new WeightToXmlConverter(process,energy,alpha4,alpha5,atoi(argv[3]))); 
         }

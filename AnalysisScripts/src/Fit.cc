@@ -13,11 +13,12 @@
 
 //=====================================================================
 
-Fit::Fit(std::string descriptor, const int energy, const int nBins, std::string inputPath) : 
+Fit::Fit(std::string descriptor, const int energy, const int nBins, std::string inputPath, bool background) : 
     m_descriptor(descriptor),
     m_energy(energy),
     m_nBins(nBins),
     m_inputPath(inputPath),
+    m_background(background),
     m_alpha4(0.0),
     m_alpha5(0.0),
     m_chi2CosThetaStarSynJets_vs_Bosons(0.0),
@@ -109,6 +110,7 @@ void Fit::Merge()
         {
             this->Initialise();
             this->MergeFiles(alpha4, alpha5);
+
             m_pTFile->cd();
             m_alpha4 = alpha4;
             m_alpha5 = alpha5;
@@ -203,10 +205,21 @@ void Fit::FindFiles()
             fileCandidate = file->GetName();
             TString energyString = this->NumberToString(m_energy) + "GeV";
 
-            if (!file->IsDirectory() and fileCandidate.EndsWith("root") and fileCandidate.Contains(m_descriptor.c_str()) and fileCandidate.Contains(energyString)) 
+            if (m_background)
             {
-                std::string filePath = m_inputPath + fileCandidate.Data();
-                m_filesToReadIn.push_back(filePath);
+                if (!file->IsDirectory() and fileCandidate.EndsWith("root") and fileCandidate.Contains(m_descriptor.c_str()) and fileCandidate.Contains(energyString) and fileCandidate.Contains("Final"))
+                {
+                    std::string filePath = m_inputPath + fileCandidate.Data();
+                    m_filesToReadIn.push_back(filePath);
+                }
+            }
+            else 
+            {
+                if (!file->IsDirectory() and fileCandidate.EndsWith("root") and fileCandidate.Contains(m_descriptor.c_str()) and fileCandidate.Contains(energyString) and !fileCandidate.Contains("Final"))
+                {
+                    std::string filePath = m_inputPath + fileCandidate.Data();
+                    m_filesToReadIn.push_back(filePath);
+                }
             }
         }
     }

@@ -46,6 +46,7 @@ int main(int argc, char **argv)
     processes.push_back(pProcess_ee_nunuqqqq_13);
 */
 
+/*
     // Signal 3 TeV
     const Process *pProcess_ee_nunuqqqq_1_3TeV = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",71.5,2000,3000,18,false);
     const Process *pProcess_ee_nunuqqqq_2_3TeV = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.5","ee_nunuqqqq",71.5,2000,3000,18,false);
@@ -75,29 +76,31 @@ int main(int argc, char **argv)
     processes.push_back(pProcess_ee_nunuqqqq_11_3TeV);
     processes.push_back(pProcess_ee_nunuqqqq_12_3TeV);
     processes.push_back(pProcess_ee_nunuqqqq_13_3TeV);
+*/
 
-/*
-    // CLIC Backgrounds 1.4 TeV
-//    const Process *pProcess_ee_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",22.16,1500,1400,16);
-    const Process *pProcess_ee_lnuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_lnuqqqq",115.3,1500,1400,15);
-    const Process *pProcess_ee_llqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_llqqqq",71.7,1500,1400,15);
-    const Process *pProcess_ee_qqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_qqqq",1328.1,1500,1400,15);
-    const Process *pProcess_ee_nunuqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqq",933.9,1500,1400,15);
-    const Process *pProcess_ee_lnuqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_lnuqq",4309.7,1500,1400,15);
-    const Process *pProcess_ee_qqll = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_qqll",2725.8,1500,1400,15);
-    const Process *pProcess_ee_qq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_qq",4009.5,1500,1400,15);
-    const Process *pProcess_egamma_qqqqe_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","egamma_qqqqe_EPA",287.1,1500,1400,15);
-    const Process *pProcess_egamma_qqqqe_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","egamma_qqqqe_BS",1160.7,1500,1400,15);
-    const Process *pProcess_gammae_qqqqe_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","gammae_qqqqe_EPA",286.9,1500,1400,15);
-    const Process *pProcess_gammae_qqqqe_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","gammae_qqqqe_BS",1156.3,1500,1400,15);
-    const Process *pProcess_egamma_qqqqnu_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","egamma_qqqqnu_EPA",32.6,1500,1400,15);
-    const Process *pProcess_egamma_qqqqnu_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","egamma_qqqqnu_BS",136.9,1500,1400,15);
-    const Process *pProcess_gammae_qqqqnu_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","gammae_qqqqnu_EPA",32.6,1500,1400,15);
-    const Process *pProcess_gammae_qqqqnu_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","gammae_qqqqnu_BS",136.4,1500,1400,15);
-    const Process *pProcess_gammagamma_qqqq_EPA_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","gammagamma_qqqq_EPA_EPA",753.0,1500,1400,15);
-    const Process *pProcess_gammagamma_qqqq_EPA_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","gammagamma_qqqq_EPA_BS",4034.8,1500,1400,15);
-    const Process *pProcess_gammagamma_qqqq_BS_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","gammagamma_qqqq_BS_EPA",4018.7,1500,1400,15);
-    const Process *pProcess_gammagamma_qqqq_BS_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","gammagamma_qqqq_BS_BS",4009.5,1500,1400,15);
+    // Signal, luminosity copied from nunuqqqq final state
+    const Process *pProcess_ee_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqqqq",24.7,1500,1400,18);
+
+    // CLIC Backgrounds
+    const Process *pProcess_ee_lnuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_lnuqqqq",110.4,1500,1400,18);
+    const Process *pProcess_ee_llqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_llqqqq",62.1,1500,1400,18);
+    const Process *pProcess_ee_qqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_qqqq",1245.1,1500,1400,18);
+    const Process *pProcess_ee_nunuqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqq",787.7,1500,1400,18);
+    const Process *pProcess_ee_lnuqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_lnuqq",4309.7,1500,1400,18);
+    const Process *pProcess_ee_qqll = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_qqll",2725.8,1500,1400,18);
+    const Process *pProcess_ee_qq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_qq",4009.5,1500,1400,18);
+    const Process *pProcess_egamma_qqqqe_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","egamma_qqqqe_EPA",287.1,1500,1400,18);
+    const Process *pProcess_egamma_qqqqe_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","egamma_qqqqe_BS",1160.7,1500,1400,18);
+    const Process *pProcess_gammae_qqqqe_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammae_qqqqe_EPA",286.9,1500,1400,18);
+    const Process *pProcess_gammae_qqqqe_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammae_qqqqe_BS",1156.3,1500,1400,18);
+    const Process *pProcess_egamma_qqqqnu_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","egamma_qqqqnu_EPA",32.6,1500,1400,18);
+    const Process *pProcess_egamma_qqqqnu_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","egamma_qqqqnu_BS",136.9,1500,1400,18);
+    const Process *pProcess_gammae_qqqqnu_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammae_qqqqnu_EPA",32.6,1500,1400,18);
+    const Process *pProcess_gammae_qqqqnu_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammae_qqqqnu_BS",136.4,1500,1400,18);
+    const Process *pProcess_gammagamma_qqqq_EPA_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammagamma_qqqq_EPA_EPA",753.0,1500,1400,18);
+    const Process *pProcess_gammagamma_qqqq_EPA_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammagamma_qqqq_EPA_BS",4034.8,1500,1400,18);
+    const Process *pProcess_gammagamma_qqqq_BS_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammagamma_qqqq_BS_EPA",4018.7,1500,1400,18);
+    const Process *pProcess_gammagamma_qqqq_BS_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammagamma_qqqq_BS_BS",21406.2,1500,1400,18);
 
     ProcessVector processes;
     processes.push_back(pProcess_ee_nunuqqqq);
@@ -120,9 +123,8 @@ int main(int argc, char **argv)
     processes.push_back(pProcess_gammagamma_qqqq_EPA_BS);
     processes.push_back(pProcess_gammagamma_qqqq_BS_EPA);
     processes.push_back(pProcess_gammagamma_qqqq_BS_BS);
-*/
 
-    TMVAClassificationApplication *pTMVAClassificationApplication = new TMVAClassificationApplication(processes, true);
+    TMVAClassificationApplication *pTMVAClassificationApplication = new TMVAClassificationApplication(processes, false);
 //    TMVAClassificationApplication *pTMVAClassificationApplication = new TMVAClassificationApplication(processes);
 }
 
@@ -134,22 +136,10 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
 
     EventNumbers *pEventNumbers = new EventNumbers();
 
+    // Event
     Float_t nPFOs(std::numeric_limits<float>::max());
-    Float_t numberOfIsolatedLeptons(std::numeric_limits<float>::max());
-    Float_t invMassWBoson1(std::numeric_limits<float>::max());
-    Float_t invMassWBoson2(std::numeric_limits<float>::max());
-    Float_t invMassZBoson1(std::numeric_limits<float>::max());
-    Float_t invMassZBoson2(std::numeric_limits<float>::max());
+    Float_t highestEnergyPfoPDG(std::numeric_limits<float>::max());
     Float_t transverseMomentum(std::numeric_limits<float>::max());
-    Float_t transverseMomentumBosonW1(std::numeric_limits<float>::max());
-    Float_t transverseMomentumBosonW2(std::numeric_limits<float>::max());
-    Float_t transverseMomentumBosonZ1(std::numeric_limits<float>::max());
-    Float_t transverseMomentumBosonZ2(std::numeric_limits<float>::max());
-    Float_t transverseEnergy(std::numeric_limits<float>::max());
-    Float_t transverseEnergyBosonW1(std::numeric_limits<float>::max());
-    Float_t transverseEnergyBosonW2(std::numeric_limits<float>::max());
-    Float_t transverseEnergyBosonZ1(std::numeric_limits<float>::max());
-    Float_t transverseEnergyBosonZ2(std::numeric_limits<float>::max());
     Float_t cosThetaMissing(std::numeric_limits<float>::max());
     Float_t cosThetaMostEnergeticTrack(std::numeric_limits<float>::max());
     Float_t y12(std::numeric_limits<float>::max());
@@ -158,101 +148,29 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
     Float_t y45(std::numeric_limits<float>::max());
     Float_t y56(std::numeric_limits<float>::max());
     Float_t y67(std::numeric_limits<float>::max());
-    Float_t invariantMassSystem(std::numeric_limits<float>::max());
-    Float_t cosThetaStarWBosons(std::numeric_limits<float>::max());
-    Float_t cosThetaStarZBosons(std::numeric_limits<float>::max());
-    Float_t cosThetaStarWJet1(std::numeric_limits<float>::max());
-    Float_t cosThetaStarWJet2(std::numeric_limits<float>::max());
-    Float_t cosThetaStarZJet1(std::numeric_limits<float>::max());
-    Float_t cosThetaStarZJet2(std::numeric_limits<float>::max());
-    Float_t acolinearityJetsW1(std::numeric_limits<float>::max());
-    Float_t acolinearityJetsW2(std::numeric_limits<float>::max());
-    Float_t acolinearityJetsZ1(std::numeric_limits<float>::max());
-    Float_t acolinearityJetsZ2(std::numeric_limits<float>::max());
-    Float_t acolinearityBosonsW(std::numeric_limits<float>::max());
-    Float_t acolinearityBosonsZ(std::numeric_limits<float>::max());
     Float_t principleThrustValue(std::numeric_limits<float>::max());
-    Float_t majorThrustValue(std::numeric_limits<float>::max());
-    Float_t minorThrustValue(std::numeric_limits<float>::max());
     Float_t sphericity(std::numeric_limits<float>::max());
     Float_t aplanarity(std::numeric_limits<float>::max());
     Float_t highestEnergyElectronEnergy(std::numeric_limits<float>::max());
-    Float_t highestEnergyElectronMomentum(std::numeric_limits<float>::max());
-    Float_t highestEnergyElectronTransverseMomentum(std::numeric_limits<float>::max());
-    Float_t highestEnergyMuonEnergy(std::numeric_limits<float>::max());
-    Float_t highestEnergyMuonMomentum(std::numeric_limits<float>::max());
-    Float_t highestEnergyMuonTransverseMomentum(std::numeric_limits<float>::max());
     Float_t highestEnergyPfoEnergy(std::numeric_limits<float>::max());
-    Float_t highestEnergyPfoMomentum(std::numeric_limits<float>::max());
-    Float_t highestEnergyPfoTransverseMomentum(std::numeric_limits<float>::max());
-    Float_t maxBTag(std::numeric_limits<float>::max());
-    Float_t minBTag(std::numeric_limits<float>::max());
-    Float_t maxCTag(std::numeric_limits<float>::max());
-    Float_t minCTag(std::numeric_limits<float>::max());
-    Float_t energyBosonW1(std::numeric_limits<float>::max());
-    Float_t energyBosonW2(std::numeric_limits<float>::max());
-    Float_t energyBosonZ1(std::numeric_limits<float>::max());
-    Float_t energyBosonZ2(std::numeric_limits<float>::max());
-    Float_t momentumBosonW1(std::numeric_limits<float>::max());
-    Float_t momentumBosonW2(std::numeric_limits<float>::max());
-    Float_t momentumBosonZ1(std::numeric_limits<float>::max());
-    Float_t momentumBosonZ2(std::numeric_limits<float>::max());
-    Float_t cosThetaBosonW1(std::numeric_limits<float>::max());
-    Float_t cosThetaBosonW2(std::numeric_limits<float>::max());
-    Float_t cosThetaBosonZ1(std::numeric_limits<float>::max());
-    Float_t cosThetaBosonZ2(std::numeric_limits<float>::max());
-    Float_t energyJet1(std::numeric_limits<float>::max());
-    Float_t energyJet2(std::numeric_limits<float>::max());
-    Float_t energyJet3(std::numeric_limits<float>::max());
-    Float_t energyJet4(std::numeric_limits<float>::max());
-    Float_t momentumJet1(std::numeric_limits<float>::max());
-    Float_t momentumJet2(std::numeric_limits<float>::max());
-    Float_t momentumJet3(std::numeric_limits<float>::max());
-    Float_t momentumJet4(std::numeric_limits<float>::max());
-    Float_t transverseMomentumJet1(std::numeric_limits<float>::max());
-    Float_t transverseMomentumJet2(std::numeric_limits<float>::max());
-    Float_t transverseMomentumJet3(std::numeric_limits<float>::max());
-    Float_t transverseMomentumJet4(std::numeric_limits<float>::max());
-    Float_t cosThetaJet1(std::numeric_limits<float>::max());
-    Float_t cosThetaJet2(std::numeric_limits<float>::max());
-    Float_t cosThetaJet3(std::numeric_limits<float>::max());
-    Float_t cosThetaJet4(std::numeric_limits<float>::max());
-/*
- MaxBTagForBosonW1 = 0.0622279
- MinBTagForBosonW1 = 0.0502749
- MaxBTagForBosonW2 = 0.0465169
- MinBTagForBosonW2 = 0.0366808
- MaxCTagForBosonW1 = 0.184498
- MinCTagForBosonW1 = 0.156542
- MaxCTagForBosonW2 = 0.192766
- MinCTagForBosonW2 = 0.14
- MaxBTagForBosonZ1 = 0.0622279
- MinBTagForBosonZ1 = 0.0502749
- MaxBTagForBosonZ2 = 0.0465169
- MinBTagForBosonZ2 = 0.0366808
- MaxCTagForBosonZ1 = 0.184498
- MinCTagForBosonZ1 = 0.156542
- MaxCTagForBosonZ2 = 0.192766
- MinCTagForBosonZ2 = 0.14
-*/
+
+    // Bosons
+    Float_t energyBosonSyn1(std::numeric_limits<float>::max());
+    Float_t energyBosonSyn2(std::numeric_limits<float>::max());
+    Float_t acolinearityBosonsSyn(std::numeric_limits<float>::max());
+    Float_t invariantMassSynBoson1(std::numeric_limits<float>::max());
+    Float_t invariantMassSynBoson2(std::numeric_limits<float>::max());
+
+    // Jets
+    Float_t acolinearityJetsSyn1(std::numeric_limits<float>::max());
+    Float_t acolinearityJetsSyn2(std::numeric_limits<float>::max());
 
     if (!perfect)
     {
+        // Event
         reader->AddVariable("NPfos := NParticlesJet1+NParticlesJet2+NParticlesJet3+NParticlesJet4", &nPFOs);
-        reader->AddVariable("InvariantMassWBoson1", &invMassWBoson1);
-        reader->AddVariable("InvariantMassWBoson2", &invMassWBoson2);
-        reader->AddVariable("InvariantMassZBoson1", &invMassZBoson1);
-        reader->AddVariable("InvariantMassZBoson2", &invMassZBoson2);
+        reader->AddVariable("HighestEnergyPfoPDG", &highestEnergyPfoPDG);
         reader->AddVariable("TransverseMomentum", &transverseMomentum);
-        reader->AddVariable("TransverseMomentumBosonW1", &transverseMomentumBosonW1);
-        reader->AddVariable("TransverseMomentumBosonW2", &transverseMomentumBosonW2);
-        reader->AddVariable("TransverseMomentumBosonZ1", &transverseMomentumBosonZ1);
-        reader->AddVariable("TransverseMomentumBosonZ2", &transverseMomentumBosonZ2);
-        reader->AddVariable("TransverseEnergy", &transverseEnergy);
-        reader->AddVariable("TransverseEnergyBosonW1", &transverseEnergyBosonW1);
-        reader->AddVariable("TransverseEnergyBosonW2", &transverseEnergyBosonW2);
-        reader->AddVariable("TransverseEnergyBosonZ1", &transverseEnergyBosonZ1);
-        reader->AddVariable("TransverseEnergyBosonZ2", &transverseEnergyBosonZ2);
         reader->AddVariable("CosThetaMissing", &cosThetaMissing);
         reader->AddVariable("CosThetaMostEnergeticTrack", &cosThetaMostEnergeticTrack);
         reader->AddVariable("y12", &y12);
@@ -261,44 +179,23 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
         reader->AddVariable("y45", &y45);
         reader->AddVariable("y56", &y56);
         reader->AddVariable("y67", &y67);
-        reader->AddVariable("InvariantMassSystem", &invariantMassSystem);
-//        reader->AddVariable("CosThetaStarWBosons", &cosThetaStarWBosons);
-//        reader->AddVariable("CosThetaStarZBosons", &cosThetaStarZBosons);
-//        reader->AddVariable("CosThetaStarWJet1", &cosThetaStarWJet1);
-//        reader->AddVariable("CosThetaStarWJet2", &cosThetaStarWJet2);
-//        reader->AddVariable("CosThetaStarZJet1", &cosThetaStarZJet1);
-//        reader->AddVariable("CosThetaStarZJet2", &cosThetaStarZJet2);
-        reader->AddVariable("AcolinearityJetsW1", &acolinearityJetsW1);
-        reader->AddVariable("AcolinearityJetsW2", &acolinearityJetsW2);
-        reader->AddVariable("AcolinearityJetsZ1", &acolinearityJetsZ1);
-        reader->AddVariable("AcolinearityJetsZ2", &acolinearityJetsZ2);
-        reader->AddVariable("AcolinearityBosonsW", &acolinearityBosonsW);
-        reader->AddVariable("AcolinearityBosonsZ", &acolinearityBosonsZ);
         reader->AddVariable("PrincipleThrustValue", &principleThrustValue);
-        reader->AddVariable("MajorThrustValue", &majorThrustValue);
-        reader->AddVariable("MinorThrustValue", &minorThrustValue);
         reader->AddVariable("Sphericity", &sphericity);
         reader->AddVariable("Aplanarity", &aplanarity);
         reader->AddVariable("(HighestEnergyElectronEnergy<10000)*HighestEnergyElectronEnergy", &highestEnergyElectronEnergy);
-        reader->AddVariable("(HighestEnergyElectronMomentum<10000)*HighestEnergyElectronMomentum", &highestEnergyElectronMomentum);
-        reader->AddVariable("(HighestEnergyElectronTransverseMomentum<10000)*HighestEnergyElectronTransverseMomentum", &highestEnergyElectronTransverseMomentum);
-        reader->AddVariable("(HighestEnergyMuonEnergy<10000)*HighestEnergyMuonEnergy", &highestEnergyMuonEnergy);
-        reader->AddVariable("(HighestEnergyMuonMomentum<10000)*HighestEnergyMuonMomentum", &highestEnergyMuonMomentum);
-        reader->AddVariable("(HighestEnergyMuonTransverseMomentum<10000)*HighestEnergyMuonTransverseMomentum", &highestEnergyMuonTransverseMomentum);
         reader->AddVariable("(HighestEnergyPfoEnergy<10000)*HighestEnergyPfoEnergy", &highestEnergyPfoEnergy);
-        reader->AddVariable("(HighestEnergyPfoMomentum<10000)*HighestEnergyPfoMomentum", &highestEnergyPfoMomentum);
-        reader->AddVariable("(HighestEnergyPfoTransverseMomentum<10000)*HighestEnergyPfoTransverseMomentum", &highestEnergyPfoTransverseMomentum);
-        reader->AddVariable("TMath::Max(BTagForJet1, TMath::Max(BTagForJet2, TMath::Max(BTagForJet3,BTagForJet4)))", &maxBTag);
-        reader->AddVariable("TMath::Min(BTagForJet1, TMath::Min(BTagForJet2, TMath::Min(BTagForJet3,BTagForJet4)))", &minBTag);
-        reader->AddVariable("TMath::Max(CTagForJet1, TMath::Max(CTagForJet2, TMath::Max(CTagForJet3,CTagForJet4)))", &maxCTag);
-        reader->AddVariable("TMath::Min(CTagForJet1, TMath::Min(CTagForJet2, TMath::Min(CTagForJet3,CTagForJet4)))", &minCTag);
+        // Bosons
+        reader->AddVariable("EnergyBosonSyn1", &energyBosonSyn1);
+        reader->AddVariable("EnergyBosonSyn2", &energyBosonSyn2);
+        reader->AddVariable("AcolinearityBosonsSyn", &acolinearityBosonsSyn);
+        reader->AddVariable("InvariantMassSynBoson1", &invariantMassSynBoson1);
+        reader->AddVariable("InvariantMassSynBoson2", &invariantMassSynBoson2);
+        // Jets
+        reader->AddVariable("AcolinearityJetsSyn1", &acolinearityJetsSyn1);
+        reader->AddVariable("AcolinearityJetsSyn2", &acolinearityJetsSyn2);
 
-        reader->BookMVA("BDT method", "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/weights/TMVAClassification_BDT.weights.xml");
-//    reader->BookMVA("Cuts method", "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/weights/TMVAClassification_Cuts.weights.xml");
-//    reader->BookMVA("Likelihood method", "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/weights/TMVAClassification_Likelihood.weights.xml");
-//    reader->BookMVA("PDERS method", "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/weights/TMVAClassification_PDERS.weights.xml");
-//    reader->BookMVA("KNN method", "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/weights/TMVAClassification_KNN.weights.xml");
-//    reader->BookMVA("CFMlpANN method", "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/weights/TMVAClassification_CFMlpANN.weights.xml");
+//        reader->BookMVA("BDT method", "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/weights/TMVAClassification_BDT.weights.xml");
+        reader->BookMVA("BDT method", "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/weights/TMVAClassification_BDT_NTrees3000_MaxDepth3_NCuts25.weights.xml");
     }
 
     for (ProcessVector::iterator itPro = processes.begin(); itPro != processes.end(); itPro++)
@@ -451,8 +348,8 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
         Double_t invariantMassWBosons2_ToSaveAndRead(std::numeric_limits<double>::max());
         Double_t invariantMassZBosons1_ToSaveAndRead(std::numeric_limits<double>::max());
         Double_t invariantMassZBosons2_ToSaveAndRead(std::numeric_limits<double>::max());
-        Double_t invariantMassSynBosons1_ToSaveAndRead(std::numeric_limits<double>::max());
-        Double_t invariantMassSynBosons2_ToSaveAndRead(std::numeric_limits<double>::max());
+        Double_t invariantMassSynBoson1_ToSaveAndRead(std::numeric_limits<double>::max());
+        Double_t invariantMassSynBoson2_ToSaveAndRead(std::numeric_limits<double>::max());
         Double_t invariantMassWBosonsMC1_ToSaveAndRead(std::numeric_limits<double>::max());
         Double_t invariantMassWBosonsMC2_ToSaveAndRead(std::numeric_limits<double>::max());
         Double_t invariantMassZBosonsMC1_ToSaveAndRead(std::numeric_limits<double>::max());
@@ -720,8 +617,8 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
         pTTree->Branch("InvariantMassWBoson2", &invariantMassWBosons2_ToSaveAndRead);
         pTTree->Branch("InvariantMassZBoson1", &invariantMassZBosons1_ToSaveAndRead);
         pTTree->Branch("InvariantMassZBoson2", &invariantMassZBosons2_ToSaveAndRead);
-        pTTree->Branch("InvariantMassSynBoson1", &invariantMassSynBosons1_ToSaveAndRead);
-        pTTree->Branch("InvariantMassSynBoson2", &invariantMassSynBosons2_ToSaveAndRead);
+        pTTree->Branch("InvariantMassSynBoson1", &invariantMassSynBoson1_ToSaveAndRead);
+        pTTree->Branch("InvariantMassSynBoson2", &invariantMassSynBoson2_ToSaveAndRead);
         pTTree->Branch("MCInvariantMassWBoson1", &invariantMassWBosonsMC1_ToSaveAndRead);
         pTTree->Branch("MCInvariantMassWBoson2", &invariantMassWBosonsMC2_ToSaveAndRead);
         pTTree->Branch("MCInvariantMassZBoson1", &invariantMassZBosonsMC1_ToSaveAndRead);
@@ -973,8 +870,8 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
         pTChain->SetBranchAddress("InvariantMassWBoson2", &invariantMassWBosons2_ToSaveAndRead);
         pTChain->SetBranchAddress("InvariantMassZBoson1", &invariantMassZBosons1_ToSaveAndRead);
         pTChain->SetBranchAddress("InvariantMassZBoson2", &invariantMassZBosons2_ToSaveAndRead);
-        pTChain->SetBranchAddress("InvariantMassSynBoson1", &invariantMassSynBosons1_ToSaveAndRead);
-        pTChain->SetBranchAddress("InvariantMassSynBoson2", &invariantMassSynBosons2_ToSaveAndRead);
+        pTChain->SetBranchAddress("InvariantMassSynBoson1", &invariantMassSynBoson1_ToSaveAndRead);
+        pTChain->SetBranchAddress("InvariantMassSynBoson2", &invariantMassSynBoson2_ToSaveAndRead);
         pTChain->SetBranchAddress("MCInvariantMassWBoson1", &invariantMassWBosonsMC1_ToSaveAndRead);
         pTChain->SetBranchAddress("MCInvariantMassWBoson2", &invariantMassWBosonsMC2_ToSaveAndRead);
         pTChain->SetBranchAddress("MCInvariantMassZBoson1", &invariantMassZBosonsMC1_ToSaveAndRead);
@@ -1108,28 +1005,13 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
             jobEventNumber++;
 
             globalEventNumber_ToSave = pEventNumbers->SetGlobalEventNumber(simulationEventNumber, jobEventNumber);
-            //std::cout << "simulationEventNumber : " << simulationEventNumber << std::endl;
-            //std::cout << "jobEventNumber : " << jobEventNumber << std::endl;
-            //std::cout << "globalEventNumber_ToSave : " << globalEventNumber_ToSave << std::endl;
 
-            ///< Set all variables needed by MVA reader
+            // Set all variables needed by MVA reader
+            // Event
             nPFOs_ToSaveAndRead = nParticlesJet1_ToSaveAndRead + nParticlesJet2_ToSaveAndRead + nParticlesJet3_ToSaveAndRead + nParticlesJet4_ToSaveAndRead;
             nPFOs = (Float_t)(nPFOs_ToSaveAndRead);
-            numberOfIsolatedLeptons = (Float_t)(nIsolatedLeptons_ToSaveAndRead);
-            invMassWBoson1 = (Float_t)(invariantMassWBosons1_ToSaveAndRead);
-            invMassWBoson2 = (Float_t)(invariantMassWBosons2_ToSaveAndRead);
-            invMassZBoson1 = (Float_t)(invariantMassZBosons1_ToSaveAndRead);
-            invMassZBoson2 = (Float_t)(invariantMassZBosons2_ToSaveAndRead);
+            highestEnergyPfoPDG = (Float_t)(highestEnergyPfoPDG_ToSaveAndRead);
             transverseMomentum = (Float_t)(transverseMomentum_ToSaveAndRead);
-            transverseMomentumBosonW1 = (Float_t)(transverseMomentumBosonW1_ToSaveAndRead);
-            transverseMomentumBosonW2 = (Float_t)(transverseMomentumBosonW2_ToSaveAndRead);
-            transverseMomentumBosonZ1 = (Float_t)(transverseMomentumBosonZ1_ToSaveAndRead);
-            transverseMomentumBosonZ2 = (Float_t)(transverseMomentumBosonZ2_ToSaveAndRead);
-            transverseEnergy = (Float_t)(transverseEnergy_ToSaveAndRead);
-            transverseEnergyBosonW1 = (Float_t)(transverseEnergyBosonW1_ToSaveAndRead);
-            transverseEnergyBosonW2 = (Float_t)(transverseEnergyBosonW2_ToSaveAndRead);
-            transverseEnergyBosonZ1 = (Float_t)(transverseEnergyBosonZ1_ToSaveAndRead);
-            transverseEnergyBosonZ2 = (Float_t)(transverseEnergyBosonZ2_ToSaveAndRead);
             cosThetaMissing = (Float_t)(cosThetaMissing_ToSaveAndRead);
             cosThetaMostEnergeticTrack = (Float_t)(cosThetaMostEnergeticTrack_ToSaveAndRead);
             y12 = (Float_t)(y12_ToSaveAndRead);
@@ -1138,61 +1020,20 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
             y45 = (Float_t)(y45_ToSaveAndRead);
             y56 = (Float_t)(y56_ToSaveAndRead);
             y67 = (Float_t)(y67_ToSaveAndRead);
-            invariantMassSystem = (Float_t)(invariantMassSystem_ToSaveAndRead);
-            cosThetaStarWBosons = (Float_t)(cosThetaStarWBosons_ToSaveAndRead);
-            cosThetaStarZBosons = (Float_t)(cosThetaStarZBosons_ToSaveAndRead);
-            cosThetaStarWJet1 = (Float_t)(cosThetaStarWJet1_ToSaveAndRead);
-            cosThetaStarWJet2 = (Float_t)(cosThetaStarWJet2_ToSaveAndRead);
-            cosThetaStarZJet1 = (Float_t)(cosThetaStarZJet1_ToSaveAndRead);
-            cosThetaStarZJet2 = (Float_t)(cosThetaStarZJet2_ToSaveAndRead);
-            acolinearityJetsW1 = (Float_t)(acolinearityJetsW1_ToSaveAndRead);
-            acolinearityJetsW2 = (Float_t)(acolinearityJetsW2_ToSaveAndRead);
-            acolinearityJetsZ1 = (Float_t)(acolinearityJetsZ1_ToSaveAndRead);
-            acolinearityJetsZ2 = (Float_t)(acolinearityJetsZ2_ToSaveAndRead);
-            acolinearityBosonsW = (Float_t)(acolinearityBosonsW_ToSaveAndRead);
-            acolinearityBosonsZ = (Float_t)(acolinearityBosonsZ_ToSaveAndRead);
             principleThrustValue = (Float_t)(principleThrustValue_ToSaveAndRead);
-            majorThrustValue = (Float_t)(majorThrustValue_ToSaveAndRead);
-            minorThrustValue = (Float_t)(minorThrustValue_ToSaveAndRead);
             sphericity = (Float_t)(sphericity_ToSaveAndRead);
             aplanarity = (Float_t)(aplanarity_ToSaveAndRead);
             highestEnergyElectronEnergy = (Float_t)(highestEnergyElectronEnergy_ToSaveAndRead);
-            highestEnergyElectronMomentum = (Float_t)(highestEnergyElectronMomentum_ToSaveAndRead);
-            highestEnergyElectronTransverseMomentum = (Float_t)(highestEnergyElectronTransverseMomentum_ToSaveAndRead);
-            highestEnergyMuonEnergy = (Float_t)(highestEnergyMuonEnergy_ToSaveAndRead);
-            highestEnergyMuonMomentum = (Float_t)(highestEnergyMuonMomentum_ToSaveAndRead);
-            highestEnergyMuonTransverseMomentum = (Float_t)(highestEnergyMuonTransverseMomentum_ToSaveAndRead);
             highestEnergyPfoEnergy = (Float_t)(highestEnergyPfoEnergy_ToSaveAndRead);
-            highestEnergyPfoMomentum = (Float_t)(highestEnergyPfoMomentum_ToSaveAndRead);
-            highestEnergyPfoTransverseMomentum = (Float_t)(highestEnergyPfoTransverseMomentum_ToSaveAndRead);
-            maxBTag = (Float_t)(std::max(bTagForJet1_ToSaveAndRead, std::max(bTagForJet2_ToSaveAndRead, std::max(bTagForJet3_ToSaveAndRead, bTagForJet4_ToSaveAndRead))));
-            minBTag = (Float_t)(std::min(bTagForJet1_ToSaveAndRead, std::min(bTagForJet2_ToSaveAndRead, std::min(bTagForJet3_ToSaveAndRead, bTagForJet4_ToSaveAndRead))));
-            maxCTag = (Float_t)(std::max(cTagForJet1_ToSaveAndRead, std::max(cTagForJet2_ToSaveAndRead, std::max(cTagForJet3_ToSaveAndRead, cTagForJet4_ToSaveAndRead))));
-            minCTag = (Float_t)(std::min(cTagForJet1_ToSaveAndRead, std::min(cTagForJet2_ToSaveAndRead, std::min(cTagForJet3_ToSaveAndRead, cTagForJet4_ToSaveAndRead))));
-            energyBosonW1 = (Float_t)(energyBosonW1_ToSaveAndRead);
-            energyBosonW2 = (Float_t)(energyBosonW2_ToSaveAndRead);
-            energyBosonZ1 = (Float_t)(energyBosonZ1_ToSaveAndRead);
-            energyBosonZ2 = (Float_t)(energyBosonZ2_ToSaveAndRead);
-            momentumBosonW1 = (Float_t)(momentumBosonW1_ToSaveAndRead);
-            momentumBosonW2 = (Float_t)(momentumBosonW2_ToSaveAndRead);
-            momentumBosonZ1 = (Float_t)(momentumBosonZ1_ToSaveAndRead);
-            momentumBosonZ2 = (Float_t)(momentumBosonZ2_ToSaveAndRead);
-            cosThetaBosonW1 = (Float_t)(cosThetaBosonW1_ToSaveAndRead);
-            cosThetaBosonW2 = (Float_t)(cosThetaBosonW2_ToSaveAndRead);
-            cosThetaBosonZ1 = (Float_t)(cosThetaBosonZ1_ToSaveAndRead);
-            cosThetaBosonZ2 = (Float_t)(cosThetaBosonZ2_ToSaveAndRead);
-            momentumJet1 = (Float_t)(momentumJet1_ToSaveAndRead);
-            momentumJet2 = (Float_t)(momentumJet2_ToSaveAndRead);
-            momentumJet3 = (Float_t)(momentumJet3_ToSaveAndRead);
-            momentumJet4 = (Float_t)(momentumJet4_ToSaveAndRead);
-            transverseMomentumJet1 = (Float_t)(transverseMomentumJet1_ToSaveAndRead);
-            transverseMomentumJet2 = (Float_t)(transverseMomentumJet2_ToSaveAndRead);
-            transverseMomentumJet3 = (Float_t)(transverseMomentumJet3_ToSaveAndRead);
-            transverseMomentumJet4 = (Float_t)(transverseMomentumJet4_ToSaveAndRead);
-            cosThetaJet1 = (Float_t)(cosThetaJet1_ToSaveAndRead);
-            cosThetaJet2 = (Float_t)(cosThetaJet2_ToSaveAndRead);
-            cosThetaJet3 = (Float_t)(cosThetaJet3_ToSaveAndRead);
-            cosThetaJet4 = (Float_t)(cosThetaJet4_ToSaveAndRead);
+            // Bosons
+            energyBosonSyn1 = (Float_t)(energyBosonSyn1_ToSaveAndRead);
+            energyBosonSyn2 = (Float_t)(energyBosonSyn2_ToSaveAndRead);
+            acolinearityBosonsSyn = (Float_t)(acolinearityBosonsSyn_ToSaveAndRead);
+            invariantMassSynBoson1 = (Float_t)(invariantMassSynBoson1_ToSaveAndRead);
+            invariantMassSynBoson2 = (Float_t)(invariantMassSynBoson2_ToSaveAndRead);
+            // Jets
+            acolinearityJetsSyn1 = (Float_t)(acolinearityJetsSyn1_ToSaveAndRead);
+            acolinearityJetsSyn2 = (Float_t)(acolinearityJetsSyn2_ToSaveAndRead);
 
             if (!perfect)
             {
@@ -1212,7 +1053,17 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
             pTTree->Fill();
         }
 
-        TString filename = "/r06/lc/sg568/PhysicsAnalysis/Analysis/RootFiles_Multivariant_" + pProcess->GetEventType() + "_" + this->NumberToString(pProcess->GetEnergy()) + "GeV_" + pProcess->GetRootSuffix() + "_AnalysisTag" + this->NumberToString(pProcess->GetAnalysisTag()) + ".root";
+        TString filename = "/r06/lc/sg568/PhysicsAnalysis/Analysis/RootFilesPostMVA/RootFiles_Multivariant_" + pProcess->GetEventType() + "_" + this->NumberToString(pProcess->GetEnergy()) + "GeV_" + pProcess->GetRootSuffix() + "_AnalysisTag" + this->NumberToString(pProcess->GetAnalysisTag());
+
+        if (perfect)
+        {
+            filename = filename + "_NoMVA.root";
+        }
+        else
+        {
+            filename = filename + ".root";
+        }
+
         TFile *pTFile = new TFile(filename, "recreate");
         pTTree->SetDirectory(pTFile);
 

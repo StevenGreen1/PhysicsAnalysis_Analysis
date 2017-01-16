@@ -86,6 +86,7 @@ MakeDerivedPlots::MakeDerivedPlots(const ProcessVector &processVector, std::stri
         if (pPostMVASelection != NULL)
         {
             pTChain = pProcess->GetPostMVATChain(); 
+            weight = pProcess->GetPostMVAProcessWeight();
             pVariables->SetBranchAddresses(pTChain, true);
         }
         else

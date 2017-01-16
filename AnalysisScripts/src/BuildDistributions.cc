@@ -62,7 +62,7 @@ void BuildDistributions::SetNBins(const int &nBins)
 
 //=====================================================================
 
-void BuildDistributions::BuildDistribution()
+void BuildDistributions::BuildDistribution(bool backgrounds)
 {
     double alpha4Min(0.0);
     double alpha4Max(0.0);
@@ -71,7 +71,7 @@ void BuildDistributions::BuildDistribution()
     double alpha5Max(0.0);
     double alpha5Step(1.0);
 
-    if (m_energy == 1400)
+    if (m_energy == 1400 && !backgrounds)
     {
         alpha4Min = -0.02;
         alpha4Max = 0.0205;
@@ -80,7 +80,16 @@ void BuildDistributions::BuildDistribution()
         alpha5Max = 0.0205;
         alpha5Step = 0.001;
     }
-    else if (m_energy == 3000)
+    else if (m_energy == 1400 && backgrounds)
+    {
+        alpha4Min = -0.045;
+        alpha4Max = 0.0455;
+        alpha4Step = 0.0025;
+        alpha5Min = -0.045;
+        alpha5Max = 0.0455;
+        alpha5Step = 0.0025;
+    }
+    else if (m_energy == 3000 && !backgrounds)
     {
         alpha4Min = -0.002;
         alpha4Max = 0.00205;
@@ -88,6 +97,15 @@ void BuildDistributions::BuildDistribution()
         alpha5Min = -0.002;
         alpha5Max = 0.00205;
         alpha5Step = 0.0001;
+    }
+    else if (m_energy == 3000 && backgrounds)
+    {
+        alpha4Min = -0.0045;
+        alpha4Max = 0.00455;
+        alpha4Step = 0.00025;
+        alpha5Min = -0.0045;
+        alpha5Max = 0.00455;
+        alpha5Step = 0.00025;
     }
 
     this->InitialiseReference();

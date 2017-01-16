@@ -43,9 +43,10 @@ class Fit
          *  @param descriptor string to read in filenames
          *  @param nBins used in fit
          *  @param inputPath
+         *  @param background
          *
          */
-        Fit(std::string descriptor, const int energy, const int nBins, std::string inputPath);
+        Fit(std::string descriptor, const int energy, const int nBins, std::string inputPath, bool background = false);
 
         /**
          *  @brief Default destructor
@@ -127,6 +128,7 @@ class Fit
         const std::string     m_inputPath;                                  ///< Path to send results to
         const int             m_nBins;                                      ///< Number of bins to use in costheta*jet fit
         const int             m_energy;                                     ///< Energy
+        const bool            m_background;                                 ///< Backgrounds
         const std::string     m_rootFileName;                               ///< Name of output results root file
         StringVector          m_filesToReadIn;                              ///< Vector of files to read in
         const bool            m_splitDistributions;                         ///< Make a separate W and Z distribution

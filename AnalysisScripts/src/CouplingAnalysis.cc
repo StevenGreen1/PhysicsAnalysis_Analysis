@@ -10,14 +10,12 @@
 
 //============================================================================
 
-CouplingAnalysis::CouplingAnalysis(PostMVASelection *pPostMVASelection, const int energy) : 
+CouplingAnalysis::CouplingAnalysis(PostMVASelection *pPostMVASelection, const int energy, bool backgrounds) : 
     m_pPostMVASelection(pPostMVASelection),
     m_numberUniqueAlpha4(0),
-    m_numberUniqueAlpha5(0),
-//    m_weightsLoaded(false)
-    m_activeSimulationEventNumber(std::numeric_limits<int>::max())
+    m_numberUniqueAlpha5(0)
 {
-    if (energy == 1400)
+    if (energy == 1400 && !backgrounds)
     {
         m_a4IntMin = -6;
         m_a4IntMax = 6;
@@ -26,13 +24,31 @@ CouplingAnalysis::CouplingAnalysis(PostMVASelection *pPostMVASelection, const in
         m_a5IntMax = 6;
         m_a5Step = 0.01f;
     }
-    else if (energy == 3000)
+    else if (energy == 1400 && backgrounds)
+    {
+        m_a4IntMin = -7;
+        m_a4IntMax = 7;
+        m_a4Step = 0.01f;
+        m_a5IntMin = -7;
+        m_a5IntMax = 7;
+        m_a5Step = 0.01f;
+    }
+    else if (energy == 3000 && !backgrounds)
     {
         m_a4IntMin = -6;
         m_a4IntMax = 6;
         m_a4Step = 0.001f;
         m_a5IntMin = -6;
         m_a5IntMax = 6;
+        m_a5Step = 0.001f;
+    }
+    else if (energy == 3000 && backgrounds)
+    {
+        m_a4IntMin = -7;
+        m_a4IntMax = 7;
+        m_a4Step = 0.001f;
+        m_a5IntMin = -7;
+        m_a5IntMax = 7;
         m_a5Step = 0.001f;
     }
     else 
@@ -71,15 +87,6 @@ void CouplingAnalysis::GetWeight(const int globalEventNumber, const float alpha4
 
     EventNumbers *pEventNumbers = new EventNumbers();
     const int simulationEventNumber(pEventNumbers->GetSimulationNumberFromGlobal(globalEventNumber));
-
-/*
-    if (simulationEventNumber != m_activeSimulationEventNumber)
-    {
-        m_eventToAlpha4ToAlpha5ToWeightMap.clear(); // Wipe the otherwise huge map every time a new simulation number needs to be read, hopefully makes memory useage easier.
-        this->LoadConcatenatedWeightXml(simulationEventNumber);
-        m_activeSimulationEventNumber = simulationEventNumber;
-    }
-*/
 
     if (std::find(m_readInSimulationEventNumbers.begin(), m_readInSimulationEventNumbers.end(), simulationEventNumber) == m_readInSimulationEventNumbers.end())
     {
@@ -125,20 +132,6 @@ void CouplingAnalysis::GetWeight(const int globalEventNumber, const float alpha4
         alpha4BoundingValues.at(i) = this->GetAlpha4(alpha4BoundingKeys.at(i));
         alpha5BoundingValues.at(i) = this->GetAlpha5(alpha5BoundingKeys.at(i));
     }
-
-/*
-    const float lowerA4(alpha4BoundingValues.at(1));
-    const float upperA4(alpha4BoundingValues.at(2));
-    const float lowerA5(alpha5BoundingValues.at(1));
-    const float upperA5(alpha5BoundingValues.at(2));
-
-    const float lowerA4lowerA5(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(1)).at(alpha5BoundingKeys.at(1)));
-    const float lowerA4upperA5(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(2)).at(alpha5BoundingKeys.at(1)));
-    const float upperA4lowerA5(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(1)).at(alpha5BoundingKeys.at(2)));
-    const float upperA4upperA5(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(2)).at(alpha5BoundingKeys.at(2)));
-
-    eventWeight = this->BilinearInterpolation(lowerA4lowerA5,lowerA4upperA5,upperA4lowerA5,upperA4upperA5,alpha4,lowerA4,upperA4,alpha5,lowerA5,upperA5);
-*/
 
     const float p00(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(0)).at(alpha5BoundingKeys.at(0)));
     const float p01(m_eventToAlpha4ToAlpha5ToWeightMap.at(globalEventNumber).at(alpha4BoundingKeys.at(0)).at(alpha5BoundingKeys.at(1)));
@@ -432,13 +425,6 @@ float CouplingAnalysis::BicubicInterpolation(float p[4][4], float x, float y)
 }
 
 //============================================================================ Helper
-
-//void CouplingAnalysis::Print() const
-//{
-//
-//}
-
-//============================================================================
 
 template <class T>
 std::string CouplingAnalysis::NumberToString(T Number) const 

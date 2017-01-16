@@ -10,7 +10,7 @@
 
 //=====================================================================
 
-Process::Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string pandoraPFOs, std::string jetClusteringMode, const int nJetsToCluster, std::string jetClusteringAlgorithm, std::string jetClusteringRadius, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag, bool quickLoad) :
+Process::Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string pandoraPFOs, std::string jetClusteringMode, const int nJetsToCluster, std::string jetClusteringAlgorithm, std::string jetClusteringRadius, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag, bool quickLoad, bool perfect) :
     m_jobDescription(jobDescription),
     m_detectorModel(detectorModel),
     m_reconstructionVariant(reconstructionVariant),
@@ -68,7 +68,7 @@ Process::Process(std::string jobDescription, std::string detectorModel, std::str
     if (!quickLoad)
         this->MakeTChain();
 
-    this->SetMVARootFiles();
+    this->SetMVARootFiles(perfect);
 }
 
 //=====================================================================
@@ -177,10 +177,18 @@ bool Process::DoesEventPassCuts(int eventNumber) const
 
 //=====================================================================
 
-void Process::SetMVARootFiles()
+void Process::SetMVARootFiles(bool perfect)
 {
     m_pPostMVATChain = new TChain("MVATree");
-    TString fileToAdd = "/r06/lc/sg568/PhysicsAnalysis/Analysis/RootFilesPostMVA/RootFiles_Multivariant_" + m_eventType + "_" + this->NumberToString(m_energy) + "GeV_" + m_rootSuffix + "_AnalysisTag" + this->NumberToString(m_analysisTag) + ".root";
+    TString fileToAdd = "/r06/lc/sg568/PhysicsAnalysis/Analysis/RootFilesPostMVA/RootFiles_Multivariant_" + m_eventType + "_" + this->NumberToString(m_energy) + "GeV_" + m_rootSuffix + "_AnalysisTag" + this->NumberToString(m_analysisTag);
+    if (perfect)
+    {
+        fileToAdd = fileToAdd + "_NoMVA.root";
+    }
+    else
+    {
+        fileToAdd = fileToAdd + ".root";
+    }
     m_pPostMVATChain->Add(fileToAdd);
     m_postMVAProcessWeight = m_luminosity * m_crossSection / (float)(m_pPostMVATChain->GetEntries());
 }

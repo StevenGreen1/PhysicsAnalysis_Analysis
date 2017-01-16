@@ -8,6 +8,7 @@
 #ifndef COUPLING_ANALYSIS_H
 #define COUPLING_ANALYSIS_H
 
+#include <algorithm>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -19,18 +20,6 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
-
-//#include "TCanvas.h"
-//#include "TGraph2D.h"
-//#include "TF2.h"
-//#include "TH2F.h"
-//#include "TStyle.h"
-//#include "Math/Minimizer.h"
-//#include "Math/Factory.h"
-//#include "Math/Functor.h"
-//#include "Math/GSLMinimizer.h"
-
-#include <algorithm>
 
 #include "tinyxml.h"
 
@@ -49,9 +38,12 @@ class CouplingAnalysis
     public:
         /**
          *  @brief Constructor
+         *
+         *  @param pPostMVASelection
+         *  @param energy
+         *  @param backgrounds are backgrounds included in scan
          */
-        CouplingAnalysis(PostMVASelection *pPostMVASelection, const int energy);
-//        CouplingAnalysis(const ProcessVector &processVector, PostMVASelection *pPostMVASelection);
+        CouplingAnalysis(PostMVASelection *pPostMVASelection, const int energy, bool backgrounds = false);
 
         /**
          *  @brief Destructor
@@ -258,7 +250,6 @@ class CouplingAnalysis
         float                   m_a4Step;                           ///< Step value for alpha4
         float                   m_a5Step;                           ///< Step value for alpha5
 
-        int                     m_activeSimulationEventNumber;      ///< Weights for this simulation event number are loaded into memory
         IntVector               m_readInSimulationEventNumbers;     ///< GenN values read in 
         IntVector               m_missingEventNumbers;              ///< Missing event numbers 
         FloatVector             m_alpha4Vector;                     ///< Vector of unique values of alpha4 simulated in whizard and read in
@@ -266,7 +257,6 @@ class CouplingAnalysis
         IntToFloatMap           m_keyToAlpha4Map;                   ///< Map of integer keys to unique values of alpha4 simulated in whizard 
         IntToFloatMap           m_keyToAlpha5Map;                   ///< Map of integer keys to unique values of alpha5 simulated in whizard
         IntToIntToIntToFloatMap m_eventToAlpha4ToAlpha5ToWeightMap; ///< Map of event number to alpha4 to alpha5 to event weight 
-//        bool                    m_weightsLoaded;                    ///< Bool indicating if concatenated weights have been loaded
 };
 
 #endif

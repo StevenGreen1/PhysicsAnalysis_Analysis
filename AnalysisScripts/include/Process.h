@@ -45,8 +45,10 @@ class Process
          *  @param crossSection
          *  @param energy
          *  @param analysisTag
+         *  @param quickLoad skip loading individual files
+         *  @param perfect is BDT applied in full or are files just concatenated
          */
-        Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string pandoraPFOs, std::string jetClusteringMode, const int nJetsToCluster, std::string jetClusteringAlgorithm, std::string jetClusteringRadius, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag, bool quickLoad = false);
+        Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string pandoraPFOs, std::string jetClusteringMode, const int nJetsToCluster, std::string jetClusteringAlgorithm, std::string jetClusteringRadius, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag, bool quickLoad = false, bool perfect = false);
 
         /**
          *  @brief Default destructor
@@ -135,9 +137,11 @@ class Process
         std::string NumberToString(T Number);
 
         /**
-         *  @breif Set the post MVA tchain
+         *  @brief Set the post MVA tchain
+         *
+         *  @param perfect is MVA applied or are files just concatenated
          */
-        void SetMVARootFiles();
+        void SetMVARootFiles(bool perfect);
 
         const std::string     m_jobDescription;          ///< Job description
         const std::string     m_detectorModel;           ///< Detector model

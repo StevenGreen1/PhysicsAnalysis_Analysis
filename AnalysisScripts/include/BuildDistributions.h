@@ -67,8 +67,10 @@ class BuildDistributions
 
         /**
          *  @brief Perform simple scan of alpha4/alpha5 to make distributions for chi2 calculation
+         *
+         *  @param backgrounds does distribution scan including background
          */
-        void BuildDistribution();
+        void BuildDistribution(bool backgrounds = false);
 
         /**
          *  @brief Make plot of event weight for a single event vs alpha4 and alpha5
