@@ -1,57 +1,18 @@
 /**
- *  @file   AnalysisScripts/src/TMVAClassificationApplication.cxx 
+ *  @file   AnalysisScripts/src/TMVAClassificationApplication3000.cxx 
  * 
  *  @brief  Implementation of the TMVA classifier class.
  * 
  *  $Log: $
  */
 
-#include "TMVAClassificationApplication.h"
+#include "TMVAClassificationApplication3000.h"
 
 //=====================================================================
 
 int main(int argc, char **argv)
 {
     typedef std::vector<const Process*> ProcessVector;
-
-/*
-    // 1.4 TeV
-    float nominalLuminosity(1500);
-    float eeLuminosityRatio(1.0);
-    float egammaLuminosityRatio(0.75);
-    float gammaeLuminosityRatio(0.75);
-    float gammagammaLuminosityRatio(0.64);
-
-    // Signal 1.4 TeV
-    const Process *pProcess_ee_nunuqqqq_1 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,false);
-    const Process *pProcess_ee_nunuqqqq_2 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.5","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,false);
-    const Process *pProcess_ee_nunuqqqq_3 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,false);
-    const Process *pProcess_ee_nunuqqqq_4 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.0","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,false);
-    const Process *pProcess_ee_nunuqqqq_5 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,false);
-    const Process *pProcess_ee_nunuqqqq_6 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,false);
-    const Process *pProcess_ee_nunuqqqq_7 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","LooseSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,false);
-    const Process *pProcess_ee_nunuqqqq_8 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"ee_kt_algorithm","0.7","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,false);
-    const Process *pProcess_ee_nunuqqqq_9 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"cambridge_algorithm","0.7","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,false);
-    const Process *pProcess_ee_nunuqqqq_10 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,false);
-    const Process *pProcess_ee_nunuqqqq_11 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","LooseSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,false);
-    const Process *pProcess_ee_nunuqqqq_12 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,false);
-    const Process *pProcess_ee_nunuqqqq_13 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","LooseSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,false);
-
-    ProcessVector processes;
-    processes.push_back(pProcess_ee_nunuqqqq_1);
-    processes.push_back(pProcess_ee_nunuqqqq_2);
-    processes.push_back(pProcess_ee_nunuqqqq_3);
-    processes.push_back(pProcess_ee_nunuqqqq_4);
-    processes.push_back(pProcess_ee_nunuqqqq_5);
-    processes.push_back(pProcess_ee_nunuqqqq_6);
-    processes.push_back(pProcess_ee_nunuqqqq_7);
-    processes.push_back(pProcess_ee_nunuqqqq_8);
-    processes.push_back(pProcess_ee_nunuqqqq_9);
-    processes.push_back(pProcess_ee_nunuqqqq_10);
-    processes.push_back(pProcess_ee_nunuqqqq_11);
-    processes.push_back(pProcess_ee_nunuqqqq_12);
-    processes.push_back(pProcess_ee_nunuqqqq_13);
-*/
 
 /*
     // 3 TeV
@@ -92,59 +53,6 @@ int main(int argc, char **argv)
     processes.push_back(pProcess_ee_nunuqqqq_13_3TeV);
 */
 
-    // 1.4 TeV
-    float nominalLuminosity(1500);
-    float eeLuminosityRatio(1.0);
-    float egammaLuminosityRatio(0.75);
-    float gammaeLuminosityRatio(0.75);
-    float gammagammaLuminosityRatio(0.64);
-
-    // Signal 1.4 TeV and background
-    const Process *pProcess_ee_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    // CLIC Backgrounds
-    const Process *pProcess_ee_lnuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_lnuqqqq",110.4,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_ee_llqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_llqqqq",62.1,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_ee_qqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_qqqq",1245.1,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_ee_nunuqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqq",787.7,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_ee_lnuqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_lnuqq",4309.7,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_ee_qqll = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_qqll",2725.8,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_ee_qq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_qq",4009.5,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_egamma_qqqqe_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","egamma_qqqqe_EPA",287.1,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_egamma_qqqqe_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","egamma_qqqqe_BS",1160.7,nominalLuminosity*egammaLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_gammae_qqqqe_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammae_qqqqe_EPA",286.9,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_gammae_qqqqe_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammae_qqqqe_BS",1156.3,nominalLuminosity*gammaeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_egamma_qqqqnu_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","egamma_qqqqnu_EPA",32.6,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_egamma_qqqqnu_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","egamma_qqqqnu_BS",136.9,nominalLuminosity*egammaLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_gammae_qqqqnu_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammae_qqqqnu_EPA",32.6,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_gammae_qqqqnu_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammae_qqqqnu_BS",136.4,nominalLuminosity*gammaeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_gammagamma_qqqq_EPA_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammagamma_qqqq_EPA_EPA",753.0,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_gammagamma_qqqq_EPA_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammagamma_qqqq_EPA_BS",4034.8,nominalLuminosity*egammaLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_gammagamma_qqqq_BS_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammagamma_qqqq_BS_EPA",4018.7,nominalLuminosity*gammaeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_gammagamma_qqqq_BS_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammagamma_qqqq_BS_BS",21406.2,nominalLuminosity*gammagammaLuminosityRatio,1400,18,false,true);
-
-    ProcessVector processes;
-    processes.push_back(pProcess_ee_nunuqqqq);
-    processes.push_back(pProcess_ee_lnuqqqq);
-    processes.push_back(pProcess_ee_llqqqq);
-    processes.push_back(pProcess_ee_qqqq);
-    processes.push_back(pProcess_ee_nunuqq);
-    processes.push_back(pProcess_ee_lnuqq);
-    processes.push_back(pProcess_ee_qqll);
-    processes.push_back(pProcess_ee_qq);
-    processes.push_back(pProcess_egamma_qqqqe_EPA);
-    processes.push_back(pProcess_egamma_qqqqe_BS);
-    processes.push_back(pProcess_gammae_qqqqe_EPA);
-    processes.push_back(pProcess_gammae_qqqqe_BS);
-    processes.push_back(pProcess_egamma_qqqqnu_EPA);
-    processes.push_back(pProcess_egamma_qqqqnu_BS);
-    processes.push_back(pProcess_gammae_qqqqnu_EPA);
-    processes.push_back(pProcess_gammae_qqqqnu_BS);
-    processes.push_back(pProcess_gammagamma_qqqq_EPA_EPA);
-    processes.push_back(pProcess_gammagamma_qqqq_EPA_BS);
-    processes.push_back(pProcess_gammagamma_qqqq_BS_EPA);
-    processes.push_back(pProcess_gammagamma_qqqq_BS_BS);
-
-/*
     // 3 TeV
     float nominalLuminosity(2000);
     float eeLuminosityRatio(1.0);
@@ -193,18 +101,17 @@ int main(int argc, char **argv)
     processes.push_back(pProcess_egamma_qqqqnu_BS);
     processes.push_back(pProcess_gammae_qqqqnu_EPA);
     processes.push_back(pProcess_gammae_qqqqnu_BS);
-
     processes.push_back(pProcess_gammagamma_qqqq_EPA_EPA);
     processes.push_back(pProcess_gammagamma_qqqq_EPA_BS);
     processes.push_back(pProcess_gammagamma_qqqq_BS_EPA);
     processes.push_back(pProcess_gammagamma_qqqq_BS_BS);
-*/
-    TMVAClassificationApplication *pTMVAClassificationApplication = new TMVAClassificationApplication(processes, false);
+
+    TMVAClassificationApplication3000 *pTMVAClassificationApplication3000 = new TMVAClassificationApplication3000(processes, false);
 }
 
 //=====================================================================
 
-TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector processes, bool perfect)
+TMVAClassificationApplication3000::TMVAClassificationApplication3000(ProcessVector processes, bool perfect)
 {
     TMVA::Reader *reader = new TMVA::Reader( "!Color:!Silent" );
 
@@ -268,7 +175,7 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
         reader->AddVariable("AcolinearityJetsSyn1", &acolinearityJetsSyn1);
         reader->AddVariable("AcolinearityJetsSyn2", &acolinearityJetsSyn2);
 
-        reader->BookMVA("BDT method", "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/weights/IdealConfiguration1400GeV/TMVAClassification_BDT_NTrees3000_MaxDepth3_NCuts25.weights.xml");
+        reader->BookMVA("BDT method", "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/weights/IdealConfiguration3000GeV/TMVAClassification_BDT_NTrees3000_MaxDepth3_NCuts25_3000GeV.weights.xml");
     }
 
     for (ProcessVector::iterator itPro = processes.begin(); itPro != processes.end(); itPro++)
@@ -1151,7 +1058,7 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
 
 //=====================================================================
 
-std::string TMVAClassificationApplication::GetGeneratorSerialNumber(std::string filename)
+std::string TMVAClassificationApplication3000::GetGeneratorSerialNumber(std::string filename)
 {
     std::size_t position = filename.find("GenN");
     std::string substring = filename.substr(position+5);
@@ -1163,7 +1070,7 @@ std::string TMVAClassificationApplication::GetGeneratorSerialNumber(std::string 
 //=====================================================================
 
 template <class T>
-std::string TMVAClassificationApplication::NumberToString(T number)
+std::string TMVAClassificationApplication3000::NumberToString(T number)
 {
     std::ostringstream ss;
     ss << number;

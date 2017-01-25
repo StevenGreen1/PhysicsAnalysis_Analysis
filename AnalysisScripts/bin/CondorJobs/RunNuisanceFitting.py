@@ -2,7 +2,7 @@
 
 import os, sys, getopt, re, subprocess, math, dircache, logging, time, random, string
 
-class CondorConcatenateWeightFiles:
+class CondorNuisanceFitting:
     'Common base class for running whizard on condor'
 
 ### ----------------------------------------------------------------------------------------------------
@@ -10,27 +10,16 @@ class CondorConcatenateWeightFiles:
 ### ----------------------------------------------------------------------------------------------------
 
     def __init__(self):
-
-        self._ConcatenateWeightFilesArgList = [] 
-        self._ExecutableName = 'ConcatenateWeightFiles.sh'
-        self._Energy = 3000
+        self._NuisanceFittingArgList = [] 
+        self._CondorMaxRuns = 10000000 
+        self._ExecutableName = 'Fitting.sh'
         self._Executable = os.path.join('/var/clus/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin', self._ExecutableName)
-        self._CondorMaxRuns = 100
-        savePath = '/r06/lc/sg568/PhysicsAnalysis/Generator/ee_nunuqqqq/' + str(self._Energy) + 'GeV/ConcatenatedWeightsXml'
-
-        with open('GeneratorNumbersToConcatenate_3TeV.txt','r') as f:
-#        with open('GeneratorNumbersToConcatenate.txt','r') as f:
-            for line in f:
-                weightFile = os.path.join(savePath, 'ConcatenatedWeights' + str(line.strip()) + '.xml')
-                if not os.path.isfile(weightFile):
-                    line = str(line.strip()) + ' ' + str(self._Energy)
-                    self._ConcatenateWeightFilesArgList.append(line)
-
-        if self._ConcatenateWeightFilesArgList:
-            self.runCondorJobs()
-            self.checkCondorJobs()
-        else:
-            print 'No weights need concatenating.'
+        self._NuisanceFittingArgList.append('0.01')
+        self._NuisanceFittingArgList.append('0.02')
+        self._NuisanceFittingArgList.append('0.05')
+        self._NuisanceFittingArgList.append('0.10')
+        self.runCondorJobs()
+        self.checkCondorJobs()
 
 ### ----------------------------------------------------------------------------------------------------
 ### Start of runCondorJobs function
@@ -38,11 +27,11 @@ class CondorConcatenateWeightFiles:
 
     def runCondorJobs(self):
         nQueued = self.nQueuedCondorJobs()
-        condorJobFile = 'ConcatenateWeightFiles.job'
+        condorJobFile = 'NuisanceFitting.job'
 
         while True:
-            for idx, arguement in enumerate(self._ConcatenateWeightFilesArgList):
-                nRemaining = len(self._ConcatenateWeightFilesArgList) - idx - 1
+            for idx, arguement in enumerate(self._NuisanceFittingArgList):
+                nRemaining = len(self._NuisanceFittingArgList) - idx - 1
                 nQueued = 0 
 
                 while True:
@@ -77,11 +66,11 @@ class CondorConcatenateWeightFiles:
         jobString  = 'executable              = ' + self._Executable + '                                             \n'
         jobString += 'initial_dir             = ' + os.getcwd() + '                                                  \n'
         jobString += 'notification            = never                                                                \n'
-        jobString += 'Requirements            = (OSTYPE == \"SLC6\")                                                 \n'
+        jobString += 'Requirements            = ( POOL == \"GEN_FARM\" && OSTYPE == \"SLC6\" )                       \n'
         jobString += 'Rank                    = memory                                                               \n'
-        jobString += 'output                  = ' + os.environ['HOME'] + '/CondorLogs/ConcatenateWeightFiles' + str(idx) + '.out  \n'
-        jobString += 'error                   = ' + os.environ['HOME'] + '/CondorLogs/ConcatenateWeightFiles' + str(idx) + '.err \n'
-        jobString += 'log                     = ' + os.environ['HOME'] + '/CondorLogs/ConcatenateWeightFiles' + str(idx) + '.log \n'
+        jobString += 'output                  = ' + os.environ['HOME'] + '/CondorLogs/NuisanceFitting_' + str(idx) + '.out  \n'
+        jobString += 'error                   = ' + os.environ['HOME'] + '/CondorLogs/NuisanceFitting_' + str(idx) + '.err \n'
+        jobString += 'log                     = ' + os.environ['HOME'] + '/CondorLogs/NuisanceFitting_' + str(idx) + '.log \n'
         jobString += 'environment             = CONDOR_JOB=true                                                      \n'
         jobString += 'Universe                = vanilla                                                              \n'
         jobString += 'getenv                  = false                                                                \n'
@@ -126,4 +115,4 @@ class CondorConcatenateWeightFiles:
 ### ----------------------------------------------------------------------------------------------------
 ### Call class in main
 ### ----------------------------------------------------------------------------------------------------
-CondorConcatenateWeightFiles()
+CondorNuisanceFitting()

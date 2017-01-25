@@ -19,6 +19,7 @@ Fit::Fit(std::string descriptor, const int energy, const int nBins, std::string 
     m_nBins(nBins),
     m_inputPath(inputPath),
     m_background(background),
+    m_fluctuateNominal(false),
     m_alpha4(0.0),
     m_alpha5(0.0),
     m_chi2CosThetaStarSynJets_vs_Bosons(0.0),
@@ -72,6 +73,13 @@ Fit::~Fit()
 
 //=====================================================================
 
+void Fit::FluctuateNominal()
+{
+    m_fluctuateNominal = true;
+}
+
+//=====================================================================
+
 void Fit::Merge()
 {
     double alpha4Min(0.0);
@@ -81,7 +89,7 @@ void Fit::Merge()
     double alpha5Max(0.0);
     double alpha5Step(1.0);
 
-    if (m_energy == 1400)
+    if (m_energy == 1400 and !m_background)
     {
         alpha4Min = -0.02;
         alpha4Max = 0.0205;
@@ -90,7 +98,25 @@ void Fit::Merge()
         alpha5Max = 0.0205;
         alpha5Step = 0.001;
     }
-    else if (m_energy == 3000)
+    else if (m_energy == 1400 and m_background)
+    {
+        alpha4Min = -0.045;
+        alpha4Max = 0.0455;
+        alpha4Step = 0.0025;
+        alpha5Min = -0.045;
+        alpha5Max = 0.0455;
+        alpha5Step = 0.0025;
+    }
+    else if (m_energy == 3000 and !m_background)
+    {
+        alpha4Min = -0.002;
+        alpha4Max = 0.00205;
+        alpha4Step = 0.0001;
+        alpha5Min = -0.002;
+        alpha5Max = 0.00205;
+        alpha5Step = 0.0001;
+    }
+    else if (m_energy == 3000 and m_background)
     {
         alpha4Min = -0.002;
         alpha4Max = 0.00205;
@@ -130,7 +156,6 @@ void Fit::Merge()
                 m_chi2CosThetaStarWSynJets_vs_Bosons = this->CalculateChi2In2D(m_cosThetaStarWSynJets_vs_Bosons, m_cosThetaStarWSynJets_vs_BosonsRef);
                 m_chi2CosThetaStarZSynJets_vs_Bosons = this->CalculateChi2In2D(m_cosThetaStarZSynJets_vs_Bosons, m_cosThetaStarZSynJets_vs_BosonsRef);
             }
-//std::cout << "m_chi2CosThetaStarSynJets : " << m_chi2CosThetaStarSynJets << std::endl;
 
             m_pTTree->Fill();
 
@@ -140,7 +165,7 @@ void Fit::Merge()
                 m_cosThetaStarSynJets_vs_Bosons->SetTitle(title_CosThetaStarSynJets_vs_Bosons.c_str());
                 m_cosThetaStarSynJets_vs_Bosons->SetName(title_CosThetaStarSynJets_vs_Bosons.c_str());
                 m_cosThetaStarSynJets_vs_Bosons->Write(m_cosThetaStarSynJets_vs_Bosons->GetName(),TObject::kOverwrite);
-//std::cout << "Writing histos for alpha4 , alpha5 = " << alpha4 << " , " << alpha5 << std::endl;
+
                 std::string title_CosThetaStarSynJets = "CosThetaStarSynJets_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
                 m_cosThetaStarSynJets->SetTitle(title_CosThetaStarSynJets.c_str());
                 m_cosThetaStarSynJets->SetName(title_CosThetaStarSynJets.c_str());
@@ -204,13 +229,13 @@ void Fit::FindFiles()
         {
             fileCandidate = file->GetName();
             TString energyString = this->NumberToString(m_energy) + "GeV";
-
             if (m_background)
             {
                 if (!file->IsDirectory() and fileCandidate.EndsWith("root") and fileCandidate.Contains(m_descriptor.c_str()) and fileCandidate.Contains(energyString) and fileCandidate.Contains("Final"))
                 {
                     std::string filePath = m_inputPath + fileCandidate.Data();
                     m_filesToReadIn.push_back(filePath);
+std::cout << "Including : " <<  fileCandidate << std::endl;
                 }
             }
             else 
@@ -307,6 +332,7 @@ void Fit::Initialise()
 
 void Fit::MergeFiles(float alpha4, float alpha5, bool reference)
 {
+    std::cout << "Merging files for (alpha4,alpha5) = (" << alpha4 << "," << alpha5 << ")" << std::endl;
     for (const auto &fileName: m_filesToReadIn)
     {
         TH1F *pTH1F_CosThetaStarSynJets;
@@ -329,12 +355,7 @@ void Fit::MergeFiles(float alpha4, float alpha5, bool reference)
             pTH1F_CosThetaStarSynBosons = (TH1F*)pTFile->Get(plotName2.c_str());
             std::string plotName3("CosThetaStarSynJets_vs_Bosons_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5));
             pTH2F_CosThetaStarSynJets_vs_Bosons = (TH2F*)pTFile->Get(plotName3.c_str());
-/*
-std::cout << "File : " << fileName << std::endl; 
-std::cout << "Trying to add : " << plotName1 << std::endl; 
-std::cout << "Trying to add : " << plotName2 << std::endl; 
-std::cout << "Trying to add : " << plotName3 << std::endl; 
-*/
+
             if (!reference)
             {
                 m_cosThetaStarSynJets->Add(pTH1F_CosThetaStarSynJets);
@@ -432,17 +453,47 @@ void Fit::Clear()
 
 double Fit::CalculateChi2In1D(TH1F *pTH1F, TH1F *pTH1FRef)
 {
-    double chi2(0.0);
-    const int nBinsX(pTH1F->GetXaxis()->GetNbins());
-
-    for (unsigned int xBin = 1; xBin < nBinsX; xBin++)
+    if (m_fluctuateNominal)
     {
-        const double binContent = pTH1F->GetBinContent(xBin);
-        const double binContentRef = pTH1FRef->GetBinContent(xBin);
-        chi2 += (binContent - binContentRef) * (binContent - binContentRef) / binContentRef;
+        double chi2(0.0);
+        const int nIterations(10000);
+        const int nBinsX(pTH1F->GetXaxis()->GetNbins());
+        TRandom3 *pTRandom3 = new TRandom3();
+
+        for (unsigned int xBin = 1; xBin < nBinsX; xBin++)
+        {
+            double sumOfChi2(0.0);
+            const double binContent = pTH1F->GetBinContent(xBin);
+            const double expected = pTH1FRef->GetBinContent(xBin);
+
+            for (unsigned int i = 0; i < nIterations; i++)
+            {
+                const double observed = (double)(pTRandom3->Poisson(expected));
+                sumOfChi2 += (binContent - observed) * (binContent - observed) / observed;
+//std::cout << "binContent  : " << binContent << std::endl;
+//std::cout << "expected    : " << expected << std::endl;
+//std::cout << "observed    : " << observed << std::endl;
+            }
+            chi2 += sumOfChi2 / (double)(nIterations);
+        }
+
+        return chi2;
     }
 
-    return chi2;
+    else
+    {
+        double chi2(0.0);
+        const int nBinsX(pTH1F->GetXaxis()->GetNbins());
+
+        for (unsigned int xBin = 1; xBin < nBinsX; xBin++)
+        {
+            const double binContent = pTH1F->GetBinContent(xBin);
+            const double binContentRef = pTH1FRef->GetBinContent(xBin);
+            chi2 += (binContent - binContentRef) * (binContent - binContentRef) / binContentRef;
+        }
+
+        return chi2;
+    }
 }
 
 //=====================================================================
@@ -487,11 +538,14 @@ std::string Fit::RandomName()
 template <class T>
 std::string Fit::NumberToString(T number)
 {
-    if (number < 0.00001 and number > -0.00001 and m_energy == 1400)
+    if (number < 0.00001 and number > -0.00001 and m_energy == 1400 and !m_background)
         return "1.04083e-17";
 
+    else if (number < 0.00001 and number > -0.00001 and m_energy == 1400 and m_background)
+        return "0.0";
+
     else if (number < 0.00001 and number > -0.00001 and m_energy == 3000)
-        return "6.23416e-19";
+        return "0.0";
 
     std::ostringstream ss;
     ss << number;

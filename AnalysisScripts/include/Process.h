@@ -46,9 +46,9 @@ class Process
          *  @param energy
          *  @param analysisTag
          *  @param quickLoad skip loading individual files
-         *  @param perfect is BDT applied in full or are files just concatenated
+         *  @param trivialMVA is BDT applied in full or are files just concatenated
          */
-        Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string pandoraPFOs, std::string jetClusteringMode, const int nJetsToCluster, std::string jetClusteringAlgorithm, std::string jetClusteringRadius, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag, bool quickLoad = false, bool perfect = false);
+        Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string pandoraPFOs, std::string jetClusteringMode, const int nJetsToCluster, std::string jetClusteringAlgorithm, std::string jetClusteringRadius, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag, bool quickLoad = false, bool trivialMVA = true);
 
         /**
          *  @brief Default destructor
@@ -66,6 +66,11 @@ class Process
         TChain* GetTrainingTChain() const;
 
         /**
+         *  @brief Get full event sample TChain
+         */
+        TChain* GetFullTChain() const;
+
+        /**
          *  @brief Return pointer to TChain made from input root files that will be used for training
          */
         TChain* GetPostMVATChain() const;
@@ -74,6 +79,16 @@ class Process
          *  @brief Return the weight for the given process
          */
         float GetProcessWeight() const;
+
+        /**
+         *  @brief Return the weight for the given process training tree
+         */
+        float GetTrainingProcessWeight() const;
+
+        /**
+         *  @brief Get full event sample TChain event weight
+         */
+        float GetFullProcessWeight() const;
 
         /**
          *  @brief Return the weight for the given process post MVA training
@@ -104,6 +119,16 @@ class Process
          *  @brief Get analysis tag
          */
         int GetAnalysisTag() const;
+
+        /**
+         *  @brief Get trivial MVA
+         */
+        bool GetQuickLoad() const;
+
+        /**
+         *  @brief Get trivialMVA
+         */
+        bool GetTrivialMVA() const;
 
         /**
          *  @brief Get the root suffix
@@ -156,12 +181,19 @@ class Process
         const float           m_luminosity;              ///< Luminosity
         const unsigned int    m_energy;                  ///< Energy of process
         const int             m_analysisTag;             ///< Analysis tag for bookeeping
+        const bool            m_quickLoad;               ///< Skip loading individual root files
+        const bool            m_trivialMVA;              ///< MVA applied to concatenate files, but not actually apply MVA
         std::string           m_rootSuffix;              ///< Root suffix for loading files
         TChain*               m_pTChain;                 ///< Chain of analysis root files
         TChain*               m_pTrainTChain;            ///< Chain of analysis root files for training TMVA
+        TChain*               m_pFullTChain;             ///< Chain of all analysis root files
         TChain*               m_pPostMVATChain;          ///< Chain of analysis root files post DBT training 
         int                   m_numberOfEntries;         ///< Number of entries in tree
+        int                   m_trainingNumberOfEntries; ///< Training tree number of entries
+        int                   m_fullNumberOfEntries;     ///< Full tree number of entries
         float                 m_processWeight;           ///< Weight to give required luminosity
+        float                 m_trainingProcessWeight;   ///< Weight to give required luminosity for training sample
+        float                 m_fullProcessWeight;       ///< Weight to give required luminosity for full sample
         float                 m_postMVAProcessWeight;    ///< Weight to give required luminosity for post MVA
         std::string           m_pathToFiles;             ///< Path to analysis root files
         std::map<int,bool>    m_doesEventPassSelection;  ///< Does event number pass the selection cuts

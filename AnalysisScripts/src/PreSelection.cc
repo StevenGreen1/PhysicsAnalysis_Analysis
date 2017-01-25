@@ -41,11 +41,13 @@ void PreSelection::ApplyPreSelection()
 
     for (const auto &pProcess: m_processVector)
     {
-        TChain *pTChain(pProcess->GetTrainingTChain());
+        TChain *pTChain(pProcess->GetFullTChain());
+        double weight(pProcess->GetFullProcessWeight());
 
         int nIsolatedLeptons(std::numeric_limits<int>::max());
         double transverseMomentum(std::numeric_limits<double>::max());
         double invariantMassSystem(std::numeric_limits<double>::max());
+/*
         double bTag1(std::numeric_limits<double>::max());
         double bTag2(std::numeric_limits<double>::max());
         double bTag3(std::numeric_limits<double>::max());
@@ -54,10 +56,11 @@ void PreSelection::ApplyPreSelection()
         double invMassW2(std::numeric_limits<double>::max());
         double invMassZ1(std::numeric_limits<double>::max());
         double invMassZ2(std::numeric_limits<double>::max());
-
+*/
         pTChain->SetBranchAddress("NumberOfIsolatedLeptons", &nIsolatedLeptons);
         pTChain->SetBranchAddress("TransverseMomentum", &transverseMomentum);
         pTChain->SetBranchAddress("InvariantMassSystem", &invariantMassSystem);
+/*
         pTChain->SetBranchAddress("BTagForJet1", &bTag1);
         pTChain->SetBranchAddress("BTagForJet2", &bTag2);
         pTChain->SetBranchAddress("BTagForJet3", &bTag3);
@@ -66,7 +69,7 @@ void PreSelection::ApplyPreSelection()
         pTChain->SetBranchAddress("InvariantMassWBoson2", &invMassW2);
         pTChain->SetBranchAddress("InvariantMassZBoson1", &invMassZ1);
         pTChain->SetBranchAddress("InvariantMassZBoson2", &invMassZ2);
-
+*/
         int counter(0);
 
         for (unsigned int i = 0; i < pTChain->GetEntries(); i++)
@@ -81,7 +84,7 @@ void PreSelection::ApplyPreSelection()
 
             if (invariantMassSystem < m_invariantMassSystemLow or m_invariantMassSystemHigh < invariantMassSystem)
                 continue;
-
+/*
             if (bTag1 < m_bTagLow or m_bTagHigh < bTag1 or bTag2 < m_bTagLow or m_bTagHigh < bTag2 or bTag3 < m_bTagLow or m_bTagHigh < bTag3 or bTag4 < m_bTagLow or m_bTagHigh < bTag4)
                 continue;
 
@@ -96,16 +99,12 @@ void PreSelection::ApplyPreSelection()
 
             if (invMassZ2 < m_invariantMassBosonLow or m_invariantMassBosonHigh < invMassZ2)
                 continue;
-
+*/
             counter++;
         }
 
-        double crossSection(pProcess->GetCrossSection());
-        double luminosity(pProcess->GetLuminosity());
-        double eventWeight(crossSection*luminosity/(double)(pTChain->GetEntries()));
         std::string evtType(pProcess->GetEventType());
-
-        std::cout << std::setprecision(4) << evtType << " " << pTChain->GetEntries() << " " << counter << " " << (double)(counter)*eventWeight << std::endl;
+        std::cout << std::setprecision(4) << evtType << " " << pTChain->GetEntries() << " " << counter << " " << (double)(counter)*weight << std::endl;
     }
 }
 

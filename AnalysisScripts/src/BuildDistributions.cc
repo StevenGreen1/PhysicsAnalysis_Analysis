@@ -100,12 +100,20 @@ void BuildDistributions::BuildDistribution(bool backgrounds)
     }
     else if (m_energy == 3000 && backgrounds)
     {
+        alpha4Min = -0.002;
+        alpha4Max = 0.00205;
+        alpha4Step = 0.0001;
+        alpha5Min = -0.002;
+        alpha5Max = 0.00205;
+        alpha5Step = 0.0001;
+/*
         alpha4Min = -0.0045;
         alpha4Max = 0.00455;
         alpha4Step = 0.00025;
         alpha5Min = -0.0045;
         alpha5Max = 0.00455;
         alpha5Step = 0.00025;
+*/
     }
 
     this->InitialiseReference();
@@ -611,6 +619,9 @@ std::string BuildDistributions::RandomName()
 template <class T>
 std::string BuildDistributions::NumberToString(T number)
 {
+    if (number < 0.00000001 and -0.00000001 < number)
+        return "0.0";
+
     std::ostringstream ss;
     ss << number;
     return ss.str();

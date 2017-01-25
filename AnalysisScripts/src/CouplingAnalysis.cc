@@ -35,21 +35,29 @@ CouplingAnalysis::CouplingAnalysis(PostMVASelection *pPostMVASelection, const in
     }
     else if (energy == 3000 && !backgrounds)
     {
-        m_a4IntMin = -6;
-        m_a4IntMax = 6;
-        m_a4Step = 0.001f;
-        m_a5IntMin = -6;
-        m_a5IntMax = 6;
-        m_a5Step = 0.001f;
+        m_a4IntMin = -10;
+        m_a4IntMax = 10;
+        m_a4Step = 0.00025f;
+        m_a5IntMin = -10;
+        m_a5IntMax = 10;
+        m_a5Step = 0.00025f;
     }
     else if (energy == 3000 && backgrounds)
     {
+        m_a4IntMin = -10;
+        m_a4IntMax = 10;
+        m_a4Step = 0.00025f;
+        m_a5IntMin = -10;
+        m_a5IntMax = 10;
+        m_a5Step = 0.00025f;
+/*
         m_a4IntMin = -7;
         m_a4IntMax = 7;
         m_a4Step = 0.001f;
         m_a5IntMin = -7;
         m_a5IntMax = 7;
         m_a5Step = 0.001f;
+*/
     }
     else 
     {

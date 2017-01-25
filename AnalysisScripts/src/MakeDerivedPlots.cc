@@ -15,54 +15,63 @@ MakeDerivedPlots::MakeDerivedPlots(const ProcessVector &processVector, std::stri
     m_processVector(processVector),
     m_descriptor(descriptor)
 {
+    int energy(1400);
+
+    if (processVector.size() != 0)
+    {
+        energy = processVector.at(0)->GetEnergy();
+    }
+
+    double doubleEnergy = (double)(energy);
+
     // Event
     MakeDerivedPlots::PlotContainer *pNPfosPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "NPfos", 400, 0.0, 400.0);
-    MakeDerivedPlots::PlotContainer *pTransverseMomentumPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "TransverseMomentum", 2000, 0.0, 2000.0);
+    MakeDerivedPlots::PlotContainer *pTransverseMomentumPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "TransverseMomentum", std::floor(1.5*energy), 0.0, 1.5*doubleEnergy);
     MakeDerivedPlots::PlotContainer *pCosThetaMissingPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "CosThetaMissing", 200, -1.0, 1.0);
-    MakeDerivedPlots::PlotContainer *pRecoilMassPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "RecoilMass", 1400, -2000.0, 2000.0);
+    MakeDerivedPlots::PlotContainer *pRecoilMassPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "RecoilMass", std::floor(1.5*energy), -1.5*doubleEnergy, 1.5*doubleEnergy);
     MakeDerivedPlots::PlotContainer *pY12PlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "Y12", 100, 0.0, 10.0);
     MakeDerivedPlots::PlotContainer *pY23PlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "Y23", 100, 0.0, 10.0);
     MakeDerivedPlots::PlotContainer *pY34PlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "Y34", 100, 0.0, 10.0);
     MakeDerivedPlots::PlotContainer *pY45PlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "Y45", 100, 0.0, 10.0);
     MakeDerivedPlots::PlotContainer *pY56PlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "Y56", 100, 0.0, 10.0);
     MakeDerivedPlots::PlotContainer *pY67PlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "Y67", 100, 0.0, 10.0);
-    MakeDerivedPlots::PlotContainer *pInvariantMassSystemPlotContainer =  new MakeDerivedPlots::PlotContainer(m_descriptor, "InvariantMassSystem", 2000, 0.0, 2000.0);
+    MakeDerivedPlots::PlotContainer *pInvariantMassSystemPlotContainer =  new MakeDerivedPlots::PlotContainer(m_descriptor, "InvariantMassSystem", std::floor(1.5*energy), 0.0, 1.5*doubleEnergy);
     MakeDerivedPlots::PlotContainer *pPrincipleThrustValuePlotContainer =  new MakeDerivedPlots::PlotContainer(m_descriptor, "PrincipleThrustValue", 100, 0.0, 1.0);
     MakeDerivedPlots::PlotContainer *pMajorThrustValuePlotContainer =  new MakeDerivedPlots::PlotContainer(m_descriptor, "MajorThrustValue", 80, 0.0, 0.8);
     MakeDerivedPlots::PlotContainer *pMinorThrustValuePlotContainer =  new MakeDerivedPlots::PlotContainer(m_descriptor, "MinorThrustValue", 60, 0.0, 0.6);
     MakeDerivedPlots::PlotContainer *pSphericityPlotContainer =  new MakeDerivedPlots::PlotContainer(m_descriptor, "Sphericity", 100, 0.0, 1.0);
     MakeDerivedPlots::PlotContainer *pAplanarityPlotContainer =  new MakeDerivedPlots::PlotContainer(m_descriptor, "Aplanarity", 50, 0.0, 0.5);
-    MakeDerivedPlots::PlotContainer *pNumberOfIsolatedLeptons = new MakeDerivedPlots::PlotContainer(m_descriptor, "NumberOfIsolatedLeptons", 5, 0, 5);
-    MakeDerivedPlots::PlotContainer *pHighestEnergyIsolatedLeptonEnergy = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyIsolatedLeptonEnergy", 700, 0, 700);
-    MakeDerivedPlots::PlotContainer *pHighestEnergyIsolatedLeptonMomentum = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyIsolatedLeptonTransverseMomentum", 700, 0, 700);
-    MakeDerivedPlots::PlotContainer *pHighestEnergyIsolatedLeptonTransverseMomentum = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyIsolatedLeptonCosTheta", 700, 0, 700);
+    MakeDerivedPlots::PlotContainer *pNumberOfIsolatedLeptons = new MakeDerivedPlots::PlotContainer(m_descriptor, "NumberOfIsolatedLeptons", 10, 0, 10);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyIsolatedLeptonEnergy = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyIsolatedLeptonEnergy", std::floor(0.5*energy), 0, 0.5*doubleEnergy);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyIsolatedLeptonMomentum = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyIsolatedLeptonTransverseMomentum", std::floor(0.5*energy), 0, 0.5*doubleEnergy);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyIsolatedLeptonTransverseMomentum = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyIsolatedLeptonCosTheta", std::floor(0.5*energy), 0, 0.5*doubleEnergy);
     MakeDerivedPlots::PlotContainer *pHighestEnergyIsolatedLeptonCosTheta = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyIsolatedLeptonCosTheta", 100, 0, 1);
-    MakeDerivedPlots::PlotContainer *pHighestEnergyPfoEnergy = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyPfoEnergy", 700, 0, 700);
-    MakeDerivedPlots::PlotContainer *pHighestEnergyPfoMomentum = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyPfoMomentum", 700, 0, 700);
-    MakeDerivedPlots::PlotContainer *pHighestEnergyPfoTransverseMomentum = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyPfoTransverseMomentum", 700, 0, 700);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyPfoEnergy = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyPfoEnergy", std::floor(0.5*energy), 0, 0.5*doubleEnergy);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyPfoMomentum = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyPfoMomentum", std::floor(0.5*energy), 0, 0.5*doubleEnergy);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyPfoTransverseMomentum = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyPfoTransverseMomentum", std::floor(0.5*energy), 0, 0.5*doubleEnergy);
     MakeDerivedPlots::PlotContainer *pHighestEnergyPfoCosTheta = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyPfoCosTheta", 100, 0, 1);
-    MakeDerivedPlots::PlotContainer *pHighestEnergyElectronEnergy = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyElectronEnergy", 700, 0, 700);
-    MakeDerivedPlots::PlotContainer *pHighestEnergyElectronMomentum = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyElectronMomentum", 700, 0, 700);
-    MakeDerivedPlots::PlotContainer *pHighestEnergyElectronTransverseMomentum = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyElectronTransverseMomentum", 700, 0, 700);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyElectronEnergy = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyElectronEnergy", std::floor(0.5*energy), 0, 0.5*doubleEnergy);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyElectronMomentum = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyElectronMomentum", std::floor(0.5*energy), 0, 0.5*doubleEnergy);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyElectronTransverseMomentum = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyElectronTransverseMomentum", std::floor(0.5*energy), 0, 0.5*doubleEnergy);
     MakeDerivedPlots::PlotContainer *pHighestEnergyElectronCosTheta = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyElectronCosTheta", 100, 0, 1);
-    MakeDerivedPlots::PlotContainer *pHighestEnergyMuonEnergy = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyMuonEnergy", 700, 0, 700);
-    MakeDerivedPlots::PlotContainer *pHighestEnergyMuonMomentum = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyMuonMomentum", 700, 0, 700);
-    MakeDerivedPlots::PlotContainer *pHighestEnergyMuonTransverseMomentum = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyMuonTransverseMomentum", 700, 0, 700);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyMuonEnergy = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyMuonEnergy", std::floor(0.5*energy), 0, 0.5*doubleEnergy);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyMuonMomentum = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyMuonMomentum", std::floor(0.5*energy), 0, 0.5*doubleEnergy);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyMuonTransverseMomentum = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyMuonTransverseMomentum", std::floor(0.5*energy), 0, 0.5*doubleEnergy);
     MakeDerivedPlots::PlotContainer *pHighestEnergyMuonCosTheta = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyMuonCosTheta", 100, 0, 1);
-    MakeDerivedPlots::PlotContainer *pHighestEnergyPhotonEnergy = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyPhotonEnergy", 700, 0, 700);
-    MakeDerivedPlots::PlotContainer *pHighestEnergyPhotonMomentum = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyPhotonMomentum", 700, 0, 700);
-    MakeDerivedPlots::PlotContainer *pHighestEnergyPhotonTransverseMomentum = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyPhotonTransverseMomentum", 700, 0, 700);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyPhotonEnergy = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyPhotonEnergy", std::floor(0.5*energy), 0, 0.5*doubleEnergy);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyPhotonMomentum = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyPhotonMomentum", std::floor(0.5*energy), 0, 0.5*doubleEnergy);
+    MakeDerivedPlots::PlotContainer *pHighestEnergyPhotonTransverseMomentum = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyPhotonTransverseMomentum", std::floor(0.5*energy), 0, 0.5*doubleEnergy);
     MakeDerivedPlots::PlotContainer *pHighestEnergyPhotonCosTheta = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestEnergyPhotonCosTheta", 100, 0, 1);
 
     // Bosons
-    MakeDerivedPlots::PlotContainer *pNPfosSynBosonPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "NPfosSynBoson", 200, 0.0, 200.0);
-    MakeDerivedPlots::PlotContainer *pEnergySynBosonPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "EnergySynBoson", 1400, 0.0, 1400.0);
-    MakeDerivedPlots::PlotContainer *pMomentumSynBosonPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "MomentumSynBoson", 1400, 0.0, 1400.0);
-    MakeDerivedPlots::PlotContainer *pTransverseMomentumSynBosonPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "TransverseMomentumSynBoson", 1400, 0.0, 1400.0);
+    MakeDerivedPlots::PlotContainer *pNPfosSynBosonPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "NPfosSynBoson", 300, 0.0, 300.0);
+    MakeDerivedPlots::PlotContainer *pEnergySynBosonPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "EnergySynBoson", energy, 0.0, doubleEnergy);
+    MakeDerivedPlots::PlotContainer *pMomentumSynBosonPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "MomentumSynBoson", energy, 0.0, doubleEnergy);
+    MakeDerivedPlots::PlotContainer *pTransverseMomentumSynBosonPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "TransverseMomentumSynBoson", energy, 0.0, doubleEnergy);
     MakeDerivedPlots::PlotContainer *pCosThetaSynBosonPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "CosThetaSynBoson", 200, -1.0, 1.0);
     MakeDerivedPlots::PlotContainer *pCosThetaStarSynBosonsPlotContainer =  new MakeDerivedPlots::PlotContainer(m_descriptor, "CosThetaStarSynBosons", 100, 0.0, 1.0);
     MakeDerivedPlots::PlotContainer *pAcolinearitySynBosonsPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "AcolinearitySynBosons", 180, 0.0, 180.0);
-    MakeDerivedPlots::PlotContainer *pInvariantMassSynBosonsPlotContainer =  new MakeDerivedPlots::PlotContainer(m_descriptor, "InvariantMassSynBosons", 2000, 0.0, 2000.0);
+    MakeDerivedPlots::PlotContainer *pInvariantMassSynBosonsPlotContainer =  new MakeDerivedPlots::PlotContainer(m_descriptor, "InvariantMassSynBosons", std::floor(1.5*energy), 0.0, 1.5*doubleEnergy);
     MakeDerivedPlots::PlotContainer *pHighestBTagSynBosonsPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestBTagSynBosons", 100, 0.0, 1.0);
     MakeDerivedPlots::PlotContainer *pLowestBTagSynBosonsPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "LowestBTagSynBosons", 100, 0.0, 1.0);
     MakeDerivedPlots::PlotContainer *pHighestCTagSynBosonsPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "HighestCTagSynBosons", 100, 0.0, 1.0);
@@ -71,28 +80,32 @@ MakeDerivedPlots::MakeDerivedPlots(const ProcessVector &processVector, std::stri
     // Jets
     MakeDerivedPlots::PlotContainer *pAcolinearitySynJetsPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "AcolinearitySynJets", 180, 0.0, 180.0);
     MakeDerivedPlots::PlotContainer *pCosThetaStarSynJetsPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "CosThetaStarSynJets", 100, 0.0, 1.0);
-    MakeDerivedPlots::PlotContainer *pEnergySynJetsPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "EnergySynJets", 1400, 0.0, 1400.0);
-    MakeDerivedPlots::PlotContainer *pMomentumSynJetsPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "MomentumSynJets", 1400, 0.0, 1400.0);
-    MakeDerivedPlots::PlotContainer *pTransverseMomentumSynJetsPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "TransverseMomentumSynJets", 1400, 0.0, 1400.0);
+    MakeDerivedPlots::PlotContainer *pEnergySynJetsPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "EnergySynJets", energy, 0.0, doubleEnergy);
+    MakeDerivedPlots::PlotContainer *pMomentumSynJetsPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "MomentumSynJets", energy, 0.0, doubleEnergy);
+    MakeDerivedPlots::PlotContainer *pTransverseMomentumSynJetsPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "TransverseMomentumSynJets", energy, 0.0, doubleEnergy);
     MakeDerivedPlots::PlotContainer *pCosThetaSynJetsPlotContainer = new MakeDerivedPlots::PlotContainer(m_descriptor, "CosThetaSynJets", 200, -1.0, 1.0);
 
     for (const auto &pProcess: m_processVector)
     {
-        double weight(pProcess->GetProcessWeight());
-
-        TChain *pTChain; 
+        TChain *pTChain;
+        double weight;
         Variables *pVariables = new Variables();
-
-        if (pPostMVASelection != NULL)
+/*
+        TChain *pTChain(pProcess->GetFullTChain());
+        double weight(pProcess->GetFullProcessWeight());
+        pVariables->SetBranchAddresses(pTChain, false);
+*/
+        if (pPostMVASelection == NULL)
         {
-            pTChain = pProcess->GetPostMVATChain(); 
-            weight = pProcess->GetPostMVAProcessWeight();
-            pVariables->SetBranchAddresses(pTChain, true);
+            pTChain = pProcess->GetFullTChain();
+            weight = pProcess->GetFullProcessWeight();
+            pVariables->SetBranchAddresses(pTChain, false);
         }
         else
         {
-            pTChain = pProcess->GetTChain(); 
-            pVariables->SetBranchAddresses(pTChain, false);
+            pTChain = pProcess->GetPostMVATChain();
+            weight = pProcess->GetPostMVAProcessWeight();
+            pVariables->SetBranchAddresses(pTChain, true);
         }
 
         for (int entry = 0; entry < pTChain->GetEntries(); entry++)
@@ -266,6 +279,8 @@ MakeDerivedPlots::MakeDerivedPlots(const ProcessVector &processVector, std::stri
         pMomentumSynJetsPlotContainer->DrawHistograms(pProcess->GetEventType());
         pTransverseMomentumSynJetsPlotContainer->DrawHistograms(pProcess->GetEventType());
         pCosThetaSynJetsPlotContainer->DrawHistograms(pProcess->GetEventType());
+
+        delete pVariables;
     }
 
     // Event

@@ -1,0 +1,16 @@
+executable              = /var/clus/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/Analysis3000.sh                                             
+initial_dir             = /var/clus/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/CondorJobs                                                  
+notification            = never                                                                
+Requirements            = ( POOL == "GEN_FARM" && OSTYPE == "SLC6" )                       
+Rank                    = memory                                                               
+output                  = /usera/sg568/CondorLogs/Fitting_Analysis3000_1290000_1300000.out  
+error                   = /usera/sg568/CondorLogs/Fitting_Analysis3000_1290000_1300000.err 
+log                     = /usera/sg568/CondorLogs/Fitting_Analysis3000_1290000_1300000.log 
+environment             = CONDOR_JOB=true                                                      
+Universe                = vanilla                                                              
+getenv                  = false                                                                
+copy_to_spool           = true                                                                 
+should_transfer_files   = yes                                                                  
+when_to_transfer_output = on_exit_or_evict                                                     
+arguments = 1290000 1300000 /r06/lc/sg568/PhysicsAnalysis/Analysis/Chi2Fragments/
+queue 1 

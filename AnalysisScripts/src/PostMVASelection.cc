@@ -64,11 +64,8 @@ void PostMVASelection::ApplyPostMVASelection()
             counter++;
         }
 
-        double crossSection(pProcess->GetCrossSection());
-        double luminosity(pProcess->GetLuminosity());
-        double eventWeight(crossSection*luminosity/(double)(pTChain->GetEntries()));
+        double eventWeight(pProcess->GetPostMVAProcessWeight());
         std::string evtType(pProcess->GetEventType());
-
         std::cout << std::setprecision(4) << evtType << " " << pTChain->GetEntries() << " " << counter << " " << (double)(counter)*eventWeight << std::endl;
     }
 }

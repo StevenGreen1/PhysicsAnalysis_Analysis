@@ -11,25 +11,23 @@ class CondorFitting:
 
     def __init__(self):
         self._FittingArgList = [] 
-        self._ExecutableName = 'PerfectAnalysis.sh'
-        self._Executable = os.path.join('/var/clus/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin', self._ExecutableName)
-        self._CondorMaxRuns = 100 
+        self._CondorMaxRuns = 10000000 
         savePath = '/r06/lc/sg568/PhysicsAnalysis/Analysis/Chi2Fragments/'
 
-        for i in range(0,141):
-            self._FittingArgList.append(str(i*10000) + ' ' + str((i+1)*10000) + ' ' + savePath)
+#        self._ExecutableName = 'Analysis.sh'
+#        self._ExecutableName = 'PerfectAnalysis.sh'
+#        self._Executable = os.path.join('/var/clus/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin', self._ExecutableName)
+#        for i in range(0,141):
+#            self._FittingArgList.append(str(i*10000) + ' ' + str((i+1)*10000) + ' ' + savePath)
+#        self.runCondorJobs()
 
-        self.runCondorJobs()
-        self.checkCondorJobs()
-
-        self._ExecutableName = 'PerfectAnalysis3000.sh'
+        self._ExecutableName = 'Analysis3000.sh'
+#        self._ExecutableName = 'PerfectAnalysis3000.sh'
         self._Executable = os.path.join('/var/clus/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin', self._ExecutableName)
-        savePath = '/r06/lc/sg568/PhysicsAnalysis/Analysis/Chi2Fragments/'
-
         for i in range(0,171):
             self._FittingArgList.append(str(i*10000) + ' ' + str((i+1)*10000) + ' ' + savePath)
-
         self.runCondorJobs()
+
         self.checkCondorJobs()
 
 ### ----------------------------------------------------------------------------------------------------
@@ -77,7 +75,7 @@ class CondorFitting:
         jobString  = 'executable              = ' + self._Executable + '                                             \n'
         jobString += 'initial_dir             = ' + os.getcwd() + '                                                  \n'
         jobString += 'notification            = never                                                                \n'
-        jobString += 'Requirements            = (OSTYPE == \"SLC6\")                                                 \n'
+        jobString += 'Requirements            = ( POOL == \"GEN_FARM\" && OSTYPE == \"SLC6\" )                       \n'
         jobString += 'Rank                    = memory                                                               \n'
         jobString += 'output                  = ' + os.environ['HOME'] + '/CondorLogs/Fitting_' + os.path.splitext(self._ExecutableName)[0] + '_' + '_'.join(arguement.split(' ')[:-1]) + '.out  \n'
         jobString += 'error                   = ' + os.environ['HOME'] + '/CondorLogs/Fitting_' + os.path.splitext(self._ExecutableName)[0] + '_' + '_'.join(arguement.split(' ')[:-1]) + '.err \n'

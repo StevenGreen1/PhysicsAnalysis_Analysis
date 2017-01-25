@@ -12,7 +12,7 @@ class CondorWeightToXmlConverter:
     def __init__(self):
 
         self._WeightToXmlConverterArgList = [] 
-        self._ExecutableName = 'WeightToXmlConverter'
+        self._ExecutableName = 'WeightToXmlConverter.sh'
         self._Executable = os.path.join('/var/clus/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin', self._ExecutableName)
         self._CondorMaxRuns = 1000
 

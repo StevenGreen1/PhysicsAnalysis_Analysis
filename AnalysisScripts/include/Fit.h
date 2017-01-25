@@ -26,6 +26,7 @@
 #include "THStack.h"
 #include "TLegend.h"
 #include "TROOT.h"
+#include "TRandom3.h"
 #include "TSystemDirectory.h"
 #include "TTree.h"
 
@@ -55,8 +56,15 @@ class Fit
 
         /**
          *  @brief Merge distributions to form chi2 together and calculate chi2
+         *
+         *  @param background does fit include backgrounds
          */
         void Merge();
+
+        /**
+         *  @breif Apply fluctuation of chi2 in fit
+         */
+        void FluctuateNominal();
 
     private:
         /**
@@ -129,6 +137,7 @@ class Fit
         const int             m_nBins;                                      ///< Number of bins to use in costheta*jet fit
         const int             m_energy;                                     ///< Energy
         const bool            m_background;                                 ///< Backgrounds
+        bool                  m_fluctuateNominal;                           ///< Fluctuate the nominal (standard model) using Poisson statistics
         const std::string     m_rootFileName;                               ///< Name of output results root file
         StringVector          m_filesToReadIn;                              ///< Vector of files to read in
         const bool            m_splitDistributions;                         ///< Make a separate W and Z distribution

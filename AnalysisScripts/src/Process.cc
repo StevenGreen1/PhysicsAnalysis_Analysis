@@ -10,7 +10,7 @@
 
 //=====================================================================
 
-Process::Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string pandoraPFOs, std::string jetClusteringMode, const int nJetsToCluster, std::string jetClusteringAlgorithm, std::string jetClusteringRadius, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag, bool quickLoad, bool perfect) :
+Process::Process(std::string jobDescription, std::string detectorModel, std::string reconstructionVariant, std::string pandoraPFOs, std::string jetClusteringMode, const int nJetsToCluster, std::string jetClusteringAlgorithm, std::string jetClusteringRadius, std::string eventType, const float crossSection, const float luminosity, const int energy, const int analysisTag, bool quickLoad, bool trivialMVA) :
     m_jobDescription(jobDescription),
     m_detectorModel(detectorModel),
     m_reconstructionVariant(reconstructionVariant),
@@ -24,12 +24,17 @@ Process::Process(std::string jobDescription, std::string detectorModel, std::str
     m_luminosity(luminosity),
     m_energy(energy),
     m_analysisTag(analysisTag),
+    m_quickLoad(quickLoad),
+    m_trivialMVA(trivialMVA),
     m_pTChain(NULL),
     m_pTrainTChain(NULL),
     m_pPostMVATChain(NULL),
     m_numberOfEntries(std::numeric_limits<int>::max()),
-    m_postMVAProcessWeight(std::numeric_limits<float>::max()),
-    m_processWeight(std::numeric_limits<float>::max())
+    m_trainingNumberOfEntries(std::numeric_limits<int>::max()),
+    m_fullNumberOfEntries(std::numeric_limits<int>::max()),
+    m_processWeight(std::numeric_limits<float>::max()),
+    m_trainingProcessWeight(std::numeric_limits<float>::max()),
+    m_postMVAProcessWeight(std::numeric_limits<float>::max())
 {
     if (pandoraPFOs == "SelectedPandoraPFANewPFOs")
         m_rootSuffix += "S";
@@ -68,7 +73,7 @@ Process::Process(std::string jobDescription, std::string detectorModel, std::str
     if (!quickLoad)
         this->MakeTChain();
 
-    this->SetMVARootFiles(perfect);
+    this->SetMVARootFiles(trivialMVA);
 }
 
 //=====================================================================
@@ -93,6 +98,13 @@ TChain* Process::GetTrainingTChain() const
 
 //=====================================================================
 
+TChain* Process::GetFullTChain() const
+{
+    return (TChain*)(m_pFullTChain->Clone());
+}
+
+//=====================================================================
+
 TChain* Process::GetPostMVATChain() const
 {   
     return (TChain*)(m_pPostMVATChain->Clone());
@@ -103,6 +115,20 @@ TChain* Process::GetPostMVATChain() const
 float Process::GetProcessWeight() const 
 {
     return m_processWeight;
+}
+
+//=====================================================================
+
+float Process::GetTrainingProcessWeight() const
+{
+    return m_trainingProcessWeight;
+}
+
+//=====================================================================
+
+float Process::GetFullProcessWeight() const
+{
+    return m_fullProcessWeight;
 }
 
 //=====================================================================
@@ -149,6 +175,20 @@ int Process::GetAnalysisTag() const
 
 //=====================================================================
 
+bool Process::GetQuickLoad() const 
+{
+    return m_quickLoad;
+}
+
+//=====================================================================
+
+bool Process::GetTrivialMVA() const
+{
+    return m_trivialMVA;
+}
+
+//=====================================================================
+
 std::string Process::GetRootSuffix() const
 {
     return m_rootSuffix;
@@ -177,11 +217,11 @@ bool Process::DoesEventPassCuts(int eventNumber) const
 
 //=====================================================================
 
-void Process::SetMVARootFiles(bool perfect)
+void Process::SetMVARootFiles(bool trivialMVA)
 {
     m_pPostMVATChain = new TChain("MVATree");
     TString fileToAdd = "/r06/lc/sg568/PhysicsAnalysis/Analysis/RootFilesPostMVA/RootFiles_Multivariant_" + m_eventType + "_" + this->NumberToString(m_energy) + "GeV_" + m_rootSuffix + "_AnalysisTag" + this->NumberToString(m_analysisTag);
-    if (perfect)
+    if (trivialMVA)
     {
         fileToAdd = fileToAdd + "_NoMVA.root";
     }
@@ -199,6 +239,7 @@ void Process::MakeTChain()
 {
     m_pTChain = new TChain("AnalysisProcessorTree");
     m_pTrainTChain = new TChain("AnalysisProcessorTree");
+    m_pFullTChain =  new TChain("AnalysisProcessorTree");
 
     TSystemDirectory directory(m_pathToFiles.c_str(), m_pathToFiles.c_str());
     TList *listOfFiles = directory.GetListOfFiles();
@@ -244,6 +285,7 @@ void Process::MakeTChain()
                 }
 
                 TString rootFileToAdd = m_pathToFiles + fileCandidate.Data();
+                m_pFullTChain->Add(rootFileToAdd.Data());
 
                 if (trainingSample)
                 {
@@ -261,6 +303,12 @@ void Process::MakeTChain()
 
     m_numberOfEntries = m_pTChain->GetEntries();
     m_processWeight = m_luminosity * m_crossSection / (float)(m_numberOfEntries);
+
+    m_trainingNumberOfEntries = m_pTrainTChain->GetEntries();
+    m_trainingProcessWeight = m_luminosity * m_crossSection / (float)(m_trainingNumberOfEntries);
+
+    m_fullNumberOfEntries = m_pFullTChain->GetEntries();
+    m_fullProcessWeight = m_luminosity * m_crossSection / (float)(m_fullNumberOfEntries);
 }
 
 //=====================================================================
