@@ -194,20 +194,19 @@ int main(int argc, char **argv)
 //    pPostMVASelection->ApplyPostMVASelection(); // Remove for condor jobs
 //    MakeDerivedPlots *makePlots = new MakeDerivedPlots(processes, "3000GeV_PostPreSelection_PostMVA_Cuts", pPreSelectionSemiFinal, pPostMVASelection);
 
-    CouplingAnalysis *pCouplingAnalysis = new CouplingAnalysis(pPostMVASelection, 3000);
+    CouplingAnalysis *pCouplingAnalysis = new CouplingAnalysis(pPostMVASelection, 3000, true); // Bool is with or without background, adjusts scan.
 
+    BuildDistributions *pBuildDistributions = new BuildDistributions(processes, pCouplingAnalysis, nEvtsStart, nEvtsEnd, "TPFOs_kt_1p10_10Bins_Start_" + NumberToString(nEvtsStart) + "_End_" + NumberToString(nEvtsEnd) + "_3000GeV_Final", outputPath);
+    pBuildDistributions->SetNBins(10);
+//    pBuildDistributions->EventWeightsForSingleEvent(1, true);
+    pBuildDistributions->BuildDistribution(true); // Bool is with or without background, adjusts scan.
+    delete pBuildDistributions;
+/*
     BuildIndividualDistributions *pBuildIndividualDistributions = new BuildIndividualDistributions(processes, pCouplingAnalysis, nEvtsStart, nEvtsEnd, "TPFOs_kt_1p10_10Bins_Start_" + NumberToString(nEvtsStart) + "_End_" + NumberToString(nEvtsEnd) + "_3000GeV_Final", outputPath);
     pBuildIndividualDistributions->SetNBins(10);
     pBuildIndividualDistributions->BuildDistribution(true); // Bool is with or without background, adjusts scan.
     delete pBuildIndividualDistributions;
-
-/*
-    BuildDistributions *pBuildDistributions = new BuildDistributions(processes, pCouplingAnalysis, nEvtsStart, nEvtsEnd, "TPFOs_kt_1p10_10Bins_Start_" + NumberToString(nEvtsStart) + "_End_" + NumberToString(nEvtsEnd) + "_3000GeV_Final", outputPath);
-    pBuildDistributions->SetNBins(10);
-    pBuildDistributions->BuildDistribution(true); // Bool is with or without background, adjusts scan.
-    delete pBuildDistributions;
 */
-
     delete pCouplingAnalysis;
     delete pPreSelectionSemiFinal, pPostMVASelection;
     delete pProcess_ee_nunuqqqq, pProcess_ee_lnuqqqq, pProcess_ee_llqqqq, pProcess_ee_qqqq, pProcess_ee_nunuqq, pProcess_ee_lnuqq, pProcess_ee_qqll, pProcess_ee_qq, pProcess_egamma_qqqqe_EPA, pProcess_egamma_qqqqe_BS, pProcess_gammae_qqqqe_EPA, pProcess_gammae_qqqqe_BS, pProcess_egamma_qqqqnu_EPA, pProcess_egamma_qqqqnu_BS, pProcess_gammae_qqqqnu_EPA, pProcess_gammae_qqqqnu_BS, pProcess_gammagamma_qqqq_EPA_EPA, pProcess_gammagamma_qqqq_EPA_BS, pProcess_gammagamma_qqqq_BS_EPA, pProcess_gammagamma_qqqq_BS_BS;

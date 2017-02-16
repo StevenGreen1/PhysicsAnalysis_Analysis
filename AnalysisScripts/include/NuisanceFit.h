@@ -87,33 +87,33 @@ class NuisanceFit
         void FindFiles();
 
         /**
-         *  @brief Initialise reference histograms for reweighting
+         *  @brief Initialise observed histograms for reweighting
          */
-        void InitialiseReference();
+        void InitialiseObserved();
 
         /**
-         *  @brief Initialise histograms for reweighting
+         *  @brief Initialise expected histograms for reweighting
          */
-        void Initialise();
+        void InitialiseExpected();
 
         /**
-         *  @brief Clear reference variables for next chi2 calcaultion
+         *  @brief Clear observed histograms for next chi2 calcaultion
          */
-        void ClearReference();
+        void ClearObserved();
 
         /**
-         *  @brief Clear histograms for next chi2 calcaultion
+         *  @brief Clear expected histograms for next chi2 calcaultion
          */
-        void Clear();
+        void ClearExpected();
 
         /**
-         *  @brief Merge all files together for given alpha4 and alpha5.  If reference = true, fill reference distribution
+         *  @brief Merge all files together for given alpha4 and alpha5.  If observed = true, fill observed distribution
          *
          *  @param alpha4 to use to fill 
          *  @param alpha5 to use to fill
-         *  @param reference should fill reference distribution 
+         *  @param observed should fill observed distribution 
          */
-        void MergeFiles(float alpha4, float alpha5, bool reference = false);
+        void MergeFiles(float alpha4, float alpha5, bool observed = false);
 
         /**
          *  @breif Calculate the nuisance chi sqaured value using MINUIT for a given alpha4 and alpha5 based on the input histograms
@@ -121,7 +121,7 @@ class NuisanceFit
         double CalculateNuisanceChi2MINUITIn1D();
 
         /**
-         *  @breif Return chi2 based on the m_cosThetaStarSynJets and m_cosThetaStarSynJetsRef histograms having fluctuated certain background processes by Gaussian with widths given by param
+         *  @breif Return chi2 based on the m_cosThetaStarSynJetsExpected and m_cosThetaStarSynJetsObserved histograms having fluctuated certain background processes by Gaussian with widths given by param
          *
          *  @param Gaussian widths for backgrounds 
          */
@@ -130,10 +130,10 @@ class NuisanceFit
         /**
          *  @brief Calculate the nuisance chi sqaured value for a given alpha4 and alpha5 based on the input histograms
          *
-         *  @param hists Map of event type to histogram of distribution of interest for fit
-         *  @param hists Map of event type to reference histogram of distribution of interest for fit
+         *  @param histsExpected Map of event type to expected histogram of distribution of interest for fit
+         *  @param histsObserved Map of event type to observed histogram of distribution of interest for fit
          */
-        double CalculateNuisanceChi2In1D(OneDHistogramMap hists, OneDHistogramMap histsRef);
+        double CalculateNuisanceChi2In1D(OneDHistogramMap histsExpected, OneDHistogramMap histsObserved);
 
         /**
          *  @brief See if name is available name for root object and if not delete pre exisiting object so that it is a valid name choice
@@ -143,20 +143,20 @@ class NuisanceFit
         TString SafeName(const TString &name);
 
         /**
-         *  @brief Calculate negative log likelihood for a given distribution for non-zero alpha4 and alpha5 based on distribution with zero alpha4 and alpah5
+         *  @brief Calculate chi2 for a given 1D distribution, observed, with zero alpha4 and alpha5 based on distribution, expected, with non-zero alpha4 and alpah5
          *
-         *  @param pTH1F distribution with non zero alpha4 and alpha5
-         *  @param pTH1FRef reference distribution to base log likelihood from
+         *  @param pTH1F_Expected expected distribution with non zero alpha4 and alpha5
+         *  @param pTH1F_Observed observed distribution with zero alpha4 and alphs5
          */
-        double CalculateChi2In1D(TH1F *pTH1F, TH1F *pTH1FRef);
+        double CalculateChi2In1D(TH1F *pTH1F_Expected, TH1F *pTH1F_Observed);
 
         /**
-         *  @brief Calculate negative log likelihood for a given 2D distribution for non-zero alpha4 and alpha5 based on distribution with zero alpha4 and alpah5
+         *  @brief Calculate chi2 for a given 2D distribution, observed, with zero alpha4 and alpha5 based on distribution, expected, with non-zero alpha4 and alpah5
          *
-         *  @param pTH2F distribution with non zero alpha4 and alpha5
-         *  @param pTH2FRef reference distribution to base log likelihood from
+         *  @param pTH2F_Expected expected distribution with non zero alpha4 and alpha5
+         *  @param pTH2F_Observed observed distribution with zero alpha4 and alphs5 
          */
-        double CalculateChi2In2D(TH2F *pTH2F, TH2F *pTH2FRef);
+        double CalculateChi2In2D(TH2F *pTH2F_Expected, TH2F *pTH2F_Observed);
 
         /**
          *  @brief Make random string for histogram name to prevent root troubles...
@@ -190,12 +190,12 @@ class NuisanceFit
         double                m_chi2CosThetaStarSynJets;                    ///< Chi2 from cos theta start synergy jets
         double                m_chi2CosThetaStarSynBosons;                  ///< Chi2 from cos theta start synergy boson
         double                m_chi2CosThetaStarSynJets_vs_Bosons;          ///< Chi2 from cos theta start synergy jets vs cos theta start synergy boson
-        OneDHistogramMap      m_cosThetaStarSynJets;                        ///< Distribution of cos theta star from jets from synergy boson all, map of process to histogram
-        OneDHistogramMap      m_cosThetaStarSynJetsRef;                     ///< Distribution of cos theta star from jets from synergy boson all ref, map of process to histogram
-        OneDHistogramMap      m_cosThetaStarSynBosons;                      ///< Distribution of cos theta star from bosons from synergy boson all, map of process to histogram
-        OneDHistogramMap      m_cosThetaStarSynBosonsRef;                   ///< Distribution of cos theta star from bosons from synergy boson all ref, map of process to histogram
-        TwoDHistogramMap      m_cosThetaStarSynJets_vs_Bosons;              ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson all, map of process to histogram
-        TwoDHistogramMap      m_cosThetaStarSynJets_vs_BosonsRef;           ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson all ref, map of process to histogram
+        OneDHistogramMap      m_cosThetaStarSynJetsExpected;                ///< Distribution of cos theta star from jets from synergy boson all expected, map of process to histogram
+        OneDHistogramMap      m_cosThetaStarSynJetsObserved;                ///< Distribution of cos theta star from jets from synergy boson all observed, map of process to histogram
+        OneDHistogramMap      m_cosThetaStarSynBosonsExpected;              ///< Distribution of cos theta star from bosons from synergy boson all expected, map of process to histogram
+        OneDHistogramMap      m_cosThetaStarSynBosonsObserved;              ///< Distribution of cos theta star from bosons from synergy boson all observed, map of process to histogram
+        TwoDHistogramMap      m_cosThetaStarSynJets_vs_BosonsExpected;      ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson all expected, map of process to histogram
+        TwoDHistogramMap      m_cosThetaStarSynJets_vs_BosonsObserved;      ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson all observed, map of process to histogram
 };
 
 #endif

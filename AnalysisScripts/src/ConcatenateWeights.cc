@@ -28,20 +28,21 @@ ConcatenateWeights::ConcatenateWeights(PostMVASelection *pPostMVASelection, cons
     }
     else if (energy == 3000)
     {
+/*
         m_a4IntMin = -10;
         m_a4IntMax = 10;
         m_a5IntMin = -10;
         m_a5IntMax = 10;
         m_a4Step = 0.00025;
         m_a5Step = 0.00025;
-/*
-        m_a4IntMin = -7;
-        m_a4IntMax = 7;
-        m_a5IntMin = -7;
-        m_a5IntMax = 7;
-        m_a4Step = 0.001f;
-        m_a5Step = 0.001f;
 */
+
+        m_a4IntMin = -18;
+        m_a4IntMax = 18;
+        m_a5IntMin = -18;
+        m_a5IntMax = 18;
+        m_a4Step = 0.00025f;
+        m_a5Step = 0.00025f;
     }
 }
 

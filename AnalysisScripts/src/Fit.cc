@@ -31,9 +31,13 @@ Fit::Fit(std::string descriptor, const int energy, const int nBins, std::string 
     m_chi2CosThetaStarSynBosons(0.0),
     m_chi2CosThetaStarWSynBosons(0.0),
     m_chi2CosThetaStarZSynBosons(0.0),
-    m_rootFileName(descriptor + "_" + this->NumberToString(energy) + "GeV_FitData.root"),
     m_splitDistributions(false)
 {
+    if (background)
+        m_rootFileName = descriptor + "_" + this->NumberToString(energy) + "GeV_FitDataOptimal.root";
+    else
+        m_rootFileName = descriptor + "_" + this->NumberToString(energy) + "GeV_FitData.root";
+
     TH1::AddDirectory(kFALSE);
 
     // Make things look pretty 
@@ -118,23 +122,33 @@ void Fit::Merge()
     }
     else if (m_energy == 3000 and m_background)
     {
+        alpha4Min = -0.0039;
+//        alpha4Max = 0.00395;
+        alpha4Max = 0.00005;
+        alpha4Step = 0.0001;
+//        alpha5Min = -0.0039;
+        alpha5Min = -0.0000;
+        alpha5Max = 0.00395;
+        alpha5Step = 0.0001;
+/*
         alpha4Min = -0.002;
         alpha4Max = 0.00205;
         alpha4Step = 0.0001;
         alpha5Min = -0.002;
         alpha5Max = 0.00205;
         alpha5Step = 0.0001;
+*/
     }
 
     this->FindFiles();
-    this->InitialiseReference();
+    this->InitialiseObserved();
     this->MergeFiles(0.f, 0.f, true);
 
     for (double alpha4 = alpha4Min; alpha4 < alpha4Max; alpha4 = alpha4 + alpha4Step)
     {
         for (double alpha5 = alpha5Min; alpha5 < alpha5Max; alpha5 = alpha5 + alpha5Step)
         {
-            this->Initialise();
+            this->InitialiseExpected();
             this->MergeFiles(alpha4, alpha5);
 
             m_pTFile->cd();
@@ -143,18 +157,18 @@ void Fit::Merge()
 
             if (!m_splitDistributions)
             {
-                m_chi2CosThetaStarSynJets = this->CalculateChi2In1D(m_cosThetaStarSynJets, m_cosThetaStarSynJetsRef);
-                m_chi2CosThetaStarSynBosons = this->CalculateChi2In1D(m_cosThetaStarSynBosons, m_cosThetaStarSynBosonsRef);
-                m_chi2CosThetaStarSynJets_vs_Bosons = this->CalculateChi2In2D(m_cosThetaStarSynJets_vs_Bosons, m_cosThetaStarSynJets_vs_BosonsRef);
+                m_chi2CosThetaStarSynJets = this->CalculateChi2In1D(m_cosThetaStarSynJetsExpected, m_cosThetaStarSynJetsObserved);
+                m_chi2CosThetaStarSynBosons = this->CalculateChi2In1D(m_cosThetaStarSynBosonsExpected, m_cosThetaStarSynBosonsObserved);
+                m_chi2CosThetaStarSynJets_vs_Bosons = this->CalculateChi2In2D(m_cosThetaStarSynJets_vs_BosonsExpected, m_cosThetaStarSynJets_vs_BosonsObserved);
             }
             else
             {
-                m_chi2CosThetaStarWSynJets = this->CalculateChi2In1D(m_cosThetaStarWSynJets, m_cosThetaStarWSynJetsRef);
-                m_chi2CosThetaStarZSynJets = this->CalculateChi2In1D(m_cosThetaStarZSynJets, m_cosThetaStarZSynJetsRef);
-                m_chi2CosThetaStarWSynBosons = this->CalculateChi2In1D(m_cosThetaStarWSynBosons, m_cosThetaStarWSynBosonsRef);
-                m_chi2CosThetaStarZSynBosons = this->CalculateChi2In1D(m_cosThetaStarZSynBosons, m_cosThetaStarZSynBosonsRef);
-                m_chi2CosThetaStarWSynJets_vs_Bosons = this->CalculateChi2In2D(m_cosThetaStarWSynJets_vs_Bosons, m_cosThetaStarWSynJets_vs_BosonsRef);
-                m_chi2CosThetaStarZSynJets_vs_Bosons = this->CalculateChi2In2D(m_cosThetaStarZSynJets_vs_Bosons, m_cosThetaStarZSynJets_vs_BosonsRef);
+                m_chi2CosThetaStarWSynJets = this->CalculateChi2In1D(m_cosThetaStarWSynJetsExpected, m_cosThetaStarWSynJetsObserved);
+                m_chi2CosThetaStarZSynJets = this->CalculateChi2In1D(m_cosThetaStarZSynJetsExpected, m_cosThetaStarZSynJetsObserved);
+                m_chi2CosThetaStarWSynBosons = this->CalculateChi2In1D(m_cosThetaStarWSynBosonsExpected, m_cosThetaStarWSynBosonsObserved);
+                m_chi2CosThetaStarZSynBosons = this->CalculateChi2In1D(m_cosThetaStarZSynBosonsExpected, m_cosThetaStarZSynBosonsObserved);
+                m_chi2CosThetaStarWSynJets_vs_Bosons = this->CalculateChi2In2D(m_cosThetaStarWSynJets_vs_BosonsExpected, m_cosThetaStarWSynJets_vs_BosonsObserved);
+                m_chi2CosThetaStarZSynJets_vs_Bosons = this->CalculateChi2In2D(m_cosThetaStarZSynJets_vs_BosonsExpected, m_cosThetaStarZSynJets_vs_BosonsObserved);
             }
 
             m_pTTree->Fill();
@@ -162,51 +176,51 @@ void Fit::Merge()
             if (!m_splitDistributions)
             {
                 std::string title_CosThetaStarSynJets_vs_Bosons = "CosThetaStarSynJets_vs_Bosons_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
-                m_cosThetaStarSynJets_vs_Bosons->SetTitle(title_CosThetaStarSynJets_vs_Bosons.c_str());
-                m_cosThetaStarSynJets_vs_Bosons->SetName(title_CosThetaStarSynJets_vs_Bosons.c_str());
-                m_cosThetaStarSynJets_vs_Bosons->Write(m_cosThetaStarSynJets_vs_Bosons->GetName(),TObject::kOverwrite);
+                m_cosThetaStarSynJets_vs_BosonsExpected->SetTitle(title_CosThetaStarSynJets_vs_Bosons.c_str());
+                m_cosThetaStarSynJets_vs_BosonsExpected->SetName(title_CosThetaStarSynJets_vs_Bosons.c_str());
+                m_cosThetaStarSynJets_vs_BosonsExpected->Write(m_cosThetaStarSynJets_vs_BosonsExpected->GetName(),TObject::kOverwrite);
 
                 std::string title_CosThetaStarSynJets = "CosThetaStarSynJets_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
-                m_cosThetaStarSynJets->SetTitle(title_CosThetaStarSynJets.c_str());
-                m_cosThetaStarSynJets->SetName(title_CosThetaStarSynJets.c_str());
-                m_cosThetaStarSynJets->Write(m_cosThetaStarSynJets->GetName(),TObject::kOverwrite);
+                m_cosThetaStarSynJetsExpected->SetTitle(title_CosThetaStarSynJets.c_str());
+                m_cosThetaStarSynJetsExpected->SetName(title_CosThetaStarSynJets.c_str());
+                m_cosThetaStarSynJetsExpected->Write(m_cosThetaStarSynJetsExpected->GetName(),TObject::kOverwrite);
 
                 std::string title_CosThetaStarSynBosons = "CosThetaStarSynBosons_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
-                m_cosThetaStarSynBosons->SetTitle(title_CosThetaStarSynBosons.c_str());
-                m_cosThetaStarSynBosons->SetName(title_CosThetaStarSynBosons.c_str());
-                m_cosThetaStarSynBosons->Write(m_cosThetaStarSynBosons->GetName(),TObject::kOverwrite);
+                m_cosThetaStarSynBosonsExpected->SetTitle(title_CosThetaStarSynBosons.c_str());
+                m_cosThetaStarSynBosonsExpected->SetName(title_CosThetaStarSynBosons.c_str());
+                m_cosThetaStarSynBosonsExpected->Write(m_cosThetaStarSynBosonsExpected->GetName(),TObject::kOverwrite);
             }
             else
             {
                 std::string title_CosThetaStarSynWJets_vs_Bosons = "CosThetaStarSynWJets_vs_Bosons_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
-                m_cosThetaStarWSynJets_vs_Bosons->SetTitle(title_CosThetaStarSynWJets_vs_Bosons.c_str());
-                m_cosThetaStarWSynJets_vs_Bosons->SetName(title_CosThetaStarSynWJets_vs_Bosons.c_str());
-                m_cosThetaStarWSynJets_vs_Bosons->Write(m_cosThetaStarWSynJets_vs_Bosons->GetName(),TObject::kOverwrite);
+                m_cosThetaStarWSynJets_vs_BosonsExpected->SetTitle(title_CosThetaStarSynWJets_vs_Bosons.c_str());
+                m_cosThetaStarWSynJets_vs_BosonsExpected->SetName(title_CosThetaStarSynWJets_vs_Bosons.c_str());
+                m_cosThetaStarWSynJets_vs_BosonsExpected->Write(m_cosThetaStarWSynJets_vs_BosonsExpected->GetName(),TObject::kOverwrite);
 
                 std::string title_CosThetaStarSynZJets_vs_Bosons = "CosThetaStarSynZJets_vs_Bosons_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
-                m_cosThetaStarZSynJets_vs_Bosons->SetTitle(title_CosThetaStarSynZJets_vs_Bosons.c_str());
-                m_cosThetaStarZSynJets_vs_Bosons->SetName(title_CosThetaStarSynZJets_vs_Bosons.c_str());
-                m_cosThetaStarZSynJets_vs_Bosons->Write(m_cosThetaStarZSynJets_vs_Bosons->GetName(),TObject::kOverwrite);
+                m_cosThetaStarZSynJets_vs_BosonsExpected->SetTitle(title_CosThetaStarSynZJets_vs_Bosons.c_str());
+                m_cosThetaStarZSynJets_vs_BosonsExpected->SetName(title_CosThetaStarSynZJets_vs_Bosons.c_str());
+                m_cosThetaStarZSynJets_vs_BosonsExpected->Write(m_cosThetaStarZSynJets_vs_BosonsExpected->GetName(),TObject::kOverwrite);
 
                 std::string title_CosThetaStarSynWJets = "CosThetaStarSynWJets_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
-                m_cosThetaStarWSynJets->SetTitle(title_CosThetaStarSynWJets.c_str());
-                m_cosThetaStarWSynJets->SetName(title_CosThetaStarSynWJets.c_str());
-                m_cosThetaStarWSynJets->Write(m_cosThetaStarWSynJets->GetName(),TObject::kOverwrite);
+                m_cosThetaStarWSynJetsExpected->SetTitle(title_CosThetaStarSynWJets.c_str());
+                m_cosThetaStarWSynJetsExpected->SetName(title_CosThetaStarSynWJets.c_str());
+                m_cosThetaStarWSynJetsExpected->Write(m_cosThetaStarWSynJetsExpected->GetName(),TObject::kOverwrite);
 
                 std::string title_CosThetaStarSynZJets = "CosThetaStarSynZJets_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
-                m_cosThetaStarZSynJets->SetTitle(title_CosThetaStarSynZJets.c_str());
-                m_cosThetaStarZSynJets->SetName(title_CosThetaStarSynZJets.c_str());
-                m_cosThetaStarZSynJets->Write(m_cosThetaStarZSynJets->GetName(),TObject::kOverwrite);
+                m_cosThetaStarZSynJetsExpected->SetTitle(title_CosThetaStarSynZJets.c_str());
+                m_cosThetaStarZSynJetsExpected->SetName(title_CosThetaStarSynZJets.c_str());
+                m_cosThetaStarZSynJetsExpected->Write(m_cosThetaStarZSynJetsExpected->GetName(),TObject::kOverwrite);
 
                 std::string title_CosThetaStarSynWBosons = "CosThetaStarSynWBosons_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
-                m_cosThetaStarWSynBosons->SetTitle(title_CosThetaStarSynWBosons.c_str());
-                m_cosThetaStarWSynBosons->SetName(title_CosThetaStarSynWBosons.c_str());
-                m_cosThetaStarWSynBosons->Write(m_cosThetaStarWSynBosons->GetName(),TObject::kOverwrite);
+                m_cosThetaStarWSynBosonsExpected->SetTitle(title_CosThetaStarSynWBosons.c_str());
+                m_cosThetaStarWSynBosonsExpected->SetName(title_CosThetaStarSynWBosons.c_str());
+                m_cosThetaStarWSynBosonsExpected->Write(m_cosThetaStarWSynBosonsExpected->GetName(),TObject::kOverwrite);
 
                 std::string title_CosThetaStarSynZBosons = "CosThetaStarSynZBosons_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
-                m_cosThetaStarZSynBosons->SetTitle(title_CosThetaStarSynZBosons.c_str());
-                m_cosThetaStarZSynBosons->SetName(title_CosThetaStarSynZBosons.c_str());
-                m_cosThetaStarZSynBosons->Write(m_cosThetaStarZSynBosons->GetName(),TObject::kOverwrite);
+                m_cosThetaStarZSynBosonsExpected->SetTitle(title_CosThetaStarSynZBosons.c_str());
+                m_cosThetaStarZSynBosonsExpected->SetName(title_CosThetaStarSynZBosons.c_str());
+                m_cosThetaStarZSynBosonsExpected->Write(m_cosThetaStarZSynBosonsExpected->GetName(),TObject::kOverwrite);
             }
         }
     }
@@ -231,7 +245,7 @@ void Fit::FindFiles()
             TString energyString = this->NumberToString(m_energy) + "GeV";
             if (m_background)
             {
-                if (!file->IsDirectory() and fileCandidate.EndsWith("root") and fileCandidate.Contains(m_descriptor.c_str()) and fileCandidate.Contains(energyString) and fileCandidate.Contains("Final"))
+                if (!file->IsDirectory() and fileCandidate.EndsWith("root") and fileCandidate.Contains(m_descriptor.c_str()) and fileCandidate.Contains(energyString) and fileCandidate.Contains("Final") and !fileCandidate.Contains("IndividualDistributionData"))
                 {
                     std::string filePath = m_inputPath + fileCandidate.Data();
                     m_filesToReadIn.push_back(filePath);
@@ -240,7 +254,7 @@ std::cout << "Including : " <<  fileCandidate << std::endl;
             }
             else 
             {
-                if (!file->IsDirectory() and fileCandidate.EndsWith("root") and fileCandidate.Contains(m_descriptor.c_str()) and fileCandidate.Contains(energyString) and !fileCandidate.Contains("Final"))
+                if (!file->IsDirectory() and fileCandidate.EndsWith("root") and fileCandidate.Contains(m_descriptor.c_str()) and fileCandidate.Contains(energyString) and !fileCandidate.Contains("Final") and !fileCandidate.Contains("IndividualDistributionData"))
                 {
                     std::string filePath = m_inputPath + fileCandidate.Data();
                     m_filesToReadIn.push_back(filePath);
@@ -252,85 +266,85 @@ std::cout << "Including : " <<  fileCandidate << std::endl;
 
 //=====================================================================
 
-void Fit::InitialiseReference()
+void Fit::InitialiseObserved()
 {
     if (!m_splitDistributions)
     {
-        m_cosThetaStarSynJets_vs_BosonsRef = new TH2F(this->SafeName("CosThetaStarSynJets_vs_BosonsRef"),"Reference Cos#theta_{Jets}^{*} vs Cos#theta_{Bosons}^{*}",m_nBins,0,1,m_nBins,0,1);
-        m_cosThetaStarSynJets_vs_BosonsRef->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
-        m_cosThetaStarSynJets_vs_BosonsRef->GetYaxis()->SetTitle("Cos#theta_{Bosons}^{*}");
-        m_cosThetaStarSynJetsRef = new TH1F(this->SafeName("CosThetaStarSynJetsRef"),"Reference Cos#theta_{Jets}^{*}",m_nBins,0,1);
-        m_cosThetaStarSynJetsRef->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
-        m_cosThetaStarSynJetsRef->GetYaxis()->SetTitle("Entries");
-        m_cosThetaStarSynBosonsRef = new TH1F(this->SafeName("CosThetaStarSynBosonsRef"),"Reference Cos#theta_{Bosons}^{*}",m_nBins,0,1);
-        m_cosThetaStarSynBosonsRef->GetXaxis()->SetTitle("Cos#theta_{Bosons}^{*}");
-        m_cosThetaStarSynBosonsRef->GetYaxis()->SetTitle("Entries");
+        m_cosThetaStarSynJets_vs_BosonsObserved = new TH2F(this->SafeName("CosThetaStarSynJets_vs_BosonsObserved"),"Observed Cos#theta_{Jets}^{*} vs Cos#theta_{Bosons}^{*}",m_nBins,0,1,m_nBins,0,1);
+        m_cosThetaStarSynJets_vs_BosonsObserved->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
+        m_cosThetaStarSynJets_vs_BosonsObserved->GetYaxis()->SetTitle("Cos#theta_{Bosons}^{*}");
+        m_cosThetaStarSynJetsObserved = new TH1F(this->SafeName("CosThetaStarSynJetsObserved"),"Observed Cos#theta_{Jets}^{*}",m_nBins,0,1);
+        m_cosThetaStarSynJetsObserved->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
+        m_cosThetaStarSynJetsObserved->GetYaxis()->SetTitle("Entries");
+        m_cosThetaStarSynBosonsObserved = new TH1F(this->SafeName("CosThetaStarSynBosonsObserved"),"Observed Cos#theta_{Bosons}^{*}",m_nBins,0,1);
+        m_cosThetaStarSynBosonsObserved->GetXaxis()->SetTitle("Cos#theta_{Bosons}^{*}");
+        m_cosThetaStarSynBosonsObserved->GetYaxis()->SetTitle("Entries");
     }
     else
     {
-        m_cosThetaStarWSynJets_vs_BosonsRef = new TH2F(this->SafeName("CosThetaStarSynWJets_vs_BosonsRef"),"Reference Cos#theta_{WJets}^{*} vs Cos#theta_{WBosons}^{*}",m_nBins,0,1,m_nBins,0,1);
-        m_cosThetaStarWSynJets_vs_BosonsRef->GetXaxis()->SetTitle("Cos#theta_{WJets}^{*}");
-        m_cosThetaStarWSynJets_vs_BosonsRef->GetYaxis()->SetTitle("Cos#theta_{WBosons}^{*}");
-        m_cosThetaStarZSynJets_vs_BosonsRef = new TH2F(this->SafeName("CosThetaStarSynZJets_vs_BosonsRef"),"Reference Cos#theta_{ZJets}^{*} vs Cos#theta_{ZBosons}^{*}",m_nBins,0,1,m_nBins,0,1);
-        m_cosThetaStarZSynJets_vs_BosonsRef->GetXaxis()->SetTitle("Cos#theta_{ZJets}^{*}");
-        m_cosThetaStarZSynJets_vs_BosonsRef->GetYaxis()->SetTitle("Cos#theta_{ZBosons}^{*}");
-        m_cosThetaStarWSynJetsRef = new TH1F(this->SafeName("CosThetaStarSynWJetsRef"),"Reference Cos#theta_{WJets}^{*}",m_nBins,0,1);
-        m_cosThetaStarWSynJetsRef->GetXaxis()->SetTitle("Cos#theta_{WJets}^{*}");
-        m_cosThetaStarWSynJetsRef->GetYaxis()->SetTitle("Entries");
-        m_cosThetaStarZSynJetsRef = new TH1F(this->SafeName("CosThetaStarSynZJetsRef"),"Reference Cos#theta_{ZJets}^{*}",m_nBins,0,1);
-        m_cosThetaStarZSynJetsRef->GetXaxis()->SetTitle("Cos#theta_{ZJets}^{*}");
-        m_cosThetaStarZSynJetsRef->GetYaxis()->SetTitle("Entries");
-        m_cosThetaStarWSynBosonsRef = new TH1F(this->SafeName("CosThetaStarSynWBosonsRef"),"Reference Cos#theta_{WBosons}^{*}",m_nBins,0,1);
-        m_cosThetaStarWSynBosonsRef->GetXaxis()->SetTitle("Cos#theta_{WBosons}^{*}");
-        m_cosThetaStarWSynBosonsRef->GetYaxis()->SetTitle("Entries");
-        m_cosThetaStarZSynBosonsRef = new TH1F(this->SafeName("CosThetaStarSynZBosonsRef"),"Reference Cos#theta_{ZBosons}^{*}",m_nBins,0,1);
-        m_cosThetaStarZSynBosonsRef->GetXaxis()->SetTitle("Cos#theta_{ZBosons}^{*}");
-        m_cosThetaStarZSynBosonsRef->GetYaxis()->SetTitle("Entries");
+        m_cosThetaStarWSynJets_vs_BosonsObserved = new TH2F(this->SafeName("CosThetaStarSynWJets_vs_BosonsObserved"),"Observed Cos#theta_{WJets}^{*} vs Cos#theta_{WBosons}^{*}",m_nBins,0,1,m_nBins,0,1);
+        m_cosThetaStarWSynJets_vs_BosonsObserved->GetXaxis()->SetTitle("Cos#theta_{WJets}^{*}");
+        m_cosThetaStarWSynJets_vs_BosonsObserved->GetYaxis()->SetTitle("Cos#theta_{WBosons}^{*}");
+        m_cosThetaStarZSynJets_vs_BosonsObserved = new TH2F(this->SafeName("CosThetaStarSynZJets_vs_BosonsObserved"),"Observed Cos#theta_{ZJets}^{*} vs Cos#theta_{ZBosons}^{*}",m_nBins,0,1,m_nBins,0,1);
+        m_cosThetaStarZSynJets_vs_BosonsObserved->GetXaxis()->SetTitle("Cos#theta_{ZJets}^{*}");
+        m_cosThetaStarZSynJets_vs_BosonsObserved->GetYaxis()->SetTitle("Cos#theta_{ZBosons}^{*}");
+        m_cosThetaStarWSynJetsObserved = new TH1F(this->SafeName("CosThetaStarSynWJetsObserved"),"Observed Cos#theta_{WJets}^{*}",m_nBins,0,1);
+        m_cosThetaStarWSynJetsObserved->GetXaxis()->SetTitle("Cos#theta_{WJets}^{*}");
+        m_cosThetaStarWSynJetsObserved->GetYaxis()->SetTitle("Entries");
+        m_cosThetaStarZSynJetsObserved = new TH1F(this->SafeName("CosThetaStarSynZJetsObserved"),"Observed Cos#theta_{ZJets}^{*}",m_nBins,0,1);
+        m_cosThetaStarZSynJetsObserved->GetXaxis()->SetTitle("Cos#theta_{ZJets}^{*}");
+        m_cosThetaStarZSynJetsObserved->GetYaxis()->SetTitle("Entries");
+        m_cosThetaStarWSynBosonsObserved = new TH1F(this->SafeName("CosThetaStarSynWBosonsObserved"),"Observed Cos#theta_{WBosons}^{*}",m_nBins,0,1);
+        m_cosThetaStarWSynBosonsObserved->GetXaxis()->SetTitle("Cos#theta_{WBosons}^{*}");
+        m_cosThetaStarWSynBosonsObserved->GetYaxis()->SetTitle("Entries");
+        m_cosThetaStarZSynBosonsObserved = new TH1F(this->SafeName("CosThetaStarSynZBosonsObserved"),"Observede Cos#theta_{ZBosons}^{*}",m_nBins,0,1);
+        m_cosThetaStarZSynBosonsObserved->GetXaxis()->SetTitle("Cos#theta_{ZBosons}^{*}");
+        m_cosThetaStarZSynBosonsObserved->GetYaxis()->SetTitle("Entries");
     }
 }
 
 //=====================================================================
 
-void Fit::Initialise()
+void Fit::InitialiseExpected()
 {
     if (!m_splitDistributions)
     {
-        m_cosThetaStarSynJets_vs_Bosons = new TH2F(this->SafeName("CosThetaStarSynJets_vs_Bosons"),"Cos#theta_{Jets}^{*} vs Cos#theta_{Bosons}^{*}",m_nBins,0,1,m_nBins,0,1);
-        m_cosThetaStarSynJets_vs_Bosons->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
-        m_cosThetaStarSynJets_vs_Bosons->GetYaxis()->SetTitle("Cos#theta_{Bosons}^{*}");
-        m_cosThetaStarSynJets = new TH1F(this->SafeName("CosThetaStarSynJets"),"Cos#theta_{Jets}^{*}",m_nBins,0,1);
-        m_cosThetaStarSynJets->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
-        m_cosThetaStarSynJets->GetYaxis()->SetTitle("Entries");
-        m_cosThetaStarSynBosons = new TH1F(this->SafeName("CosThetaStarSynBosons"),"Cos#theta_{Bosons}^{*}",m_nBins,0,1);
-        m_cosThetaStarSynBosons->GetXaxis()->SetTitle("Cos#theta_{Bosons}^{*}");
-        m_cosThetaStarSynBosons->GetYaxis()->SetTitle("Entries");
+        m_cosThetaStarSynJets_vs_BosonsExpected = new TH2F(this->SafeName("CosThetaStarSynJets_vs_BosonsExpected"),"Expected Cos#theta_{Jets}^{*} vs Cos#theta_{Bosons}^{*}",m_nBins,0,1,m_nBins,0,1);
+        m_cosThetaStarSynJets_vs_BosonsExpected->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
+        m_cosThetaStarSynJets_vs_BosonsExpected->GetYaxis()->SetTitle("Cos#theta_{Bosons}^{*}");
+        m_cosThetaStarSynJetsExpected = new TH1F(this->SafeName("CosThetaStarSynJetsExpected"),"Expected Cos#theta_{Jets}^{*}",m_nBins,0,1);
+        m_cosThetaStarSynJetsExpected->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
+        m_cosThetaStarSynJetsExpected->GetYaxis()->SetTitle("Entries");
+        m_cosThetaStarSynBosonsExpected = new TH1F(this->SafeName("CosThetaStarSynBosonsExpected"),"Expected Cos#theta_{Bosons}^{*}",m_nBins,0,1);
+        m_cosThetaStarSynBosonsExpected->GetXaxis()->SetTitle("Cos#theta_{Bosons}^{*}");
+        m_cosThetaStarSynBosonsExpected->GetYaxis()->SetTitle("Entries");
     }
     else
     {
-        m_cosThetaStarWSynJets_vs_Bosons = new TH2F(this->SafeName("CosThetaStarSynWJets_vs_Bosons"),"Cos#theta_{WJets}^{*} vs Cos#theta_{WBosons}^{*}",m_nBins,0,1,m_nBins,0,1);
-        m_cosThetaStarWSynJets_vs_Bosons->GetXaxis()->SetTitle("Cos#theta_{WJets}^{*}");
-        m_cosThetaStarWSynJets_vs_Bosons->GetYaxis()->SetTitle("Cos#theta_{WBosons}^{*}");
-        m_cosThetaStarZSynJets_vs_Bosons = new TH2F(this->SafeName("CosThetaStarSynZJets_vs_Bosons"),"Cos#theta_{ZJets}^{*} vs Cos#theta_{ZBosons}^{*}",m_nBins,0,1,m_nBins,0,1);
-        m_cosThetaStarZSynJets_vs_Bosons->GetXaxis()->SetTitle("Cos#theta_{ZJets}^{*}");
-        m_cosThetaStarZSynJets_vs_Bosons->GetYaxis()->SetTitle("Cos#theta_{ZBosons}^{*}");
-        m_cosThetaStarWSynJets = new TH1F(this->SafeName("CosThetaStarSynWJets"),"Cos#theta_{WJets}^{*}",m_nBins,0,1);
-        m_cosThetaStarWSynJets->GetXaxis()->SetTitle("Cos#theta_{WJets}^{*}");
-        m_cosThetaStarWSynJets->GetYaxis()->SetTitle("Entries");
-        m_cosThetaStarZSynJets = new TH1F(this->SafeName("CosThetaStarSynZJets"),"Cos#theta_{ZJets}^{*}",m_nBins,0,1);
-        m_cosThetaStarZSynJets->GetXaxis()->SetTitle("Cos#theta_{ZJets}^{*}");
-        m_cosThetaStarZSynJets->GetYaxis()->SetTitle("Entries");
-        m_cosThetaStarWSynBosons = new TH1F(this->SafeName("CosThetaStarSynWBosons"),"Cos#theta_{WBosons}^{*}",m_nBins,0,1);
-        m_cosThetaStarWSynBosons->GetXaxis()->SetTitle("Cos#theta_{WBosons}^{*}");
-        m_cosThetaStarWSynBosons->GetYaxis()->SetTitle("Entries");
-        m_cosThetaStarZSynBosons = new TH1F(this->SafeName("CosThetaStarSynZBosons"),"Cos#theta_{ZBosons}^{*}",m_nBins,0,1);
-        m_cosThetaStarZSynBosons->GetXaxis()->SetTitle("Cos#theta_{ZBosons}^{*}");
-        m_cosThetaStarZSynBosons->GetYaxis()->SetTitle("Entries");
+        m_cosThetaStarWSynJets_vs_BosonsExpected = new TH2F(this->SafeName("CosThetaStarSynWJets_vs_BosonsExpected"),"Expected Cos#theta_{WJets}^{*} vs Cos#theta_{WBosons}^{*}",m_nBins,0,1,m_nBins,0,1);
+        m_cosThetaStarWSynJets_vs_BosonsExpected->GetXaxis()->SetTitle("Cos#theta_{WJets}^{*}");
+        m_cosThetaStarWSynJets_vs_BosonsExpected->GetYaxis()->SetTitle("Cos#theta_{WBosons}^{*}");
+        m_cosThetaStarZSynJets_vs_BosonsExpected = new TH2F(this->SafeName("CosThetaStarSynZJets_vs_BosonsExpected"),"Expected Cos#theta_{ZJets}^{*} vs Cos#theta_{ZBosons}^{*}",m_nBins,0,1,m_nBins,0,1);
+        m_cosThetaStarZSynJets_vs_BosonsExpected->GetXaxis()->SetTitle("Cos#theta_{ZJets}^{*}");
+        m_cosThetaStarZSynJets_vs_BosonsExpected->GetYaxis()->SetTitle("Cos#theta_{ZBosons}^{*}");
+        m_cosThetaStarWSynJetsExpected = new TH1F(this->SafeName("CosThetaStarSynWJetsExpected"),"Expected Cos#theta_{WJets}^{*}",m_nBins,0,1);
+        m_cosThetaStarWSynJetsExpected->GetXaxis()->SetTitle("Cos#theta_{WJets}^{*}");
+        m_cosThetaStarWSynJetsExpected->GetYaxis()->SetTitle("Entries");
+        m_cosThetaStarZSynJetsExpected = new TH1F(this->SafeName("CosThetaStarSynZJetsExpected"),"Expected Cos#theta_{ZJets}^{*}",m_nBins,0,1);
+        m_cosThetaStarZSynJetsExpected->GetXaxis()->SetTitle("Cos#theta_{ZJets}^{*}");
+        m_cosThetaStarZSynJetsExpected->GetYaxis()->SetTitle("Entries");
+        m_cosThetaStarWSynBosonsExpected = new TH1F(this->SafeName("CosThetaStarSynWBosonsExpected"),"Expected Cos#theta_{WBosons}^{*}",m_nBins,0,1);
+        m_cosThetaStarWSynBosonsExpected->GetXaxis()->SetTitle("Cos#theta_{WBosons}^{*}");
+        m_cosThetaStarWSynBosonsExpected->GetYaxis()->SetTitle("Entries");
+        m_cosThetaStarZSynBosonsExpected = new TH1F(this->SafeName("CosThetaStarSynZBosonsExpected"),"Expected Cos#theta_{ZBosons}^{*}",m_nBins,0,1);
+        m_cosThetaStarZSynBosonsExpected->GetXaxis()->SetTitle("Cos#theta_{ZBosons}^{*}");
+        m_cosThetaStarZSynBosonsExpected->GetYaxis()->SetTitle("Entries");
     }
 }
 
 //=====================================================================
 
-void Fit::MergeFiles(float alpha4, float alpha5, bool reference)
+void Fit::MergeFiles(float alpha4, float alpha5, bool observed)
 {
     std::cout << "Merging files for (alpha4,alpha5) = (" << alpha4 << "," << alpha5 << ")" << std::endl;
     for (const auto &fileName: m_filesToReadIn)
@@ -356,17 +370,17 @@ void Fit::MergeFiles(float alpha4, float alpha5, bool reference)
             std::string plotName3("CosThetaStarSynJets_vs_Bosons_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5));
             pTH2F_CosThetaStarSynJets_vs_Bosons = (TH2F*)pTFile->Get(plotName3.c_str());
 
-            if (!reference)
+            if (!observed)
             {
-                m_cosThetaStarSynJets->Add(pTH1F_CosThetaStarSynJets);
-                m_cosThetaStarSynBosons->Add(pTH1F_CosThetaStarSynBosons);
-                m_cosThetaStarSynJets_vs_Bosons->Add(pTH2F_CosThetaStarSynJets_vs_Bosons);
+                m_cosThetaStarSynJetsExpected->Add(pTH1F_CosThetaStarSynJets);
+                m_cosThetaStarSynBosonsExpected->Add(pTH1F_CosThetaStarSynBosons);
+                m_cosThetaStarSynJets_vs_BosonsExpected->Add(pTH2F_CosThetaStarSynJets_vs_Bosons);
             }
             else
             {
-                m_cosThetaStarSynJetsRef->Add(pTH1F_CosThetaStarSynJets);
-                m_cosThetaStarSynBosonsRef->Add(pTH1F_CosThetaStarSynBosons);
-                m_cosThetaStarSynJets_vs_BosonsRef->Add(pTH2F_CosThetaStarSynJets_vs_Bosons);
+                m_cosThetaStarSynJetsObserved->Add(pTH1F_CosThetaStarSynJets);
+                m_cosThetaStarSynBosonsObserved->Add(pTH1F_CosThetaStarSynBosons);
+                m_cosThetaStarSynJets_vs_BosonsObserved->Add(pTH2F_CosThetaStarSynJets_vs_Bosons);
             }
         }
         else
@@ -384,23 +398,23 @@ void Fit::MergeFiles(float alpha4, float alpha5, bool reference)
             std::string plotName9("CosThetaStarSynZJets_vs_Bosons_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5));
             pTH2F_CosThetaStarZSynJets_vs_Bosons = (TH2F*)pTFile->Get(plotName9.c_str());
 
-            if (!reference)
+            if (!observed)
             {
-                m_cosThetaStarWSynJets->Add(pTH1F_CosThetaStarSynWJets);
-                m_cosThetaStarZSynJets->Add(pTH1F_CosThetaStarSynZJets);
-                m_cosThetaStarWSynBosons->Add(pTH1F_CosThetaStarSynWBosons);
-                m_cosThetaStarZSynBosons->Add(pTH1F_CosThetaStarSynZBosons);
-                m_cosThetaStarWSynJets_vs_Bosons->Add(pTH2F_CosThetaStarWSynJets_vs_Bosons);
-                m_cosThetaStarZSynJets_vs_Bosons->Add(pTH2F_CosThetaStarZSynJets_vs_Bosons);
+                m_cosThetaStarWSynJetsExpected->Add(pTH1F_CosThetaStarSynWJets);
+                m_cosThetaStarZSynJetsExpected->Add(pTH1F_CosThetaStarSynZJets);
+                m_cosThetaStarWSynBosonsExpected->Add(pTH1F_CosThetaStarSynWBosons);
+                m_cosThetaStarZSynBosonsExpected->Add(pTH1F_CosThetaStarSynZBosons);
+                m_cosThetaStarWSynJets_vs_BosonsExpected->Add(pTH2F_CosThetaStarWSynJets_vs_Bosons);
+                m_cosThetaStarZSynJets_vs_BosonsExpected->Add(pTH2F_CosThetaStarZSynJets_vs_Bosons);
             }
             else 
             {
-                m_cosThetaStarWSynJetsRef->Add(pTH1F_CosThetaStarSynWJets);
-                m_cosThetaStarZSynJetsRef->Add(pTH1F_CosThetaStarSynZJets);
-                m_cosThetaStarWSynBosonsRef->Add(pTH1F_CosThetaStarSynWBosons);
-                m_cosThetaStarZSynBosonsRef->Add(pTH1F_CosThetaStarSynZBosons);
-                m_cosThetaStarWSynJets_vs_BosonsRef->Add(pTH2F_CosThetaStarWSynJets_vs_Bosons);
-                m_cosThetaStarZSynJets_vs_BosonsRef->Add(pTH2F_CosThetaStarZSynJets_vs_Bosons);
+                m_cosThetaStarWSynJetsObserved->Add(pTH1F_CosThetaStarSynWJets);
+                m_cosThetaStarZSynJetsObserved->Add(pTH1F_CosThetaStarSynZJets);
+                m_cosThetaStarWSynBosonsObserved->Add(pTH1F_CosThetaStarSynWBosons);
+                m_cosThetaStarZSynBosonsObserved->Add(pTH1F_CosThetaStarSynZBosons);
+                m_cosThetaStarWSynJets_vs_BosonsObserved->Add(pTH2F_CosThetaStarWSynJets_vs_Bosons);
+                m_cosThetaStarZSynJets_vs_BosonsObserved->Add(pTH2F_CosThetaStarZSynJets_vs_Bosons);
             }
         }
 
@@ -439,57 +453,54 @@ void Fit::Clear()
 {
     if (!m_splitDistributions)
     {
-        delete m_cosThetaStarSynJets, m_cosThetaStarSynBosons, m_cosThetaStarSynJets_vs_Bosons;
-        delete m_cosThetaStarSynJetsRef, m_cosThetaStarSynBosonsRef, m_cosThetaStarSynJets_vs_BosonsRef;
+        delete m_cosThetaStarSynJetsExpected, m_cosThetaStarSynBosonsExpected, m_cosThetaStarSynJets_vs_BosonsExpected;
+        delete m_cosThetaStarSynJetsObserved, m_cosThetaStarSynBosonsObserved, m_cosThetaStarSynJets_vs_BosonsObserved;
     }
     else
     {
-        delete m_cosThetaStarWSynJets, m_cosThetaStarWSynBosons, m_cosThetaStarWSynJets_vs_Bosons, m_cosThetaStarZSynJets, m_cosThetaStarZSynBosons, m_cosThetaStarZSynJets_vs_Bosons;
-        delete m_cosThetaStarWSynJetsRef, m_cosThetaStarWSynBosonsRef, m_cosThetaStarWSynJets_vs_BosonsRef, m_cosThetaStarZSynJetsRef, m_cosThetaStarZSynBosonsRef, m_cosThetaStarZSynJets_vs_BosonsRef;
+        delete m_cosThetaStarWSynJetsExpected, m_cosThetaStarWSynBosonsExpected, m_cosThetaStarWSynJets_vs_BosonsExpected, m_cosThetaStarZSynJetsExpected, m_cosThetaStarZSynBosonsExpected, m_cosThetaStarZSynJets_vs_BosonsExpected;
+        delete m_cosThetaStarWSynJetsObserved, m_cosThetaStarWSynBosonsObserved, m_cosThetaStarWSynJets_vs_BosonsObserved, m_cosThetaStarZSynJetsObserved, m_cosThetaStarZSynBosonsObserved, m_cosThetaStarZSynJets_vs_BosonsObserved;
     }
 }
 
 //=====================================================================
 
-double Fit::CalculateChi2In1D(TH1F *pTH1F, TH1F *pTH1FRef)
+double Fit::CalculateChi2In1D(TH1F *pTH1F_Expected, TH1F *pTH1F_Observed)
 {
     if (m_fluctuateNominal)
     {
         double chi2(0.0);
         const int nIterations(10000);
-        const int nBinsX(pTH1F->GetXaxis()->GetNbins());
+        const int nBinsX(pTH1F_Expected->GetXaxis()->GetNbins());
         TRandom3 *pTRandom3 = new TRandom3();
 
         for (unsigned int xBin = 1; xBin < nBinsX; xBin++)
         {
             double sumOfChi2(0.0);
-            const double binContent = pTH1F->GetBinContent(xBin);
-            const double expected = pTH1FRef->GetBinContent(xBin);
+            const double binContentExpected = pTH1F_Expected->GetBinContent(xBin);
+            const double binContentObserved = pTH1F_Observed->GetBinContent(xBin);
 
             for (unsigned int i = 0; i < nIterations; i++)
             {
-                const double observed = (double)(pTRandom3->Poisson(expected));
-                sumOfChi2 += (binContent - observed) * (binContent - observed) / observed;
-//std::cout << "binContent  : " << binContent << std::endl;
-//std::cout << "expected    : " << expected << std::endl;
-//std::cout << "observed    : " << observed << std::endl;
+                const double binContentFluctuatedExpected = (double)(pTRandom3->Poisson(binContentExpected));
+                sumOfChi2 += (binContentObserved - binContentFluctuatedExpected) * (binContentObserved - binContentFluctuatedExpected) / binContentFluctuatedExpected;
             }
             chi2 += sumOfChi2 / (double)(nIterations);
         }
-
+        delete pTRandom3;
         return chi2;
     }
 
     else
     {
         double chi2(0.0);
-        const int nBinsX(pTH1F->GetXaxis()->GetNbins());
+        const int nBinsX(pTH1F_Expected->GetXaxis()->GetNbins());
 
         for (unsigned int xBin = 1; xBin < nBinsX; xBin++)
         {
-            const double binContent = pTH1F->GetBinContent(xBin);
-            const double binContentRef = pTH1FRef->GetBinContent(xBin);
-            chi2 += (binContent - binContentRef) * (binContent - binContentRef) / binContentRef;
+            const double binContentExpected = pTH1F_Expected->GetBinContent(xBin);
+            const double binContentObserved = pTH1F_Observed->GetBinContent(xBin);
+            chi2 += (binContentObserved - binContentExpected) * (binContentObserved - binContentExpected) / binContentExpected;
         }
 
         return chi2;
@@ -498,19 +509,19 @@ double Fit::CalculateChi2In1D(TH1F *pTH1F, TH1F *pTH1FRef)
 
 //=====================================================================
 
-double Fit::CalculateChi2In2D(TH2F *pTH2F, TH2F *pTH2FRef)
+double Fit::CalculateChi2In2D(TH2F *pTH2F_Expected, TH2F *pTH2F_Observed)
 {
     double chi2(0.0);
-    const int nBinsX(pTH2F->GetXaxis()->GetNbins());
-    const int nBinsY(pTH2F->GetYaxis()->GetNbins());
+    const int nBinsX(pTH2F_Expected->GetXaxis()->GetNbins());
+    const int nBinsY(pTH2F_Expected->GetYaxis()->GetNbins());
 
     for (unsigned int xBin = 1; xBin < nBinsX; xBin++)
     {
         for (unsigned int yBin = 1; yBin < nBinsY; yBin++)
         {
-            const double binContent = pTH2F->GetBinContent(xBin, yBin);
-            const double binContentRef = pTH2FRef->GetBinContent(xBin, yBin);
-            chi2 += (binContent - binContentRef) * (binContent - binContentRef) / binContentRef;
+            const double binContentExpected = pTH2F_Expected->GetBinContent(xBin, yBin);
+            const double binContentObserved = pTH2F_Observed->GetBinContent(xBin, yBin);
+            chi2 += (binContentObserved - binContentExpected) * (binContentObserved - binContentExpected) / binContentExpected;
         }
     }
 

@@ -76,8 +76,9 @@ class BuildDistributions
          *  @brief Make plot of event weight for a single event vs alpha4 and alpha5
          *
          *  @param maxEventNumber
+         *  @param backgrounds for stepping ranges
          */
-        void EventWeightsForSingleEvent(int maxEventNumber);
+        void EventWeightsForSingleEvent(int maxEventNumber, bool backgrounds);
 
     private:
         /**

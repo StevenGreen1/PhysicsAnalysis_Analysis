@@ -15,9 +15,9 @@ int main(int argc, char* argv[])
     std::string process(argv[1]);
     const int energy(atoi(argv[2]));
 
-    for (int i = -10; i < 11; i++)
+    for (int i = -18; i < 19; i++)
     {
-        for (int j = -10; j < 11; j++)
+        for (int j = -18; j < 19; j++)
         {
             const float alpha4(i * 0.00025);
             const float alpha5(j * 0.00025);

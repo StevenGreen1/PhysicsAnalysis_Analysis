@@ -100,20 +100,20 @@ void BuildDistributions::BuildDistribution(bool backgrounds)
     }
     else if (m_energy == 3000 && backgrounds)
     {
+/*
         alpha4Min = -0.002;
         alpha4Max = 0.00205;
         alpha4Step = 0.0001;
         alpha5Min = -0.002;
         alpha5Max = 0.00205;
         alpha5Step = 0.0001;
-/*
-        alpha4Min = -0.0045;
-        alpha4Max = 0.00455;
-        alpha4Step = 0.00025;
-        alpha5Min = -0.0045;
-        alpha5Max = 0.00455;
-        alpha5Step = 0.00025;
 */
+        alpha4Min = -0.0039;
+        alpha4Max = 0.0039;
+        alpha4Step = 0.0001;
+        alpha5Min = -0.0039;
+        alpha5Max = 0.0039;
+        alpha5Step = 0.0001;
     }
 
     this->InitialiseReference();
@@ -179,19 +179,63 @@ void BuildDistributions::BuildDistribution(bool backgrounds)
 
 //=====================================================================
 
-void BuildDistributions::EventWeightsForSingleEvent(int maxEventNumber)
+void BuildDistributions::EventWeightsForSingleEvent(int maxEventNumber, bool backgrounds)
 {
     gROOT->ProcessLine(".x /var/clus/usera/sg568/StyleFile/CLICStyleMod.C");
 
-    const double alpha4Min(-0.04);
-    const double alpha4Max(0.041);
-    const double alpha4Step(0.001);
-    const double alpha5Min(-0.04);
-    const double alpha5Max(0.041);
-    const double alpha5Step(0.001);
+    double alpha4Min(-0.04);
+    double alpha4Max(0.041);
+    double alpha4Step(0.001);
+    double alpha5Min(-0.04);
+    double alpha5Max(0.041);
+    double alpha5Step(0.001);
+    double alpha4StepRef(0.01);
+    double alpha5StepRef(0.01);
 
-    const double alpha4StepRef(0.01);
-    const double alpha5StepRef(0.01);
+    if (m_energy == 1400 && !backgrounds)
+    {
+        alpha4Min = -0.02;
+        alpha4Max = 0.0205;
+        alpha4Step = 0.001;
+        alpha5Min = -0.02;
+        alpha5Max = 0.0205;
+        alpha5Step = 0.001;
+        alpha4StepRef = 0.01;
+        alpha5StepRef = 0.01;
+    }
+    else if (m_energy == 1400 && backgrounds)
+    {
+        alpha4Min = -0.045;
+        alpha4Max = 0.0455;
+        alpha4Step = 0.0025;
+        alpha5Min = -0.045;
+        alpha5Max = 0.0455;
+        alpha5Step = 0.0025;
+        alpha4StepRef = 0.01;
+        alpha5StepRef = 0.01;
+    }
+    else if (m_energy == 3000 && !backgrounds)
+    {
+        alpha4Min = -0.002;
+        alpha4Max = 0.00205;
+        alpha4Step = 0.0001;
+        alpha5Min = -0.002;
+        alpha5Max = 0.00205;
+        alpha5Step = 0.0001;
+        alpha4StepRef = 0.00025;
+        alpha5StepRef = 0.00025;
+    }
+    else if (m_energy == 3000 && backgrounds)
+    {
+        alpha4Min = -0.0039;
+        alpha4Max = 0.0039;
+        alpha4Step = 0.0001;
+        alpha5Min = -0.0039;
+        alpha5Max = 0.0039;
+        alpha5Step = 0.0001;
+        alpha4StepRef = 0.00025;
+        alpha5StepRef = 0.00025;
+    }
 
     TH3F *pTH3F = new TH3F("AxisName","",100,alpha4Min,alpha4Max,100,alpha5Min,alpha5Max,100,0.75,1.25);
     pTH3F->GetXaxis()->SetTitle("#alpha_{4}");
@@ -224,9 +268,11 @@ void BuildDistributions::EventWeightsForSingleEvent(int maxEventNumber)
 
         int nEventsToProcess(pTChain->GetEntries() > maxEventNumber ? maxEventNumber : pTChain->GetEntries());
 
-        for (unsigned int event = 0; event < nEventsToProcess; event++)
+//        for (unsigned int event = 0; event < nEventsToProcess; event++)
+        for (unsigned int event = 0; event < pTChain->GetEntries(); event++)
         {
             pTChain->GetEntry(event);
+if (globalEventNumber != 64084036) continue;
 
             float matrixElementWeight(1.f);
             std::string name("EventWeightsForEvent" + this->NumberToString(globalEventNumber));

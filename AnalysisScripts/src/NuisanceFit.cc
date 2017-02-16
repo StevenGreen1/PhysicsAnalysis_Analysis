@@ -156,14 +156,14 @@ void NuisanceFit::Merge()
     }
 
     this->FindFiles();
-    this->InitialiseReference();
+    this->InitialiseObserved();
     this->MergeFiles(0.f, 0.f, true);
 
     for (double alpha4 = alpha4Min; alpha4 < alpha4Max; alpha4 = alpha4 + alpha4Step)
     {
         for (double alpha5 = alpha5Min; alpha5 < alpha5Max; alpha5 = alpha5 + alpha5Step)
         {
-            this->Initialise();
+            this->InitialiseExpected();
             this->MergeFiles(alpha4, alpha5);
 
             m_pTFile->cd();
@@ -171,8 +171,8 @@ void NuisanceFit::Merge()
             m_alpha5 = alpha5;
 
 //std::cout << "Minimising : " << alpha4 << ", " << alpha5 << std::endl;
-//            m_chi2CosThetaStarSynJets = this->CalculateNuisanceChi2In1D(m_cosThetaStarSynJets, m_cosThetaStarSynJetsRef);  // Good not MINUIT fit
-//std::cout << "Chi2 from drawing from Gaussian distributions = " << this->CalculateNuisanceChi2In1D(m_cosThetaStarSynJets, m_cosThetaStarSynJetsRef) << std::endl;
+//            m_chi2CosThetaStarSynJets = this->CalculateNuisanceChi2In1D(m_cosThetaStarSynJetsExpected, m_cosThetaStarSynJetsObserved);  // Good not MINUIT fit
+//std::cout << "Chi2 from drawing from Gaussian distributions = " << this->CalculateNuisanceChi2In1D(m_cosThetaStarSynJetsExpected, m_cosThetaStarSynJetsObserved) << std::endl;
             m_chi2CosThetaStarSynJets = this->CalculateNuisanceChi2MINUITIn1D(); // EVIL!, but may work...
 //std::cout << m_chi2CosThetaStarSynJets << std::endl;
             m_pTTree->Fill();
@@ -219,137 +219,137 @@ void NuisanceFit::FindFiles()
 
 //=====================================================================
 
-void NuisanceFit::InitialiseReference()
+void NuisanceFit::InitialiseObserved()
 {
-    this->ClearReference();
+    this->ClearObserved();
 
     for (const auto &processName: m_processNames)
     {
 /*
-        std::string name1("CosThetaStarSynJets_vs_BosonsRef_" + processName);
-        std::string title1("Reference Cos#theta_{Jets}^{*} vs Cos#theta_{Bosons}^{*} for " + processName);
+        std::string name1("CosThetaStarSynJets_vs_BosonsObserved_" + processName);
+        std::string title1("Observed Cos#theta_{Jets}^{*} vs Cos#theta_{Bosons}^{*} for " + processName);
         TH2F *pTH2F = new TH2F(this->SafeName(name1),title1.c_str(),m_nBins,0,1,m_nBins,0,1);
         pTH2F->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
         pTH2F->GetYaxis()->SetTitle("Cos#theta_{Bosons}^{*}");
-        m_cosThetaStarSynJets_vs_BosonsRef.insert(std::make_pair(processName, pTH2F));
+        m_cosThetaStarSynJets_vs_BosonsObserved.insert(std::make_pair(processName, pTH2F));
 */
-        std::string name2("CosThetaStarSynJetsRef_" + processName);
-        std::string title2("Reference Cos#theta_{Jets}^{*} for " + processName);
+        std::string name2("CosThetaStarSynJetsObserved_" + processName);
+        std::string title2("Observed Cos#theta_{Jets}^{*} for " + processName);
         TH1F *pTH1F_J = new TH1F(this->SafeName(name2),title2.c_str(),m_nBins,0,1);
         pTH1F_J->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
         pTH1F_J->GetYaxis()->SetTitle("Entries");
-        m_cosThetaStarSynJetsRef.insert(std::make_pair(processName, pTH1F_J));
+        m_cosThetaStarSynJetsObserved.insert(std::make_pair(processName, pTH1F_J));
 /*
-        std::string name3("CosThetaStarSynBosonsRef_" + processName);
-        std::string title3("Reference Cos#theta_{Bosons}^{*} for " + processName);
+        std::string name3("CosThetaStarSynBosonsObserved_" + processName);
+        std::string title3("Observed Cos#theta_{Bosons}^{*} for " + processName);
         TH1F *pTH1F_B = new TH1F(this->SafeName(name3),title3.c_str(),m_nBins,0,1);
         pTH1F_B->GetXaxis()->SetTitle("Cos#theta_{Bosons}^{*}");
         pTH1F_B->GetYaxis()->SetTitle("Entries");
-        m_cosThetaStarSynBosonsRef.insert(std::make_pair(processName, pTH1F_B));
+        m_cosThetaStarSynBosonsObserved.insert(std::make_pair(processName, pTH1F_B));
 */
     }
 }
 
 //=====================================================================
 
-void NuisanceFit::Initialise()
+void NuisanceFit::InitialiseExpected()
 {
-    this->Clear();
+    this->ClearExpected();
 
     for (const auto &processName: m_processNames)
     {
 /*
-        std::string name1("CosThetaStarSynJets_vs_Bosons_" + processName);
-        std::string title1("Cos#theta_{Jets}^{*} vs Cos#theta_{Bosons}^{*} for " + processName);
+        std::string name1("CosThetaStarSynJets_vs_BosonsExpected_" + processName);
+        std::string title1("Expected Cos#theta_{Jets}^{*} vs Cos#theta_{Bosons}^{*} for " + processName);
         TH2F *pTH2F = new TH2F(this->SafeName(name1),title1.c_str(),m_nBins,0,1,m_nBins,0,1);
         pTH2F->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
         pTH2F->GetYaxis()->SetTitle("Cos#theta_{Bosons}^{*}");
-        m_cosThetaStarSynJets_vs_Bosons.insert(std::make_pair(processName, pTH2F));
+        m_cosThetaStarSynJets_vs_BosonsExpected.insert(std::make_pair(processName, pTH2F));
 */
-        std::string name2("CosThetaStarSynJets_" + processName);
-        std::string title2("Cos#theta_{Jets}^{*} for " + processName);
+        std::string name2("CosThetaStarSynJetsExpected_" + processName);
+        std::string title2("Expected Cos#theta_{Jets}^{*} for " + processName);
         TH1F *pTH1F_J = new TH1F(this->SafeName(name2),title2.c_str(),m_nBins,0,1);
         pTH1F_J->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
         pTH1F_J->GetYaxis()->SetTitle("Entries");
-        m_cosThetaStarSynJets.insert(std::make_pair(processName, pTH1F_J));
+        m_cosThetaStarSynJetsExpected.insert(std::make_pair(processName, pTH1F_J));
 /*
-        std::string name3("CosThetaStarSynBosons_" + processName);
-        std::string title3("Cos#theta_{Bosons}^{*} for " + processName);
+        std::string name3("CosThetaStarSynBosonsExpected_" + processName);
+        std::string title3("Expected Cos#theta_{Bosons}^{*} for " + processName);
         TH1F *pTH1F_B = new TH1F(this->SafeName(name3),title3.c_str(),m_nBins,0,1);
         pTH1F_B->GetXaxis()->SetTitle("Cos#theta_{Bosons}^{*}");
         pTH1F_B->GetYaxis()->SetTitle("Entries");
-        m_cosThetaStarSynBosons.insert(std::make_pair(processName, pTH1F_B));
+        m_cosThetaStarSynBosonsExpected.insert(std::make_pair(processName, pTH1F_B));
 */
     }
 }
 
 //=====================================================================
 
-void NuisanceFit::ClearReference()
+void NuisanceFit::ClearObserved()
 {
     for (const auto &processName: m_processNames)
     {
 /*
-        if (m_cosThetaStarSynJets_vs_BosonsRef.find(processName) != m_cosThetaStarSynJets_vs_BosonsRef.end())
+        if (m_cosThetaStarSynJets_vs_BosonsObserved.find(processName) != m_cosThetaStarSynJets_vs_BosonsObserved.end())
         {
-            TH2F *pTH2F = m_cosThetaStarSynJets_vs_BosonsRef.at(processName);
+            TH2F *pTH2F = m_cosThetaStarSynJets_vs_BosonsObserved.at(processName);
             if (pTH2F != NULL) delete pTH2F;
         }
 */
-        if (m_cosThetaStarSynJetsRef.find(processName) != m_cosThetaStarSynJetsRef.end())
+        if (m_cosThetaStarSynJetsObserved.find(processName) != m_cosThetaStarSynJetsObserved.end())
         {
-            TH1F *pTH1F_J = m_cosThetaStarSynJetsRef.at(processName);
+            TH1F *pTH1F_J = m_cosThetaStarSynJetsObserved.at(processName);
             if (pTH1F_J != NULL) delete pTH1F_J;
         }
 /*
-        if (m_cosThetaStarSynBosonsRef.find(processName) != m_cosThetaStarSynBosonsRef.end())
+        if (m_cosThetaStarSynBosonsObserved.find(processName) != m_cosThetaStarSynBosonsObserved.end())
         {
-            TH1F *pTH1F_B = m_cosThetaStarSynBosonsRef.at(processName);
+            TH1F *pTH1F_B = m_cosThetaStarSynBosonsObserved.at(processName);
             if (pTH1F_B != NULL) delete pTH1F_B;
         }
 */
     }
-//     m_cosThetaStarSynJets_vs_BosonsRef.clear();
-     m_cosThetaStarSynJetsRef.clear();
-//     m_cosThetaStarSynBosonsRef.clear();
+//     m_cosThetaStarSynJets_vs_BosonsObserved.clear();
+     m_cosThetaStarSynJetsObserved.clear();
+//     m_cosThetaStarSynBosonsObserved.clear();
 }
 
 //=====================================================================
 
-void NuisanceFit::Clear()
+void NuisanceFit::ClearExpected()
 {
     for (const auto &processName: m_processNames)
     {
 /* 
-       if (m_cosThetaStarSynJets_vs_Bosons.find(processName) != m_cosThetaStarSynJets_vs_Bosons.end())
+       if (m_cosThetaStarSynJets_vs_BosonsExpected.find(processName) != m_cosThetaStarSynJets_vs_BosonsExpected.end())
         {
-            TH2F *pTH2F = m_cosThetaStarSynJets_vs_Bosons.at(processName);
+            TH2F *pTH2F = m_cosThetaStarSynJets_vs_BosonsExpected.at(processName);
             if (pTH2F != NULL) delete pTH2F;
         }
 */
-        if (m_cosThetaStarSynJets.find(processName) != m_cosThetaStarSynJets.end())
+        if (m_cosThetaStarSynJetsExpected.find(processName) != m_cosThetaStarSynJetsExpected.end())
         {
-            TH1F *pTH1F_J = m_cosThetaStarSynJets.at(processName);
+            TH1F *pTH1F_J = m_cosThetaStarSynJetsExpected.at(processName);
             if (pTH1F_J != NULL) delete pTH1F_J;
         }
 /*
-        if (m_cosThetaStarSynBosons.find(processName) != m_cosThetaStarSynBosons.end())
+        if (m_cosThetaStarSynBosonsExpected.find(processName) != m_cosThetaStarSynBosonsExpected.end())
         {
-            TH1F *pTH1F_B = m_cosThetaStarSynBosons.at(processName);
+            TH1F *pTH1F_B = m_cosThetaStarSynBosonsExpected.at(processName);
             if (pTH1F_B != NULL) delete pTH1F_B;
         }
 */
     }
-//     m_cosThetaStarSynJets_vs_Bosons.clear();
-     m_cosThetaStarSynJets.clear();
-//     m_cosThetaStarSynBosons.clear();
+//     m_cosThetaStarSynJets_vs_BosonsExpected.clear();
+     m_cosThetaStarSynJetsExpected.clear();
+//     m_cosThetaStarSynBosonsExpected.clear();
 }
 
 //=====================================================================
 
-void NuisanceFit::MergeFiles(float alpha4, float alpha5, bool reference)
+void NuisanceFit::MergeFiles(float alpha4, float alpha5, bool observed)
 {
-    std::cout << "Merging files for (alpha4,alpha5) = (" << alpha4 << "," << alpha5 << "), reference = " << reference << std::endl;
+    std::cout << "Merging files for (alpha4,alpha5) = (" << alpha4 << "," << alpha5 << "), observed = " << observed << std::endl;
     for (const auto &fileName: m_filesToReadIn)
     {
         TFile *pTFile = new TFile(fileName.c_str());
@@ -368,39 +368,39 @@ void NuisanceFit::MergeFiles(float alpha4, float alpha5, bool reference)
             if (pTH1F_J == NULL)
                 continue;
 
-            if (!reference)
+            if (!observed)
             {
 /*
-                if (m_cosThetaStarSynJets_vs_Bosons.find(processName) == m_cosThetaStarSynJets_vs_Bosons.end() or 
-                    m_cosThetaStarSynJets.find(processName) == m_cosThetaStarSynJets.end() or 
-                    m_cosThetaStarSynBosons.find(processName) == m_cosThetaStarSynBosons.end())
+                if (m_cosThetaStarSynJets_vs_BosonsExpected.find(processName) == m_cosThetaStarSynJets_vs_BosonsExpected.end() or 
+                    m_cosThetaStarSynJetsExpected.find(processName) == m_cosThetaStarSynJetsExpected.end() or 
+                    m_cosThetaStarSynBosonsExpected.find(processName) == m_cosThetaStarSynBosonsExpected.end())
 */
-                if (m_cosThetaStarSynJets.find(processName) == m_cosThetaStarSynJets.end())
+                if (m_cosThetaStarSynJetsExpected.find(processName) == m_cosThetaStarSynJetsExpected.end())
                 {
-                    std::cout << "Missing histogram.  Please locate..." << std::endl;
+                    std::cout << "Missing expected histogram.  Please locate..." << std::endl;
                     continue;
                 }
 
-                m_cosThetaStarSynJets.at(processName)->Add(pTH1F_J);
-//                m_cosThetaStarSynBosons.at(processName)->Add(pTH1F_B);
-//                m_cosThetaStarSynJets_vs_Bosons.at(processName)->Add(pTH2F);
+                m_cosThetaStarSynJetsExpected.at(processName)->Add(pTH1F_J);
+//                m_cosThetaStarSynBosonsExpected.at(processName)->Add(pTH1F_B);
+//                m_cosThetaStarSynJets_vs_BosonsExpected.at(processName)->Add(pTH2F);
             }
             else
             {
 /*
-                if (m_cosThetaStarSynJets_vs_BosonsRef.find(processName) == m_cosThetaStarSynJets_vs_BosonsRef.end() or
-                    m_cosThetaStarSynJetsRef.find(processName) == m_cosThetaStarSynJetsRef.end() or
-                    m_cosThetaStarSynBosonsRef.find(processName) == m_cosThetaStarSynBosonsRef.end())
+                if (m_cosThetaStarSynJets_vs_BosonsObserved.find(processName) == m_cosThetaStarSynJets_vs_BosonsObserved.end() or
+                    m_cosThetaStarSynJetsObserved.find(processName) == m_cosThetaStarSynJetsObserved.end() or
+                    m_cosThetaStarSynBosonsObserved.find(processName) == m_cosThetaStarSynBosonsObserved.end())
 */
-                if (m_cosThetaStarSynJetsRef.find(processName) == m_cosThetaStarSynJetsRef.end())
+                if (m_cosThetaStarSynJetsObserved.find(processName) == m_cosThetaStarSynJetsObserved.end())
                 {
-                    std::cout << "Missing reference histogram.  Please locate..." << std::endl;
+                    std::cout << "Missing observed histogram.  Please locate..." << std::endl;
                     continue;
                 }
 
-                m_cosThetaStarSynJetsRef.at(processName)->Add(pTH1F_J);
-//                m_cosThetaStarSynBosonsRef.at(processName)->Add(pTH1F_B);
-//                m_cosThetaStarSynJets_vs_BosonsRef.at(processName)->Add(pTH2F);
+                m_cosThetaStarSynJetsObserved.at(processName)->Add(pTH1F_J);
+//                m_cosThetaStarSynBosonsObserved.at(processName)->Add(pTH1F_B);
+//                m_cosThetaStarSynJets_vs_BosonsObserved.at(processName)->Add(pTH2F);
             }
         }
         delete pTFile;
@@ -427,7 +427,7 @@ double NuisanceFit::CalculateNuisanceChi2MINUITIn1D()
  
     const double *minParam = pMinimizer->X();
     const double minChi2(this->GetChi2In1D(minParam));
-//    std::cout << "Minimum: f(" << minParam[0] << "," << minParam[1] << "): " << minChi2 << std::endl;
+    std::cout << "Minimum: f(" << minParam[0] << "," << minParam[1] << "): " << minChi2 << std::endl;
     delete pMinimizer;
     return minChi2;
 }
@@ -438,67 +438,67 @@ double NuisanceFit::GetChi2In1D(const double *param)
 {
     double r0(1.0);
     double chi2(0.0);
-    const int nBinsX(m_cosThetaStarSynJets.begin()->second->GetXaxis()->GetNbins());
+    const int nBinsX(m_cosThetaStarSynJetsExpected.begin()->second->GetXaxis()->GetNbins());
 
     typedef std::map<int, double> IntToDoubleMap;
-    IntToDoubleMap binToContentMap;
-    IntToDoubleMap binToContentMapRef;
+    IntToDoubleMap binToContentMapObserved;
+    IntToDoubleMap binToContentMapExpected;
 
-    for (const auto &stringHistPair: m_cosThetaStarSynJets)
+    for (const auto &stringToHistExpected: m_cosThetaStarSynJetsExpected)
     {
-        std::string processName(stringHistPair.first);
-        TH1F *pTH1F(stringHistPair.second);
-        TH1F *pTH1FRef(m_cosThetaStarSynJetsRef.at(processName));
+        std::string processName(stringToHistExpected.first);
+        TH1F *pTH1F_Expected(stringToHistExpected.second); // Alpha4 and Alpha5 non-zero
+        TH1F *pTH1F_Observed(m_cosThetaStarSynJetsObserved.at(processName)); // Alpha4 and Alpha5 zero
         double r(1.0);
 
         if (processName == "egamma_qqqqnu_BS")
         {
-            double nuisanceSigma = 0.1;
+            double nuisanceSigma = m_nuisanceBackgrounds.at(processName);
             r = param[0];
             chi2 += (r - r0) * (r - r0) / (2 * nuisanceSigma * nuisanceSigma);
         }
         else if (processName == "gammae_qqqqnu_BS")
         {
-            double nuisanceSigma = 0.1;
+            double nuisanceSigma = m_nuisanceBackgrounds.at(processName);
             r = param[1];
             chi2 += (r - r0) * (r - r0) / (2 * nuisanceSigma * nuisanceSigma);
         }
 
         for (unsigned int xBin = 1; xBin < nBinsX; xBin++)
         {
-            if (binToContentMap.find(xBin) == binToContentMap.end())
+            if (binToContentMapObserved.find(xBin) == binToContentMapObserved.end())
             {
-                binToContentMap.insert(std::make_pair(xBin,pTH1F->GetBinContent(xBin)));
+                binToContentMapObserved.insert(std::make_pair(xBin,pTH1F_Observed->GetBinContent(xBin)));
             }
             else
             {
-                binToContentMap.at(xBin) += pTH1F->GetBinContent(xBin);
+                binToContentMapObserved.at(xBin) += pTH1F_Observed->GetBinContent(xBin);
             }
 
-            if (binToContentMapRef.find(xBin) == binToContentMapRef.end())
+            if (binToContentMapExpected.find(xBin) == binToContentMapExpected.end())
             {
-                binToContentMapRef.insert(std::make_pair(xBin,pTH1FRef->GetBinContent(xBin)*r));
+                binToContentMapExpected.insert(std::make_pair(xBin,pTH1F_Expected->GetBinContent(xBin) * r));
             }
             else
             {
-                binToContentMapRef.at(xBin) += pTH1FRef->GetBinContent(xBin) * r;
+                binToContentMapExpected.at(xBin) += pTH1F_Expected->GetBinContent(xBin) * r;
             }
         }
     }
 
-    for (const auto &binContentPair: binToContentMap)
+    for (const auto &binContentPairObserved: binToContentMapObserved)
     {
-        int bin(binContentPair.first);
-        double binContent(binContentPair.second);
-        double binContentRef(binToContentMapRef.at(bin));
-        chi2 += (binContent - binContentRef) * (binContent - binContentRef) / binContentRef;
+        int bin(binContentPairObserved.first);
+        double binContentObserved(binContentPairObserved.second); // Observed, this is fixed.
+        double binContentExpected(binToContentMapExpected.at(bin)); // Expected, this is fluctuated with nuisance.
+        chi2 += (binContentObserved - binContentExpected) * (binContentObserved - binContentExpected) / binContentExpected;
     }
     return chi2;
 }
 
 //=====================================================================
 
-double NuisanceFit::CalculateNuisanceChi2In1D(OneDHistogramMap hists, OneDHistogramMap histsRef)
+double NuisanceFit::CalculateNuisanceChi2In1D(OneDHistogramMap histsExpected, OneDHistogramMap histsObserved)
 {
     typedef std::map<std::string, double> StringToDoubleMap;
     double r0(1.0);
@@ -509,17 +509,17 @@ double NuisanceFit::CalculateNuisanceChi2In1D(OneDHistogramMap hists, OneDHistog
     for (int i = 0; i < nIterations; i++)
     {
         double chi2(0.0);
-        const int nBinsX(hists.begin()->second->GetXaxis()->GetNbins());
+        const int nBinsX(histsExpected.begin()->second->GetXaxis()->GetNbins());
 
         typedef std::map<int, double> IntToDoubleMap;
-        IntToDoubleMap binToContentMap;
-        IntToDoubleMap binToContentMapRef;
+        IntToDoubleMap binToContentMapObserved;
+        IntToDoubleMap binToContentMapExpected;
 
-        for (const auto &stringHistPair: hists)
+        for (const auto &stringToHistExpected: histsExpected)
         {
-            std::string processName(stringHistPair.first);
-            TH1F *pTH1F(stringHistPair.second);
-            TH1F *pTH1FRef(histsRef.at(processName));
+            std::string processName(stringToHistExpected.first);
+            TH1F *pTH1F_Expected(stringToHistExpected.second);
+            TH1F *pTH1F_Observed(histsObserved.at(processName));
             double r(1.0);
 
             if (m_nuisanceBackgrounds.find(processName) != m_nuisanceBackgrounds.end())
@@ -536,33 +536,33 @@ double NuisanceFit::CalculateNuisanceChi2In1D(OneDHistogramMap hists, OneDHistog
 
             for (unsigned int xBin = 1; xBin < nBinsX; xBin++)
             {
-                if (binToContentMap.find(xBin) == binToContentMap.end())
+                if (binToContentMapObserved.find(xBin) == binToContentMapObserved.end())
                 {
-                    binToContentMap.insert(std::make_pair(xBin,pTH1F->GetBinContent(xBin)));
+                    binToContentMapObserved.insert(std::make_pair(xBin,pTH1F_Observed->GetBinContent(xBin)));
                 }
                 else
                 {
-                    binToContentMap.at(xBin) += pTH1F->GetBinContent(xBin);
+                    binToContentMapObserved.at(xBin) += pTH1F_Observed->GetBinContent(xBin);
                 }
 
-                if (binToContentMapRef.find(xBin) == binToContentMapRef.end())
+                if (binToContentMapExpected.find(xBin) == binToContentMapExpected.end())
                 {
-                    binToContentMapRef.insert(std::make_pair(xBin,pTH1FRef->GetBinContent(xBin)*r));
+                    binToContentMapExpected.insert(std::make_pair(xBin,pTH1F_Expected->GetBinContent(xBin)*r));
                 }
                 else
                 {
-                    binToContentMapRef.at(xBin) += pTH1FRef->GetBinContent(xBin) * r;
+                    binToContentMapExpected.at(xBin) += pTH1F_Expected->GetBinContent(xBin) * r;
                 }
             }
         }
 
-        for (const auto &binContentPair: binToContentMap)
+        for (const auto &binContentPair: binToContentMapObserved)
         {
             int bin(binContentPair.first);
-            double binContent(binContentPair.second);
-            double binContentRef(binToContentMapRef.at(bin));
-//std::cout << "Bin Contentes and ref " << binContent << " " << binContentRef << std::endl;
-            chi2 += (binContent - binContentRef) * (binContent - binContentRef) / binContentRef;
+            double binContentObserved(binContentPair.second);
+            double binContentExpected(binToContentMapExpected.at(bin));
+//std::cout << "Bin Contents, expected and observed " << binContentExpected << " " << binContentObserved << std::endl;
+            chi2 += (binContentObserved - binContentExpected) * (binContentObserved - binContentExpected) / binContentExpected;
         }
 
 //std::cout << "Giving a chi squared of " << chi2 << std::endl;
@@ -583,28 +583,25 @@ TString NuisanceFit::SafeName(const TString &name)
 
 //=====================================================================
 
-double NuisanceFit::CalculateChi2In1D(TH1F *pTH1F, TH1F *pTH1FRef)
+double NuisanceFit::CalculateChi2In1D(TH1F *pTH1F_Expected, TH1F *pTH1F_Observed)
 {
     if (m_fluctuateNominal)
     {
         double chi2(0.0);
         const int nIterations(10000);
-        const int nBinsX(pTH1F->GetXaxis()->GetNbins());
+        const int nBinsX(pTH1F_Expected->GetXaxis()->GetNbins());
         TRandom3 *pTRandom3 = new TRandom3();
 
         for (unsigned int xBin = 1; xBin < nBinsX; xBin++)
         {
             double sumOfChi2(0.0);
-            const double binContent = pTH1F->GetBinContent(xBin);
-            const double expected = pTH1FRef->GetBinContent(xBin);
+            const double binContentExpected = pTH1F_Expected->GetBinContent(xBin);
+            const double binContentObserved = pTH1F_Observed->GetBinContent(xBin);
 
             for (unsigned int i = 0; i < nIterations; i++)
             {
-                const double observed = (double)(pTRandom3->Poisson(expected));
-                sumOfChi2 += (binContent - observed) * (binContent - observed) / observed;
-//std::cout << "binContent  : " << binContent << std::endl;
-//std::cout << "expected    : " << expected << std::endl;
-//std::cout << "observed    : " << observed << std::endl;
+                const double binContentFluctuatedExpected = (double)(pTRandom3->Poisson(binContentExpected));
+                sumOfChi2 += (binContentObserved - binContentFluctuatedExpected) * (binContentObserved - binContentFluctuatedExpected) / binContentFluctuatedExpected;
             }
             chi2 += sumOfChi2 / (double)(nIterations);
         }
@@ -615,13 +612,13 @@ double NuisanceFit::CalculateChi2In1D(TH1F *pTH1F, TH1F *pTH1FRef)
     else
     {
         double chi2(0.0);
-        const int nBinsX(pTH1F->GetXaxis()->GetNbins());
+        const int nBinsX(pTH1F_Expected->GetXaxis()->GetNbins());
 
         for (unsigned int xBin = 1; xBin < nBinsX; xBin++)
         {
-            const double binContent = pTH1F->GetBinContent(xBin);
-            const double binContentRef = pTH1FRef->GetBinContent(xBin);
-            chi2 += (binContent - binContentRef) * (binContent - binContentRef) / binContentRef;
+            const double binContentExpected = pTH1F_Expected->GetBinContent(xBin);
+            const double binContentObserved = pTH1F_Observed->GetBinContent(xBin);
+            chi2 += (binContentObserved - binContentExpected) * (binContentObserved - binContentExpected) / binContentExpected;
         }
 
         return chi2;
@@ -630,19 +627,19 @@ double NuisanceFit::CalculateChi2In1D(TH1F *pTH1F, TH1F *pTH1FRef)
 
 //=====================================================================
 
-double NuisanceFit::CalculateChi2In2D(TH2F *pTH2F, TH2F *pTH2FRef)
+double NuisanceFit::CalculateChi2In2D(TH2F *pTH2F_Expected, TH2F *pTH2F_Observed)
 {
     double chi2(0.0);
-    const int nBinsX(pTH2F->GetXaxis()->GetNbins());
-    const int nBinsY(pTH2F->GetYaxis()->GetNbins());
+    const int nBinsX(pTH2F_Expected->GetXaxis()->GetNbins());
+    const int nBinsY(pTH2F_Expected->GetYaxis()->GetNbins());
 
     for (unsigned int xBin = 1; xBin < nBinsX; xBin++)
     {
         for (unsigned int yBin = 1; yBin < nBinsY; yBin++)
         {
-            const double binContent = pTH2F->GetBinContent(xBin, yBin);
-            const double binContentRef = pTH2FRef->GetBinContent(xBin, yBin);
-            chi2 += (binContent - binContentRef) * (binContent - binContentRef) / binContentRef;
+            const double binContentExpected = pTH2F_Expected->GetBinContent(xBin, yBin);
+            const double binContentObserved = pTH2F_Observed->GetBinContent(xBin, yBin);
+            chi2 += (binContentObserved - binContentExpected) * (binContentObserved - binContentExpected) / binContentExpected;
         }
     }
 
