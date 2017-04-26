@@ -131,12 +131,10 @@ class BuildIndividualDistributions
         TFile                *m_pTFile;                                     ///< Root file for results
         TTree                *m_pTTree;                                     ///< Root tree for results
         int                   m_nBins;                                      ///< Number of bins to use in costheta*jet fit
-        OneDHistogramMap        m_cosThetaStarSynJets;                      ///< Distribution of cos theta star from jets from synergy boson all, map of process to histogram 
-        OneDHistogramMap        m_cosThetaStarSynJetsRef;                   ///< Distribution of cos theta star from jets from synergy boson all ref, map of process to histogram 
-        OneDHistogramMap        m_cosThetaStarSynBosons;                    ///< Distribution of cos theta star from bosons from synergy boson all, map of process to histogram
-        OneDHistogramMap        m_cosThetaStarSynBosonsRef;                 ///< Distribution of cos theta star from bosons from synergy boson all ref, map of process to histogram
-        TwoDHistogramMap        m_cosThetaStarSynJets_vs_Bosons;            ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson all, map of process to histogram
-        TwoDHistogramMap        m_cosThetaStarSynJets_vs_BosonsRef;         ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson all ref, map of process to histogram
+        TwoDHistogramMap      m_cosThetaStarSynJets;                      ///< Distribution of cos theta star from jets from synergy boson all, map of process to histogram 
+        TwoDHistogramMap      m_cosThetaStarSynJetsRef;                   ///< Distribution of cos theta star from jets from synergy boson all ref, map of process to histogram 
+        OneDHistogramMap      m_cosThetaStarSynBosons;                    ///< Distribution of cos theta star from bosons from synergy boson all, map of process to histogram
+        OneDHistogramMap      m_cosThetaStarSynBosonsRef;                 ///< Distribution of cos theta star from bosons from synergy boson all ref, map of process to histogram
 };
 
 #endif

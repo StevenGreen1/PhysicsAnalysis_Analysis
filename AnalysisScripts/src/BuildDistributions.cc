@@ -11,8 +11,6 @@
 #include "TSystem.h"
 #include <fcntl.h>
 
-void Pause();
-
 //=====================================================================
 
 BuildDistributions::BuildDistributions(const ProcessVector &processVector, CouplingAnalysis *pCouplingAnalysis, int nEvtsStart, int nEvtsEnd, std::string descriptor, std::string outputPath) : 
@@ -73,11 +71,11 @@ void BuildDistributions::BuildDistribution(bool backgrounds)
 
     if (m_energy == 1400 && !backgrounds)
     {
-        alpha4Min = -0.02;
-        alpha4Max = 0.0205;
+        alpha4Min = -0.015;
+        alpha4Max = 0.0155;
         alpha4Step = 0.001;
-        alpha5Min = -0.02;
-        alpha5Max = 0.0205;
+        alpha5Min = -0.015;
+        alpha5Max = 0.0155;
         alpha5Step = 0.001;
     }
     else if (m_energy == 1400 && backgrounds)
@@ -100,36 +98,22 @@ void BuildDistributions::BuildDistribution(bool backgrounds)
     }
     else if (m_energy == 3000 && backgrounds)
     {
-/*
-        alpha4Min = -0.002;
-        alpha4Max = 0.00205;
+        alpha4Min = -0.0092;
+        alpha4Max = 0.0092;
         alpha4Step = 0.0001;
-        alpha5Min = -0.002;
-        alpha5Max = 0.00205;
-        alpha5Step = 0.0001;
-*/
-        alpha4Min = -0.0039;
-        alpha4Max = 0.0039;
-        alpha4Step = 0.0001;
-        alpha5Min = -0.0039;
-        alpha5Max = 0.0039;
+        alpha5Min = -0.0062;
+        alpha5Max = 0.0062;
         alpha5Step = 0.0001;
     }
 
-    this->InitialiseReference();
+    this->Initialise();
     this->FillReferenceDistribution();
 
-    for (double alpha4 = alpha4Min; alpha4 < alpha4Max; alpha4 = alpha4 + alpha4Step)
+    for (double alpha4 = alpha4Min; alpha4 < alpha4Max + (0.5 * alpha4Step); alpha4 = alpha4 + alpha4Step)
     {
-        for (double alpha5 = alpha5Min; alpha5 < alpha5Max; alpha5 = alpha5 + alpha5Step)
+        for (double alpha5 = alpha5Min; alpha5 < alpha5Max + (0.5 * alpha5Step); alpha5 = alpha5 + alpha5Step)
         {
-            this->Initialise();
             this->FillDistribution(alpha4, alpha5);
-
-            std::string title_CosThetaStarSynJets_vs_Bosons = "CosThetaStarSynJets_vs_Bosons_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
-            m_cosThetaStarSynJets_vs_Bosons->SetTitle(title_CosThetaStarSynJets_vs_Bosons.c_str());
-            m_cosThetaStarSynJets_vs_Bosons->SetName(title_CosThetaStarSynJets_vs_Bosons.c_str());
-            m_cosThetaStarSynJets_vs_Bosons->Write();
 
             std::string title_CosThetaStarSynJets = "CosThetaStarSynJets_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
             m_cosThetaStarSynJets->SetTitle(title_CosThetaStarSynJets.c_str());
@@ -141,40 +125,187 @@ void BuildDistributions::BuildDistribution(bool backgrounds)
             m_cosThetaStarSynBosons->SetName(title_CosThetaStarSynBosons.c_str());
             m_cosThetaStarSynBosons->Write();
 
-            if (m_splitDistributions)
-            {
-                std::string title_CosThetaStarSynWJets_vs_Bosons = "CosThetaStarSynWJets_vs_Bosons_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
-                m_cosThetaStarWSynJets_vs_Bosons->SetTitle(title_CosThetaStarSynWJets_vs_Bosons.c_str());
-                m_cosThetaStarWSynJets_vs_Bosons->SetName(title_CosThetaStarSynWJets_vs_Bosons.c_str());
-                m_cosThetaStarWSynJets_vs_Bosons->Write();
-
-                std::string title_CosThetaStarSynZJets_vs_Bosons = "CosThetaStarSynZJets_vs_Bosons_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
-                m_cosThetaStarZSynJets_vs_Bosons->SetTitle(title_CosThetaStarSynZJets_vs_Bosons.c_str());
-                m_cosThetaStarZSynJets_vs_Bosons->SetName(title_CosThetaStarSynZJets_vs_Bosons.c_str());
-                m_cosThetaStarZSynJets_vs_Bosons->Write();
-
-                std::string title_CosThetaStarSynWJets = "CosThetaStarSynWJets_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
-                m_cosThetaStarWSynJets->SetTitle(title_CosThetaStarSynWJets.c_str());
-                m_cosThetaStarWSynJets->SetName(title_CosThetaStarSynWJets.c_str());
-                m_cosThetaStarWSynJets->Write();
-
-                std::string title_CosThetaStarSynZJets = "CosThetaStarSynZJets_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
-                m_cosThetaStarZSynJets->SetTitle(title_CosThetaStarSynZJets.c_str());
-                m_cosThetaStarZSynJets->SetName(title_CosThetaStarSynZJets.c_str());
-                m_cosThetaStarZSynJets->Write();
-
-                std::string title_CosThetaStarSynWBosons = "CosThetaStarSynWBosons_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
-                m_cosThetaStarWSynBosons->SetTitle(title_CosThetaStarSynWBosons.c_str());
-                m_cosThetaStarWSynBosons->SetName(title_CosThetaStarSynWBosons.c_str());
-                m_cosThetaStarWSynBosons->Write();
-
-                std::string title_CosThetaStarSynZBosons = "CosThetaStarSynZBosons_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
-                m_cosThetaStarZSynBosons->SetTitle(title_CosThetaStarSynZBosons.c_str());
-                m_cosThetaStarZSynBosons->SetName(title_CosThetaStarSynZBosons.c_str());
-                m_cosThetaStarZSynBosons->Write();
-            }
+            std::string title_MVV = "MVV_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5);
+            m_mVVSynBosons->SetTitle(title_MVV.c_str());
+            m_mVVSynBosons->SetName(title_MVV.c_str());
+            m_mVVSynBosons->Write();
         }
     }
+}
+
+//=====================================================================
+
+void BuildDistributions::MCBuildDistribution()
+{
+    TH2F *pTH2F = new TH2F("pTH2F","",10,0,1,10,0,1);
+    TH1F *pTH1F = new TH1F("pTH1F","",10,0,1);
+    TH1F *pTH1Fw = new TH1F("pTH1Fw","",10,0,1);
+    TH1F *pTH1FmVV = new TH1F("pTH1FmVV","",28,200,3000);
+    TH1F *pTH1FmVVw = new TH1F("pTH1FmVVw","",28,200,3000);
+
+    for (const auto &pProcess: m_processVector)
+    {
+        double weight(pProcess->GetPostMVAProcessWeight());
+        TChain *pTChain(pProcess->GetPostMVATChain());
+
+        Int_t globalEventNumber(std::numeric_limits<int>::max());
+        Double_t quarkEnergy1(std::numeric_limits<double>::max());
+        Double_t quarkPx1(std::numeric_limits<double>::max());
+        Double_t quarkPy1(std::numeric_limits<double>::max());
+        Double_t quarkPz1(std::numeric_limits<double>::max());
+        Double_t quarkEnergy2(std::numeric_limits<double>::max());
+        Double_t quarkPx2(std::numeric_limits<double>::max());
+        Double_t quarkPy2(std::numeric_limits<double>::max());
+        Double_t quarkPz2(std::numeric_limits<double>::max());
+        Double_t quarkEnergy3(std::numeric_limits<double>::max());
+        Double_t quarkPx3(std::numeric_limits<double>::max());
+        Double_t quarkPy3(std::numeric_limits<double>::max());
+        Double_t quarkPz3(std::numeric_limits<double>::max());
+        Double_t quarkEnergy4(std::numeric_limits<double>::max());
+        Double_t quarkPx4(std::numeric_limits<double>::max());
+        Double_t quarkPy4(std::numeric_limits<double>::max());
+        Double_t quarkPz4(std::numeric_limits<double>::max());
+        Double_t mVV(std::numeric_limits<double>::max());
+
+        // BuildDistributions Variables
+        pTChain->SetBranchAddress("GlobalEventNumber", &globalEventNumber);
+        pTChain->SetBranchAddress("QuarkEnergy1", &quarkEnergy1);
+        pTChain->SetBranchAddress("QuarkPx1", &quarkPx1);
+        pTChain->SetBranchAddress("QuarkPy1", &quarkPy1);
+        pTChain->SetBranchAddress("QuarkPz1", &quarkPz1);
+        pTChain->SetBranchAddress("QuarkEnergy2", &quarkEnergy2);
+        pTChain->SetBranchAddress("QuarkPx2", &quarkPx2);
+        pTChain->SetBranchAddress("QuarkPy2", &quarkPy2);
+        pTChain->SetBranchAddress("QuarkPz2", &quarkPz2);
+        pTChain->SetBranchAddress("QuarkEnergy3", &quarkEnergy3);
+        pTChain->SetBranchAddress("QuarkPx3", &quarkPx3);
+        pTChain->SetBranchAddress("QuarkPy3", &quarkPy3);
+        pTChain->SetBranchAddress("QuarkPz3", &quarkPz3);
+        pTChain->SetBranchAddress("QuarkEnergy4", &quarkEnergy4);
+        pTChain->SetBranchAddress("QuarkPx4", &quarkPx4);
+        pTChain->SetBranchAddress("QuarkPy4", &quarkPy4);
+        pTChain->SetBranchAddress("QuarkPz4", &quarkPz4);
+        pTChain->SetBranchAddress("InvariantMassSystem", &mVV);
+
+        if (pTChain->GetEntries() < m_nEvtsStart)
+            continue;
+
+        if (pTChain->GetEntries() < m_nEvtsEnd)
+            m_nEvtsEnd = pTChain->GetEntries();
+
+        int nEventsToProcess(m_nEvtsEnd-m_nEvtsStart);
+        weight = weight * pTChain->GetEntries() / (double)(nEventsToProcess);
+
+        for (unsigned int event = m_nEvtsStart; event < m_nEvtsEnd; event++)
+        {
+            pTChain->GetEntry(event);
+            float matrixElementWeight(1.f);
+            TLorentzVector *quark1 = new TLorentzVector(quarkPx1, quarkPy1, quarkPz1, quarkEnergy1);
+            TLorentzVector *quark2 = new TLorentzVector(quarkPx2, quarkPy2, quarkPz2, quarkEnergy2);
+            TLorentzVector *quark3 = new TLorentzVector(quarkPx3, quarkPy3, quarkPz3, quarkEnergy3);
+            TLorentzVector *quark4 = new TLorentzVector(quarkPx4, quarkPy4, quarkPz4, quarkEnergy4);
+            double cosThetaStarMC1(-2.f), cosThetaStarMC2(-2.f);
+            this->PairQuarks(quark1, quark2, quark3, quark4, cosThetaStarMC1, cosThetaStarMC2);
+            pTH2F->Fill(cosThetaStarMC1, cosThetaStarMC2, weight);
+            pTH1F->Fill(cosThetaStarMC1, weight);
+            pTH1F->Fill(cosThetaStarMC2, weight);
+
+            m_pCouplingAnalysis->GetWeight(globalEventNumber, 0.005, 0.005, matrixElementWeight);
+            pTH1Fw->Fill(cosThetaStarMC1,matrixElementWeight*weight);
+            pTH1Fw->Fill(cosThetaStarMC2,matrixElementWeight*weight);
+
+            pTH1FmVV->Fill(mVV, weight);
+            pTH1FmVVw->Fill(mVV, matrixElementWeight*weight);
+
+            delete quark1, quark2, quark3, quark4;
+        }
+    }
+
+    TCanvas *pTCanvas = new TCanvas("pTCanvas","");
+    pTCanvas->Draw();
+    pTH2F->Draw();
+    pTCanvas->SaveAs("2DMCHist.C");
+    pTCanvas->SaveAs("2DMCHist.pdf");
+    pTCanvas->SaveAs("2DMCHist.png");
+    delete pTCanvas;
+
+    pTCanvas = new TCanvas("pTCanvas","");
+    pTH1F->Draw();
+    pTCanvas->SaveAs("1DMCHist.C");
+    pTCanvas->SaveAs("1DMCHist.pdf");
+    pTCanvas->SaveAs("1DMCHist.png");
+
+    pTCanvas = new TCanvas("pTCanvas","");
+    pTH1Fw->Draw();
+    pTCanvas->SaveAs("1DMCHistw.C");
+    pTCanvas->SaveAs("1DMCHistw.pdf");
+    pTCanvas->SaveAs("1DMCHistw.png");
+
+    pTCanvas = new TCanvas("pTCanvas","");
+    pTH1FmVV->Draw();
+    pTCanvas->SaveAs("1DMCHistmVV.C");
+    pTCanvas->SaveAs("1DMCHistmVV.pdf");
+    pTCanvas->SaveAs("1DMCHistmVV.png");
+
+    pTCanvas = new TCanvas("pTCanvas","");
+    pTH1FmVVw->Draw();
+    pTCanvas->SaveAs("1DMCHistmVVw.C");
+    pTCanvas->SaveAs("1DMCHistmVVw.pdf");
+    pTCanvas->SaveAs("1DMCHistmVVw.png");
+
+}
+
+//=====================================================================
+
+void BuildDistributions::PairQuarks(TLorentzVector *quark1, TLorentzVector *quark2, TLorentzVector *quark3, TLorentzVector *quark4, double &cosThetaStar1, double &cosThetaStar2)
+{
+    TLorentzVector pairing1a = *quark1 + *quark2; 
+    TLorentzVector pairing1b = *quark3 + *quark4; 
+    TLorentzVector pairing2a = *quark1 + *quark3; 
+    TLorentzVector pairing2b = *quark2 + *quark4; 
+    TLorentzVector pairing3a = *quark1 + *quark4; 
+    TLorentzVector pairing3b = *quark2 + *quark3; 
+
+    double metric1((pairing1a.M() - pairing1b.M())*(pairing1a.M() - pairing1b.M()));
+    double metric2((pairing2a.M() - pairing2b.M())*(pairing2a.M() - pairing2b.M()));
+    double metric3((pairing3a.M() - pairing3b.M())*(pairing3a.M() - pairing3b.M()));
+
+    if (metric1 < metric2 && metric1 < metric3)
+    {
+//        if (std::fabs(pairing1a.M() - 91.f) < 1.f)
+            this->CalculateCosThetaStar(quark1,quark2,cosThetaStar1);
+
+//        if (std::fabs(pairing1b.M() - 91.f) < 1.f)
+            this->CalculateCosThetaStar(quark3,quark4,cosThetaStar2);
+
+    }
+    else if (metric2 < metric1 && metric2 < metric3)
+    {
+//        if (std::fabs(pairing2a.M() - 91.f) < 1.f)
+            this->CalculateCosThetaStar(quark1,quark3,cosThetaStar1);
+
+//        if (std::fabs(pairing2b.M() - 91.f) < 1.f)
+            this->CalculateCosThetaStar(quark2,quark4,cosThetaStar2);
+    }
+    else if (metric3 < metric1 && metric3 < metric2)
+    {
+//        if (std::fabs(pairing3a.M() - 91.f) < 1.f)
+            this->CalculateCosThetaStar(quark1,quark4,cosThetaStar1);
+
+//        if (std::fabs(pairing3b.M() - 91.f) < 1.f)
+            this->CalculateCosThetaStar(quark2,quark3,cosThetaStar2);
+    }
+}
+
+//=====================================================================
+
+void BuildDistributions::CalculateCosThetaStar(TLorentzVector *quark1, TLorentzVector *quark2, double &cosThetaStar)
+{
+    cosThetaStar = -1.f;
+    TLorentzVector boson = *quark1 + *quark2;
+    TVector3 boostvector = -boson.BoostVector();
+    quark1->Boost(boostvector);
+    cosThetaStar = std::fabs(quark1->Vect().Dot(boson.Vect()) / (quark1->Vect().Mag() * boson.Vect().Mag()));
 }
 
 //=====================================================================
@@ -358,76 +489,27 @@ if (globalEventNumber != 64084036) continue;
 
 //=====================================================================
 
-void BuildDistributions::InitialiseReference()
-{
-    m_cosThetaStarSynJets_vs_BosonsRef = new TH2F(this->SafeName("CosThetaStarSynJets_vs_BosonsRef"),"Reference Cos#theta_{Jets}^{*} vs Cos#theta_{Bosons}^{*}",m_nBins,0,1,m_nBins,0,1);
-    m_cosThetaStarSynJets_vs_BosonsRef->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
-    m_cosThetaStarSynJets_vs_BosonsRef->GetYaxis()->SetTitle("Cos#theta_{Bosons}^{*}");
-    m_cosThetaStarSynJetsRef = new TH1F(this->SafeName("CosThetaStarSynJetsRef"),"Reference Cos#theta_{Jets}^{*}",m_nBins,0,1);
-    m_cosThetaStarSynJetsRef->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
-    m_cosThetaStarSynJetsRef->GetYaxis()->SetTitle("Entries");
-    m_cosThetaStarSynBosonsRef = new TH1F(this->SafeName("CosThetaStarSynBosonsRef"),"Reference Cos#theta_{Bosons}^{*}",m_nBins,0,1);
-    m_cosThetaStarSynBosonsRef->GetXaxis()->SetTitle("Cos#theta_{Bosons}^{*}");
-    m_cosThetaStarSynBosonsRef->GetYaxis()->SetTitle("Entries");
-
-    if (m_splitDistributions)
-    {
-        m_cosThetaStarWSynJets_vs_BosonsRef = new TH2F(this->SafeName("CosThetaStarSynWJets_vs_BosonsRef"),"Reference Cos#theta_{WJets}^{*} vs Cos#theta_{WBosons}^{*}",m_nBins,0,1,m_nBins,0,1);
-        m_cosThetaStarWSynJets_vs_BosonsRef->GetXaxis()->SetTitle("Cos#theta_{WJets}^{*}");
-        m_cosThetaStarWSynJets_vs_BosonsRef->GetYaxis()->SetTitle("Cos#theta_{WBosons}^{*}");
-        m_cosThetaStarZSynJets_vs_BosonsRef = new TH2F(this->SafeName("CosThetaStarSynZJets_vs_BosonsRef"),"Reference Cos#theta_{ZJets}^{*} vs Cos#theta_{ZBosons}^{*}",m_nBins,0,1,m_nBins,0,1);
-        m_cosThetaStarZSynJets_vs_BosonsRef->GetXaxis()->SetTitle("Cos#theta_{ZJets}^{*}");
-        m_cosThetaStarZSynJets_vs_BosonsRef->GetYaxis()->SetTitle("Cos#theta_{ZBosons}^{*}");
-        m_cosThetaStarWSynJetsRef = new TH1F(this->SafeName("CosThetaStarSynWJetsRef"),"Reference Cos#theta_{WJets}^{*}",m_nBins,0,1);
-        m_cosThetaStarWSynJetsRef->GetXaxis()->SetTitle("Cos#theta_{WJets}^{*}");
-        m_cosThetaStarWSynJetsRef->GetYaxis()->SetTitle("Entries");
-        m_cosThetaStarZSynJetsRef = new TH1F(this->SafeName("CosThetaStarSynZJetsRef"),"Reference Cos#theta_{ZJets}^{*}",m_nBins,0,1);
-        m_cosThetaStarZSynJetsRef->GetXaxis()->SetTitle("Cos#theta_{ZJets}^{*}");
-        m_cosThetaStarZSynJetsRef->GetYaxis()->SetTitle("Entries");
-        m_cosThetaStarWSynBosonsRef = new TH1F(this->SafeName("CosThetaStarSynWBosonsRef"),"Reference Cos#theta_{WBosons}^{*}",m_nBins,0,1);
-        m_cosThetaStarWSynBosonsRef->GetXaxis()->SetTitle("Cos#theta_{WBosons}^{*}");
-        m_cosThetaStarWSynBosonsRef->GetYaxis()->SetTitle("Entries");
-        m_cosThetaStarZSynBosonsRef = new TH1F(this->SafeName("CosThetaStarSynZBosonsRef"),"Reference Cos#theta_{ZBosons}^{*}",m_nBins,0,1);
-        m_cosThetaStarZSynBosonsRef->GetXaxis()->SetTitle("Cos#theta_{ZBosons}^{*}");
-        m_cosThetaStarZSynBosonsRef->GetYaxis()->SetTitle("Entries");
-    }
-}
-
-//=====================================================================
-
 void BuildDistributions::Initialise()
 {
-    m_cosThetaStarSynJets_vs_Bosons = new TH2F(this->SafeName("CosThetaStarSynJets_vs_Bosons"),"Cos#theta_{Jets}^{*} vs Cos#theta_{Bosons}^{*}",m_nBins,0,1,m_nBins,0,1);
-    m_cosThetaStarSynJets_vs_Bosons->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
-    m_cosThetaStarSynJets_vs_Bosons->GetYaxis()->SetTitle("Cos#theta_{Bosons}^{*}");
-    m_cosThetaStarSynJets = new TH1F(this->SafeName("CosThetaStarSynJets"),"Cos#theta_{Jets}^{*}",m_nBins,0,1);
-    m_cosThetaStarSynJets->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
-    m_cosThetaStarSynJets->GetYaxis()->SetTitle("Entries");
-    m_cosThetaStarSynBosons = new TH1F(this->SafeName("CosThetaStarSynBosons"),"Cos#theta_{Bosons}^{*}",m_nBins,0,1);
-    m_cosThetaStarSynBosons->GetXaxis()->SetTitle("Cos#theta_{Bosons}^{*}");
-    m_cosThetaStarSynBosons->GetYaxis()->SetTitle("Entries");
+    m_cosThetaStarSynJetsRef = new TH2F(this->SafeName("CosThetaStarSynJetsRef"),"Reference Cos(#theta_{Jets}^{*})",m_nBins,0,1,m_nBins,0,1);
+    m_cosThetaStarSynJetsRef->GetXaxis()->SetTitle("Cos(#theta_{Jets}^{*}) Boson 1");
+    m_cosThetaStarSynJetsRef->GetYaxis()->SetTitle("Cos(#theta_{Jets}^{*}) Boson 2");
+    m_cosThetaStarSynBosonsRef = new TH1F(this->SafeName("CosThetaStarSynBosonsRef"),"Reference Cos(#theta_{Bosons}^{*})",m_nBins,0,1);
+    m_cosThetaStarSynBosonsRef->GetXaxis()->SetTitle("Cos(#theta_{Bosons}^{*})");
+    m_cosThetaStarSynBosonsRef->GetYaxis()->SetTitle("Entries");
+    m_mVVSynBosonsRef = new TH1F(this->SafeName("MVVSynBosonsRef"),"Reference Invariant Mass VV",28,200,3000);
+    m_mVVSynBosonsRef->GetXaxis()->SetTitle("MVV [GeV]");
+    m_mVVSynBosonsRef->GetYaxis()->SetTitle("Entries");
 
-    if (m_splitDistributions)
-    {
-        m_cosThetaStarWSynJets_vs_Bosons = new TH2F(this->SafeName("CosThetaStarSynWJets_vs_Bosons"),"Cos#theta_{WJets}^{*} vs Cos#theta_{WBosons}^{*}",m_nBins,0,1,m_nBins,0,1);
-        m_cosThetaStarWSynJets_vs_Bosons->GetXaxis()->SetTitle("Cos#theta_{WJets}^{*}");
-        m_cosThetaStarWSynJets_vs_Bosons->GetYaxis()->SetTitle("Cos#theta_{WBosons}^{*}");
-        m_cosThetaStarZSynJets_vs_Bosons = new TH2F(this->SafeName("CosThetaStarSynZJets_vs_Bosons"),"Cos#theta_{ZJets}^{*} vs Cos#theta_{ZBosons}^{*}",m_nBins,0,1,m_nBins,0,1);
-        m_cosThetaStarZSynJets_vs_Bosons->GetXaxis()->SetTitle("Cos#theta_{ZJets}^{*}");
-        m_cosThetaStarZSynJets_vs_Bosons->GetYaxis()->SetTitle("Cos#theta_{ZBosons}^{*}");
-        m_cosThetaStarWSynJets = new TH1F(this->SafeName("CosThetaStarSynWJets"),"Cos#theta_{WJets}^{*}",m_nBins,0,1);
-        m_cosThetaStarWSynJets->GetXaxis()->SetTitle("Cos#theta_{WJets}^{*}");
-        m_cosThetaStarWSynJets->GetYaxis()->SetTitle("Entries");
-        m_cosThetaStarZSynJets = new TH1F(this->SafeName("CosThetaStarSynZJets"),"Cos#theta_{ZJets}^{*}",m_nBins,0,1);
-        m_cosThetaStarZSynJets->GetXaxis()->SetTitle("Cos#theta_{ZJets}^{*}");
-        m_cosThetaStarZSynJets->GetYaxis()->SetTitle("Entries");
-        m_cosThetaStarWSynBosons = new TH1F(this->SafeName("CosThetaStarSynWBosons"),"Cos#theta_{WBosons}^{*}",m_nBins,0,1);
-        m_cosThetaStarWSynBosons->GetXaxis()->SetTitle("Cos#theta_{WBosons}^{*}");
-        m_cosThetaStarWSynBosons->GetYaxis()->SetTitle("Entries");
-        m_cosThetaStarZSynBosons = new TH1F(this->SafeName("CosThetaStarSynZBosons"),"Cos#theta_{ZBosons}^{*}",m_nBins,0,1);
-        m_cosThetaStarZSynBosons->GetXaxis()->SetTitle("Cos#theta_{ZBosons}^{*}");
-        m_cosThetaStarZSynBosons->GetYaxis()->SetTitle("Entries");
-    }
+    m_cosThetaStarSynJetsBkg = new TH2F(this->SafeName("CosThetaStarSynJets"),"Backgrounds Cos(#theta_{Jets}^{*})",m_nBins,0,1,m_nBins,0,1);
+    m_cosThetaStarSynJetsBkg->GetXaxis()->SetTitle("Cos(#theta_{Jets}^{*}) Boson 1");
+    m_cosThetaStarSynJetsBkg->GetYaxis()->SetTitle("Cos(#theta_{Jets}^{*}) Boson 2");
+    m_cosThetaStarSynBosonsBkg = new TH1F(this->SafeName("CosThetaStarSynBosons"),"Backgrounds Cos#theta_{Bosons}^{*}",m_nBins,0,1);
+    m_cosThetaStarSynBosonsBkg->GetXaxis()->SetTitle("Cos(#theta_{Bosons}^{*})");
+    m_cosThetaStarSynBosonsBkg->GetYaxis()->SetTitle("Entries");
+    m_mVVSynBosonsBkg = new TH1F(this->SafeName("MVVSynBosonsBkg"),"Backgrounds Invariant Mass VV",28,200,3000);
+    m_mVVSynBosonsBkg->GetXaxis()->SetTitle("MVV [GeV]");
+    m_mVVSynBosonsBkg->GetYaxis()->SetTitle("Entries");
 }
 
 //=====================================================================
@@ -443,23 +525,18 @@ TString BuildDistributions::SafeName(const TString &name)
 
 void BuildDistributions::Clear()
 {
-    delete m_cosThetaStarSynJetsRef, m_cosThetaStarSynBosonsRef, m_cosThetaStarSynJets_vs_BosonsRef;
-
-    if (m_splitDistributions)
-    {
-        delete m_cosThetaStarWSynJetsRef, m_cosThetaStarWSynBosonsRef, m_cosThetaStarWSynJets_vs_BosonsRef, m_cosThetaStarZSynJetsRef, m_cosThetaStarZSynBosonsRef, m_cosThetaStarZSynJets_vs_BosonsRef;
-    }
+    delete m_cosThetaStarSynJetsRef, m_cosThetaStarSynBosonsRef, m_cosThetaStarSynJetsBkg, m_cosThetaStarSynBosonsBkg;
 }
 
 //=====================================================================
 
 void BuildDistributions::FillReferenceDistribution()
 {
-   for (const auto &pProcess: m_processVector)
+    for (const auto &pProcess: m_processVector)
     {
         double weight(pProcess->GetPostMVAProcessWeight());
         TChain *pTChain(pProcess->GetPostMVATChain());
-        const double wzSeparationCut(87.0); // Not using at the moment but possibly for MT idea of a4w/a4z/a5w/a5z
+//        const double wzSeparationCut(87.0); // Not using at the moment but possibly for MT idea of a4w/a4z/a5w/a5z
 
         Int_t nIsolatedLeptons(std::numeric_limits<int>::max());
         Double_t transverseMomentum(std::numeric_limits<double>::max());
@@ -468,21 +545,20 @@ void BuildDistributions::FillReferenceDistribution()
         Double_t cosThetaStarSynBosons(std::numeric_limits<double>::max());
         Double_t cosThetaStarSynJet1(std::numeric_limits<double>::max());
         Double_t cosThetaStarSynJet2(std::numeric_limits<double>::max());
-        Double_t invariantMassSynBoson1(std::numeric_limits<double>::max());
-        Double_t invariantMassSynBoson2(std::numeric_limits<double>::max());
+        Double_t energyBosonSyn1(std::numeric_limits<double>::max());
+        Double_t energyBosonSyn2(std::numeric_limits<double>::max());
+        Double_t momentumBosonSyn1(std::numeric_limits<double>::max());
+        Double_t momentumBosonSyn2(std::numeric_limits<double>::max());
 
         // Selection Variables
         pTChain->SetBranchAddress("NumberOfIsolatedLeptons", &nIsolatedLeptons);
         pTChain->SetBranchAddress("TransverseMomentum", &transverseMomentum);
         pTChain->SetBranchAddress("InvariantMassSystem", &invariantMassSystem);
         pTChain->SetBranchAddress("BDT", &bdt);
-
-        if (m_splitDistributions)
-        {
-            // W or Z Boson Selection
-            pTChain->SetBranchAddress("InvariantMassSynBoson1", &invariantMassSynBoson1);
-            pTChain->SetBranchAddress("InvariantMassSynBoson2", &invariantMassSynBoson2);
-        }
+        pTChain->SetBranchAddress("EnergyBosonSyn1", &energyBosonSyn1);
+        pTChain->SetBranchAddress("EnergyBosonSyn2", &energyBosonSyn2);
+        pTChain->SetBranchAddress("MomentumBosonSyn1", &momentumBosonSyn1);
+        pTChain->SetBranchAddress("MomentumBosonSyn2", &momentumBosonSyn2);
 
         // BuildDistributions Variables
         pTChain->SetBranchAddress("CosThetaStarSynBosons", &cosThetaStarSynBosons);
@@ -509,34 +585,31 @@ void BuildDistributions::FillReferenceDistribution()
             if (invariantMassSystem < m_pPostMVASelection->GetPreSelection()->GetInvariantMassSystemLowCut() or m_pPostMVASelection->GetPreSelection()->GetInvariantMassSystemHighCut() < invariantMassSystem)
                 continue;
 
-            m_cosThetaStarSynJets_vs_BosonsRef->Fill(cosThetaStarSynJet1, cosThetaStarSynBosons, weight);
-            m_cosThetaStarSynJets_vs_BosonsRef->Fill(cosThetaStarSynJet2, cosThetaStarSynBosons, weight);
-            m_cosThetaStarSynJetsRef->Fill(cosThetaStarSynJet1, weight);
-            m_cosThetaStarSynJetsRef->Fill(cosThetaStarSynJet2, weight);
-            m_cosThetaStarSynBosonsRef->Fill(cosThetaStarSynBosons, weight);
+            double boson1Mass(sqrt(energyBosonSyn1*energyBosonSyn1-momentumBosonSyn1*momentumBosonSyn1)); 
+            double boson2Mass(sqrt(energyBosonSyn2*energyBosonSyn2-momentumBosonSyn2*momentumBosonSyn2)); 
+            double cosThetaStarSynJetMostEnergetic(std::numeric_limits<double>::max());
+            double cosThetaStarSynJetLeastEnergetic(std::numeric_limits<double>::max());
 
-            if (m_splitDistributions)
+            if ((boson1Mass > boson2Mass && energyBosonSyn1 > energyBosonSyn2) || (boson2Mass > boson1Mass) && energyBosonSyn2 > energyBosonSyn1) // Most massive is most energetic 
             {
-                bool isW(invariantMassSynBoson1 < wzSeparationCut && invariantMassSynBoson2 < wzSeparationCut);
-                bool isZ(invariantMassSynBoson1 > wzSeparationCut && invariantMassSynBoson2 > wzSeparationCut);
+                cosThetaStarSynJetMostEnergetic = cosThetaStarSynJet1;
+                cosThetaStarSynJetLeastEnergetic = cosThetaStarSynJet2;
+            }
+            else // Least massive is most energetic 
+            {
+                cosThetaStarSynJetMostEnergetic = cosThetaStarSynJet2;
+                cosThetaStarSynJetLeastEnergetic = cosThetaStarSynJet1;
+            }
 
-                if (isW)
-                {
-                    m_cosThetaStarWSynJets_vs_BosonsRef->Fill(cosThetaStarSynJet1, cosThetaStarSynBosons, weight);
-                    m_cosThetaStarWSynJets_vs_BosonsRef->Fill(cosThetaStarSynJet2, cosThetaStarSynBosons, weight);
-                    m_cosThetaStarWSynJetsRef->Fill(cosThetaStarSynJet1, weight);
-                    m_cosThetaStarWSynJetsRef->Fill(cosThetaStarSynJet2, weight);
-                    m_cosThetaStarWSynBosonsRef->Fill(cosThetaStarSynBosons, weight);
-                }
+            m_cosThetaStarSynJetsRef->Fill(cosThetaStarSynJetMostEnergetic, cosThetaStarSynJetLeastEnergetic, weight);
+            m_cosThetaStarSynBosonsRef->Fill(cosThetaStarSynBosons, weight);
+            m_mVVSynBosonsRef->Fill(invariantMassSystem, weight);
 
-                if (isZ)
-                {
-                    m_cosThetaStarZSynJets_vs_BosonsRef->Fill(cosThetaStarSynJet1, cosThetaStarSynBosons, weight);
-                    m_cosThetaStarZSynJets_vs_BosonsRef->Fill(cosThetaStarSynJet2, cosThetaStarSynBosons, weight);
-                    m_cosThetaStarZSynJetsRef->Fill(cosThetaStarSynJet1, weight);
-                    m_cosThetaStarZSynJetsRef->Fill(cosThetaStarSynJet2, weight);
-                    m_cosThetaStarZSynBosonsRef->Fill(cosThetaStarSynBosons, weight);
-                }
+            if (pProcess->GetEventType() != "ee_nunuqqqq")
+            {
+                m_cosThetaStarSynJetsBkg->Fill(cosThetaStarSynJetMostEnergetic, cosThetaStarSynJetLeastEnergetic, weight);
+                m_cosThetaStarSynBosonsBkg->Fill(cosThetaStarSynBosons, weight);
+                m_mVVSynBosonsBkg->Fill(invariantMassSystem, weight);
             }
         }
         delete pTChain;
@@ -547,8 +620,15 @@ void BuildDistributions::FillReferenceDistribution()
 
 void BuildDistributions::FillDistribution(const double alpha4, const double alpha5)
 {
+    m_cosThetaStarSynJets = (TH2F*)(m_cosThetaStarSynJetsBkg->Clone());
+    m_cosThetaStarSynBosons = (TH1F*)(m_cosThetaStarSynBosonsBkg->Clone());
+    m_mVVSynBosons = (TH1F*)(m_mVVSynBosonsBkg->Clone());
+
     for (const auto &pProcess: m_processVector)
     {
+        if (pProcess->GetEventType() != "ee_nunuqqqq")
+            continue;
+
         double weight(pProcess->GetPostMVAProcessWeight());
         TChain *pTChain(pProcess->GetPostMVATChain());
         const double wzSeparationCut(87.0);
@@ -561,8 +641,10 @@ void BuildDistributions::FillDistribution(const double alpha4, const double alph
         Double_t cosThetaStarSynBosons(std::numeric_limits<double>::max());
         Double_t cosThetaStarSynJet1(std::numeric_limits<double>::max());
         Double_t cosThetaStarSynJet2(std::numeric_limits<double>::max());
-        Double_t invariantMassSynBoson1(std::numeric_limits<double>::max());
-        Double_t invariantMassSynBoson2(std::numeric_limits<double>::max());
+        Double_t energyBosonSyn1(std::numeric_limits<double>::max());
+        Double_t energyBosonSyn2(std::numeric_limits<double>::max());
+        Double_t momentumBosonSyn1(std::numeric_limits<double>::max());
+        Double_t momentumBosonSyn2(std::numeric_limits<double>::max());
 
         // Selection Variables
         pTChain->SetBranchAddress("GlobalEventNumber", &globalEventNumber);
@@ -570,13 +652,10 @@ void BuildDistributions::FillDistribution(const double alpha4, const double alph
         pTChain->SetBranchAddress("TransverseMomentum", &transverseMomentum);
         pTChain->SetBranchAddress("InvariantMassSystem", &invariantMassSystem);
         pTChain->SetBranchAddress("BDT", &bdt);
-
-        if (m_splitDistributions)
-        {
-            // W or Z Boson Selection
-            pTChain->SetBranchAddress("InvariantMassSynBoson1", &invariantMassSynBoson1);
-            pTChain->SetBranchAddress("InvariantMassSynBoson2", &invariantMassSynBoson2);
-        }
+        pTChain->SetBranchAddress("EnergyBosonSyn1", &energyBosonSyn1);
+        pTChain->SetBranchAddress("EnergyBosonSyn2", &energyBosonSyn2);
+        pTChain->SetBranchAddress("MomentumBosonSyn1", &momentumBosonSyn1);
+        pTChain->SetBranchAddress("MomentumBosonSyn2", &momentumBosonSyn2);
 
         // BuildDistributions Variables
         pTChain->SetBranchAddress("CosThetaStarSynBosons", &cosThetaStarSynBosons);
@@ -603,42 +682,27 @@ void BuildDistributions::FillDistribution(const double alpha4, const double alph
             if (invariantMassSystem < m_pPostMVASelection->GetPreSelection()->GetInvariantMassSystemLowCut() or m_pPostMVASelection->GetPreSelection()->GetInvariantMassSystemHighCut() < invariantMassSystem)
                 continue;
 
+            double boson1Mass(sqrt(energyBosonSyn1*energyBosonSyn1-momentumBosonSyn1*momentumBosonSyn1));
+            double boson2Mass(sqrt(energyBosonSyn2*energyBosonSyn2-momentumBosonSyn2*momentumBosonSyn2));
+            double cosThetaStarSynJetMostEnergetic(std::numeric_limits<double>::max());
+            double cosThetaStarSynJetLeastEnergetic(std::numeric_limits<double>::max());
+
+            if ((boson1Mass > boson2Mass && energyBosonSyn1 > energyBosonSyn2) || (boson2Mass > boson1Mass) && energyBosonSyn2 > energyBosonSyn1) // Most massive is most energetic
+            {
+                cosThetaStarSynJetMostEnergetic = cosThetaStarSynJet1;
+                cosThetaStarSynJetLeastEnergetic = cosThetaStarSynJet2;
+            }
+            else // Least massive is most energetic
+            {
+                cosThetaStarSynJetMostEnergetic = cosThetaStarSynJet2;
+                cosThetaStarSynJetLeastEnergetic = cosThetaStarSynJet1;
+            }
+
             float matrixElementWeight(1.f);
-
-            if (pProcess->GetEventType() == "ee_nunuqqqq")
-            {
-                m_pCouplingAnalysis->GetWeight(globalEventNumber, alpha4, alpha5, matrixElementWeight);
-            }
-
-            m_cosThetaStarSynJets_vs_Bosons->Fill(cosThetaStarSynJet1, cosThetaStarSynBosons, weight*matrixElementWeight);
-            m_cosThetaStarSynJets_vs_Bosons->Fill(cosThetaStarSynJet2, cosThetaStarSynBosons, weight*matrixElementWeight);
-            m_cosThetaStarSynJets->Fill(cosThetaStarSynJet1, weight*matrixElementWeight);
-            m_cosThetaStarSynJets->Fill(cosThetaStarSynJet2, weight*matrixElementWeight);
+            m_pCouplingAnalysis->GetWeight(globalEventNumber, alpha4, alpha5, matrixElementWeight);
+            m_cosThetaStarSynJets->Fill(cosThetaStarSynJetMostEnergetic, cosThetaStarSynJetLeastEnergetic, weight*matrixElementWeight);
             m_cosThetaStarSynBosons->Fill(cosThetaStarSynBosons, weight*matrixElementWeight);
-
-            if (m_splitDistributions)
-            {
-                bool isW(invariantMassSynBoson1 < wzSeparationCut && invariantMassSynBoson2 < wzSeparationCut);
-                bool isZ(invariantMassSynBoson1 > wzSeparationCut && invariantMassSynBoson2 > wzSeparationCut);
-
-                if (isW)
-                {
-                    m_cosThetaStarWSynJets_vs_Bosons->Fill(cosThetaStarSynJet1, cosThetaStarSynBosons, weight*matrixElementWeight);
-                    m_cosThetaStarWSynJets_vs_Bosons->Fill(cosThetaStarSynJet2, cosThetaStarSynBosons, weight*matrixElementWeight);
-                    m_cosThetaStarWSynJets->Fill(cosThetaStarSynJet1, weight*matrixElementWeight);
-                    m_cosThetaStarWSynJets->Fill(cosThetaStarSynJet2, weight*matrixElementWeight);
-                    m_cosThetaStarWSynBosons->Fill(cosThetaStarSynBosons, weight*matrixElementWeight);
-                }
-
-                if (isZ)
-                {
-                    m_cosThetaStarZSynJets_vs_Bosons->Fill(cosThetaStarSynJet1, cosThetaStarSynBosons, weight*matrixElementWeight);
-                    m_cosThetaStarZSynJets_vs_Bosons->Fill(cosThetaStarSynJet2, cosThetaStarSynBosons, weight*matrixElementWeight);
-                    m_cosThetaStarZSynJets->Fill(cosThetaStarSynJet1, weight*matrixElementWeight);
-                    m_cosThetaStarZSynJets->Fill(cosThetaStarSynJet2, weight*matrixElementWeight);
-                    m_cosThetaStarZSynBosons->Fill(cosThetaStarSynBosons, weight*matrixElementWeight);
-                }
-            }
+            m_mVVSynBosons->Fill(invariantMassSystem, weight*matrixElementWeight);
         }
         delete pTChain;
     } 
@@ -675,7 +739,7 @@ std::string BuildDistributions::NumberToString(T number)
 
 //=====================================================================
 
-void Pause()
+void BuildDistributions::Pause()
 {
 #ifdef __unix__
     std::cout << "Press return to continue ..." << std::endl;

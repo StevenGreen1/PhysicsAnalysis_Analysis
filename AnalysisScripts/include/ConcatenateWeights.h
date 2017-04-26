@@ -48,7 +48,7 @@ class ConcatenateWeights
          *  @param processName Process name indicating which data to load
          *  @param energy Process energy indicating which data to load
          */
-        ConcatenateWeights(PostMVASelection *pPostMVASelection, const std::string processName, const int energy);
+        ConcatenateWeights(const std::string processName, const int energy);
 
         /**
          *  @brief Destructor
@@ -126,7 +126,6 @@ class ConcatenateWeights
 
         typedef std::vector<ConcatenateWeights::Event*> EventVector;
 
-        IntVector               m_eventsNeedingWeights;             ///< Vector of event numbers requiring weights
         const std::string       m_processName;                      ///< Process name to concatenate events
         const int               m_energy;                           ///< Process energy
         int                     m_a4IntMin;                         ///< Min int to use for stepping alpha4 values

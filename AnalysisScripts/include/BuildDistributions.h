@@ -24,6 +24,7 @@
 #include "TH3F.h"
 #include "THStack.h"
 #include "TLegend.h"
+#include "TLorentzVector.h"
 #include "TROOT.h"
 #include "Math/Minimizer.h"
 #include "Math/Factory.h"
@@ -73,6 +74,13 @@ class BuildDistributions
         void BuildDistribution(bool backgrounds = false);
 
         /**
+         *  @brief Quick MC analysis functinos for making plots
+         */
+void MCBuildDistribution();
+void PairQuarks(TLorentzVector *quark1, TLorentzVector *quark2, TLorentzVector *quark3, TLorentzVector *quark4, double &cosThetaStar1, double &cosThetaStar2);
+void CalculateCosThetaStar(TLorentzVector *quark1, TLorentzVector *quark2, double &cosThetaStar);
+
+        /**
          *  @brief Make plot of event weight for a single event vs alpha4 and alpha5
          *
          *  @param maxEventNumber
@@ -81,11 +89,6 @@ class BuildDistributions
         void EventWeightsForSingleEvent(int maxEventNumber, bool backgrounds);
 
     private:
-        /**
-         *  @brief Initialise reference histograms for reweighting
-         */
-        void InitialiseReference();
-
         /**
          *  @brief Initialise histograms for reweighting
          */
@@ -129,6 +132,11 @@ class BuildDistributions
         template <class T>
         std::string NumberToString(T Number);
 
+        /**
+         *  @brief Helper pause function
+         */
+        void Pause();
+
         ProcessVector         m_processVector;                              ///< Vector of all processes
         PostMVASelection     *m_pPostMVASelection;                          ///< Container for all selection cuts
         CouplingAnalysis     *m_pCouplingAnalysis;                          ///< Coupling analysis to use in fit
@@ -144,24 +152,15 @@ class BuildDistributions
         int                   m_nBins;                                      ///< Number of bins to use in costheta*jet fit
         float                 m_wBosonMass;                                 ///< W Boson Mass
         float                 m_zBosonMass;                                 ///< Z Boson Mass
-        TH1F                 *m_cosThetaStarSynJets;                        ///< Distribution of cos theta star from jets from synergy boson all 
-        TH1F                 *m_cosThetaStarSynJetsRef;                     ///< Distribution of cos theta star from jets from synergy boson all ref 
-        TH1F                 *m_cosThetaStarWSynJets;                       ///< Distribution of cos theta star from jets from synergy boson assumed to be W
-        TH1F                 *m_cosThetaStarWSynJetsRef;                    ///< Distribution of cos theta star from jets from synergy boson assumed to be W ref
-        TH1F                 *m_cosThetaStarZSynJets;                       ///< Distribution of cos theta star from jets from synergy boson assumed to be Z
-        TH1F                 *m_cosThetaStarZSynJetsRef;                    ///< Distribution of cos theta star from jets from synergy boson assumed to be Z ref
+        TH2F                 *m_cosThetaStarSynJets;                        ///< Distribution of cos theta star from jets from synergy boson all 
+        TH2F                 *m_cosThetaStarSynJetsRef;                     ///< Distribution of cos theta star from jets from synergy boson all ref 
+        TH2F                 *m_cosThetaStarSynJetsBkg;                     ///< Distribution of cos theta star from jets from synergy boson for backgrounds, fill just once
         TH1F                 *m_cosThetaStarSynBosons;                      ///< Distribution of cos theta star from bosons from synergy boson all
         TH1F                 *m_cosThetaStarSynBosonsRef;                   ///< Distribution of cos theta star from bosons from synergy boson all ref
-        TH1F                 *m_cosThetaStarWSynBosons;                     ///< Distribution of cos theta star from bosons from synergy boson assumed to be W
-        TH1F                 *m_cosThetaStarWSynBosonsRef;                  ///< Distribution of cos theta star from bosons from synergy boson assumed to be W ref
-        TH1F                 *m_cosThetaStarZSynBosons;                     ///< Distribution of cos theta star from bosons from synergy boson assumed to be Z
-        TH1F                 *m_cosThetaStarZSynBosonsRef;                  ///< Distribution of cos theta star from bosons from synergy boson assumed to be Z ref
-        TH2F                 *m_cosThetaStarSynJets_vs_Bosons;              ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson all
-        TH2F                 *m_cosThetaStarSynJets_vs_BosonsRef;           ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson all ref
-        TH2F                 *m_cosThetaStarWSynJets_vs_Bosons;             ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson assumed to be W
-        TH2F                 *m_cosThetaStarWSynJets_vs_BosonsRef;          ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson assumed to be W ref
-        TH2F                 *m_cosThetaStarZSynJets_vs_Bosons;             ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson assumed to be Z
-        TH2F                 *m_cosThetaStarZSynJets_vs_BosonsRef;          ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson assumed to be Z ref
+        TH1F                 *m_cosThetaStarSynBosonsBkg;                   ///< Distribution of cos theta star from bosons from synergy boson for backgrounds, fill just once
+        TH1F                 *m_mVVSynBosons;                               ///< Distribution of invariant mass of system from synergy boson all
+        TH1F                 *m_mVVSynBosonsRef;                            ///< Distribution of invariant mass of system from synergy boson all ref
+        TH1F                 *m_mVVSynBosonsBkg;                            ///< Distribution of invariant mass of system from synergy boson for backgrounds, fill just once
 };
 
 #endif

@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <iomanip>
 #include <map>
 #include <memory>
 #include <sstream>
@@ -118,22 +119,14 @@ class NuisanceFit
         /**
          *  @breif Calculate the nuisance chi sqaured value using MINUIT for a given alpha4 and alpha5 based on the input histograms
          */
-        double CalculateNuisanceChi2MINUITIn1D();
+        double CalculateNuisanceChi2MINUITIn2D();
 
         /**
          *  @breif Return chi2 based on the m_cosThetaStarSynJetsExpected and m_cosThetaStarSynJetsObserved histograms having fluctuated certain background processes by Gaussian with widths given by param
          *
          *  @param Gaussian widths for backgrounds 
          */
-        double GetChi2In1D(const double *param);
-
-        /**
-         *  @brief Calculate the nuisance chi sqaured value for a given alpha4 and alpha5 based on the input histograms
-         *
-         *  @param histsExpected Map of event type to expected histogram of distribution of interest for fit
-         *  @param histsObserved Map of event type to observed histogram of distribution of interest for fit
-         */
-        double CalculateNuisanceChi2In1D(OneDHistogramMap histsExpected, OneDHistogramMap histsObserved);
+        double GetChi2In2D(const double *param);
 
         /**
          *  @brief See if name is available name for root object and if not delete pre exisiting object so that it is a valid name choice
@@ -141,22 +134,6 @@ class NuisanceFit
          *  @param name of root object
          */
         TString SafeName(const TString &name);
-
-        /**
-         *  @brief Calculate chi2 for a given 1D distribution, observed, with zero alpha4 and alpha5 based on distribution, expected, with non-zero alpha4 and alpah5
-         *
-         *  @param pTH1F_Expected expected distribution with non zero alpha4 and alpha5
-         *  @param pTH1F_Observed observed distribution with zero alpha4 and alphs5
-         */
-        double CalculateChi2In1D(TH1F *pTH1F_Expected, TH1F *pTH1F_Observed);
-
-        /**
-         *  @brief Calculate chi2 for a given 2D distribution, observed, with zero alpha4 and alpha5 based on distribution, expected, with non-zero alpha4 and alpah5
-         *
-         *  @param pTH2F_Expected expected distribution with non zero alpha4 and alpha5
-         *  @param pTH2F_Observed observed distribution with zero alpha4 and alphs5 
-         */
-        double CalculateChi2In2D(TH2F *pTH2F_Expected, TH2F *pTH2F_Observed);
 
         /**
          *  @brief Make random string for histogram name to prevent root troubles...
@@ -190,12 +167,10 @@ class NuisanceFit
         double                m_chi2CosThetaStarSynJets;                    ///< Chi2 from cos theta start synergy jets
         double                m_chi2CosThetaStarSynBosons;                  ///< Chi2 from cos theta start synergy boson
         double                m_chi2CosThetaStarSynJets_vs_Bosons;          ///< Chi2 from cos theta start synergy jets vs cos theta start synergy boson
-        OneDHistogramMap      m_cosThetaStarSynJetsExpected;                ///< Distribution of cos theta star from jets from synergy boson all expected, map of process to histogram
-        OneDHistogramMap      m_cosThetaStarSynJetsObserved;                ///< Distribution of cos theta star from jets from synergy boson all observed, map of process to histogram
+        TwoDHistogramMap      m_cosThetaStarSynJetsExpected;                ///< Distribution of cos theta star from jets from synergy boson all expected, map of process to histogram
+        TwoDHistogramMap      m_cosThetaStarSynJetsObserved;                ///< Distribution of cos theta star from jets from synergy boson all observed, map of process to histogram
         OneDHistogramMap      m_cosThetaStarSynBosonsExpected;              ///< Distribution of cos theta star from bosons from synergy boson all expected, map of process to histogram
         OneDHistogramMap      m_cosThetaStarSynBosonsObserved;              ///< Distribution of cos theta star from bosons from synergy boson all observed, map of process to histogram
-        TwoDHistogramMap      m_cosThetaStarSynJets_vs_BosonsExpected;      ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson all expected, map of process to histogram
-        TwoDHistogramMap      m_cosThetaStarSynJets_vs_BosonsObserved;      ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson all observed, map of process to histogram
 };
 
 #endif

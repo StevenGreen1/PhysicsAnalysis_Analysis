@@ -15,9 +15,9 @@ int main(int argc, char* argv[])
     std::string process(argv[1]);
     const int energy(atoi(argv[2]));
 
-    for (int i = -18; i < 19; i++)
+    for (int i = -38; i <= 38; i++)
     {
-        for (int j = -18; j < 19; j++)
+        for (int j = -26; j <= 26; j++)
         {
             const float alpha4(i * 0.00025);
             const float alpha5(j * 0.00025);
@@ -51,9 +51,9 @@ WeightToXmlConverter::~WeightToXmlConverter()
 
 void WeightToXmlConverter::LoadASCII()
 {
-std::cout << m_alpha4 << " " << m_alpha5 << std::endl;
+//std::cout << m_alpha4 << " " << m_alpha5 << std::endl;
     std::string folder("/r06/lc/sg568/PhysicsAnalysis/Generator/" + m_eventType + "/" + this->NumberToString(m_energy) + "GeV/WhizardJobSet" + this->NumberToString(m_generatorNumber) + "/Alpha4_" + this->AlphasToStringReading(m_alpha4) + "_Alpha5_" + this->AlphasToStringReading(m_alpha5));
-    std::cout << folder << std::endl;
+//    std::cout << folder << std::endl;
 
     int nFilesToProcess(0);
     int nEventsInFile(0);
@@ -107,16 +107,17 @@ std::cout << m_alpha4 << " " << m_alpha5 << std::endl;
 //            pEvent->SetEnergy(m_energy);
 //            pEvent->SetAlpha4(m_alpha4);
 //            pEvent->SetAlpha5(m_alpha5);
-            const int localEventNumber(atoi(eventNumber.c_str())-nFilesToProcess*(i-1));
+            const int localEventNumber(atoi(eventNumber.c_str())-nEventsInFile*(i-1));
             pEvent->SetEventNumber(localEventNumber);
             pEvent->SetWeight(atof(weight.c_str()));
             m_events.push_back(pEvent); 
-            std::cout << "For event number : " << eventNumber << ", the weight is " << weight << std::endl;
+//            std::cout << "For event number : " << eventNumber << ", the local evenr number is " << localEventNumber << std::endl;
+//            std::cout << "For event number : " << eventNumber << ", the weight is " << weight << std::endl;
         }
 
         int simulationEventNumber = (1e3*m_generatorNumber) + i;
         std::string weightsFileName("/r06/lc/sg568/PhysicsAnalysis/Generator/" + m_eventType + "/" + this->NumberToString(m_energy) + "GeV/WhizardJobSet" + this->NumberToString(m_generatorNumber) + "/Alpha4_" + this->AlphasToStringReading(m_alpha4) + "_Alpha5_" + this->AlphasToStringReading(m_alpha5) + "/Reweighting_GenN" + this->NumberToString(simulationEventNumber) + "_" + m_eventType + "_" + this->NumberToString(m_energy) + "GeV_Alpha4_" + this->AlphasToStringWriting(m_alpha4) + "_Alpha5_" + this->AlphasToStringWriting(m_alpha5) + ".xml");
-std::cout << "saving : " << weightsFileName << std::endl;
+//std::cout << "saving : " << weightsFileName << std::endl;
         this->SaveXml(weightsFileName);
     }
     return;

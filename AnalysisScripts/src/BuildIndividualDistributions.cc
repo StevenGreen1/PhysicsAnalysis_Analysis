@@ -98,65 +98,72 @@ void BuildIndividualDistributions::BuildDistribution(bool backgrounds)
     }
     else if (m_energy == 3000 && backgrounds)
     {
-/*
-        alpha4Min = -0.002;
-        alpha4Max = 0.00205;
+        alpha4Min = -0.0092;
+        alpha4Max = 0.0092;
         alpha4Step = 0.0001;
-        alpha5Min = -0.002;
-        alpha5Max = 0.00205;
-        alpha5Step = 0.0001;
-*/
-        alpha4Min = -0.0039;
-        alpha4Max = 0.0039;
-        alpha4Step = 0.0001;
-        alpha5Min = -0.0039;
-        alpha5Max = 0.0039;
+        alpha5Min = -0.0062;
+        alpha5Max = 0.0062;
         alpha5Step = 0.0001;
     }
 
     this->InitialiseReference();
     this->FillReferenceDistribution();
 
-    for (double alpha4 = alpha4Min; alpha4 < alpha4Max; alpha4 = alpha4 + alpha4Step)
+    // Save all histograms for background channels only 
+    for (const auto &pProcess: m_processVector)
     {
-        for (double alpha5 = alpha5Min; alpha5 < alpha5Max; alpha5 = alpha5 + alpha5Step)
+        std::string processName(pProcess->GetEventType());
+
+        if (processName == "ee_nunuqqqq")
+            continue;
+
+        TH2F *pTH2F_J;
+        if (m_cosThetaStarSynJetsRef.find(processName) != m_cosThetaStarSynJets.end())
+            pTH2F_J = m_cosThetaStarSynJetsRef.at(processName);
+
+        TH1F *pTH1F_B;
+        if (m_cosThetaStarSynBosonsRef.find(processName) != m_cosThetaStarSynBosons.end())
+            pTH1F_B  = m_cosThetaStarSynBosonsRef.at(processName);
+
+        if (pTH2F_J == NULL or pTH1F_B == NULL)
+            std::cout << "Problem related to initialisation of histograms." << std::endl;
+
+        std::string title = "CosThetaStarSynJets_Alpha4_0.0_Alpha5_0.0_" + processName;
+        pTH2F_J->SetTitle(this->SafeName(title));
+        pTH2F_J->SetName(title.c_str());
+        pTH2F_J->Write();
+    }
+
+    for (double alpha4 = alpha4Min; alpha4 < alpha4Max + (0.5 * alpha4Step); alpha4 = alpha4 + alpha4Step)
+    {
+        for (double alpha5 = alpha5Min; alpha5 < alpha5Max + (0.5 *alpha5Step); alpha5 = alpha5 + alpha5Step)
         {
             this->Initialise();
             this->FillDistribution(alpha4, alpha5);
 
+            // Save histograms for signal channels only as others do not change
             for (const auto &pProcess: m_processVector)
             {
                 std::string processName(pProcess->GetEventType());
 
-                TH2F *pTH2F;
-                if (m_cosThetaStarSynJets_vs_Bosons.find(processName) != m_cosThetaStarSynJets_vs_Bosons.end())
-                    pTH2F = m_cosThetaStarSynJets_vs_Bosons.at(processName);
+                if (processName != "ee_nunuqqqq")
+                    continue;
 
-                TH1F *pTH1F_J;
+                TH2F *pTH2F_J;
                 if (m_cosThetaStarSynJets.find(processName) != m_cosThetaStarSynJets.end())
-                    pTH1F_J = m_cosThetaStarSynJets.at(processName);
+                    pTH2F_J = m_cosThetaStarSynJets.at(processName);
 
                 TH1F *pTH1F_B;
                 if (m_cosThetaStarSynBosons.find(processName) != m_cosThetaStarSynBosons.end())
                     pTH1F_B  = m_cosThetaStarSynBosons.at(processName);
 
-                if (pTH2F == NULL or pTH1F_J == NULL or pTH1F_B == NULL)
+                if (pTH2F_J == NULL or pTH1F_B == NULL)
                     std::cout << "Problem related to initialisation of histograms." << std::endl;
 
-                std::string title1 = "CosThetaStarSynJets_vs_Bosons_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5) + "_" + processName;
-                pTH2F->SetTitle(this->SafeName(title1));
-                pTH2F->SetName(title1.c_str());
-//                pTH2F->Write();
-
-                std::string title2 = "CosThetaStarSynJets_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5) + "_" + processName;
-                pTH1F_J->SetTitle(this->SafeName(title2));
-                pTH1F_J->SetName(title2.c_str());
-                pTH1F_J->Write();
-
-                std::string title3 = "CosThetaStarSynBosons_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5) + "_" + processName;
-                pTH1F_B->SetTitle(this->SafeName(title3));
-                pTH1F_B->SetName(title3.c_str());
-//                pTH1F_B->Write();
+                std::string title = "CosThetaStarSynJets_Alpha4_"  + this->NumberToString(alpha4) + "_Alpha5_" + this->NumberToString(alpha5) + "_" + processName;
+                pTH2F_J->SetTitle(this->SafeName(title));
+                pTH2F_J->SetName(title.c_str());
+                pTH2F_J->Write();
             }
         }
     }
@@ -172,19 +179,12 @@ void BuildIndividualDistributions::InitialiseReference()
     {
         std::string processName(pProcess->GetEventType());
 
-        std::string name1("CosThetaStarSynJets_vs_BosonsRef_" + processName);
-        std::string title1("Reference Cos#theta_{Jets}^{*} vs Cos#theta_{Bosons}^{*} for " + processName);
-        TH2F *pTH2F = new TH2F(this->SafeName(name1),title1.c_str(),m_nBins,0,1,m_nBins,0,1);
-        pTH2F->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
-        pTH2F->GetYaxis()->SetTitle("Cos#theta_{Bosons}^{*}");
-        m_cosThetaStarSynJets_vs_BosonsRef.insert(std::make_pair(processName, pTH2F));
-
         std::string name2("CosThetaStarSynJetsRef_" + processName);
         std::string title2("Reference Cos#theta_{Jets}^{*} for " + processName);
-        TH1F *pTH1F_J = new TH1F(this->SafeName(name2),title2.c_str(),m_nBins,0,1);
-        pTH1F_J->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
-        pTH1F_J->GetYaxis()->SetTitle("Entries");
-        m_cosThetaStarSynJetsRef.insert(std::make_pair(processName, pTH1F_J));
+        TH2F *pTH2F_J = new TH2F(this->SafeName(name2),title2.c_str(),m_nBins,0,1,m_nBins,0,1);
+        pTH2F_J->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
+        pTH2F_J->GetYaxis()->SetTitle("Entries");
+        m_cosThetaStarSynJetsRef.insert(std::make_pair(processName, pTH2F_J));
 
         std::string name3("CosThetaStarSynBosonsRef_" + processName);
         std::string title3("Reference Cos#theta_{Bosons}^{*} for " + processName);
@@ -205,19 +205,12 @@ void BuildIndividualDistributions::Initialise()
     {
         std::string processName(pProcess->GetEventType());
 
-        std::string name1("CosThetaStarSynJets_vs_Bosons_" + processName);
-        std::string title1("Cos#theta_{Jets}^{*} vs Cos#theta_{Bosons}^{*} for " + processName);
-        TH2F *pTH2F = new TH2F(this->SafeName(name1),title1.c_str(),m_nBins,0,1,m_nBins,0,1);
-        pTH2F->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
-        pTH2F->GetYaxis()->SetTitle("Cos#theta_{Bosons}^{*}");
-        m_cosThetaStarSynJets_vs_Bosons.insert(std::make_pair(processName, pTH2F));
-
         std::string name2("CosThetaStarSynJets_" + processName);
         std::string title2("Cos#theta_{Jets}^{*} for " + processName);
-        TH1F *pTH1F_J = new TH1F(this->SafeName(name2),title2.c_str(),m_nBins,0,1);
-        pTH1F_J->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
-        pTH1F_J->GetYaxis()->SetTitle("Entries");
-        m_cosThetaStarSynJets.insert(std::make_pair(processName, pTH1F_J));
+        TH2F *pTH2F_J = new TH2F(this->SafeName(name2),title2.c_str(),m_nBins,0,1,m_nBins,0,1);
+        pTH2F_J->GetXaxis()->SetTitle("Cos#theta_{Jets}^{*}");
+        pTH2F_J->GetYaxis()->SetTitle("Entries");
+        m_cosThetaStarSynJets.insert(std::make_pair(processName, pTH2F_J));
 
         std::string name3("CosThetaStarSynBosons_" + processName);
         std::string title3("Cos#theta_{Bosons}^{*} for " + processName);
@@ -245,16 +238,10 @@ void BuildIndividualDistributions::ClearReference()
     {
         std::string processName(pProcess->GetEventType());
 
-        if (m_cosThetaStarSynJets_vs_BosonsRef.find(processName) != m_cosThetaStarSynJets_vs_BosonsRef.end())
-        {
-            TH2F *pTH2F = m_cosThetaStarSynJets_vs_BosonsRef.at(processName);
-            if (pTH2F != NULL) delete pTH2F;
-        }
-
         if (m_cosThetaStarSynJetsRef.find(processName) != m_cosThetaStarSynJetsRef.end())
         {
-            TH1F *pTH1F_J = m_cosThetaStarSynJetsRef.at(processName);
-            if (pTH1F_J != NULL) delete pTH1F_J;
+            TH2F *pTH2F_J = m_cosThetaStarSynJetsRef.at(processName);
+            if (pTH2F_J != NULL) delete pTH2F_J;
         }
 
         if (m_cosThetaStarSynBosonsRef.find(processName) != m_cosThetaStarSynBosonsRef.end())
@@ -263,7 +250,6 @@ void BuildIndividualDistributions::ClearReference()
             if (pTH1F_B != NULL) delete pTH1F_B;
         }
     }
-     m_cosThetaStarSynJets_vs_BosonsRef.clear();
      m_cosThetaStarSynJetsRef.clear();
      m_cosThetaStarSynBosonsRef.clear();
 }
@@ -276,16 +262,10 @@ void BuildIndividualDistributions::Clear()
     {
         std::string processName(pProcess->GetEventType());
 
-        if (m_cosThetaStarSynJets_vs_Bosons.find(processName) != m_cosThetaStarSynJets_vs_Bosons.end())
-        {
-            TH2F *pTH2F = m_cosThetaStarSynJets_vs_Bosons.at(processName);
-            if (pTH2F != NULL) delete pTH2F;
-        }
-
         if (m_cosThetaStarSynJets.find(processName) != m_cosThetaStarSynJets.end())
         {
-            TH1F *pTH1F_J = m_cosThetaStarSynJets.at(processName);
-            if (pTH1F_J != NULL) delete pTH1F_J;
+            TH2F *pTH2F_J = m_cosThetaStarSynJets.at(processName);
+            if (pTH2F_J != NULL) delete pTH2F_J;
         }
 
         if (m_cosThetaStarSynBosons.find(processName) != m_cosThetaStarSynBosons.end())
@@ -294,7 +274,6 @@ void BuildIndividualDistributions::Clear()
             if (pTH1F_B != NULL) delete pTH1F_B;
         }
     }
-     m_cosThetaStarSynJets_vs_Bosons.clear();
      m_cosThetaStarSynJets.clear();
      m_cosThetaStarSynBosons.clear();
 }
@@ -309,19 +288,15 @@ void BuildIndividualDistributions::FillReferenceDistribution()
         double weight(pProcess->GetPostMVAProcessWeight());
         TChain *pTChain(pProcess->GetPostMVATChain());
 
-        TH2F *pTH2F;
-        if (m_cosThetaStarSynJets_vs_BosonsRef.find(processName) != m_cosThetaStarSynJets_vs_BosonsRef.end())
-            pTH2F = m_cosThetaStarSynJets_vs_BosonsRef.at(processName);
-
-        TH1F *pTH1F_J;
+        TH2F *pTH2F_J;
         if (m_cosThetaStarSynJetsRef.find(processName) != m_cosThetaStarSynJetsRef.end())
-            pTH1F_J = m_cosThetaStarSynJetsRef.at(processName);
+            pTH2F_J = m_cosThetaStarSynJetsRef.at(processName);
 
         TH1F *pTH1F_B;
         if (m_cosThetaStarSynBosonsRef.find(processName) != m_cosThetaStarSynBosonsRef.end())
             pTH1F_B  = m_cosThetaStarSynBosonsRef.at(processName);
 
-        if (pTH2F == NULL or pTH1F_J == NULL or pTH1F_B == NULL)
+        if (pTH2F_J == NULL or pTH1F_B == NULL)
             std::cout << "Problem related to initialisation of histograms." << std::endl;
 
         Int_t nIsolatedLeptons(std::numeric_limits<int>::max());
@@ -331,14 +306,20 @@ void BuildIndividualDistributions::FillReferenceDistribution()
         Double_t cosThetaStarSynBosons(std::numeric_limits<double>::max());
         Double_t cosThetaStarSynJet1(std::numeric_limits<double>::max());
         Double_t cosThetaStarSynJet2(std::numeric_limits<double>::max());
-        Double_t invariantMassSynBoson1(std::numeric_limits<double>::max());
-        Double_t invariantMassSynBoson2(std::numeric_limits<double>::max());
+        Double_t energyBosonSyn1(std::numeric_limits<double>::max());
+        Double_t energyBosonSyn2(std::numeric_limits<double>::max());
+        Double_t momentumBosonSyn1(std::numeric_limits<double>::max());
+        Double_t momentumBosonSyn2(std::numeric_limits<double>::max());
 
         // Selection Variables
         pTChain->SetBranchAddress("NumberOfIsolatedLeptons", &nIsolatedLeptons);
         pTChain->SetBranchAddress("TransverseMomentum", &transverseMomentum);
         pTChain->SetBranchAddress("InvariantMassSystem", &invariantMassSystem);
         pTChain->SetBranchAddress("BDT", &bdt);
+        pTChain->SetBranchAddress("EnergyBosonSyn1", &energyBosonSyn1);
+        pTChain->SetBranchAddress("EnergyBosonSyn2", &energyBosonSyn2);
+        pTChain->SetBranchAddress("MomentumBosonSyn1", &momentumBosonSyn1);
+        pTChain->SetBranchAddress("MomentumBosonSyn2", &momentumBosonSyn2);
 
         // BuildIndividualDistributions Variables
         pTChain->SetBranchAddress("CosThetaStarSynBosons", &cosThetaStarSynBosons);
@@ -365,10 +346,23 @@ void BuildIndividualDistributions::FillReferenceDistribution()
             if (invariantMassSystem < m_pPostMVASelection->GetPreSelection()->GetInvariantMassSystemLowCut() or m_pPostMVASelection->GetPreSelection()->GetInvariantMassSystemHighCut() < invariantMassSystem)
                 continue;
 
-            pTH2F->Fill(cosThetaStarSynJet1, cosThetaStarSynBosons, weight);
-            pTH2F->Fill(cosThetaStarSynJet2, cosThetaStarSynBosons, weight);
-            pTH1F_J->Fill(cosThetaStarSynJet1, weight);
-            pTH1F_J->Fill(cosThetaStarSynJet2, weight);
+            double boson1Mass(sqrt(energyBosonSyn1*energyBosonSyn1-momentumBosonSyn1*momentumBosonSyn1));
+            double boson2Mass(sqrt(energyBosonSyn2*energyBosonSyn2-momentumBosonSyn2*momentumBosonSyn2));
+            double cosThetaStarSynJetMostEnergetic(std::numeric_limits<double>::max());
+            double cosThetaStarSynJetLeastEnergetic(std::numeric_limits<double>::max());
+
+            if ((boson1Mass > boson2Mass && energyBosonSyn1 > energyBosonSyn2) || (boson2Mass > boson1Mass) && energyBosonSyn2 > energyBosonSyn1) // Most massive is most energetic
+            {
+                cosThetaStarSynJetMostEnergetic = cosThetaStarSynJet1;
+                cosThetaStarSynJetLeastEnergetic = cosThetaStarSynJet2;
+            }
+            else // Least massive is most energetic
+            {
+                cosThetaStarSynJetMostEnergetic = cosThetaStarSynJet2;
+                cosThetaStarSynJetLeastEnergetic = cosThetaStarSynJet1;
+            }
+
+            pTH2F_J->Fill(cosThetaStarSynJetMostEnergetic, cosThetaStarSynJetLeastEnergetic, weight);
             pTH1F_B->Fill(cosThetaStarSynBosons, weight);
         }
         delete pTChain;
@@ -385,19 +379,15 @@ void BuildIndividualDistributions::FillDistribution(const double alpha4, const d
         double weight(pProcess->GetPostMVAProcessWeight());
         TChain *pTChain(pProcess->GetPostMVATChain());
 
-        TH2F *pTH2F;
-        if (m_cosThetaStarSynJets_vs_Bosons.find(processName) != m_cosThetaStarSynJets_vs_Bosons.end())
-            pTH2F = m_cosThetaStarSynJets_vs_Bosons.at(processName);
-
-        TH1F *pTH1F_J;
+        TH2F *pTH2F_J;
         if (m_cosThetaStarSynJets.find(processName) != m_cosThetaStarSynJets.end())
-            pTH1F_J = m_cosThetaStarSynJets.at(processName);
+            pTH2F_J = m_cosThetaStarSynJets.at(processName);
 
         TH1F *pTH1F_B;
         if (m_cosThetaStarSynBosons.find(processName) != m_cosThetaStarSynBosons.end())
             pTH1F_B  = m_cosThetaStarSynBosons.at(processName);
 
-        if (pTH2F == NULL or pTH1F_J == NULL or pTH1F_B == NULL)
+        if (pTH2F_J == NULL or pTH1F_B == NULL)
             std::cout << "Problem related to initialisation of histograms." << std::endl;
 
         Int_t globalEventNumber(std::numeric_limits<int>::max());
@@ -408,8 +398,10 @@ void BuildIndividualDistributions::FillDistribution(const double alpha4, const d
         Double_t cosThetaStarSynBosons(std::numeric_limits<double>::max());
         Double_t cosThetaStarSynJet1(std::numeric_limits<double>::max());
         Double_t cosThetaStarSynJet2(std::numeric_limits<double>::max());
-        Double_t invariantMassSynBoson1(std::numeric_limits<double>::max());
-        Double_t invariantMassSynBoson2(std::numeric_limits<double>::max());
+        Double_t energyBosonSyn1(std::numeric_limits<double>::max());
+        Double_t energyBosonSyn2(std::numeric_limits<double>::max());
+        Double_t momentumBosonSyn1(std::numeric_limits<double>::max());
+        Double_t momentumBosonSyn2(std::numeric_limits<double>::max());
 
         // Selection Variables
         pTChain->SetBranchAddress("GlobalEventNumber", &globalEventNumber);
@@ -417,6 +409,10 @@ void BuildIndividualDistributions::FillDistribution(const double alpha4, const d
         pTChain->SetBranchAddress("TransverseMomentum", &transverseMomentum);
         pTChain->SetBranchAddress("InvariantMassSystem", &invariantMassSystem);
         pTChain->SetBranchAddress("BDT", &bdt);
+        pTChain->SetBranchAddress("EnergyBosonSyn1", &energyBosonSyn1);
+        pTChain->SetBranchAddress("EnergyBosonSyn2", &energyBosonSyn2);
+        pTChain->SetBranchAddress("MomentumBosonSyn1", &momentumBosonSyn1);
+        pTChain->SetBranchAddress("MomentumBosonSyn2", &momentumBosonSyn2);
 
         // BuildIndividualDistributions Variables
         pTChain->SetBranchAddress("CosThetaStarSynBosons", &cosThetaStarSynBosons);
@@ -450,10 +446,23 @@ void BuildIndividualDistributions::FillDistribution(const double alpha4, const d
                 m_pCouplingAnalysis->GetWeight(globalEventNumber, alpha4, alpha5, matrixElementWeight);
             }
 
-            pTH2F->Fill(cosThetaStarSynJet1, cosThetaStarSynBosons, weight*matrixElementWeight);
-            pTH2F->Fill(cosThetaStarSynJet2, cosThetaStarSynBosons, weight*matrixElementWeight);
-            pTH1F_J->Fill(cosThetaStarSynJet1, weight*matrixElementWeight);
-            pTH1F_J->Fill(cosThetaStarSynJet2, weight*matrixElementWeight);
+            double boson1Mass(sqrt(energyBosonSyn1*energyBosonSyn1-momentumBosonSyn1*momentumBosonSyn1));
+            double boson2Mass(sqrt(energyBosonSyn2*energyBosonSyn2-momentumBosonSyn2*momentumBosonSyn2));
+            double cosThetaStarSynJetMostEnergetic(std::numeric_limits<double>::max());
+            double cosThetaStarSynJetLeastEnergetic(std::numeric_limits<double>::max());
+
+            if ((boson1Mass > boson2Mass && energyBosonSyn1 > energyBosonSyn2) || (boson2Mass > boson1Mass) && energyBosonSyn2 > energyBosonSyn1) // Most massive is most energetic
+            {
+                cosThetaStarSynJetMostEnergetic = cosThetaStarSynJet1;
+                cosThetaStarSynJetLeastEnergetic = cosThetaStarSynJet2;
+            }
+            else // Least massive is most energetic
+            {
+                cosThetaStarSynJetMostEnergetic = cosThetaStarSynJet2;
+                cosThetaStarSynJetLeastEnergetic = cosThetaStarSynJet1;
+            }
+
+            pTH2F_J->Fill(cosThetaStarSynJetMostEnergetic, cosThetaStarSynJetLeastEnergetic, weight*matrixElementWeight);
             pTH1F_B->Fill(cosThetaStarSynBosons, weight*matrixElementWeight);
         }
         delete pTChain;

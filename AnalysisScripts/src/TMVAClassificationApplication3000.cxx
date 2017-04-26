@@ -15,7 +15,7 @@ int main(int argc, char **argv)
     typedef std::vector<const Process*> ProcessVector;
 
 /*
-    // 3 TeV
+    // 3 TeV - Optimisation of Jet Algorithm
     float nominalLuminosity(2000);
     float eeLuminosityRatio(1.0);
     float egammaLuminosityRatio(0.79);
@@ -53,16 +53,16 @@ int main(int argc, char **argv)
     processes.push_back(pProcess_ee_nunuqqqq_13_3TeV);
 */
 
-    // 3 TeV
+    // 3 TeV - Signal and Background
     float nominalLuminosity(2000);
     float eeLuminosityRatio(1.0);
     float egammaLuminosityRatio(0.79);
     float gammaeLuminosityRatio(0.79);
     float gammagammaLuminosityRatio(0.69);
 
-    // Signal 3 TeV and background
+    // Signal
     const Process *pProcess_ee_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_nunuqqqq",71.5,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    // CLIC Backgrounds
+    // Backgrounds
     const Process *pProcess_ee_lnuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_lnuqqqq",106.6,nominalLuminosity*eeLuminosityRatio,3000,18,false);
     const Process *pProcess_ee_llqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_llqqqq",169.3,nominalLuminosity*eeLuminosityRatio,3000,18,false);
     const Process *pProcess_ee_qqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_qqqq",546.5,nominalLuminosity*eeLuminosityRatio,3000,18,false);
@@ -118,20 +118,15 @@ TMVAClassificationApplication3000::TMVAClassificationApplication3000(ProcessVect
     EventNumbers *pEventNumbers = new EventNumbers();
 
     // Event
-    Float_t nPFOs(std::numeric_limits<float>::max());
-    Float_t highestEnergyPfoPDG(std::numeric_limits<float>::max());
+    Float_t nParticlesJet1(std::numeric_limits<float>::max());
+    Float_t nParticlesJet2(std::numeric_limits<float>::max());
+    Float_t nParticlesJet3(std::numeric_limits<float>::max());
+    Float_t nParticlesJet4(std::numeric_limits<float>::max());
     Float_t transverseMomentum(std::numeric_limits<float>::max());
-    Float_t cosThetaMissing(std::numeric_limits<float>::max());
     Float_t cosThetaMostEnergeticTrack(std::numeric_limits<float>::max());
-    Float_t y12(std::numeric_limits<float>::max());
-    Float_t y23(std::numeric_limits<float>::max());
     Float_t y34(std::numeric_limits<float>::max());
     Float_t y45(std::numeric_limits<float>::max());
-    Float_t y56(std::numeric_limits<float>::max());
-    Float_t y67(std::numeric_limits<float>::max());
-    Float_t principleThrustValue(std::numeric_limits<float>::max());
     Float_t sphericity(std::numeric_limits<float>::max());
-    Float_t aplanarity(std::numeric_limits<float>::max());
     Float_t highestEnergyElectronEnergy(std::numeric_limits<float>::max());
     Float_t highestEnergyPfoEnergy(std::numeric_limits<float>::max());
 
@@ -142,27 +137,18 @@ TMVAClassificationApplication3000::TMVAClassificationApplication3000(ProcessVect
     Float_t invariantMassSynBoson1(std::numeric_limits<float>::max());
     Float_t invariantMassSynBoson2(std::numeric_limits<float>::max());
 
-    // Jets
-    Float_t acolinearityJetsSyn1(std::numeric_limits<float>::max());
-    Float_t acolinearityJetsSyn2(std::numeric_limits<float>::max());
-
     if (!perfect)
     {
         // Event
-        reader->AddVariable("NPfos := NParticlesJet1+NParticlesJet2+NParticlesJet3+NParticlesJet4", &nPFOs);
-        reader->AddVariable("HighestEnergyPfoPDG", &highestEnergyPfoPDG);
+        reader->AddVariable("NParticlesJet1", &nParticlesJet1);
+        reader->AddVariable("NParticlesJet2", &nParticlesJet2);
+        reader->AddVariable("NParticlesJet3", &nParticlesJet3);
+        reader->AddVariable("NParticlesJet4", &nParticlesJet4);
         reader->AddVariable("TransverseMomentum", &transverseMomentum);
-        reader->AddVariable("CosThetaMissing", &cosThetaMissing);
         reader->AddVariable("CosThetaMostEnergeticTrack", &cosThetaMostEnergeticTrack);
-        reader->AddVariable("y12", &y12);
-        reader->AddVariable("y23", &y23);
         reader->AddVariable("y34", &y34);
         reader->AddVariable("y45", &y45);
-        reader->AddVariable("y56", &y56);
-        reader->AddVariable("y67", &y67);
-        reader->AddVariable("PrincipleThrustValue", &principleThrustValue);
         reader->AddVariable("Sphericity", &sphericity);
-        reader->AddVariable("Aplanarity", &aplanarity);
         reader->AddVariable("(HighestEnergyElectronEnergy<10000)*HighestEnergyElectronEnergy", &highestEnergyElectronEnergy);
         reader->AddVariable("(HighestEnergyPfoEnergy<10000)*HighestEnergyPfoEnergy", &highestEnergyPfoEnergy);
         // Bosons
@@ -171,9 +157,6 @@ TMVAClassificationApplication3000::TMVAClassificationApplication3000(ProcessVect
         reader->AddVariable("AcolinearityBosonsSyn", &acolinearityBosonsSyn);
         reader->AddVariable("InvariantMassSynBoson1", &invariantMassSynBoson1);
         reader->AddVariable("InvariantMassSynBoson2", &invariantMassSynBoson2);
-        // Jets
-        reader->AddVariable("AcolinearityJetsSyn1", &acolinearityJetsSyn1);
-        reader->AddVariable("AcolinearityJetsSyn2", &acolinearityJetsSyn2);
 
         reader->BookMVA("BDT method", "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/weights/IdealConfiguration3000GeV/TMVAClassification_BDT_NTrees3000_MaxDepth3_NCuts25_3000GeV.weights.xml");
     }
@@ -983,26 +966,21 @@ TMVAClassificationApplication3000::TMVAClassificationApplication3000(ProcessVect
             }
 
             jobEventNumber++;
-
             globalEventNumber_ToSave = pEventNumbers->SetGlobalEventNumber(simulationEventNumber, jobEventNumber);
+
+            nPFOs_ToSaveAndRead = nParticlesJet1_ToSaveAndRead + nParticlesJet2_ToSaveAndRead + nParticlesJet3_ToSaveAndRead + nParticlesJet4_ToSaveAndRead;
 
             // Set all variables needed by MVA reader
             // Event
-            nPFOs_ToSaveAndRead = nParticlesJet1_ToSaveAndRead + nParticlesJet2_ToSaveAndRead + nParticlesJet3_ToSaveAndRead + nParticlesJet4_ToSaveAndRead;
-            nPFOs = (Float_t)(nPFOs_ToSaveAndRead);
-            highestEnergyPfoPDG = (Float_t)(highestEnergyPfoPDG_ToSaveAndRead);
+            nParticlesJet1 = (Float_t)(nParticlesJet1_ToSaveAndRead);
+            nParticlesJet2 = (Float_t)(nParticlesJet2_ToSaveAndRead);
+            nParticlesJet3 = (Float_t)(nParticlesJet3_ToSaveAndRead);
+            nParticlesJet4 = (Float_t)(nParticlesJet4_ToSaveAndRead);
             transverseMomentum = (Float_t)(transverseMomentum_ToSaveAndRead);
-            cosThetaMissing = (Float_t)(cosThetaMissing_ToSaveAndRead);
             cosThetaMostEnergeticTrack = (Float_t)(cosThetaMostEnergeticTrack_ToSaveAndRead);
-            y12 = (Float_t)(y12_ToSaveAndRead);
-            y23 = (Float_t)(y23_ToSaveAndRead);
             y34 = (Float_t)(y34_ToSaveAndRead);
             y45 = (Float_t)(y45_ToSaveAndRead);
-            y56 = (Float_t)(y56_ToSaveAndRead);
-            y67 = (Float_t)(y67_ToSaveAndRead);
-            principleThrustValue = (Float_t)(principleThrustValue_ToSaveAndRead);
             sphericity = (Float_t)(sphericity_ToSaveAndRead);
-            aplanarity = (Float_t)(aplanarity_ToSaveAndRead);
             highestEnergyElectronEnergy = (Float_t)(highestEnergyElectronEnergy_ToSaveAndRead);
             highestEnergyPfoEnergy = (Float_t)(highestEnergyPfoEnergy_ToSaveAndRead);
             // Bosons
@@ -1011,9 +989,6 @@ TMVAClassificationApplication3000::TMVAClassificationApplication3000(ProcessVect
             acolinearityBosonsSyn = (Float_t)(acolinearityBosonsSyn_ToSaveAndRead);
             invariantMassSynBoson1 = (Float_t)(invariantMassSynBoson1_ToSaveAndRead);
             invariantMassSynBoson2 = (Float_t)(invariantMassSynBoson2_ToSaveAndRead);
-            // Jets
-            acolinearityJetsSyn1 = (Float_t)(acolinearityJetsSyn1_ToSaveAndRead);
-            acolinearityJetsSyn2 = (Float_t)(acolinearityJetsSyn2_ToSaveAndRead);
 
             if (!perfect)
             {

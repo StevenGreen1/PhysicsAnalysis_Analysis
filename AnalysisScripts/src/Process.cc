@@ -246,6 +246,7 @@ void Process::MakeTChain()
     listOfFiles->Sort(); // Alphabetises the list
 
     bool trainingSample(false);
+    int trainingCounter(0);
 
     if (listOfFiles) 
     {
@@ -257,7 +258,7 @@ void Process::MakeTChain()
             fileCandidate = file->GetName();
             std::string analysisTagString("Tag" + this->NumberToString(m_analysisTag));
 
-            if (!file->IsDirectory() and fileCandidate.EndsWith("root") and fileCandidate.Contains(analysisTagString.c_str()) and fileCandidate.Contains(m_rootSuffix.c_str())) // and m_pTrainTChain->GetEntries() < 50000) // and m_pTChain->GetEntries() < 50000) 
+            if (!file->IsDirectory() and fileCandidate.EndsWith("root") and fileCandidate.Contains(analysisTagString.c_str()) and fileCandidate.Contains(m_rootSuffix.c_str())) // &&  m_pTrainTChain->GetEntries() < 50000) // and m_pTrainTChain->GetEntries() < 50000) // and m_pTChain->GetEntries() < 50000) 
             {
                 if (m_eventType == "ee_nunuqqqq" and m_energy == 1400)
                 {
@@ -287,15 +288,32 @@ void Process::MakeTChain()
                 TString rootFileToAdd = m_pathToFiles + fileCandidate.Data();
                 m_pFullTChain->Add(rootFileToAdd.Data());
 
-                if (trainingSample)
+                if (m_energy == 1400)
                 {
-                    m_pTChain->Add(rootFileToAdd.Data());
-                    trainingSample = false;
+                    if (trainingSample)
+                    {
+                        m_pTChain->Add(rootFileToAdd.Data());
+                        trainingSample = false;
+                    }
+                    else
+                    {
+                        m_pTrainTChain->Add(rootFileToAdd.Data()); 
+                        trainingSample = true;
+                    }
                 }
-                else
+
+                else if (m_energy == 3000)
                 {
-                    m_pTrainTChain->Add(rootFileToAdd.Data()); 
-                    trainingSample = true;
+                    trainingCounter++;
+                    if (trainingCounter < 10)
+                    {
+                        m_pTChain->Add(rootFileToAdd.Data());
+                    }
+                    else
+                    {
+                        m_pTrainTChain->Add(rootFileToAdd.Data());
+                        trainingCounter = 0;
+                    }
                 }
             }
         }

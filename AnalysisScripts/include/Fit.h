@@ -41,13 +41,15 @@ class Fit
         /**
          *  @brief Constructor
          *
-         *  @param descriptor string to read in filenames
-         *  @param nBins used in fit
+         *  @param inputDescriptor string to read in filenames
          *  @param inputPath
+         *  @param outputDescriptor string to writing filenames
+         *  @param outputPath
+         *  @param nBins used in fit
          *  @param background
          *
          */
-        Fit(std::string descriptor, const int energy, const int nBins, std::string inputPath, bool background = false);
+        Fit(std::string inputDescriptor, std::string inputPath, std::string outputDescriptor, std::string outputPath, const int energy, const int nBins, bool background = false);
 
         /**
          *  @brief Default destructor
@@ -104,12 +106,20 @@ class Fit
         void Clear();
 
         /**
-         *  @brief Calculate chi2 for a given 1D distribution, observed, with zero alpha4 and alpha5 based on distribution, expected, with non-zero alpha4 and alpah5
+         *  @brief Calculate chi2 for a given 1D distribution, observed, with zero alpha4 and alpha5 based on distribution, expected, with non-zero alpha4 and alpah5.  No under/overflow.
          *
          *  @param pTH1F_Expected expected distribution with non zero alpha4 and alpha5
          *  @param pTH1F_Observed observed distribution with zero alpha4 and alphs5
          */
-        double CalculateChi2In1D(TH1F *pTH1F_Expected, TH1F *pTH1F_Observed);
+        double CalculateChi2In1D(TH1F *pTH1F_Expected, TH1F *pTH1F_Observed); 
+
+        /**
+         *  @brief Calculate chi2 for a given 1D distribution, observed, with zero alpha4 and alpha5 based on distribution, expected, with non-zero alpha4 and alpah5.  No underflow.
+         *
+         *  @param pTH1F_Expected expected distribution with non zero alpha4 and alpha5
+         *  @param pTH1F_Observed observed distribution with zero alpha4 and alphs5
+         */
+        double CalculateChi2In1DWithOverflow(TH1F *pTH1F_Expected, TH1F *pTH1F_Observed);
 
         /**
          *  @brief Calculate chi2 for a given 2D distribution, observed, with zero alpha4 and alpha5 based on distribution, expected, with non-zero alpha4 and alpah5
@@ -132,46 +142,29 @@ class Fit
         template <class T>
         std::string NumberToString(T Number);
 
-        const std::string     m_descriptor;                                 ///< Optional string to attack to plots/filename etc
-        const std::string     m_inputPath;                                  ///< Path to send results to
+        const std::string     m_inputDescriptor;                            ///< Descriptor to read in file names
+        const std::string     m_inputPath;                                  ///< Path to read in file names
+        const std::string     m_outputDescriptor;                           ///< Descriptor to save output
+        const std::string     m_outputPath;                                 ///< Path to save output
         const int             m_nBins;                                      ///< Number of bins to use in costheta*jet fit
         const int             m_energy;                                     ///< Energy
         const bool            m_background;                                 ///< Backgrounds
         bool                  m_fluctuateNominal;                           ///< Fluctuate the nominal (standard model) using Poisson statistics
         std::string           m_rootFileName;                               ///< Name of output results root file
         StringVector          m_filesToReadIn;                              ///< Vector of files to read in
-        const bool            m_splitDistributions;                         ///< Make a separate W and Z distribution
         TFile                *m_pTFile;                                     ///< Root file for results
         TTree                *m_pTTree;                                     ///< Root tree for results
         double                m_alpha4;                                     ///< Alpha 4 value to save to tree 
         double                m_alpha5;                                     ///< Alpha 5 value to save to tree
         double                m_chi2CosThetaStarSynJets;                    ///< Chi2 from cos theta start synergy jets
-        double                m_chi2CosThetaStarWSynJets;                   ///< Chi2 from cos theta start synergy jets assumed to be W
-        double                m_chi2CosThetaStarZSynJets;                   ///< Chi2 from cos theta start synergy jets assumed to be Z
         double                m_chi2CosThetaStarSynBosons;                  ///< Chi2 from cos theta start synergy boson
-        double                m_chi2CosThetaStarWSynBosons;                 ///< Chi2 from cos theta start synergy boson assumed to be W
-        double                m_chi2CosThetaStarZSynBosons;                 ///< Chi2 from cos theta start synergy boson assumed to be Z
-        double                m_chi2CosThetaStarSynJets_vs_Bosons;          ///< Chi2 from cos theta start synergy jets vs cos theta start synergy boson
-        double                m_chi2CosThetaStarWSynJets_vs_Bosons;         ///< Chi2 from cos theta start synergy jets vs cos theta start synergy boson assumed to be W
-        double                m_chi2CosThetaStarZSynJets_vs_Bosons;         ///< Chi2 from cos theta start synergy jets vs cos theta start synergy boson assumed to be Z
-        TH1F                 *m_cosThetaStarSynJetsExpected;                ///< Distribution of cos theta star from jets from synergy boson, expected
-        TH1F                 *m_cosThetaStarSynJetsObserved;                ///< Distribution of cos theta star from jets from synergy boson, observed
-        TH1F                 *m_cosThetaStarWSynJetsExpected;               ///< Distribution of cos theta star from jets from synergy boson assumed to be W, expected
-        TH1F                 *m_cosThetaStarWSynJetsObserved;               ///< Distribution of cos theta star from jets from synergy boson assumed to be W, observed
-        TH1F                 *m_cosThetaStarZSynJetsExpected;               ///< Distribution of cos theta star from jets from synergy boson assumed to be Z, expected
-        TH1F                 *m_cosThetaStarZSynJetsObserved;               ///< Distribution of cos theta star from jets from synergy boson assumed to be Z, observed
+        double                m_chi2MVV;                                    ///< Chi2 from invariant mass of boson pair
+        TH2F                 *m_cosThetaStarSynJetsExpected;                ///< Distribution of cos theta star from jets from synergy boson, expected
+        TH2F                 *m_cosThetaStarSynJetsObserved;                ///< Distribution of cos theta star from jets from synergy boson, observed
         TH1F                 *m_cosThetaStarSynBosonsExpected;              ///< Distribution of cos theta star from bosons from synergy boson, expected
         TH1F                 *m_cosThetaStarSynBosonsObserved;              ///< Distribution of cos theta star from bosons from synergy boson, observed
-        TH1F                 *m_cosThetaStarWSynBosonsExpected;             ///< Distribution of cos theta star from bosons from synergy boson assumed to be W, expected
-        TH1F                 *m_cosThetaStarWSynBosonsObserved;             ///< Distribution of cos theta star from bosons from synergy boson assumed to be W, observed
-        TH1F                 *m_cosThetaStarZSynBosonsExpected;             ///< Distribution of cos theta star from bosons from synergy boson assumed to be Z, expected
-        TH1F                 *m_cosThetaStarZSynBosonsObserved;             ///< Distribution of cos theta star from bosons from synergy boson assumed to be Z, observed
-        TH2F                 *m_cosThetaStarSynJets_vs_BosonsExpected;      ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson, expected
-        TH2F                 *m_cosThetaStarSynJets_vs_BosonsObserved;      ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson, observed
-        TH2F                 *m_cosThetaStarWSynJets_vs_BosonsExpected;     ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson assumed to be W, expected
-        TH2F                 *m_cosThetaStarWSynJets_vs_BosonsObserved;     ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson assumed to be W, observed
-        TH2F                 *m_cosThetaStarZSynJets_vs_BosonsExpected;     ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson assumed to be Z, expected
-        TH2F                 *m_cosThetaStarZSynJets_vs_BosonsObserved;     ///< Distribution of cos theta star from jets vs cos theta star from bosons from synergy boson assumed to be Z, observed
+        TH1F                 *m_mVVExpected;                                ///< Distribution of invariant mass of boson pair, expected
+        TH1F                 *m_mVVObserved;                                ///< Distribution of invariant mass of boson pair, observed
         FloatVector           m_red;                                        ///< Red RGB for plotting
         FloatVector           m_green;                                      ///< Green RGB for plotting
         FloatVector           m_blue;                                       ///< Blue RGB for plotting

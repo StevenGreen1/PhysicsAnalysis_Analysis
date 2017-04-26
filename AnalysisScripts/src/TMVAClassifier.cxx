@@ -76,39 +76,43 @@ int main(int argc, char **argv)
 
 TMVAClassifier::TMVAClassifier(ProcessVector sigProcesses, ProcessVector bkgProcesses)
 {
-    TString outfileName( "TMVA.root" );
+    TString outfileName( "TMVA_1400GeV.root" );
     TFile* outputFile = TFile::Open( outfileName, "RECREATE" );
     TMVA::Factory *factory = new TMVA::Factory( "TMVAClassification", outputFile, "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification");
 
     // Event
-    factory->AddVariable( "NPfos := NParticlesJet1 + NParticlesJet2 + NParticlesJet3 + NParticlesJet4", "Number of PFOs", "", 'I');
-////    factory->AddVariable( "NChargedPfos := NChargedParticlesJet1 + NChargedParticlesJet2 + NChargedParticlesJet3 + NChargedParticlesJet4", "Number of Charged PFOs", "", 'I');
-    factory->AddVariable( "HighestEnergyPfoPDG", "Highest Energy Pfo PDG", "", 'I');
+//    factory->AddVariable( "NPfos := NParticlesJet1 + NParticlesJet2 + NParticlesJet3 + NParticlesJet4", "Number of PFOs", "", 'I');
+    factory->AddVariable( "NParticlesJet1", "Number of PFOs Jet 1", "", 'I');
+    factory->AddVariable( "NParticlesJet2", "Number of PFOs Jet 2", "", 'I');
+    factory->AddVariable( "NParticlesJet3", "Number of PFOs Jet 3", "", 'I');
+    factory->AddVariable( "NParticlesJet4", "Number of PFOs Jet 4", "", 'I');
+//    factory->AddVariable( "NChargedPfos := NChargedParticlesJet1 + NChargedParticlesJet2 + NChargedParticlesJet3 + NChargedParticlesJet4", "Number of Charged PFOs", "", 'I');
+//~~    factory->AddVariable( "HighestEnergyPfoPDG", "Highest Energy Pfo PDG", "", 'I');
     factory->AddVariable( "TransverseMomentum", "Transverse Momentum", "GeV", 'D');
-///    factory->AddVariable( "TransverseEnergy", "Transverse Energy", "GeV", 'D');
-    factory->AddVariable( "CosThetaMissing", "Cos Theta Of Missing Momentum", "", 'D');
+//    factory->AddVariable( "TransverseEnergy", "Transverse Energy", "GeV", 'D');
+//~~    factory->AddVariable( "CosThetaMissing", "Cos Theta Of Missing Momentum", "", 'D');
     factory->AddVariable( "CosThetaMostEnergeticTrack", "Cosine Theta Of Most Energetic Track", "", 'D');
-    factory->AddVariable( "y12", "Jet Clustering Parameter Y12", "", 'D');
-    factory->AddVariable( "y23", "Jet Clustering Parameter Y23", "", 'D');
+//~~    factory->AddVariable( "y12", "Jet Clustering Parameter Y12", "", 'D');
+//~~    factory->AddVariable( "y23", "Jet Clustering Parameter Y23", "", 'D');
     factory->AddVariable( "y34", "Jet Clustering Parameter Y34", "", 'D');
     factory->AddVariable( "y45", "Jet Clustering Parameter Y45", "", 'D');
-    factory->AddVariable( "y56", "Jet Clustering Parameter Y56", "", 'D');
-    factory->AddVariable( "y67", "Jet Clustering Parameter Y67", "", 'D');
-////    factory->AddVariable( "InvariantMassSystem", "Invariant Mass of the System", "GeV", 'D');
-    factory->AddVariable( "PrincipleThrustValue", "PrincipleThrustValue", "", 'D');
-////    factory->AddVariable( "MajorThrustValue", "MajorThrustValue", "", 'D');
-////    factory->AddVariable( "MinorThrustValue", "MinorThrustValue", "", 'D');
+//~~    factory->AddVariable( "y56", "Jet Clustering Parameter Y56", "", 'D');
+//~~    factory->AddVariable( "y67", "Jet Clustering Parameter Y67", "", 'D');
+//    factory->AddVariable( "InvariantMassSystem", "Invariant Mass of the System", "GeV", 'D');
+//~~    factory->AddVariable( "PrincipleThrustValue", "PrincipleThrustValue", "", 'D');
+//    factory->AddVariable( "MajorThrustValue", "MajorThrustValue", "", 'D');
+//    factory->AddVariable( "MinorThrustValue", "MinorThrustValue", "", 'D');
     factory->AddVariable( "Sphericity", "Sphericity", "", 'D');
-    factory->AddVariable( "Aplanarity", "Aplanarity", "", 'D');
+//~~    factory->AddVariable( "Aplanarity", "Aplanarity", "", 'D');
     factory->AddVariable( "(HighestEnergyElectronEnergy<10000)*HighestEnergyElectronEnergy", "Highest Energy Electron Energy", "GeV", 'D');
-///    factory->AddVariable( "(HighestEnergyElectronMomentum<10000)*HighestEnergyElectronMomentum", "Highest Energy Electron Momentum", "GeV", 'D');
-///    factory->AddVariable( "(HighestEnergyElectronTransverseMomentum<10000)*HighestEnergyElectronTransverseMomentum", "Highest Energy Electron Transverse Momentum", "GeV", 'D');
+//    factory->AddVariable( "(HighestEnergyElectronMomentum<10000)*HighestEnergyElectronMomentum", "Highest Energy Electron Momentum", "GeV", 'D');
+//    factory->AddVariable( "(HighestEnergyElectronTransverseMomentum<10000)*HighestEnergyElectronTransverseMomentum", "Highest Energy Electron Transverse Momentum", "GeV", 'D');
 //    factory->AddVariable( "(HighestEnergyMuonEnergy<10000)*HighestEnergyMuonEnergy", "Highest Energy Muon Energy", "GeV", 'D');
 //    factory->AddVariable( "(HighestEnergyMuonMomentum<10000)*HighestEnergyMuonMomentum", "Highest Energy Muon Momentum", "GeV", 'D');
 //    factory->AddVariable( "(HighestEnergyMuonTransverseMomentum<10000)*HighestEnergyMuonTransverseMomentum", "Highest Energy Muon Transverse Momentum", "GeV", 'D');
     factory->AddVariable( "(HighestEnergyPfoEnergy<10000)*HighestEnergyPfoEnergy", "Highest Energy Pfo Energy", "GeV", 'D');
-///    factory->AddVariable( "(HighestEnergyPfoMomentum<10000)*HighestEnergyPfoMomentum", "Highest Energy Pfo Momentum", "GeV", 'D');
-///    factory->AddVariable( "(HighestEnergyPfoTransverseMomentum<10000)*HighestEnergyPfoTransverseMomentum", "Highest Energy Pfo Transverse Momentum", "GeV", 'D');
+//    factory->AddVariable( "(HighestEnergyPfoMomentum<10000)*HighestEnergyPfoMomentum", "Highest Energy Pfo Momentum", "GeV", 'D');
+//    factory->AddVariable( "(HighestEnergyPfoTransverseMomentum<10000)*HighestEnergyPfoTransverseMomentum", "Highest Energy Pfo Transverse Momentum", "GeV", 'D');
 
     // Bosons
 //    factory->AddVariable( "NPfosBosonSyn1", "Number of PFOs in Boson 1", "", 'I');
@@ -117,8 +121,8 @@ TMVAClassifier::TMVAClassifier(ProcessVector sigProcesses, ProcessVector bkgProc
     factory->AddVariable( "EnergyBosonSyn2", "Energy Boson 2", "GeV", 'D');
 //    factory->AddVariable( "MomentumBosonSyn1", "Momentum Boson 1", "GeV", 'D');
 //    factory->AddVariable( "MomentumBosonSyn2", "Momentum Boson 2", "GeV", 'D');
-///    factory->AddVariable( "TransverseMomentumBosonSyn1", "Transverse Momentum Boson 1", "GeV", 'D');
-///    factory->AddVariable( "TransverseMomentumBosonSyn2", "Transverse Momentum Boson 2", "GeV", 'D');
+//    factory->AddVariable( "TransverseMomentumBosonSyn1", "Transverse Momentum Boson 1", "GeV", 'D');
+//    factory->AddVariable( "TransverseMomentumBosonSyn2", "Transverse Momentum Boson 2", "GeV", 'D');
 //    factory->AddVariable( "CosThetaBosonSyn1", "Cos Theta Boson 1", "GeV", 'D');
 //    factory->AddVariable( "CosThetaBosonSyn2", "Cos Theta Boson 2", "GeV", 'D');
 //    factory->AddVariable( "TransverseEnergyBosonSyn1", "Transverse Energy Boson 1", "GeV", 'D');
@@ -136,8 +140,8 @@ TMVAClassifier::TMVAClassifier(ProcessVector sigProcesses, ProcessVector bkgProc
 //    factory->AddVariable( "MinCTagForBosonSyn2", "Min C Tag Boson 2", "", 'D');
 
     // Jets
-    factory->AddVariable( "AcolinearityJetsSyn1", "Acolinearity Jets Boson 1", "", 'D');
-    factory->AddVariable( "AcolinearityJetsSyn2", "Acolinearity Jets Boson 2", "", 'D');
+//~~    factory->AddVariable( "AcolinearityJetsSyn1", "Acolinearity Jets Boson 1", "", 'D');
+//~~    factory->AddVariable( "AcolinearityJetsSyn2", "Acolinearity Jets Boson 2", "", 'D');
 //    factory->AddVariable( "EnergyJet1", "Energy Jet 1", "GeV", 'D');
 //    factory->AddVariable( "EnergyJet2", "Energy Jet 2", "GeV", 'D');
 //    factory->AddVariable( "EnergyJet3", "Energy Jet 3", "GeV", 'D');
@@ -179,19 +183,21 @@ TMVAClassifier::TMVAClassifier(ProcessVector sigProcesses, ProcessVector bkgProc
         factory->AddBackgroundTree(pTrainingTChain, weight);
     }
 
-    TCut mycuts = "TransverseMomentum>100 && TransverseMomentum<10000 && InvariantMassSystem>200 && InvariantMassSystem<10000 && NumberOfIsolatedLeptons==0"; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
-    TCut mycutb = "TransverseMomentum>100 && TransverseMomentum<10000 && InvariantMassSystem>200 && InvariantMassSystem<10000 && NumberOfIsolatedLeptons==0"; // for example: TCut mycutb = "abs(var1)<0.5";
+    TCut mycuts = "TransverseMomentum>100 && TransverseMomentum<10000 && NumberOfIsolatedLeptons==0"; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
+//~~    TCut mycuts = "TransverseMomentum>100 && TransverseMomentum<10000 && InvariantMassSystem>200 && InvariantMassSystem<10000 && NumberOfIsolatedLeptons==0"; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
+    TCut mycutb = "TransverseMomentum>100 && TransverseMomentum<10000 && NumberOfIsolatedLeptons==0"; // for example: TCut mycutb = "abs(var1)<0.5";
+//~~    TCut mycutb = "TransverseMomentum>100 && TransverseMomentum<10000 && InvariantMassSystem>200 && InvariantMassSystem<10000 && NumberOfIsolatedLeptons==0"; // for example: TCut mycutb = "abs(var1)<0.5";
 
     factory->PrepareTrainingAndTestTree( mycuts, mycutb, "nTrain_Signal=0:nTrain_Background=0:SplitMode=Random:NormMode=NumEvents:!V" );
-
+/*
     factory->BookMethod( TMVA::Types::kCuts, "Cuts_1400GeV", "!H:!V:FitMethod=MC:EffSel:SampleSize=200000:VarProp=FSmart" );
     factory->BookMethod( TMVA::Types::kLikelihood, "Likelihood_1400GeV", "H:!V:!TransformOutput:PDFInterpol=Spline2:NSmoothSig[0]=20:NSmoothBkg[0]=20:NSmoothBkg[1]=10:NSmooth=1:NAvEvtPerBin=50" );
     factory->BookMethod( TMVA::Types::kHMatrix, "HMatrix_1400GeV", "!H:!V" );
     factory->BookMethod( TMVA::Types::kFisher, "Fisher_1400GeV", "H:!V:Fisher:CreateMVAPdfs:PDFInterpolMVAPdf=Spline2:NbinsMVAPdf=50:NsmoothMVAPdf=10" );
     factory->BookMethod( TMVA::Types::kMLP, "MLP_1400GeV", "H:!V:NeuronType=tanh:VarTransform=N:NCycles=60:HiddenLayers=N+5:TestRate=5:!UseRegulator" );
     factory->BookMethod( TMVA::Types::kKNN, "KNN_1400GeV", "H:nkNN=20:ScaleFrac=0.8:SigmaFact=1.0:Kernel=Gaus:UseKernel=F:UseWeight=T:!Trim" );
-
-//    factory->BookMethod( TMVA::Types::kBDT, "BDT_NTrees3000_MaxDepth3_NCuts25_1400GeV", "!H:!V:NTrees=3000:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=25" );
+*/
+    factory->BookMethod( TMVA::Types::kBDT, "BDT_NTrees3000_MaxDepth3_NCuts25_1400GeV", "!H:!V:NTrees=3000:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=25" );
 
 /*
     factory->BookMethod( TMVA::Types::kBDT, "BDT_NTrees3000_MaxDepth3_NCuts25", "!H:!V:NTrees=3000:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=25" );

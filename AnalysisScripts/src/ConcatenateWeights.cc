@@ -10,8 +10,7 @@
 
 //============================================================================
 
-ConcatenateWeights::ConcatenateWeights(PostMVASelection *pPostMVASelection, const std::string processName, const int energy) : 
-    m_eventsNeedingWeights(pPostMVASelection->GetEventsNeedingWeightsList()),
+ConcatenateWeights::ConcatenateWeights(const std::string processName, const int energy) : 
     m_processName(processName),
     m_energy(energy)
 {
@@ -19,28 +18,19 @@ ConcatenateWeights::ConcatenateWeights(PostMVASelection *pPostMVASelection, cons
 
     if (energy == 1400)
     {
-        m_a4IntMin = -7;
-        m_a4IntMax = 7;
-        m_a5IntMin = -7;
-        m_a5IntMax = 7;
-        m_a4Step = 0.01f;
-        m_a5Step = 0.01f;
+        m_a4IntMin = -8;
+        m_a4IntMax = 8;
+        m_a5IntMin = -8;
+        m_a5IntMax = 8;
+        m_a4Step = 0.0025f;
+        m_a5Step = 0.0025f;
     }
     else if (energy == 3000)
     {
-/*
-        m_a4IntMin = -10;
-        m_a4IntMax = 10;
-        m_a5IntMin = -10;
-        m_a5IntMax = 10;
-        m_a4Step = 0.00025;
-        m_a5Step = 0.00025;
-*/
-
-        m_a4IntMin = -18;
-        m_a4IntMax = 18;
-        m_a5IntMin = -18;
-        m_a5IntMax = 18;
+        m_a4IntMin = -38;
+        m_a4IntMax = 38;
+        m_a5IntMin = -26;
+        m_a5IntMax = 26;
         m_a4Step = 0.00025f;
         m_a5Step = 0.00025f;
     }
@@ -137,9 +127,6 @@ void ConcatenateWeights::ConcatenateIndividualWeightXml(std::string eventType, c
         ConcatenateWeights::Event *pEvent(*iter);
         TiXmlElement* pTiXmlElement = new TiXmlElement("Event");
         const int eventNumber(pEvent->GetEventNumber());
-
-//        if (std::find(m_eventsNeedingWeights.begin(), m_eventsNeedingWeights.end(), eventNumber) == m_eventsNeedingWeights.end())
-//            continue;
 
         pTiXmlElement->SetAttribute("Event_Number", eventNumber);
         pTiXmlElement->SetDoubleAttribute("Ratio_of_Integrands", pEvent->GetWeight());

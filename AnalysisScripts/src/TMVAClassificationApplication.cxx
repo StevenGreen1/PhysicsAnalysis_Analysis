@@ -15,7 +15,7 @@ int main(int argc, char **argv)
     typedef std::vector<const Process*> ProcessVector;
 
 /*
-    // 1.4 TeV
+    // 1.4 TeV - Optimisation of jet algorithm
     float nominalLuminosity(1500);
     float eeLuminosityRatio(1.0);
     float egammaLuminosityRatio(0.75);
@@ -53,74 +53,35 @@ int main(int argc, char **argv)
     processes.push_back(pProcess_ee_nunuqqqq_13);
 */
 
-/*
-    // 3 TeV
-    float nominalLuminosity(2000);
-    float eeLuminosityRatio(1.0);
-    float egammaLuminosityRatio(0.79);
-    float gammaeLuminosityRatio(0.79);
-    float gammagammaLuminosityRatio(0.69);
-
-    // Signal 3 TeV
-    const Process *pProcess_ee_nunuqqqq_1_3TeV = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",71.5,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_ee_nunuqqqq_2_3TeV = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.5","ee_nunuqqqq",71.5,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_ee_nunuqqqq_3_3TeV = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqqqq",71.5,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_ee_nunuqqqq_4_3TeV = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.0","ee_nunuqqqq",71.5,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_ee_nunuqqqq_5_3TeV = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_nunuqqqq",71.5,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_ee_nunuqqqq_6_3TeV = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",71.5,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_ee_nunuqqqq_7_3TeV = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","LooseSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",71.5,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_ee_nunuqqqq_8_3TeV = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"ee_kt_algorithm","0.7","ee_nunuqqqq",71.5,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_ee_nunuqqqq_9_3TeV = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"cambridge_algorithm","0.7","ee_nunuqqqq",71.5,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_ee_nunuqqqq_10_3TeV = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqqqq",71.5,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_ee_nunuqqqq_11_3TeV = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","LooseSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqqqq",71.5,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_ee_nunuqqqq_12_3TeV = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_nunuqqqq",71.5,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_ee_nunuqqqq_13_3TeV = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","LooseSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_nunuqqqq",71.5,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-
-    ProcessVector processes;
-    processes.push_back(pProcess_ee_nunuqqqq_1_3TeV);
-    processes.push_back(pProcess_ee_nunuqqqq_2_3TeV);
-    processes.push_back(pProcess_ee_nunuqqqq_3_3TeV);
-    processes.push_back(pProcess_ee_nunuqqqq_4_3TeV);
-    processes.push_back(pProcess_ee_nunuqqqq_5_3TeV);
-    processes.push_back(pProcess_ee_nunuqqqq_6_3TeV);
-    processes.push_back(pProcess_ee_nunuqqqq_7_3TeV);
-    processes.push_back(pProcess_ee_nunuqqqq_8_3TeV);
-    processes.push_back(pProcess_ee_nunuqqqq_9_3TeV);
-    processes.push_back(pProcess_ee_nunuqqqq_10_3TeV);
-    processes.push_back(pProcess_ee_nunuqqqq_11_3TeV);
-    processes.push_back(pProcess_ee_nunuqqqq_12_3TeV);
-    processes.push_back(pProcess_ee_nunuqqqq_13_3TeV);
-*/
-
-    // 1.4 TeV
+    // 1.4 TeV - Signal and Background Full Run
     float nominalLuminosity(1500);
     float eeLuminosityRatio(1.0);
     float egammaLuminosityRatio(0.75);
     float gammaeLuminosityRatio(0.75);
     float gammagammaLuminosityRatio(0.64);
 
-    // Signal 1.4 TeV and background
-    const Process *pProcess_ee_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    // CLIC Backgrounds
-    const Process *pProcess_ee_lnuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_lnuqqqq",110.4,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_ee_llqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_llqqqq",62.1,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_ee_qqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_qqqq",1245.1,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_ee_nunuqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqq",787.7,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_ee_lnuqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_lnuqq",4309.7,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_ee_qqll = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_qqll",2725.8,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_ee_qq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_qq",4009.5,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_egamma_qqqqe_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","egamma_qqqqe_EPA",287.1,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_egamma_qqqqe_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","egamma_qqqqe_BS",1160.7,nominalLuminosity*egammaLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_gammae_qqqqe_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammae_qqqqe_EPA",286.9,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_gammae_qqqqe_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammae_qqqqe_BS",1156.3,nominalLuminosity*gammaeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_egamma_qqqqnu_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","egamma_qqqqnu_EPA",32.6,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_egamma_qqqqnu_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","egamma_qqqqnu_BS",136.9,nominalLuminosity*egammaLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_gammae_qqqqnu_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammae_qqqqnu_EPA",32.6,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_gammae_qqqqnu_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammae_qqqqnu_BS",136.4,nominalLuminosity*gammaeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_gammagamma_qqqq_EPA_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammagamma_qqqq_EPA_EPA",753.0,nominalLuminosity*eeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_gammagamma_qqqq_EPA_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammagamma_qqqq_EPA_BS",4034.8,nominalLuminosity*egammaLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_gammagamma_qqqq_BS_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammagamma_qqqq_BS_EPA",4018.7,nominalLuminosity*gammaeLuminosityRatio,1400,18,false,true);
-    const Process *pProcess_gammagamma_qqqq_BS_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammagamma_qqqq_BS_BS",21406.2,nominalLuminosity*gammagammaLuminosityRatio,1400,18,false,true);
+    // Signal 
+    const Process *pProcess_ee_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,false);
+    // Backgrounds
+    const Process *pProcess_ee_lnuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_lnuqqqq",110.4,nominalLuminosity*eeLuminosityRatio,1400,18,false);
+    const Process *pProcess_ee_llqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_llqqqq",62.1,nominalLuminosity*eeLuminosityRatio,1400,18,false);
+    const Process *pProcess_ee_qqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_qqqq",1245.1,nominalLuminosity*eeLuminosityRatio,1400,18,false);
+    const Process *pProcess_ee_nunuqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqq",787.7,nominalLuminosity*eeLuminosityRatio,1400,18,false);
+    const Process *pProcess_ee_lnuqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_lnuqq",4309.7,nominalLuminosity*eeLuminosityRatio,1400,18,false);
+    const Process *pProcess_ee_qqll = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_qqll",2725.8,nominalLuminosity*eeLuminosityRatio,1400,18,false);
+    const Process *pProcess_ee_qq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_qq",4009.5,nominalLuminosity*eeLuminosityRatio,1400,18,false);
+    const Process *pProcess_egamma_qqqqe_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","egamma_qqqqe_EPA",287.1,nominalLuminosity*eeLuminosityRatio,1400,18,false);
+    const Process *pProcess_egamma_qqqqe_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","egamma_qqqqe_BS",1160.7,nominalLuminosity*egammaLuminosityRatio,1400,18,false);
+    const Process *pProcess_gammae_qqqqe_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammae_qqqqe_EPA",286.9,nominalLuminosity*eeLuminosityRatio,1400,18,false);
+    const Process *pProcess_gammae_qqqqe_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammae_qqqqe_BS",1156.3,nominalLuminosity*gammaeLuminosityRatio,1400,18,false);
+    const Process *pProcess_egamma_qqqqnu_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","egamma_qqqqnu_EPA",32.6,nominalLuminosity*eeLuminosityRatio,1400,18,false);
+    const Process *pProcess_egamma_qqqqnu_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","egamma_qqqqnu_BS",136.9,nominalLuminosity*egammaLuminosityRatio,1400,18,false);
+    const Process *pProcess_gammae_qqqqnu_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammae_qqqqnu_EPA",32.6,nominalLuminosity*eeLuminosityRatio,1400,18,false);
+    const Process *pProcess_gammae_qqqqnu_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammae_qqqqnu_BS",136.4,nominalLuminosity*gammaeLuminosityRatio,1400,18,false);
+    const Process *pProcess_gammagamma_qqqq_EPA_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammagamma_qqqq_EPA_EPA",753.0,nominalLuminosity*eeLuminosityRatio,1400,18,false);
+    const Process *pProcess_gammagamma_qqqq_EPA_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammagamma_qqqq_EPA_BS",4034.8,nominalLuminosity*egammaLuminosityRatio,1400,18,false);
+    const Process *pProcess_gammagamma_qqqq_BS_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammagamma_qqqq_BS_EPA",4018.7,nominalLuminosity*gammaeLuminosityRatio,1400,18,false);
+    const Process *pProcess_gammagamma_qqqq_BS_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","gammagamma_qqqq_BS_BS",21406.2,nominalLuminosity*gammagammaLuminosityRatio,1400,18,false);
 
     ProcessVector processes;
     processes.push_back(pProcess_ee_nunuqqqq);
@@ -144,61 +105,6 @@ int main(int argc, char **argv)
     processes.push_back(pProcess_gammagamma_qqqq_BS_EPA);
     processes.push_back(pProcess_gammagamma_qqqq_BS_BS);
 
-/*
-    // 3 TeV
-    float nominalLuminosity(2000);
-    float eeLuminosityRatio(1.0);
-    float egammaLuminosityRatio(0.79);
-    float gammaeLuminosityRatio(0.79);
-    float gammagammaLuminosityRatio(0.69);
-
-    // Signal 3 TeV and background
-    const Process *pProcess_ee_nunuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_nunuqqqq",71.5,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    // CLIC Backgrounds
-    const Process *pProcess_ee_lnuqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_lnuqqqq",106.6,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_ee_llqqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_llqqqq",169.3,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_ee_qqqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_qqqq",546.5,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_ee_nunuqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_nunuqq",1317.5,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_ee_lnuqq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_lnuqq",5560.9,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_ee_qqll = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_qqll",3319.6,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_ee_qq = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_qq",2948.9,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_egamma_qqqqe_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","egamma_qqqqe_EPA",287.8,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_egamma_qqqqe_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","egamma_qqqqe_BS",1268.6,nominalLuminosity*egammaLuminosityRatio,3000,18,false);
-    const Process *pProcess_gammae_qqqqe_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","gammae_qqqqe_EPA",287.8,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_gammae_qqqqe_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","gammae_qqqqe_BS",1267.3,nominalLuminosity*gammaeLuminosityRatio,3000,18,false);
-    const Process *pProcess_egamma_qqqqnu_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","egamma_qqqqnu_EPA",54.2,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_egamma_qqqqnu_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","egamma_qqqqnu_BS",262.5,nominalLuminosity*egammaLuminosityRatio,3000,18,false);
-    const Process *pProcess_gammae_qqqqnu_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","gammae_qqqqnu_EPA",54.2,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_gammae_qqqqnu_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","gammae_qqqqnu_BS",262.3,nominalLuminosity*gammaeLuminosityRatio,3000,18,false);
-    const Process *pProcess_gammagamma_qqqq_EPA_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","gammagamma_qqqq_EPA_EPA",402.7,nominalLuminosity*eeLuminosityRatio,3000,18,false);
-    const Process *pProcess_gammagamma_qqqq_EPA_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","gammagamma_qqqq_EPA_BS",2423.1,nominalLuminosity*egammaLuminosityRatio,3000,18,false);
-    const Process *pProcess_gammagamma_qqqq_BS_EPA = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","gammagamma_qqqq_BS_EPA",2420.6,nominalLuminosity*gammaeLuminosityRatio,3000,18,false);
-    const Process *pProcess_gammagamma_qqqq_BS_BS = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","gammagamma_qqqq_BS_BS",13050.3,nominalLuminosity*gammagammaLuminosityRatio,3000,18,false);
-
-    ProcessVector processes;
-
-    processes.push_back(pProcess_ee_nunuqqqq);
-    processes.push_back(pProcess_ee_lnuqqqq);
-    processes.push_back(pProcess_ee_llqqqq);
-    processes.push_back(pProcess_ee_qqqq);
-    processes.push_back(pProcess_ee_nunuqq);
-    processes.push_back(pProcess_ee_lnuqq);
-    processes.push_back(pProcess_ee_qqll);
-    processes.push_back(pProcess_ee_qq);
-    processes.push_back(pProcess_egamma_qqqqe_EPA);
-    processes.push_back(pProcess_egamma_qqqqe_BS);
-    processes.push_back(pProcess_gammae_qqqqe_EPA);
-    processes.push_back(pProcess_gammae_qqqqe_BS);
-    processes.push_back(pProcess_egamma_qqqqnu_EPA);
-    processes.push_back(pProcess_egamma_qqqqnu_BS);
-    processes.push_back(pProcess_gammae_qqqqnu_EPA);
-    processes.push_back(pProcess_gammae_qqqqnu_BS);
-
-    processes.push_back(pProcess_gammagamma_qqqq_EPA_EPA);
-    processes.push_back(pProcess_gammagamma_qqqq_EPA_BS);
-    processes.push_back(pProcess_gammagamma_qqqq_BS_EPA);
-    processes.push_back(pProcess_gammagamma_qqqq_BS_BS);
-*/
     TMVAClassificationApplication *pTMVAClassificationApplication = new TMVAClassificationApplication(processes, false);
 }
 
@@ -211,20 +117,15 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
     EventNumbers *pEventNumbers = new EventNumbers();
 
     // Event
-    Float_t nPFOs(std::numeric_limits<float>::max());
-    Float_t highestEnergyPfoPDG(std::numeric_limits<float>::max());
+    Float_t nParticlesJet1(std::numeric_limits<float>::max());
+    Float_t nParticlesJet2(std::numeric_limits<float>::max());
+    Float_t nParticlesJet3(std::numeric_limits<float>::max());
+    Float_t nParticlesJet4(std::numeric_limits<float>::max());
     Float_t transverseMomentum(std::numeric_limits<float>::max());
-    Float_t cosThetaMissing(std::numeric_limits<float>::max());
     Float_t cosThetaMostEnergeticTrack(std::numeric_limits<float>::max());
-    Float_t y12(std::numeric_limits<float>::max());
-    Float_t y23(std::numeric_limits<float>::max());
     Float_t y34(std::numeric_limits<float>::max());
     Float_t y45(std::numeric_limits<float>::max());
-    Float_t y56(std::numeric_limits<float>::max());
-    Float_t y67(std::numeric_limits<float>::max());
-    Float_t principleThrustValue(std::numeric_limits<float>::max());
     Float_t sphericity(std::numeric_limits<float>::max());
-    Float_t aplanarity(std::numeric_limits<float>::max());
     Float_t highestEnergyElectronEnergy(std::numeric_limits<float>::max());
     Float_t highestEnergyPfoEnergy(std::numeric_limits<float>::max());
 
@@ -235,27 +136,18 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
     Float_t invariantMassSynBoson1(std::numeric_limits<float>::max());
     Float_t invariantMassSynBoson2(std::numeric_limits<float>::max());
 
-    // Jets
-    Float_t acolinearityJetsSyn1(std::numeric_limits<float>::max());
-    Float_t acolinearityJetsSyn2(std::numeric_limits<float>::max());
-
     if (!perfect)
     {
         // Event
-        reader->AddVariable("NPfos := NParticlesJet1+NParticlesJet2+NParticlesJet3+NParticlesJet4", &nPFOs);
-        reader->AddVariable("HighestEnergyPfoPDG", &highestEnergyPfoPDG);
+        reader->AddVariable("NParticlesJet1", &nParticlesJet1);
+        reader->AddVariable("NParticlesJet2", &nParticlesJet2);
+        reader->AddVariable("NParticlesJet3", &nParticlesJet3);
+        reader->AddVariable("NParticlesJet4", &nParticlesJet4);
         reader->AddVariable("TransverseMomentum", &transverseMomentum);
-        reader->AddVariable("CosThetaMissing", &cosThetaMissing);
         reader->AddVariable("CosThetaMostEnergeticTrack", &cosThetaMostEnergeticTrack);
-        reader->AddVariable("y12", &y12);
-        reader->AddVariable("y23", &y23);
         reader->AddVariable("y34", &y34);
         reader->AddVariable("y45", &y45);
-        reader->AddVariable("y56", &y56);
-        reader->AddVariable("y67", &y67);
-        reader->AddVariable("PrincipleThrustValue", &principleThrustValue);
         reader->AddVariable("Sphericity", &sphericity);
-        reader->AddVariable("Aplanarity", &aplanarity);
         reader->AddVariable("(HighestEnergyElectronEnergy<10000)*HighestEnergyElectronEnergy", &highestEnergyElectronEnergy);
         reader->AddVariable("(HighestEnergyPfoEnergy<10000)*HighestEnergyPfoEnergy", &highestEnergyPfoEnergy);
         // Bosons
@@ -264,11 +156,8 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
         reader->AddVariable("AcolinearityBosonsSyn", &acolinearityBosonsSyn);
         reader->AddVariable("InvariantMassSynBoson1", &invariantMassSynBoson1);
         reader->AddVariable("InvariantMassSynBoson2", &invariantMassSynBoson2);
-        // Jets
-        reader->AddVariable("AcolinearityJetsSyn1", &acolinearityJetsSyn1);
-        reader->AddVariable("AcolinearityJetsSyn2", &acolinearityJetsSyn2);
 
-        reader->BookMVA("BDT method", "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/weights/IdealConfiguration1400GeV/TMVAClassification_BDT_NTrees3000_MaxDepth3_NCuts25.weights.xml");
+        reader->BookMVA("BDT method", "/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin/weights/IdealConfiguration1400GeV/TMVAClassification_BDT_NTrees3000_MaxDepth3_NCuts25_1400GeV.weights.xml");
     }
 
     for (ProcessVector::iterator itPro = processes.begin(); itPro != processes.end(); itPro++)
@@ -1076,26 +965,21 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
             }
 
             jobEventNumber++;
-
             globalEventNumber_ToSave = pEventNumbers->SetGlobalEventNumber(simulationEventNumber, jobEventNumber);
+
+            nPFOs_ToSaveAndRead = nParticlesJet1_ToSaveAndRead + nParticlesJet2_ToSaveAndRead + nParticlesJet3_ToSaveAndRead + nParticlesJet4_ToSaveAndRead;
 
             // Set all variables needed by MVA reader
             // Event
-            nPFOs_ToSaveAndRead = nParticlesJet1_ToSaveAndRead + nParticlesJet2_ToSaveAndRead + nParticlesJet3_ToSaveAndRead + nParticlesJet4_ToSaveAndRead;
-            nPFOs = (Float_t)(nPFOs_ToSaveAndRead);
-            highestEnergyPfoPDG = (Float_t)(highestEnergyPfoPDG_ToSaveAndRead);
+            nParticlesJet1 = (Float_t)(nParticlesJet1_ToSaveAndRead);
+            nParticlesJet2 = (Float_t)(nParticlesJet2_ToSaveAndRead);
+            nParticlesJet3 = (Float_t)(nParticlesJet3_ToSaveAndRead);
+            nParticlesJet4 = (Float_t)(nParticlesJet4_ToSaveAndRead);
             transverseMomentum = (Float_t)(transverseMomentum_ToSaveAndRead);
-            cosThetaMissing = (Float_t)(cosThetaMissing_ToSaveAndRead);
             cosThetaMostEnergeticTrack = (Float_t)(cosThetaMostEnergeticTrack_ToSaveAndRead);
-            y12 = (Float_t)(y12_ToSaveAndRead);
-            y23 = (Float_t)(y23_ToSaveAndRead);
             y34 = (Float_t)(y34_ToSaveAndRead);
             y45 = (Float_t)(y45_ToSaveAndRead);
-            y56 = (Float_t)(y56_ToSaveAndRead);
-            y67 = (Float_t)(y67_ToSaveAndRead);
-            principleThrustValue = (Float_t)(principleThrustValue_ToSaveAndRead);
             sphericity = (Float_t)(sphericity_ToSaveAndRead);
-            aplanarity = (Float_t)(aplanarity_ToSaveAndRead);
             highestEnergyElectronEnergy = (Float_t)(highestEnergyElectronEnergy_ToSaveAndRead);
             highestEnergyPfoEnergy = (Float_t)(highestEnergyPfoEnergy_ToSaveAndRead);
             // Bosons
@@ -1104,9 +988,6 @@ TMVAClassificationApplication::TMVAClassificationApplication(ProcessVector proce
             acolinearityBosonsSyn = (Float_t)(acolinearityBosonsSyn_ToSaveAndRead);
             invariantMassSynBoson1 = (Float_t)(invariantMassSynBoson1_ToSaveAndRead);
             invariantMassSynBoson2 = (Float_t)(invariantMassSynBoson2_ToSaveAndRead);
-            // Jets
-            acolinearityJetsSyn1 = (Float_t)(acolinearityJetsSyn1_ToSaveAndRead);
-            acolinearityJetsSyn2 = (Float_t)(acolinearityJetsSyn2_ToSaveAndRead);
 
             if (!perfect)
             {

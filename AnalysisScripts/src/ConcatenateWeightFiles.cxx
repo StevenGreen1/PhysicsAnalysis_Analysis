@@ -28,10 +28,7 @@ int main(int argc, char **argv)
     srand(time(0));
     gStyle->SetOptStat(0);
 
-    std::vector<const Process*> processes;
-    PreSelection *pPreSelectionSemiFinal = new PreSelection(processes);
-    PostMVASelection *pPostMVASelection = new PostMVASelection(processes, pPreSelectionSemiFinal);
-    ConcatenateWeights *pConcatenateWeights = new ConcatenateWeights(pPostMVASelection, "ee_nunuqqqq", energy);
+    ConcatenateWeights *pConcatenateWeights = new ConcatenateWeights("ee_nunuqqqq", energy);
     pConcatenateWeights->LoadWeightXml(simulationEventNumber);
 }
 

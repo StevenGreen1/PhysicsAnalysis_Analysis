@@ -17,12 +17,12 @@ CouplingAnalysis::CouplingAnalysis(PostMVASelection *pPostMVASelection, const in
 {
     if (energy == 1400 && !backgrounds)
     {
-        m_a4IntMin = -6;
-        m_a4IntMax = 6;
-        m_a4Step = 0.01f;
-        m_a5IntMin = -6;
-        m_a5IntMax = 6;
-        m_a5Step = 0.01f;
+        m_a4IntMin = -8;
+        m_a4IntMax = 8;
+        m_a4Step = 0.0025f;
+        m_a5IntMin = -8;
+        m_a5IntMax = 8;
+        m_a5Step = 0.0025f;
     }
     else if (energy == 1400 && backgrounds)
     {
@@ -44,21 +44,11 @@ CouplingAnalysis::CouplingAnalysis(PostMVASelection *pPostMVASelection, const in
     }
     else if (energy == 3000 && backgrounds)
     {
-/*
-        m_a4IntMin = -10;
-        m_a4IntMax = 10;
+        m_a4IntMin = -38;
+        m_a4IntMax = 38;
         m_a4Step = 0.00025f;
-        m_a5IntMin = -10;
-        m_a5IntMax = 10;
-        m_a5Step = 0.00025f;
-*/
-
-
-        m_a4IntMin = -18;
-        m_a4IntMax = 18;
-        m_a4Step = 0.00025f;
-        m_a5IntMin = -18;
-        m_a5IntMax = 18;
+        m_a5IntMin = -26;
+        m_a5IntMax = 26;
         m_a5Step = 0.00025f;
     }
     else 
@@ -127,13 +117,13 @@ void CouplingAnalysis::GetWeight(const int globalEventNumber, const float alpha4
         std::cout << "Unable to apply bicubic interpolation to event, please add more weight samples to be able to reweight (alpha4, alpha5) = (" << alpha4 << ", " << alpha5 << ").  Setting event weight to 1." << std::endl;
         eventWeight = 1.f;
     }
-
+/*
     if (globalEventNumber == 64084036)
     {
         eventWeight = 1.f;
         return;
     }
-
+*/
     IntVector alpha4BoundingKeys = {0, 0, 0, 0}; // alpha 4 between key 1 and 2
     IntVector alpha5BoundingKeys = {0, 0, 0, 0}; // alpha 4 between key 1 and 2
 
