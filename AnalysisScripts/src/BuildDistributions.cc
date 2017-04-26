@@ -34,6 +34,11 @@ BuildDistributions::BuildDistributions(const ProcessVector &processVector, Coupl
         m_energy = processVector.at(0)->GetEnergy();
     }
 
+    m_lowMVV = 0.f;
+    m_highMVV = (float)(m_energy);
+    const float binWidth(50.f);
+    m_nBinsMVV = round((m_highMVV-m_lowMVV)/binWidth);
+
     // Output data file
     m_pTFile = new TFile(m_rootFileName.c_str(), "recreate");
     m_pTTree = new TTree("BuildDistributionTree", "BuildDistributionTree");
@@ -497,7 +502,7 @@ void BuildDistributions::Initialise()
     m_cosThetaStarSynBosonsRef = new TH1F(this->SafeName("CosThetaStarSynBosonsRef"),"Reference Cos(#theta_{Bosons}^{*})",m_nBins,0,1);
     m_cosThetaStarSynBosonsRef->GetXaxis()->SetTitle("Cos(#theta_{Bosons}^{*})");
     m_cosThetaStarSynBosonsRef->GetYaxis()->SetTitle("Entries");
-    m_mVVSynBosonsRef = new TH1F(this->SafeName("MVVSynBosonsRef"),"Reference Invariant Mass VV",28,200,3000);
+    m_mVVSynBosonsRef = new TH1F(this->SafeName("MVVSynBosonsRef"),"Reference Invariant Mass VV",m_nBinsMVV,m_lowMVV,m_highMVV);
     m_mVVSynBosonsRef->GetXaxis()->SetTitle("MVV [GeV]");
     m_mVVSynBosonsRef->GetYaxis()->SetTitle("Entries");
 
@@ -507,7 +512,7 @@ void BuildDistributions::Initialise()
     m_cosThetaStarSynBosonsBkg = new TH1F(this->SafeName("CosThetaStarSynBosons"),"Backgrounds Cos#theta_{Bosons}^{*}",m_nBins,0,1);
     m_cosThetaStarSynBosonsBkg->GetXaxis()->SetTitle("Cos(#theta_{Bosons}^{*})");
     m_cosThetaStarSynBosonsBkg->GetYaxis()->SetTitle("Entries");
-    m_mVVSynBosonsBkg = new TH1F(this->SafeName("MVVSynBosonsBkg"),"Backgrounds Invariant Mass VV",28,200,3000);
+    m_mVVSynBosonsBkg = new TH1F(this->SafeName("MVVSynBosonsBkg"),"Backgrounds Invariant Mass VV",m_nBinsMVV,m_lowMVV,m_highMVV);
     m_mVVSynBosonsBkg->GetXaxis()->SetTitle("MVV [GeV]");
     m_mVVSynBosonsBkg->GetYaxis()->SetTitle("Entries");
 }

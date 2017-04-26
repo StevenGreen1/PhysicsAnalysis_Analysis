@@ -30,47 +30,52 @@ int main(int argc, char **argv)
     srand(time(0));
     gStyle->SetOptStat(0);
 
-    const int nEvtsStart(atoi(argv[1]));
-    const int nEvtsEnd(atoi(argv[2]));
-    const std::string outputPath(argv[3]);
+    int nEvtsStart(0);
+    int nEvtsEnd(0);
+    std::string outputPath("");
+
+    if (argc == 4)
+    {
+        nEvtsStart = atoi(argv[1]);
+        nEvtsEnd = atoi(argv[2]);
+        outputPath = argv[3];
+    }
+    else if (argc != 1)
+    {
+        std::cout << "Unexpected number of arguments.  Please check." << std::endl;
+        return 0;
+    }
 
     // Energy 1400 GeV
-    float nominalLuminosity(1500);
-    float eeLuminosityRatio(1.0);
-    float egammaLuminosityRatio(0.75);
-    float gammaeLuminosityRatio(0.75);
-    float gammagammaLuminosityRatio(0.64);
+    const float nominalLuminosity(1500.f);
+    const float eeLuminosityRatio(1.f);
+    const float egammaLuminosityRatio(0.75f);
+    const float gammaeLuminosityRatio(0.75f);
+    const float gammagammaLuminosityRatio(0.64f);
+
+    const bool quickLoad(true); // i.e. post MVA needed only
+    const bool trivialMVA(true); // i.e. files concatenated, but bdt is deprecated
 
     // Signal, luminosity copied from nunuqqqq final state
-/*
-    const Process *pProcess_ee_nunuqqqq_1 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,true,true);
-    const Process *pProcess_ee_nunuqqqq_2 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.5","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,true,true);
-*/
-    const Process *pProcess_ee_nunuqqqq_3 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,true,true);
-/*
-    const Process *pProcess_ee_nunuqqqq_4 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.0","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,true,true);
-    const Process *pProcess_ee_nunuqqqq_5 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,true,true);
-    const Process *pProcess_ee_nunuqqqq_6 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,true,true);
-    const Process *pProcess_ee_nunuqqqq_7 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","LooseSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,true,true);
-    const Process *pProcess_ee_nunuqqqq_8 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"ee_kt_algorithm","0.7", ? ,"ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,true,true);
-    const Process *pProcess_ee_nunuqqqq_9 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"cambridge_algorithm","0.7", ? ,"ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,true,true);
-    const Process *pProcess_ee_nunuqqqq_10 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,true,true);
-    const Process *pProcess_ee_nunuqqqq_11 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","LooseSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,true,true);
-    const Process *pProcess_ee_nunuqqqq_12 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,true,true);
-    const Process *pProcess_ee_nunuqqqq_13 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","LooseSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,true,true);
-*/
-/*
+    const Process *pProcess_ee_nunuqqqq_1 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,quickLoad,trivialMVA);
+//    const Process *pProcess_ee_nunuqqqq_2 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.5","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,quickLoad,trivialMVA);
+    const Process *pProcess_ee_nunuqqqq_3 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,quickLoad,trivialMVA);
+//    const Process *pProcess_ee_nunuqqqq_4 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.0","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,quickLoad,trivialMVA);
+    const Process *pProcess_ee_nunuqqqq_5 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,quickLoad,trivialMVA);
+    const Process *pProcess_ee_nunuqqqq_6 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,quickLoad,trivialMVA);
+    const Process *pProcess_ee_nunuqqqq_7 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","LooseSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.7","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,quickLoad,trivialMVA);
+//    const Process *pProcess_ee_nunuqqqq_8 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"ee_kt_algorithm","0.7", ? ,"ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,quickLoad,trivialMVA);
+//    const Process *pProcess_ee_nunuqqqq_9 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","SelectedPandoraPFANewPFOs","ExclusiveNJets",2,"cambridge_algorithm","0.7", ? ,"ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,quickLoad,trivialMVA);
+    const Process *pProcess_ee_nunuqqqq_10 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,quickLoad,trivialMVA);
+    const Process *pProcess_ee_nunuqqqq_11 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","LooseSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","0.9","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,quickLoad,trivialMVA);
+    const Process *pProcess_ee_nunuqqqq_12 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","TightSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,quickLoad,trivialMVA);
+    const Process *pProcess_ee_nunuqqqq_13 = new Process("PhysicsAnalysis","clic_ild_cdr","clic_ild_cdr_ggHadBkg","LooseSelectedPandoraPFANewPFOs","ExclusiveNJets",2,"kt_algorithm","1.1","ee_nunuqqqq",24.7,nominalLuminosity*eeLuminosityRatio,1400,18,quickLoad,trivialMVA);
+
     std::vector<const Process*> processes_1; 
     processes_1.push_back(pProcess_ee_nunuqqqq_1);
 
-    std::vector<const Process*> processes_2; 
-    processes_2.push_back(pProcess_ee_nunuqqqq_2);
-*/
     std::vector<const Process*> processes_3; 
     processes_3.push_back(pProcess_ee_nunuqqqq_3);
-/*
-    std::vector<const Process*> processes_4; 
-    processes_4.push_back(pProcess_ee_nunuqqqq_4);
 
     std::vector<const Process*> processes_5; 
     processes_5.push_back(pProcess_ee_nunuqqqq_5);
@@ -80,12 +85,6 @@ int main(int argc, char **argv)
 
     std::vector<const Process*> processes_7; 
     processes_7.push_back(pProcess_ee_nunuqqqq_7);
-
-    std::vector<const Process*> processes_8; 
-    processes_8.push_back(pProcess_ee_nunuqqqq_8);
-
-    std::vector<const Process*> processes_9; 
-    processes_9.push_back(pProcess_ee_nunuqqqq_9);
 
     std::vector<const Process*> processes_10;
     processes_10.push_back(pProcess_ee_nunuqqqq_10);
@@ -98,51 +97,34 @@ int main(int argc, char **argv)
 
     std::vector<const Process*> processes_13;
     processes_13.push_back(pProcess_ee_nunuqqqq_13);
-*/
+
     std::vector<const Process*> processes_all;
-/*
+
     processes_all.push_back(pProcess_ee_nunuqqqq_1);
-    processes_all.push_back(pProcess_ee_nunuqqqq_2);
-*/
     processes_all.push_back(pProcess_ee_nunuqqqq_3);
-/*
-    processes_all.push_back(pProcess_ee_nunuqqqq_4);
     processes_all.push_back(pProcess_ee_nunuqqqq_5);
     processes_all.push_back(pProcess_ee_nunuqqqq_6);
     processes_all.push_back(pProcess_ee_nunuqqqq_7);
-    processes_all.push_back(pProcess_ee_nunuqqqq_8);
-    processes_all.push_back(pProcess_ee_nunuqqqq_9);
     processes_all.push_back(pProcess_ee_nunuqqqq_10);
     processes_all.push_back(pProcess_ee_nunuqqqq_11);
     processes_all.push_back(pProcess_ee_nunuqqqq_12);
     processes_all.push_back(pProcess_ee_nunuqqqq_13);
-*/
+
     PreSelection *pPreSelectionSemiFinal = new PreSelection(processes_all);
 
     PostMVASelection *pPostMVASelection = new PostMVASelection(processes_all, pPreSelectionSemiFinal);
-    pPostMVASelection->MakeWeightList(false); // <- Must call to get list of events needing weights for fitting
+    pPostMVASelection->MakeWeightList(); // <- Must call to get list of events needing weights for fitting
 
     CouplingAnalysis *pCouplingAnalysis = new CouplingAnalysis(pPostMVASelection, 1400);
-/*
+
     BuildDistributions *pBuildDistributions_1 = new BuildDistributions(processes_1, pCouplingAnalysis, nEvtsStart, nEvtsEnd, "SPFOs_kt_0p70_10Bins_Start_" + NumberToString(nEvtsStart) + "_End_" + NumberToString(nEvtsEnd) + "_1400GeV", outputPath);
-    pBuildDistributions_1->SetNBins(10);
     pBuildDistributions_1->BuildDistribution();
     delete pBuildDistributions_1;
 
-    BuildDistributions *pBuildDistributions_2 = new BuildDistributions(processes_2, pCouplingAnalysis, nEvtsStart, nEvtsEnd, "SPFOs_kt_0p50_10Bins_Start_" + NumberToString(nEvtsStart) + "_End_" + NumberToString(nEvtsEnd) + "_1400GeV", outputPath);
-    pBuildDistributions_2->SetNBins(10);
-    pBuildDistributions_2->BuildDistribution();
-    delete pBuildDistributions_2;
-*/
     BuildDistributions *pBuildDistributions_3 = new BuildDistributions(processes_3, pCouplingAnalysis, nEvtsStart, nEvtsEnd, "SPFOs_kt_0p90_10Bins_Start_" + NumberToString(nEvtsStart) + "_End_" + NumberToString(nEvtsEnd) + "_1400GeV", outputPath);
     pBuildDistributions_3->SetNBins(10);
     pBuildDistributions_3->BuildDistribution();
     delete pBuildDistributions_3;
-/*
-    BuildDistributions *pBuildDistributions_4 = new BuildDistributions(processes_4, pCouplingAnalysis, nEvtsStart, nEvtsEnd, "SPFOs_kt_1p00_10Bins_Start_" + NumberToString(nEvtsStart) + "_End_" + NumberToString(nEvtsEnd) + "_1400GeV", outputPath);
-    pBuildDistributions_4->SetNBins(10);
-    pBuildDistributions_4->BuildDistribution();
-    delete pBuildDistributions_4;
 
     BuildDistributions *pBuildDistributions_5 = new BuildDistributions(processes_5, pCouplingAnalysis, nEvtsStart, nEvtsEnd, "SPFOs_kt_1p10_10Bins_Start_" + NumberToString(nEvtsStart) + "_End_" + NumberToString(nEvtsEnd) + "_1400GeV", outputPath);
     pBuildDistributions_5->SetNBins(10);
@@ -178,10 +160,9 @@ int main(int argc, char **argv)
     pBuildDistributions_13->SetNBins(10);
     pBuildDistributions_13->BuildDistribution();
     delete pBuildDistributions_13;
-*/
+
     delete pPreSelectionSemiFinal, pPostMVASelection, pCouplingAnalysis;
-    delete pProcess_ee_nunuqqqq_3;
-//    delete pProcess_ee_nunuqqqq_1, pProcess_ee_nunuqqqq_2, pProcess_ee_nunuqqqq_3, pProcess_ee_nunuqqqq_4, pProcess_ee_nunuqqqq_5, pProcess_ee_nunuqqqq_6, pProcess_ee_nunuqqqq_7;
+    delete pProcess_ee_nunuqqqq_1, pProcess_ee_nunuqqqq_3, pProcess_ee_nunuqqqq_5, pProcess_ee_nunuqqqq_6, pProcess_ee_nunuqqqq_7, pProcess_ee_nunuqqqq_10, pProcess_ee_nunuqqqq_11, pProcess_ee_nunuqqqq_12, pProcess_ee_nunuqqqq_13;
 }
 
 //=====================================================================

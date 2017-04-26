@@ -12,21 +12,34 @@ class CondorFitting:
     def __init__(self):
         self._FittingArgList = [] 
         self._CondorMaxRuns = 10000000 
-        savePath = '/r06/lc/sg568/PhysicsAnalysis/Analysis/Chi2Fragments/'
 
-#        self._ExecutableName = 'Analysis.sh'
-#        self._ExecutableName = 'PerfectAnalysis.sh'
+        self._ExecutableName = 'PerfectAnalysis.sh'
+        self._Executable = os.path.join('/var/clus/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin', self._ExecutableName)
+        savePath = '/r06/lc/sg568/PhysicsAnalysis/Analysis/Chi2Fragments/Optimisation_1400GeV/'
+        for i in range(0,141):
+            self._FittingArgList.append(str(i*10000) + ' ' + str((i+1)*10000) + ' ' + savePath)
+        self.runCondorJobs()
+
+        self._ExecutableName = 'Analysis.sh'
+        self._Executable = os.path.join('/var/clus/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin', self._ExecutableName)
+        savePath = '/r06/lc/sg568/PhysicsAnalysis/Analysis/Chi2Fragments/Final_1400GeV/'
+        for i in range(0,141):
+            self._FittingArgList.append(str(i*10000) + ' ' + str((i+1)*10000) + ' ' + savePath)
+        self.runCondorJobs()
+
+#        self._ExecutableName = 'PerfectAnalysis3000.sh'
+#        savePath = '/r06/lc/sg568/PhysicsAnalysis/Analysis/Chi2Fragments/Optimisation_3000GeV/'
 #        self._Executable = os.path.join('/var/clus/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin', self._ExecutableName)
-#        for i in range(0,141):
+#        for i in range(0,285):
 #            self._FittingArgList.append(str(i*10000) + ' ' + str((i+1)*10000) + ' ' + savePath)
 #        self.runCondorJobs()
 
-        self._ExecutableName = 'Analysis3000.sh'
-#        self._ExecutableName = 'PerfectAnalysis3000.sh'
-        self._Executable = os.path.join('/var/clus/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin', self._ExecutableName)
-        for i in range(0,171):
-            self._FittingArgList.append(str(i*10000) + ' ' + str((i+1)*10000) + ' ' + savePath)
-        self.runCondorJobs()
+#        self._ExecutableName = 'Analysis3000.sh'
+#        savePath = '/r06/lc/sg568/PhysicsAnalysis/Analysis/Chi2Fragments/Final_3000GeV/'
+#        self._Executable = os.path.join('/var/clus/usera/sg568/PhysicsAnalysis/Analysis/AnalysisScripts/bin', self._ExecutableName)
+#        for i in range(0,285):
+#            self._FittingArgList.append(str(i*10000) + ' ' + str((i+1)*10000) + ' ' + savePath)
+#        self.runCondorJobs()
 
         self.checkCondorJobs()
 
@@ -99,7 +112,7 @@ class CondorFitting:
             nActiveJobs = self.nQueuedCondorJobs()
             print 'There are ' + str(nActiveJobs) + ' jobs running on condor.'
             if (nActiveJobs > 0):
-                time.sleep(10)
+                time.sleep(1000)
             else:
                 print 'There are no more active condor jobs.'
                 return

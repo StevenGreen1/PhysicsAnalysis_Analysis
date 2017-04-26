@@ -76,9 +76,9 @@ class BuildDistributions
         /**
          *  @brief Quick MC analysis functinos for making plots
          */
-void MCBuildDistribution();
-void PairQuarks(TLorentzVector *quark1, TLorentzVector *quark2, TLorentzVector *quark3, TLorentzVector *quark4, double &cosThetaStar1, double &cosThetaStar2);
-void CalculateCosThetaStar(TLorentzVector *quark1, TLorentzVector *quark2, double &cosThetaStar);
+        void MCBuildDistribution();
+        void PairQuarks(TLorentzVector *quark1, TLorentzVector *quark2, TLorentzVector *quark3, TLorentzVector *quark4, double &cosThetaStar1, double &cosThetaStar2);
+        void CalculateCosThetaStar(TLorentzVector *quark1, TLorentzVector *quark2, double &cosThetaStar);
 
         /**
          *  @brief Make plot of event weight for a single event vs alpha4 and alpha5
@@ -150,6 +150,9 @@ void CalculateCosThetaStar(TLorentzVector *quark1, TLorentzVector *quark2, doubl
         TFile                *m_pTFile;                                     ///< Root file for results
         TTree                *m_pTTree;                                     ///< Root tree for results
         int                   m_nBins;                                      ///< Number of bins to use in costheta*jet fit
+        int                   m_nBinsMVV;                                   ///< Number of bins to use in MVV fit
+        float                 m_lowMVV;                                     ///< Low bin edge of MVV fit
+        float                 m_highMVV;                                    ///< High bin edge of MVV fit
         float                 m_wBosonMass;                                 ///< W Boson Mass
         float                 m_zBosonMass;                                 ///< Z Boson Mass
         TH2F                 *m_cosThetaStarSynJets;                        ///< Distribution of cos theta star from jets from synergy boson all 
