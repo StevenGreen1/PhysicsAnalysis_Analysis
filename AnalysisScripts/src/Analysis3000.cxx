@@ -40,7 +40,7 @@ int main(int argc, char **argv)
         nEvtsEnd = atoi(argv[2]);
         outputPath = argv[3];
     }
-    else if (argc != 0)
+    else if (argc != 1)
     {
         std::cout << "Unexpected number of arguments.  Please check." << std::endl;
         return 0;
